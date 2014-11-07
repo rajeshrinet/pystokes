@@ -38,7 +38,7 @@ computed by the library must be passed to iterative linear solvers like [PyKrylo
 
 ### What about fast multipole accelerations ? 
 
-The [PyStokes](https://gitlab.com/rajeshrinet/pystokes) library defaults to direct summation for matrix elements, flows, and rigid body motion. This is an ``O(N^2)`` operation and with current architecture is feasible for about ``N ~ 1e4``. For larger N, accelerated summation methods like the fast multipole is desirable. Future plans include  supporting one or more of the following kernel independent fast multipole methods:
+The [PyStokes](https://gitlab.com/rajeshrinet/pystokes) library defaults to direct summation for matrix elements, flows, and rigid body motion. Direct summation is an ``O(N^2)`` operation and, with current many-core architectures, is feasible for about ``N ~ 1e5``. For larger N, accelerated summation methods like the fast multipole is desirable. Future plans include  supporting one or more of the following kernel independent fast multipole methods:
 
 * [KIFMM3d](http://www.mrl.nyu.edu/~harper/kifmm3d/documentation/publications.html) (Biros et al) - restricted to Green's functions of elliptic 2nd order pdes.
 * [BBFMM3d](https://github.com/ruoxi-wang/BBFMM3D) (Darve et al) - general kernels but no parallelization.

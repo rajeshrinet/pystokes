@@ -50,7 +50,7 @@ The [PyStokes](https://gitlab.com/rajeshrinet/pystokes) library defaults to dire
 The library has a fairly comprehensive documentation which describes the method. Please cite the following papers if you publish research using [PyStokes](https://gitlab.com/rajeshrinet/pystokes).
 
 * [Irreducible Representations Of Oscillatory And Swirling Flows In Active Soft Matter](http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.112.118102), *Physical Review Letters, 112, 118102 (2014)*. (irreducible flows for a single sphere)
-* [Many-body microhydrodynamics of colloidal particles with active boundary layers](), Proceedings of the first International Conference on Soft Matter, Jaipur, India. 
+* [Many-body microhydrodynamics of colloidal particles with active boundary layers](http://arxiv.org/abs/1411.0278). 
 
 
 ### And all this is free ? 
@@ -59,5 +59,5 @@ Yes. Both as in speech and beer. We believe strongly that openness and sharing i
 
 
 ```
-To be realeased soon!
+To be released soon!
 ``` 

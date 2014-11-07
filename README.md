@@ -2,7 +2,7 @@
 
 [PyStokes](https://gitlab.com/rajeshrinet/pystokes) is a Cython library for computing Stokes flows produced by spheres with Dirichlet (velocity) or Neumann (traction) boundary conditions on their surfaces. The solution of Stokes equation is represented as an integral of the velocity and traction over the particle boundaries. The boundary conditions are expanded in a basis of tensorial spherical harmonics and the minimal set of terms that includes all long-ranged hydrodynamic interactions is retained. A linear system of equations is obtained for the unknown coefficients of the traction (for Dirichlet boundary conditions) or the velocity (for Neumann  boundary conditions). The flow and many-body correlated rigid body motion of the spheres are obtained from this solution. 
 
-There are libraries on the web, most notably [Hydrolib](http://dirac.cnrs-orleans.fr/plone/software/hydrolib) which could have been moulded for our purpose but, inspite of Havoc Pennington's [warnings](http://www106.pair.com/rhp/hacking.html), we decided to write our own library. The codebase is kept lean in line with the philosophy that 
+There are libraries on the web, most notably [Hydrolib](http://dirac.cnrs-orleans.fr/plone/software/hydrolib) and [libstokes](https://github.com/kichiki/libstokes), which could have been moulded for our purpose but, inspite of Havoc Pennington's [warnings](http://www106.pair.com/rhp/hacking.html), we decided to write our own library. The codebase is kept lean in line with the philosophy that 
 
 >large codebases are just failed ecosystems. 
 

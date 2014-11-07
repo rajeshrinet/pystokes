@@ -1,6 +1,6 @@
 ## PyStokes 
 
-[PyStokes](https://gitlab.com/rajeshrinet/pystokes) is a Cython library for computing Stokes flows produced by spheres with Dirichlet (velocity) or Neumann (traction) boundary conditions on their surfaces. The solution of Stokes equation is represented as an integral of the velocity and traction over the particle boundaries. The boundary conditions are expanded in a basis of tensorial spherical harmonics and the minimal set of terms that includes all long-ranged hydrodynamic interactions is retained. A linear system of equations is obtained for the unknown coefficients of the traction (for Dirichlet boundary conditions) or the velocity (for Neumann  boundary conditions). The flow and many-body hydrodynamic interactions are obtained from this solution. 
+[PyStokes](https://gitlab.com/rajeshrinet/pystokes) is a Cython library for computing Stokes flows produced by spheres with Dirichlet (velocity) or Neumann (traction) boundary conditions on their surfaces. The solution of Stokes equation is represented as an integral of the velocity and traction over the particle boundaries. The boundary conditions are expanded in a basis of tensorial spherical harmonics and the minimal set of terms that includes all long-ranged hydrodynamic interactions is retained. A linear system of equations is obtained for the unknown coefficients of the traction (for Dirichlet boundary conditions) or the velocity (for Neumann  boundary conditions). The flow and many-body correlated rigid body motion of the spheres are obtained from this solution. 
 
 There are libraries on the web, most notably [Hydrolib](http://dirac.cnrs-orleans.fr/plone/software/hydrolib) which could have been moulded for our purpose but, inspite of Havoc Pennington's [warnings](http://www106.pair.com/rhp/hacking.html), we decided to write our own library. The codebase is kept lean in line with the philosophy that 
 
@@ -50,7 +50,7 @@ The [PyStokes](https://gitlab.com/rajeshrinet/pystokes) library defaults to dire
 The library has a fairly comprehensive documentation which describes the method. Please cite the following papers if you publish research using [PyStokes](https://gitlab.com/rajeshrinet/pystokes).
 
 * [Irreducible Representations Of Oscillatory And Swirling Flows In Active Soft Matter](http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.112.118102), *Physical Review Letters, 112, 118102 (2014)*. (irreducible flows for a single sphere)
-* [Many-body microhydrodynamics of colloidal particles with active boundary layers](http://arxiv.org/abs/1411.0278). 
+* [Many-body microhydrodynamics of colloidal particles with active boundary layers](http://arxiv.org/abs/1411.0278). (Galerkin solution of boundary integral equation)
 
 
 ### And all this is free ? 

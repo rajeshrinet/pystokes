@@ -1,6 +1,6 @@
 ## PyStokes 
 
-[PyStokes](https://gitlab.com/rajeshrinet/pystokes) is a Cython library for computing Stokes flows produced by spheres with Dirichlet (velocity) or Neumann (traction) boundary conditions on their surfaces. The solution of Stokes equation is represented as an integral of the velocity and traction over the particle boundaries. The boundary conditions are expanded in a basis of tensorial spherical harmonics and the minimal set of terms that includes all long-ranged hydrodynamic interactions is retained. A linear system of equations is obtained for the unknown coefficients of the traction (for Dirichlet boundary conditions) or the velocity (for Neumann  boundary conditions). The flow and many-body correlated rigid body motion of the spheres are obtained from this solution. 
+[PyStokes](https://gitlab.com/rajeshrinet/pystokes) is a Cython library for computing Stokes flows produced by spheres with Dirichlet (velocity) or Neumann (traction) boundary conditions on their surfaces. The solution of Stokes equation is represented as an integral of the velocity and traction over the particle boundaries. The boundary conditions are expanded in a basis of tensorial spherical harmonics and the minimal set of terms that includes all long-ranged hydrodynamic interactions is retained. A linear system of equations is obtained for the unknown coefficients of the traction (for Dirichlet boundary conditions) or the velocity (for Neumann  boundary conditions). The flow and many-body hydrodynamic interactions are obtained from this solution. 
 
 There are open source libraries, most notably [Hydrolib](http://dirac.cnrs-orleans.fr/plone/software/hydrolib) and [libstokes](https://github.com/kichiki/libstokes), which could have been moulded for our purpose but, inspite of Havoc Pennington's [warnings](http://www106.pair.com/rhp/hacking.html), we decided to write our own library. The codebase is kept lean in line with the philosophy that 
 
@@ -58,6 +58,6 @@ The library has a fairly comprehensive documentation which describes the method.
 Yes. Both as in speech and beer. We believe strongly that openness and sharing improves the practice of science and increases the reach of its benefits. This code is licensed under. Our choice is guided by the excellent article on [Licensing for the scientist-programmer](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002598). 
 
 
-```
-To be released soon!
-``` 
+### Ok, show me the code!
+
+We want to be sure we have squashed as many bugs as possible before we release. Drop a mail to  [Rajesh Singh]() if you want access to a beta version. 

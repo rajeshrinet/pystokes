@@ -60,4 +60,4 @@ Yes. Both as in speech and beer. We believe strongly that openness and sharing i
 
 ### Ok, show me the code!
 
-We want to be sure we have squashed as many bugs as possible before we release. Drop a mail to  [Rajesh Singh]() if you want access to a beta version. 
+We want to be sure we have squashed as many bugs as possible before we release. Drop a mail to [Rajesh Singh](https://github.com/rajeshrinet) if you want access to a beta version. 

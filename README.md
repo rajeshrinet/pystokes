@@ -55,7 +55,7 @@ The library has a fairly comprehensive documentation which describes the method.
 
 ### And all this is free ? 
 
-Yes. Both as in speech and beer. We believe strongly that openness and sharing improves the practice of science and increases the reach of its benefits. This code is licensed under. Our choice is guided by the excellent article on [Licensing for the scientist-programmer](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002598). 
+Yes. Both as in speech and beer. We believe strongly that openness and sharing improves the practice of science and increases the reach of its benefits. This code is released under the [MIT license](http://opensource.org/licenses/MIT). Our choice is guided by the excellent article on [Licensing for the scientist-programmer](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002598). 
 
 
 ### Ok, show me the code!

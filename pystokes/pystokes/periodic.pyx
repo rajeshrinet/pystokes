@@ -1,0 +1,847 @@
+cimport cython
+from libc.math cimport sqrt, exp, pow, erfc, sin, cos
+from cython.parallel import prange
+cdef double PI = 3.14159265359
+cdef double IPI = (2/sqrt(PI))
+
+@cython.boundscheck(False)
+@cython.cdivision(True)
+@cython.nonecheck(False)
+@cython.wraparound(False)
+cdef class Rbm:
+    def __init__(self, a, Np, eta, L):
+        self.a  = a                 # radius of the particles
+        self.Np = Np                # number of particles
+        self.eta = eta              # fluid viscosity
+        self.L  = L                 # size of the box used
+
+
+    cpdef stokesletV(self, double [:] v, double [:] r, double [:] F, int Nb=6, int Nm=6):
+        cdef int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
+        cdef double L=self.L,  xi=1.5*sqrt(PI)/L, ixi2 = 1/(xi*xi), mu=1.0/(6*PI*self.eta*self.a), mu1=mu*self.a*0.75, siz=Nb*L
+        cdef double a2=self.a*self.a/3, tpi=2*PI/L, ivol=1/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
+        cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
+        cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
+        cdef double phi = (16.0*PI*self.a*self.a*self.a*Np/9.0)/(self.a*L*L*L)                                   #renormalization effects
+        #mpp -= mu1*0.2*phi*phi  ##quadrupolar correction
+        
+        for i in prange(Np, nogil=True):
+            vx=0;  vy=0;  vz=0;
+            for j in range(Np):
+                xd=r[i]-r[j];          xd1=xd-siz; 
+                yd=r[i+Np]-r[j+Np];    yd1=yd-siz;  
+                zd=r[i+xx]-r[j+xx];    zd1=zd-siz;
+                fx=F[j];  fy=F[j+Np];  fz=F[j+xx];
+
+                for ii in range(Nbb):
+                    dx = xd1 + ii*L 
+                    for jj in range(Nbb):               
+                        dy = yd1 + jj*L 
+                        for kk in range(Nbb):                 
+                            dz = zd1 + kk*L
+                            if ii==jj==kk==Nb and i==j:
+                                pass
+                            else:    
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                                xdr=xi/idr;  xdr2=xdr*xdr;  xdr3=xdr2*xdr;  
+                                erxdr = erfc(xdr);  e1=IPI*exp(-xdr2);
+                                fdotir = (fx*dx + fy*dy + fz*dz)*idr*idr
+                                A = erxdr + e1*(2*xdr3-3*xdr)
+                                B = erxdr + e1*(xdr - 2*xdr3)
+                                A += (2*erxdr  + e1*( 2*xdr + 28*xdr3 - 40*xdr3*xdr2 + 8*xdr3*xdr3*xdr ))*idr*idr*a2 # finite size correction
+                                B += (-6*erxdr + e1*(-6*xdr - 4*xdr3  + 32*xdr3*xdr2 - 8*xdr3*xdr3*xdr ))*idr*idr*a2  #finite size 
+                                vx += ( A*fx + B*fdotir*dx)*idr
+                                vy += ( A*fy + B*fdotir*dy)*idr
+                                vz += ( A*fz + B*fdotir*dz)*idr
+                # Fourier space sum
+                for ii in range(N1, N2):
+                    kx = tpi*ii;
+                    for jj in range(N1, N2):               
+                        ky = tpi*jj;
+                        for kk in range(N1, N2):                 
+                            kz = tpi*kk;
+                            if kx != 0 or ky != 0 or kz != 0:
+                                k2 = (kx*kx + ky*ky + kz*kz); ik2=1/k2
+                                fdotik = (fx*kx + fy*ky + fz*kz )*ik2
+                                cc = 8*PI*(1-a2*k2)*cos( kx*xd+ky*yd+kz*zd )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ivol*ik2
+
+                                vx += cc*(fx - fdotik*kx) 
+                                vy += cc*(fy - fdotik*ky) 
+                                vz += cc*(fz - fdotik*kz) 
+        
+            v[i]    += mpp*F[i]    + mu1*vx 
+            v[i+Np] += mpp*F[i+Np] + mu1*vy 
+            v[i+xx] += mpp*F[i+xx] + mu1*vz 
+        return 
+    
+    
+    cpdef rotletV(   self, double [:] v, double [:] r, double [:] T, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L)
+            double ixi2 = 1/(xi*xi)
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
+            double xdr, xdr2, xdr3, e1, erxdr 
+            double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
+
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==jj==kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = r[i]   - r[j]-Nb*L + ii*L 
+                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                                idr3 = idr*idr*idr
+                                xdr    = xi/idr;    erxdr = erfc(xdr) 
+                                xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
+                                D      = -2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr)
+                                
+                                v[i]   += D*(dx*T[j]   - dx*T[j]  )*idr3
+                                v[i+Np] += D*(dx*T[j+Np] - dy*T[j+Np])*idr3
+                                v[i+xx] += D*(dx*T[j+xx] - dz*T[j+xx])*idr3
+        # Fourier space sum
+        for i in prange(Np, nogil=True):
+            for j  in range(Np):
+                dx = r[i]  -r[j]
+                dy = r[i+Np]-r[j+Np]
+                dz = r[i+xx]-r[j+xx]
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx != 0 or ky != 0 or kz != 0:
+                                k2 = kx*kx + ky*ky + kz*kz    
+                                cc = 8*PI*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L*k2)
+
+                                v[i]    += cc*( T[j+Np]*kz - T[j+xx]*ky  ) 
+                                v[i+Np] += cc*( T[j+xx]*kx - T[j]  *kz  ) 
+                                v[i+xx] += cc*( T[j]  *ky - T[j+Np]*kx  ) 
+         
+        return 
+    
+    
+    cpdef stressletV(self, double [:] v, double [:] r, double [:] S, int Nb=6, int Nm=6):
+        cdef: 
+            int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
+            double L = self.L,  xi = sqrt(PI)/(L), siz=Nb*L
+            double ixi2 = 1/(xi*xi)
+            double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
+            double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, kdotr, vx, vy, vz, tp=2*PI/L, ixk2, ivol=1/(L*L*L)
+            double a2 = self.a*self.a*4.0/15, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.a**3)/24 
+        
+        for i in prange(Np, nogil=True):
+            vx=0; vy=0; vz=0;
+            for j in range(Np):
+                sxx = S[j]
+                syy = S[j+Np]
+                sxy = S[j+2*Np]
+                sxz = S[j+3*Np]
+                syz = S[j+4*Np]
+                xd=r[i]-r[j];          xd1=xd-siz; 
+                yd=r[i+Np]-r[j+Np];    yd1=yd-siz;  
+                zd=r[i+xx]-r[j+xx];    zd1=zd-siz;
+                
+                for ii in range(Nbb):
+                    dx = xd1 + ii*L 
+                    for jj in range(Nbb):               
+                        dy = yd1 + jj*L 
+                        for kk in range(Nbb):                 
+                            dz = zd1 + kk*L
+                            if ii==jj==kk==Nb and i==j:
+                                pass
+                            else:    
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                                idr3 = idr*idr*idr
+                                xdr = xi/idr; xdr2=xdr*xdr; xdr3 = xdr2*xdr; xdr5 = xdr3*xdr2;
+                                erxdr   = erfc(xdr);   e1  = IPI*exp(-xdr2);
+                                D =  e1*(8*xdr3 - 4*xdr5 ) 
+                                E = -3*erxdr + e1*(-3*xdr - 2*xdr3  + 4*xdr5 ) 
+                                srr = (sxx*(dx*dx-dz*dz) + syy*(dy*dy-dz*dz) +  2*sxy*dx*dy + 2*sxz*dx*dz  +  2*syz*dy*dz)*idr*idr
+                                srx = sxx*dx +  sxy*dy + sxz*dz  
+                                sry = sxy*dx +  syy*dy + syz*dz  
+                                srz = sxz*dx +  syz*dy - (sxx+syy)*dz 
+                                D += -12*erxdr+ e1*(-12*xdr - 8*xdr3  - 104*xdr5 + 104*xdr5*xdr2 - 16*xdr3*xdr3*xdr3)*a2*idr*idr
+                                E += 30*erxdr + e1*(30*xdr  + 20*xdr3 + 8*xdr5   - 80*xdr5*xdr2  + 16*xdr3*xdr3*xdr3)*a2*idr*idr
+                                vx += ( D*srx + E*srr*dx)*idr3 
+                                vy += ( D*sry + E*srr*dy)*idr3
+                                vz += ( D*srz + E*srr*dz)*idr3
+                #Fourier part
+                for ii in range(N1, N2):
+                    kx = tp*ii;
+                    for jj in range(N1, N2):               
+                        ky = tp*jj;
+                        for kk in range(N1, N2):                 
+                            kz = tp*kk;
+                            if kx != 0 or ky != 0 or kz != 0:  
+                                k2 = (kx*kx + ky*ky + kz*kz)    
+                                ixk2 = k2*ixi2
+                                cc = -8*PI*(1-k2*a2)*sin( kx*dx+ky*dy+kz*dz )*(1 + 0.25*ixk2 + 0.125*ixk2*ixk2)*exp(-0.25*ixk2)*ivol/k2
+                                srr = (sxx*(kx*kx-kz*kz) + syy*(ky*ky-kz*kz) +  2*sxy*kx*ky + 2*sxz*kx*kz  +  2*syz*ky*kz)/k2
+                                srx = sxx*kx +  sxy*ky + sxz*kz  
+                                sry = sxy*kx +  syy*ky + syz*kz  
+                                srz = sxz*kx +  syz*ky - (sxx+syy)*kz 
+                                
+                                vx += cc* (srx - srr*kx) 
+                                vy += cc* (sry - srr*ky)
+                                vz += cc* (srz - srr*kz)
+
+            v[i]    += mus*vx
+            v[i+Np] += mus*vy
+            v[i+xx ]+= mus*vz
+        return 
+      
+
+      
+
+    cpdef potDipoleV(self, double [:] v, double [:] r, double [:] D, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L), siz=Nb*L, tpi=(2*PI/L), ivol=1.0/(L*L*L)
+            double ixi2 = 1/(xi*xi), vx, vy, vz
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
+            double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
+            double mud =3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
+            double xd, yd, zd, xd1, yd1, zd1
+        mud = mud + mud1*IPI*xi*(80*xi*xi*self.a*self.a/3.0) ## adding the M^2(r=0) contribution
+        
+        for i in prange(Np, nogil=True):
+            vx=0;  vy=0; vz=0;
+            for j in range(Np):
+                xd=r[i]-r[j];          xd1=xd-siz; 
+                yd=r[i+Np]-r[j+Np];    yd1=yd-siz;  
+                zd=r[i+xx]-r[j+xx];    zd1=zd-siz;
+                
+                for ii in range(Nbb):
+                    dx = xd1 + ii*L 
+                    for jj in range(Nbb):               
+                        dy = yd1 + jj*L 
+                        for kk in range(Nbb):                 
+                            dz = zd1 + kk*L
+                            if ii==jj==kk==Nb and i==j:
+                                pass
+                            else:    
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                                idr5=idr*idr*idr*idr*idr
+                                xdr = xi/idr; xdr2=xdr*xdr; xdr3 = xdr2*xdr;
+                                erxdr   = erfc(xdr); e1=IPI*exp(-xdr2);  
+                                A1 = (2*erxdr  + e1*( 2*xdr+28*xdr3-40*xdr3*xdr2+8*xdr3*xdr3*xdr ))*idr5 
+                                B1 = (-6*erxdr + e1*(-6*xdr-4*xdr3 +32*xdr3*xdr2-8*xdr3*xdr3*xdr ))*idr5 
+                                Ddotidr2 = (D[j]*dx + D[j+Np]*dy + D[j+xx]*dz )*idr*idr
+                              
+                                vx += A1*D[j]    + B1*Ddotidr2*dx
+                                vy += A1*D[j+Np] + B1*Ddotidr2*dy
+                                vz += A1*D[j+xx] + B1*Ddotidr2*dz
+                #Fourier part
+                for ii in range(N1, N2):
+                    kx = tpi*ii;
+                    for jj in range(N1, N2):               
+                        ky = tpi*jj;
+                        for kk in range(N1, N2):                 
+                            kz = tpi*kk;
+                            if kx != 0 or ky != 0 or kz != 0:  
+                                k2 = (kx*kx + ky*ky + kz*kz)    
+                                cc = -8*PI*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ivol
+                                Ddotik2  = (D[j]*kx + D[j+Np]*ky + D[j+xx]*kz)/k2
+                                
+                                vx += cc*( D[j]   - Ddotik2*kx ) 
+                                vy += cc*( D[j+Np] - Ddotik2*ky ) 
+                                vz += cc*( D[j+xx] - Ddotik2*kz ) 
+            v[i]   += mud*D[i]    + mud1*vx
+            v[i+Np]+= mud*D[i+Np] + mud1*vy
+            v[i+xx]+= mud*D[i+xx] + mud1*vz
+        return
+
+
+    cpdef septletV(  self, double [:] v, double [:] r, double [:] G, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L)  
+            double ixi2 = 1/(xi*xi)
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, j,  ii, jj, kk, xx=2*Np
+            double xdr, xdr2, xdr3, xdr5, xdr7, e1, erxdr, D1, D2, D11, D22
+            double dx, dy, dz, idr, idr5, idr7, kx, ky, kz, k2, cc, 
+            double aidr2, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
+            double a2 = self.a*self.a*5/21
+        
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                gxxx = G[j]
+                gyyy = G[j+Np]
+                gxxy = G[j+2*Np]
+                gxxz = G[j+3*Np]
+                gxyy = G[j+4*Np]
+                gxyz = G[j+5*Np]
+                gyyz = G[j+6*Np]
+                dx = r[i]  -r[j]
+                dy = r[i+Np]-r[j+Np]
+                dz = r[i+xx]-r[j+xx]
+                
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==Nb and jj==Nb and kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = dx - Nb*L + ii*L 
+                                dy = dy - Nb*L + jj*L 
+                                dz = dz - Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                                idr5   = idr*idr*idr*idr*idr 
+                                idr7   = idr5*idr*idr
+                                xdr    = xi/idr 
+                                xdr = xi/idr; xdr2=xdr*xdr; xdr3=xdr2*xdr; xdr5 = xdr3*xdr2
+                                erxdr   = erfc(xdr); e1=IPI*exp(-xdr2); xdr7= xdr5*xdr2 
+                                D1 = ( -3*erxdr + e1*(-3*xdr  -2*xdr3 - 20*xdr5 + 8*xdr7)+ 4*a2*idr*idr )*idr5    ;
+                                D2 = ( 15*erxdr + e1*(15*xdr +10*xdr3 +4*xdr5 - 8*xdr7)  - 28*a2*idr*idr )*idr7;
+                                D11 = a2*(-9*xdr+9*xdr3-267*xdr5+632*xdr7-296*xdr7*xdr2+32*xdr7*xdr2*xdr2)*idr7
+                                D22 = a2*(45*xdr-45*xdr3-60*xdr5+320*xdr7-272*xdr7*xdr2-32*xdr7*xdr2*xdr2)*idr7*idr*idr
+
+
+                                grrr = gxxx*dx*(dx*dx-3*dz*dz) + 3*gxxy*dy*(dx*dx-dz*dz) + gxxz*dz*(3*dx*dx-dz*dz) +\
+                                   3*gxyy*dx*(dy*dy-dz*dz) + 6*gxyz*dx*dy*dz + gyyy*dy*(dy*dy-3*dz*dz) +  gyyz*dz*(3*dy*dy-dz*dz) 
+                                grrx = gxxx*(dx*dx-dz*dz) + gxyy*(dy*dy-dz*dz) +  2*gxxy*dx*dy + 2*gxxz*dx*dz  +  2*gxyz*dy*dz
+                                grry = gxxy*(dx*dx-dz*dz) + gyyy*(dy*dy-dz*dz) +  2*gxyy*dx*dy + 2*gxyz*dx*dz  +  2*gyyz*dy*dz
+                                grrz = gxxz*(dx*dx-dz*dz) + gyyz*(dy*dy-dz*dz) +  2*gxyz*dx*dy - 2*(gxxx+gxyy)*dx*dz  - 2*(gxxy+gyyy)*dy*dz
+                                D1 = D1 + D11;  D2 = D2 + D22; 
+                                v[i]   += D1*grrx - D2*grrr*dx
+                                v[i+Np] += D1*grry - D2*grrr*dy
+                                v[i+xx] += D1*grrz - D2*grrr*dz
+                #Fourier part
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx == 0 and ky == 0 and kz == 0:  
+                                pass
+                            else:    
+                                k2 = (kx*kx + ky*ky + kz*kz)    
+                                cc = -8*(1-a2*k2)*PI*cos( kx*dx+ky*dy+kz*dz )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L)
+                
+                                grrr = (gxxx*kx*(kx*kx-3*kz*kz) + 3*gxxy*ky*(kx*kx-kz*kz) + gxxz*kz*(3*kx*kx-kz*kz) +\
+                                   3*gxyy*kx*(ky*ky-kz*kz) + 6*gxyz*kx*ky*kz + gyyy*ky*(ky*ky-3*kz*kz) +  gyyz*kz*(3*ky*ky-kz*kz) )/k2
+                                grrx = gxxx*(kx*kx-kz*kz) + gxyy*(ky*ky-kz*kz) +  2*gxxy*kx*ky + 2*gxxz*kx*kz  +  2*gxyz*ky*kz
+                                grry = gxxy*(kx*kx-kz*kz) + gyyy*(ky*ky-kz*kz) +  2*gxyy*kx*ky + 2*gxyz*kx*kz  +  2*gyyz*ky*kz
+                                grrz = gxxz*(kx*kx-kz*kz) + gyyz*(ky*ky-kz*kz) +  2*gxyz*kx*ky - 2*(gxxx+gxyy)*kx*kz  - 2*(gxxy+gyyy)*ky*kz
+                                
+                                v[i]   += cc*(grrx - grrr*kx) 
+                                v[i+Np] += cc*(grry - grrr*ky) 
+                                v[i+xx] += cc*(grrz - grrr*kz) 
+
+        return
+
+    
+    cpdef vortletV(  self, double [:] v, double [:] r, double [:] V, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L)
+            double ixi2 = 1/(xi*xi)
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz, vkx, vky, vkz
+            double s1, kx, ky, kz, k2, xdr, xdr2, cc 
+ 
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                vxx = V[j]
+                vyy = V[j+Np]
+                vxy = V[j+2*Np]
+                vxz = V[j+3*Np]
+                vyz = V[j+4*Np]
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==Nb and jj==Nb and kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = r[i]   - r[j]     -Nb*L + ii*L 
+                                dy = r[i+Np] - r[j+Np]  -Nb*L + jj*L 
+                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                                idr5 = pow(idr, 5)
+                                xdr = xi/idr; xdr2 = xdr*xdr;  
+                                s1 = -6*erfc(xdr) + IPI*xdr2*(-16 + 32*xdr2 - 8*xdr2*xdr2)*exp(-xdr2)
+                                vrx = vxx*dx +  vxy*dy + vxz*dz  
+                                vry = vxy*dx +  vyy*dy + vyz*dz  
+                                vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
+                                
+                                v[i]   -= s1*( dy*vrz - dz*vry )*idr5
+                                v[i+Np] -= s1*( dz*vrx - dx*vrz )*idr5
+                                v[i+xx] -= s1*( dx*vry - dy*vrx )*idr5
+                #Fourier part
+                N1 = -(Nm/2)+1
+                N2 =  (Nm/2)+1
+                dx = r[i]      - r[j]
+                dy = r[i+Np]   - r[j+Np]
+                dz = r[i+xx] - r[j+xx] 
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx != 0 or ky != 0 or kz != 0:  
+                                k2 = (kx*kx + ky*ky + kz*kz)    
+                                cc = 8*PI*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2*L*L*L)
+                                vkx = vxx*kx +  vxy*ky + vxz*kz  
+                                vky = vxy*kx +  vyy*ky + vyz*kz  
+                                vkz = vxz*kx +  vyz*ky - (vxx+vyy)*kz 
+                                
+                                v[i]   += cc*( ky*vkz - kz*vky) 
+                                v[i+Np] += cc*( kz*vkx - kx*vkz) 
+                                v[i+xx] += cc*( kx*vky - ky*vkx) 
+                            else:    
+                                pass
+        return
+
+
+    cpdef spinletV(  self, double [:] v, double [:] r, double [:] M, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L)
+            double ixi2 = 1/(xi*xi)
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            double dx, dy, dz, idr, idr7, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
+            double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc, 
+
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                mxxx = M[j]
+                myyy = M[j+Np]
+                mxxy = M[j+2*Np]
+                mxxz = M[j+3*Np]
+                mxyy = M[j+4*Np]
+                mxyz = M[j+5*Np]
+                myyz = M[j+6*Np]
+
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==Nb and jj==Nb and kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = r[i]   - r[j]     -Nb*L + ii*L 
+                                dy = r[i+Np] - r[j+Np]  -Nb*L + jj*L 
+                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                                idr7 = pow(idr, 7)
+                                xdr = xi/idr; xdr2 = xdr*xdr; 
+                                s2 = 30*erfc(xdr) + IPI*xdr*(6 + 32*xdr2 -32*xdr2*xdr2 - 80*xdr2*xdr2*xdr2 + 16*xdr2*xdr2*xdr2*xdr2)*exp(-xdr2)
+                                mrrx = mxxx*(dx*dx-dz*dz) + mxyy*(dy*dy-dz*dz) +  2*mxxy*dx*dy + 2*mxxz*dx*dz  +  2*mxyz*dy*dz
+                                mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
+                                mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz - 2*(mxxy+myyy)*dy*dz
+                                
+                                v[i]   -= s2*( dy*mrrz - dz*mrry )*idr7
+                                v[i+Np] -= s2*( dz*mrrx - dx*mrrz )*idr7
+                                v[i+xx] -= s2*( dx*mrry - dy*mrrx )*idr7
+                #Fourier part
+                N1 = -(Nm/2)+1
+                N2 =  (Nm/2)+1
+                dx = r[i]  - r[j]     
+                dy = r[i+Np]- r[j+Np]  
+                dz = r[i+xx]- r[j+xx]
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx != 0 or ky != 0 or kz != 0:  
+                                k2 = (kx*kx + ky*ky + kz*kz)    
+                                cc = 8*PI*sin( kx*dx+ky*dy+kz*dz )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2*L*L*L)
+                                mkkx = mxxx*(kx*kx-kz*kz) + mxyy*(ky*ky-kz*kz) +  2*mxxy*kx*ky + 2*mxxz*kx*kz  +  2*mxyz*ky*kz
+                                mkky = mxxy*(kx*kx-kz*kz) + myyy*(ky*ky-kz*kz) +  2*mxyy*kx*ky + 2*mxyz*kx*kz  +  2*myyz*ky*kz
+                                mkkz = mxxz*(kx*kx-kz*kz) + myyz*(ky*ky-kz*kz) +  2*mxyz*kx*ky - 2*(mxxx+mxyy)*kx*kz-2*(mxxy+myyy)*ky*kz
+                                
+                                v[i]   += cc*( ky*mkkz - kz*mkky) 
+                                v[i+Np] += cc*( kz*mkkx - kx*mkkz) 
+                                v[i+xx] += cc*( kx*mkky - ky*mkkx) 
+                            else:    
+                                pass
+        return
+
+
+    ## Angular velocities
+
+
+    cpdef stokesletO(self, double [:] o, double [:] r, double [:] F, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L),
+            double  ixi2 = 1/(xi*xi)
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
+            double xdr, xdr2, xdr3, e1, erxdr 
+            double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
+
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==jj==kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = r[i]   - r[j]  -Nb*L + ii*L 
+                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                                idr3 = idr*idr*idr
+                                xdr    = xi/idr;    erxdr = erfc(xdr) 
+                                xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
+                                D      = -2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr)
+                                
+                                o[i]   -= D*(dx*F[j]   - dx*F[j]  )*idr3
+                                o[i+Np] -= D*(dx*F[j+Np] - dy*F[j+Np])*idr3
+                                o[i+xx] -= D*(dx*F[j+xx] - dz*F[j+xx])*idr3
+        # Fourier space sum
+        for i in prange(Np, nogil=True):
+            i1 = i*3
+            for j  in range(Np):
+                j1 = j*3
+                dx = r[i]  -r[j]
+                dy = r[i+Np]-r[j+Np]
+                dz = r[i+xx]-r[j+xx]
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx != 0 or ky != 0 or kz != 0:
+                                k2 = kx*kx + ky*ky + kz*kz    
+                                cc = 8*PI*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L*k2)
+
+                                o[i]   -= cc*( F[j+Np]*dz - F[j+xx]*dy  ) 
+                                o[i+Np] -= cc*( F[j+xx]*dx - F[j]*dz       ) 
+                                o[i+xx] -= cc*( F[j]*dy   - F[j+Np]*dx    ) 
+                            else:
+                                pass
+        return 
+
+
+    cpdef rotletO(   self, double [:] o, double [:] r, double [:] T, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L) 
+            double ixi2 = 1/(xi*xi)
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk,  xx=2*Np
+            double xdr, xdr2, A1, B1, Tdotik2, Tdotidr2, e1, erxdr, dx, dy, dz, idr,  kx, ky, kz, k2, cc
+        
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                dx = r[i]  -r[j]
+                dy = r[i+Np]-r[j+Np]
+                dz = r[i+xx]-r[j+xx]
+              
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==jj==kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = dx - Nb*L + ii*L 
+                                dy = dy - Nb*L + jj*L 
+                                dz = dz - Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                                xdr = xi/idr; xdr2=xdr*xdr; 
+                                erxdr   = erfc(xdr); e1=IPI*exp(-xdr2);  
+                                Tdotidr2 = (T[j]*dx + T[j+Np]*dy + T[j+xx]*dz )*idr*idr
+                                A1    =  2*erxdr*idr*idr + e1*( 8*xdr2*xdr2*xdr*xi*xi - 40*xdr2*xdr*xi*xi +28*xdr*xi*xi + 2*xi*idr)
+                                B1    = -6*erxdr*idr*idr + e1*(-8*xdr2*xdr2*xdr*xi*xi + 32*xdr2*xdr*xi*xi - 4*xdr*xi*xi - 6*xi*idr )
+                              
+                                o[i]   += -(A1*T[j]  *idr + B1*Tdotidr2*dx)*idr;
+                                o[i+Np] += -(A1*T[j+Np]*idr + B1*Tdotidr2*dy)*idr;
+                                o[i+xx] += -(A1*T[j+xx]*idr + B1*Tdotidr2*dz)*idr;
+                #Fourier part
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx != 0 or ky != 0 or kz != 0:  
+                                k2 = (kx*kx + ky*ky + kz*kz)    
+                                cc = -8*PI*cos(kx*dx+ky*dy+kz*dz)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L)
+                                Tdotik2  = (T[j]*kx + T[j+Np]*ky + T[j+xx]*kz)/k2
+                                
+                                o[i]   += cc*( T[j]   - Tdotik2*kx ) 
+                                o[i+Np] += cc*( T[j+Np] - Tdotik2*ky ) 
+                                o[i+xx] += cc*( T[j+xx] - Tdotik2*kz ) 
+                            else:
+                                pass                                                
+        return
+
+    
+    cpdef stressletO(self, double [:] o, double [:] r, double [:] S, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L) 
+            double ixi2 = 1/(xi*xi)
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            double dx, dy, dz, idr, idr5, sxx, syy, sxy, sxz, syz, srx, sry, srz, skx, sky, skz, s1
+            double kx, ky, kz, k2, xdr, xdr2, cc, 
+ 
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                sxx = S[j]
+                syy = S[j+Np]
+                sxy = S[j+2*Np]
+                sxz = S[j+3*Np]
+                syz = S[j+4*Np]
+
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==Nb and jj==Nb and kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = r[i]   - r[j]  -Nb*L + ii*L 
+                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                                idr5 = pow(idr, 5)
+                                xdr = xi/idr; xdr2 = xdr*xdr;
+                                s1 = -6*erfc(xdr) + IPI*(-16*xdr2*xdr + 32*xdr2*xdr2*xdr - 8*xdr2*xdr2*xdr2*xdr)*exp(-xdr2)
+                                xdr = xi/idr; xdr2 = xdr*xdr; 
+                                srx = sxx*dx +  sxy*dy + sxz*dz  
+                                sry = sxy*dx +  syy*dy + syz*dz  
+                                srz = sxz*dx +  syz*dy - (sxx+syy)*dz 
+                                
+                                o[i]   -= s1*( dy*srz - dz*sry )*idr5
+                                o[i+Np] -= s1*( dz*srx - dx*srz )*idr5
+                                o[i+xx] -= s1*( dx*sry - dy*srx )*idr5
+                #Fourier part
+                dx = r[i]   - r[j]
+                dy = r[i+Np] - r[j+Np]
+                dz = r[i+xx] - r[j+xx] 
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx != 0 or ky != 0 or kz != 0:  
+                                k2 = (kx*kx + ky*ky + kz*kz)    
+                                cc = 8*PI*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2*L*L*L)
+                                skx = sxx*kx +  sxy*ky + sxz*kz  
+                                sky = sxy*kx +  syy*ky + syz*kz  
+                                skz = sxz*kx +  syz*ky - (sxx+syy)*kz 
+                                
+                                o[i]   += cc*( ky*skz - kz*sky) 
+                                o[i+Np] += cc*( kz*skx - kx*skz) 
+                                o[i+xx] += cc*( kx*sky - ky*skx) 
+                            else:    
+                                pass
+        pass
+
+
+    cpdef septletO(  self, double [:] o, double [:] r, double [:] G, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L), 
+            double ixi2 = 1/(xi*xi)
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            double dx, dy, dz, idr, idr7, grrx, grry, grrz, gkkx, gkky, gkkz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz, 
+            double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc,
+
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                gxxx = G[j]
+                gyyy = G[j+Np]
+                gxxy = G[j+2*Np]
+                gxxz = G[j+3*Np]
+                gxyy = G[j+4*Np]
+                gxyz = G[j+5*Np]
+                gyyz = G[j+6*Np]
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==Nb and jj==Nb and kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = r[i]   - r[j]  -Nb*L + ii*L 
+                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                                idr7 = pow(idr, 7)
+                                xdr = xi/idr; xdr2 = xdr*xdr; 
+                                s2 = 3*erfc(xdr) + IPI*(12*xdr - 32*xdr2*xdr - 16* xdr2*xdr2*xdr2*xdr)*exp(-xdr2)
+                                grrx = gxxx*(dx*dx-dz*dz) + gxyy*(dy*dy-dz*dz) +  2*gxxy*dx*dy + 2*gxxz*dx*dz  +  2*gxyz*dy*dz
+                                grry = gxxy*(dx*dx-dz*dz) + gyyy*(dy*dy-dz*dz) +  2*gxyy*dx*dy + 2*gxyz*dx*dz  +  2*gyyz*dy*dz
+                                grrz = gxxz*(dx*dx-dz*dz) + gyyz*(dy*dy-dz*dz) +  2*gxyz*dx*dy - 2*(gxxx+gxyy)*dx*dz - 2*(gxxy+gyyy)*dy*dz
+                                
+                                o[i]   -= s2*( dy*grrz - dz*grry )*idr7
+                                o[i+Np]-= s2*( dz*grrx - dx*grrz )*idr7
+                                o[i+xx] -= s2*( dx*grry - dy*grrx )*idr7
+                #Fourier part
+                dx = r[i]   - r[j]     
+                dy = r[i+Np] - r[j+Np]  
+                dz = r[i+xx] - r[j+xx]
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx != 0 or ky != 0 or kz != 0:  
+                                k2 = (kx*kx + ky*ky + kz*kz)     
+                                cc = 8*PI*sin( kx*dx+ky*dy+kz*dz )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2*L*L*L)
+                                gkkx = gxxx*(kx*kx-kz*kz) + gxyy*(ky*ky-kz*kz) +  2*gxxy*kx*ky + 2*gxxz*kx*kz  +  2*gxyz*ky*kz
+                                gkky = gxxy*(kx*kx-kz*kz) + gyyy*(ky*ky-kz*kz) +  2*gxyy*kx*ky + 2*gxyz*kx*kz  +  2*gyyz*ky*kz
+                                gkkz = gxxz*(kx*kx-kz*kz) + gyyz*(ky*ky-kz*kz) +  2*gxyz*kx*ky - 2*(gxxx+gxyy)*kx*kz-2*(gxxy+gyyy)*ky*kz
+                                
+                                o[i]   += cc*( ky*gkkz - kz*gkky) 
+                                o[i+Np] += cc*( kz*gkkx - kx*gkkz) 
+                                o[i+xx] += cc*( kx*gkky - ky*gkkx) 
+                            else:    
+                                pass
+        return
+
+
+    cpdef vortletO(  self, double [:] o, double [:] r, double [:] V, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L)   
+            double ixi2 = 1/(xi*xi)
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            double dx, dy, dz, idr, idr2, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz, vkx, vky, vkz, vkk
+            double kx, ky, kz, k2,  xdr, e1, xdr2, cc,  s1, s3
+ 
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                vxx = V[j]
+                vyy = V[j+Np]
+                vxy = V[j+2*Np]
+                vxz = V[j+3*Np]
+                vyz = V[j+4*Np]
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==jj==kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = r[i]   - r[j]  -Nb*L + ii*L 
+                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                                
+                                xdr = xi/idr; xdr2 = xdr*xdr; e1 = IPI*exp(-xdr2);
+                                s1 = -6*erfc(xdr) + e1*(-16*xdr2*xdr + 32*xdr2*xdr2*xdr - 8*xdr2*xdr2*xdr2*xdr)
+                                s3 = e1*xdr*(6-48*xdr2+192*xdr2*xdr2-120*xdr2*xdr2*xdr2+16*xdr2*xdr2*xdr2*xdr2)
+                                idr5 = idr*idr*idr*idr*idr      
+                                vrr = (vxx*(dx*dx-dz*dz) + vyy*(dy*dy-dz*dz) +  2*vxy*dx*dy + 2*vxz*dx*dz  +  2*vyz*dy*dz)*idr*idr
+                                vrx = vxx*dx +  vxy*dy + vxz*dz  
+                                vry = vxy*dx +  vyy*dy + vyz*dz  
+                                vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
+
+                                o[i]   +=  ( (6*s1+s3)*vrx- (5*s1-s3)*vrr*dx )*idr5
+                                o[i+Np]+=  ( (6*s1+s3)*vry- (5*s1-s3)*vrr*dy )*idr5
+                                o[i+xx] +=  ( (6*s1+s3)*vrz- (5*s1-s3)*vrr*dz )*idr5
+                #Fourier part
+                dx = r[i]   - r[j]
+                dy = r[i+Np] - r[j+Np]
+                dz = r[i+xx] - r[j+xx] 
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx != 0 or ky != 0 or kz != 0:  
+                                k2 = (kx*kx + ky*ky + kz*kz)    
+                                cc = 8*PI*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2*L*L*L)
+                                vkk = (vxx*(kx*kx-kz*kz) + vyy*(ky*ky-kz*kz) +  2*vxy*kx*ky + 2*vxz*kx*kz  +  2*vyz*ky*kz)
+                                vkx = vxx*kx +  vxy*ky + vxz*kz  
+                                vky = vxy*kx +  vyy*ky + vyz*kz  
+                                vkz = vxz*kx +  vyz*ky - (vxx+vyy)*kz 
+                                
+                                o[i]   += cc*(vkx*k2 - vkk*kx) 
+                                o[i+Np] += cc*(vkx*k2 - vkk*kx) 
+                                o[i+xx] += cc*(vkx*k2 - vkk*kx) 
+                            else:    
+                                pass
+        return
+
+
+    cpdef spinletO(  self, double [:] o, double [:] r, double [:] M, int Nb=6, int Nm=6):
+        cdef: 
+            double L = self.L,  xi = sqrt(PI)/(L)
+            double ixi2 = 1/(xi*xi)    
+            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            double dx, dy, dz, idr, idr2, idr7
+            double mrrr, mkkk, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
+            double kx, ky, kz, k2, xdr, e1, xdr2, xdr4, cc, s2, s4
+ 
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                mxxx = M[j]
+                myyy = M[j+Np  ]
+                mxxy = M[j+2*Np]
+                mxxz = M[j+3*Np]
+                mxyy = M[j+4*Np]
+                mxyz = M[j+5*Np]
+                myyz = M[j+6*Np]
+                for ii in range(2*Nb+1):
+                    for jj in range(2*Nb+1):               
+                        for kk in range(2*Nb+1):                 
+                            if ii==Nb and jj==Nb and kk==Nb and i==j:
+                                pass
+                            else:    
+                                dx = r[i]   - r[j]     -Nb*L + ii*L 
+                                dy = r[i+Np] - r[j+Np]  -Nb*L + jj*L 
+                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                                idr2 = idr*idr
+                                idr7 = idr2*idr2*idr2*idr
+                                xdr = xi/idr; xdr2 = xdr*xdr; xdr4 = xdr2*xdr2; e1 = IPI*exp(-xdr2);
+                                s2 = 30*erfc(xdr) + e1*xdr*(6 + 32*xdr2 - 32*xdr4 - 80*xdr4*xdr2 + 16*xdr4*xdr4)
+                                s4  =e1*xdr*(-24 + 84*xdr2 + 160*xdr4 - 336*xdr4*xdr2 + 304*xdr4*xdr4 -32*xdr4*xdr4*xdr2)
+                                mrrr = mxxx*dx*(dx*dx-3*dz*dz) + 3*mxxy*dy*(dx*dx-dz*dz) + mxxz*dz*(3*dx*dx-dz*dz) +\
+                                   3*mxyy*dx*(dy*dy-dz*dz) + 6*mxyz*dx*dy*dz + myyy*dy*(dy*dy-3*dz*dz) +  myyz*dz*(3*dy*dy-dz*dz) 
+                                mrrx = mxxx*(dx*dx-dz*dz) + mxyy*(dy*dy-dz*dz) +  2*mxxy*dx*dy + 2*mxxz*dx*dz  +  2*mxyz*dy*dz
+                                mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
+                                mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz - 2*(mxxy+myyy)*dy*dz
+                                
+                                o[i]   -= -(3*s2-s4)*mrrx*idr7 + (7*s2+s4)*mrrr*dx*idr7*idr2
+                                o[i+Np] -= -(3*s2-s4)*mrrx*idr7 + (7*s2+s4)*mrrr*dy*idr7*idr2
+                                o[i+xx] -= -(3*s2-s4)*mrrx*idr7 + (7*s2+s4)*mrrr*dz*idr7*idr2
+                #Fourier part
+                dx = r[i]  - r[j]     
+                dy = r[i+Np]- r[j+Np]  
+                dz = r[i+xx]- r[j+xx]
+                for ii in range(N1, N2):
+                    kx = (2*PI/L)*ii;
+                    for jj in range(N1, N2):               
+                        ky = (2*PI/L)*jj;
+                        for kk in range(N1, N2):                 
+                            kz = (2*PI/L)*kk;
+                            if kx != 0 or ky != 0 or kz != 0:  
+                                k2 = (kx*kx + ky*ky + kz*kz)     
+                                cc = 8*PI*cos( kx*dx+ky*dy+kz*dz )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2*L*L*L)
+                                mkkk = mxxx*kx*(kx*kx-3*kz*kz) + 3*mxxy*ky*(kx*kx-kz*kz) + mxxz*kz*(3*kx*kx-kz*kz) +\
+                                   3*mxyy*kx*(ky*ky-kz*kz) + 6*mxyz*kx*ky*kz + myyy*ky*(ky*ky-3*kz*kz) +  myyz*kz*(3*ky*ky-kz*kz) 
+                                mkkx = mxxx*(kx*kx-kz*kz) + mxyy*(ky*ky-kz*kz) +  2*mxxy*kx*ky + 2*mxxz*kx*kz  +  2*mxyz*ky*kz
+                                mkky = mxxy*(kx*kx-kz*kz) + myyy*(ky*ky-kz*kz) +  2*mxyy*kx*ky + 2*mxyz*kx*kz  +  2*myyz*ky*kz
+                                mkkz = mxxz*(kx*kx-kz*kz) + myyz*(ky*ky-kz*kz) +  2*mxyz*kx*ky - 2*(mxxx+mxyy)*kx*kz-2*(mxxy+myyy)*ky*kz
+                               
+                                o[i]   += cc*( mkkx*k2 - mkkk*kx) 
+                                o[i+Np] += cc*( mkkx*k2 - mkkk*kx) 
+                                o[i+xx] += cc*( mkkx*k2 - mkkk*kx) 
+                            else:    
+                                pass
+        return
+
+
+
+
+
+@cython.boundscheck(False)
+@cython.cdivision(True)
+@cython.nonecheck(False)
+@cython.wraparound(False)
+cdef class Flow:
+    def __init__(self, a_, Np_, L_):
+        self.a = a_
+        self.Np = Np_
+        self.L = L_
+
+
+    cpdef stokesletV(self, double [:] v, double [:] r, double [:] F, int Nb=6, int Nm=6):
+        pass

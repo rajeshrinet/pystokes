@@ -49,10 +49,13 @@ The [PyStokes](https://gitlab.com/rajeshrinet/pystokes) library defaults to dire
 
 The library has a fairly comprehensive documentation which describes the method. Please cite the following papers if you publish research using [PyStokes](https://gitlab.com/rajeshrinet/pystokes).
 
-* [Irreducible Representations Of Oscillatory And Swirling Flows In Active Soft Matter](http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.112.118102), *Physical Review Letters, 112, 118102 (2014)*. (Irreducible flows for a single sphere)
-* [Many-body microhydrodynamics of colloidal particles with active boundary layers](https://iopscience.iop.org/1742-5468/2015/6/P06017), *Journal of Statistical Mechanics: Theory and Experiment, P06017 (2015)* (Galerkin solution of boundary integral equation for N spheres)
-*. [Generalized Stokes laws for active colloids and their applications](http://arxiv.org/abs/1603.05735)
-* [Universal hydrodynamic mechanisms for crystallization in active colloidal suspensions](https://doi.org/10.1103/PhysRevLett.117.228002) *Physical Review Letters, 117, 228002 (2015)*. 
+* [Irreducible Representations Of Oscillatory And Swirling Flows In Active Soft Matter](http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.112.118102), *Physical Review Letters, 112, 118102 (2014)* (Irreducible flows for a single sphere).
+
+* [Many-body microhydrodynamics of colloidal particles with active boundary layers](https://iopscience.iop.org/1742-5468/2015/6/P06017), *Journal of Statistical Mechanics: Theory and Experiment, P06017 (2015)* (Galerkin solution of boundary integral equation for N spheres).
+
+* [Generalized Stokes laws for active colloids and their applications](http://arxiv.org/abs/1603.05735) (Generalization of Stokes laws to derive active forces and torques on colloids).
+
+* [Universal hydrodynamic mechanisms for crystallization in active colloidal suspensions](https://doi.org/10.1103/PhysRevLett.117.228002) *Physical Review Letters, 117, 228002 (2015)* (Application of generalized Stokes laws to derive universal mechanisms for crystallization of active colloids). 
 
 
 ### And all this is free ? 

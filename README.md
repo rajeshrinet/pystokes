@@ -51,6 +51,8 @@ The library has a fairly comprehensive documentation which describes the method.
 
 * [Irreducible Representations Of Oscillatory And Swirling Flows In Active Soft Matter](http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.112.118102), *Physical Review Letters, 112, 118102 (2014)*. (Irreducible flows for a single sphere)
 * [Many-body microhydrodynamics of colloidal particles with active boundary layers](https://iopscience.iop.org/1742-5468/2015/6/P06017), *Journal of Statistical Mechanics: Theory and Experiment, P06017 (2015)* (Galerkin solution of boundary integral equation for N spheres)
+*. [Generalized Stokes laws for active colloids and their applications](http://arxiv.org/abs/1603.05735)
+* [Universal hydrodynamic mechanisms for crystallization in active colloidal suspensions](https://doi.org/10.1103/PhysRevLett.117.228002) *Physical Review Letters, 117, 228002 (2015)*. 
 
 
 ### And all this is free ? 
@@ -58,6 +60,6 @@ The library has a fairly comprehensive documentation which describes the method.
 Yes. Both as in speech and beer. We believe strongly that openness and sharing improves the practice of science and increases the reach of its benefits. This code is released under the [MIT license](http://opensource.org/licenses/MIT). Our choice is guided by the excellent article on [Licensing for the scientist-programmer](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002598). 
 
 
-### Ok, show me the code!
+### PyForces
 
-We want to be sure we have squashed as many bugs as possible before we release. Drop a mail to [Rajesh Singh](https://github.com/rajeshrinet) if you want access to a beta version. 
+This is a library to be used along with PyStokes for the generation of the Forces and Torques on the colloids.

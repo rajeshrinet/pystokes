@@ -65,4 +65,4 @@ Yes. Both as in speech and beer. We believe strongly that openness and sharing i
 
 ### PyForces
 
-This is a library to be used along with PyStokes for the generation of the Forces and Torques on the colloids.
+PyForces is a library to be used along with PyStokes for computing body forces and torques on the colloids.

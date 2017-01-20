@@ -414,7 +414,7 @@ cdef class Rbm:
 @cython.cdivision(True)
 @cython.nonecheck(False)
 cdef class Flow:
-    def __init__(self, a, eta, Np, Nt):
+    def __init__(self, a, Np, eta, Nt):
         self.a  = a 
         self.Np = Np
         self.Nt = Nt

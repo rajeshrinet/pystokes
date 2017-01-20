@@ -58,7 +58,11 @@ cdef class Rbm:
 @cython.nonecheck(False)
 cdef class Flow:
     cdef double a
-    cdef int Np
-    cdef double L
+    cdef int Np, Nt
+    cdef double L, eta
 
-    cpdef stokesletV(self, double [:] v, double [:] r, double [:] F, int Nb=?, int Nm=?)
+    cpdef stokesletV(self, double [:] v, double [:] rt, double [:] r, double [:] F, int Nb=?, int Nm=?)
+    
+    cpdef stressletV(self, double [:] v, double [:] rt, double [:] r, double [:] F, int Nb=?, int Nm=?)
+    
+    cpdef potDipoleV(self, double [:] v, double [:] rt, double [:] r, double [:] F, int Nb=?, int Nm=?)

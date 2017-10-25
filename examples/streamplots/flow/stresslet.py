@@ -37,12 +37,13 @@ for i in range(Np):
 ####Instantiate the Flow class
 uFlow = pystokes.unbounded.Flow(a, Np, eta, Nt)
 
-vv=vv*0
-uFlow.stokesletV(vv, rt, r, F)
+vv=vv*0  # reset the flow
+uFlow.stressletV(vv, rt, r, S)
 vx, vy = vv[0:Nt].reshape(Ng, Ng), vv[Nt:2*Nt].reshape(Ng, Ng)
 plt.figure()
 plt.plot(r[0], r[1], marker='o', markerfacecolor='#348ABD', markersize=32 )   # plot the particle at r
 plt.streamplot(X, Y, vx, vy, color="grey", density=1, arrowstyle='->', arrowsize =1)
+plt.xlim([-L, L])
 plt.xlim([-L, L])
 plt.ylim([-L, L])
 plt.xlabel(r'$x/a$', fontsize=20)

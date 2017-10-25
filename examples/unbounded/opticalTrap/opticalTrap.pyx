@@ -30,10 +30,11 @@ cdef class Rbm:
         self.lmda1   = lmda1
         self.lmda2   = lmda2
         self.lmda3   = lmda3
+        self.eta     = 1.0
 
         #class instantiations
         self.ff   = pyforces.forceFields.Forces(self.Np)
-        self.uRbm = pystokes.unbounded.Rbm(self.a, self.Np)
+        self.uRbm = pystokes.unbounded.Rbm(self.a, self.Np, self.eta)
         
         # Memory allocations
         self.Position        = np.empty( 3*self.Np, dtype=DTYPE)
@@ -88,10 +89,10 @@ cdef class Rbm:
         self.uRbm.stokesletV(v, r, F)
         
         for i in prange(0, 3*Np, 3, nogil=True):
-            '''Velocity, \dot{r} = vs p + \mu F + HI, for a sphere in Stokes flow'''
-            X[i]   = (F[i  ] + 0.75*v[i  ])/(6*PI)   # note we have chosen , the particle radius, a, to be unity
-            X[i+1] = (F[i+1] + 0.75*v[i+1])/(6*PI)
-            X[i+2] = (F[i+2] + 0.75*v[i+2])/(6*PI)
+            '''Velocity, \dot{r} = \mu F + HI, for a sphere in Stokes flow'''
+            X[i]   = v[i  ]
+            X[i+1] = v[i+1]
+            X[i+2] = v[i+2]
         return
 
 

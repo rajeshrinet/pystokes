@@ -24,13 +24,13 @@ dim = 3                              # dimensionality of the problem
 eta = 1.0/6                          # viscosity of the fluid simulated
 a   = 1                              # radius of the particle       
 k = vs/A                             # stiffness of the trap
-S0  = 0.01                           # strength of the stresslet 
+S0, D0  = 0.01, 0.01                 # strength of the stresslet and potDipole
 ljrmin, ljeps  = 3, .01              # lennard-jones parameters
-Tf, Npts       = 400000, 5000       # final time and number of points 
+Tf, Npts       = 400000, 5000        # final time and number of points 
 
 
 # instantiate the class trap for simulating active particles in a harmonic potential
-rm = trap.trap(a, Np, vs, eta, dim, S0, k, ljeps, ljrmin)
+rm = trap.trap(a, Np, vs, eta, dim, S0, D0, k, ljeps, ljrmin)
 
 # module to initialise the system. 
 def initialConfig(rp0, trapCentre, theta, a, a0, vs, k, Np):
@@ -90,6 +90,4 @@ initialConfig(rp0, trapCentre, theta, a, a0, vs, k, Np)
 rm.initialise(rp0, trapCentre)       
 
 # simulate the resulting system
-#rm.simulate(Tf, Npts, plotDynamics='none')
-#rm.simulate(Tf, Npts, plotDynamics='x-t')
-rm.simulate(Tf, Npts, plotDynamics='snapshots')
+rm.simulate(Tf, Npts)

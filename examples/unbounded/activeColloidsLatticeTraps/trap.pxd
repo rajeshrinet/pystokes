@@ -13,8 +13,8 @@ cdef class trap:
     cdef:
         pystokes.unbounded.Rbm uRbm
         readonly int Np, dim
-        readonly double a, eta, vs, S0, mu, k , ljrmin, ljeps, pos2
-        readonly np.ndarray Position, Orientation, Velocity, AngularVelocity, Force, Stresslet, drpdt, rp0, trapCentre
+        readonly double a, eta, vs, S0, D0, mu, k , ljrmin, ljeps, pos2
+        readonly np.ndarray Position, Orientation, Velocity, AngularVelocity, Force, Stresslet, PotDipole, drpdt, rp0, trapCentre
 
     cdef calcForce(self, double [:] F, double [:] r)
     

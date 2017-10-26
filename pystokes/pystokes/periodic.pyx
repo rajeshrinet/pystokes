@@ -23,7 +23,7 @@ cdef class Rbm:
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
         cdef double phi = (4.0*PI*self.a*self.a*self.a*Np/3.0)/(L*L*L)#renomalization effects
-        #mpp -= mu*0.2*phi*phi  ##quadrupolar correction
+        mpp -= mu*0.2*phi*phi  ##quadrupolar correction
         
         for i in prange(Np, nogil=True):
             vx=0;  vy=0;  vz=0;

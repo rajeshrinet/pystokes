@@ -1,20 +1,29 @@
 ## PyStokes: Library to compute stokes flows around active colloids
 
+In this library, we simulate the motion of spherical active colloids and compute external flow field produced by them. The activity of the colloids is represented by a slip velocity on their surface. Eq. (15a) of the [paper](https://arxiv.org/pdf/1603.05735.pdf) gives the expression for the fluid flow, while Eq. (23) gives the expression for the rigid body motion. These are given in terms of a sum over all the irreducible (lσ) modes of the active slip. In the code, we plot each irreducible mode. Here is a correspondence for the nomenclature
+
+* *lσ = 1s* : stokeslet
+* *lσ = 2s* : stresslet
+* *lσ = 2a* : rotlet
+* *lσ = 3s* : septlet
+* *lσ = 3a* : vortlet
+* *lσ = 3t* : potDipole 
+* *lσ = 4a* : spinlet
+ 
 ### Installation:
 ```
 python setup.py install
 
 ```
-In this library, we simulate the motion of spherical active colloids and compute external flow field produced by them. The activity of the colloids is represented by a slip velocity on their surface. Eq. (15a) of the [paper](https://arxiv.org/pdf/1603.05735.pdf) gives the expression for the fluid flow, while Eq. (23) gives the expression for the rigid body motion. These are given in terms of a sum over all the irreducible (lσ) modes of the active slip. In the code, we plot each irreducible mode. Here is a correspondence for the nomenclature
+The main dependencies are
 
-* lσ=1s : stokeslet
-* lσ=2s : stresslet
-* lσ=2a : rotlet
-* lσ=3s : septlet
-* lσ=3a : vortlet
-* lσ=3t : potDipole 
-* lσ=4a : spinlet
- 
+* Python 2.7
+* Numpy  1.11
+* Cython 0.24
+
+It is suggested to have the given versions of them respectively.
+
+
 
 
 ### Examples
@@ -22,6 +31,8 @@ In this library, we simulate the motion of spherical active colloids and compute
 
 Examples codes are added in the [example](https://github.com/rajeshrinet/pystokes/tree/master/examples) directory. Examples include
 * [Fluid flow](https://github.com/rajeshrinet/pystokes/tree/master/examples/streamplots): Computation of exterior flow produced by the leading slip modes of active colloids in [unbounded](https://github.com/rajeshrinet/pystokes/blob/master/examples/streamplots/notebooks/unboundedFlow.ipynb), and [periodic](https://github.com/rajeshrinet/pystokes/blob/master/examples/streamplots/notebooks/periodic.ipynb) geometries of Stokes flow.
+* [Synchronization of active colloids in a two-dimensional lattice of harmonic
+  traps](https://github.com/rajeshrinet/pystokes/blob/master/examples/unbounded/activeColloidsLatticeTraps/holographicTrap.ipynb): In this example we study the dynamics of active colloids in lattices of harmonic traps.
 * [Crowley instability](https://github.com/rajeshrinet/pystokes/blob/master/examples/periodic/sedimentation/crowleyInstability.py): Demonstration of Crowley instability in a lattice of sedimenting passive colloids
 * [Mobility of a sedimenting lattice](https://github.com/rajeshrinet/pystokes/blob/master/examples/periodic/sedimentation/mobilitySedimentingLattice.ipynb): Computation of mobility of sedimenting lattice of passive colloids as a function of volume fraction. Comarison with exact results of Zick & Homsy (1982) is also made.
 * [Mollified irreducible multipole approach (MIMA)](https://github.com/rajeshrinet/pystokes/tree/master/examples/mima): MIMA is a Stokes solver which resolves the fluid degrees of freedom. Compuation of fluid flow in 2D and 3D domain of Stokes flow using MIMA has been considered here. 

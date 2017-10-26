@@ -1,1 +1,4 @@
-Simulation of passive colloids in an optical trap in the unbounded geometry of Stokes flow.
+Simulation of colloid in harmonic traps - 
+
+* Passive colloids 
+* Active colloids in two-dimensional lattices of harmonic traps

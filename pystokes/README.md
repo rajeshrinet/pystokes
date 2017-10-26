@@ -1,6 +1,6 @@
 ## PyStokes: Library to compute stokes flows around active colloids
 
-In this library, we simulate the motion of spherical active colloids and compute external flow field produced by them. The activity of the colloids is represented by a slip velocity on their surface. Eq. (15a) of the [paper](https://arxiv.org/pdf/1603.05735.pdf) gives the expression for the fluid flow, while Eq. (23) gives the expression for the rigid body motion. These are given in terms of a sum over all the irreducible (lσ) modes of the active slip. In the code, we plot each irreducible mode. Here is a correspondence for the nomenclature
+In this library, we simulate the motion of spherical active colloids and compute external flow field produced by them. The activity of the colloids is represented by a slip velocity on their surface. Eq. (15a) of the [paper](https://arxiv.org/pdf/1603.05735.pdf) gives the expression for the fluid flow, while Eq. (23) gives the expression for the rigid body motion. These are given in terms of a sum over all the irreducible (*lσ*) modes of the active slip. In the code, we compute the contributions due to each irreducible mode separately for modularity. Here is a correspondence for the nomenclature
 
 * *lσ = 1s* : stokeslet
 * *lσ = 2s* : stresslet
@@ -13,8 +13,8 @@ In this library, we simulate the motion of spherical active colloids and compute
 ### Installation:
 ```
 python setup.py install
-
 ```
+
 The main dependencies are
 
 * Python 2.7

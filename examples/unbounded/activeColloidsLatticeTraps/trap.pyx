@@ -143,5 +143,5 @@ cdef class trap:
         solver = odespy.Vode(rhs0, method = 'bdf', atol=1E-7, rtol=1E-6, order=5, nsteps=10**6)
         solver.set_initial_condition(self.rp0)
         u, t = solver.solve(time_points)
-        savemat('Np=%s_vs=%4.4f_K=%4.4f_trapA=%4.4f.mat'%(self.Np, self.vs, self.k, np.abs(self.trapCentre[np.sqrt(self.Np)]-self.trapCentre[0])), {'trapCentre':self.trapCentre, 'X':u, 't':t, 'Np':self.Np,'k':self.k, 'vs':self.vs, 'S0':self.S0,})
+        savemat('Np=%s_vs=%4.4f_K=%4.4f.mat'%(self.Np, self.vs, self.k), {'trapCentre':self.trapCentre, 'X':u, 't':t, 'Np':self.Np,'k':self.k, 'vs':self.vs, 'S0':self.S0,})
         return

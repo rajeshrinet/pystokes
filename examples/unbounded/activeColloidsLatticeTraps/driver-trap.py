@@ -1,4 +1,4 @@
-# Driver code for the problem of active particles in a harmonic potential 
+# Driver code for the problem of active particles in a 2D lattice of harmonic potentials
 #
 #
 

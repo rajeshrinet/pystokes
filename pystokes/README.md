@@ -31,12 +31,12 @@ It is suggested to have the given versions of them respectively.
 
 Examples codes are added in the [example](https://github.com/rajeshrinet/pystokes/tree/master/examples) directory. Examples include
 * [Fluid flow](https://github.com/rajeshrinet/pystokes/tree/master/examples/streamplots): Computation of exterior flow produced by the leading slip modes of active colloids in [unbounded](https://github.com/rajeshrinet/pystokes/blob/master/examples/streamplots/notebooks/unboundedFlow.ipynb), and [periodic](https://github.com/rajeshrinet/pystokes/blob/master/examples/streamplots/notebooks/periodic.ipynb) geometries of Stokes flow.
-* [Convective rolls of active colloids in a harmonic trap](https://github.com/rajeshrinet/pystokes/blob/master/examples/unbounded/activeColloidsSingleTrap/convectiveRolls.ipynb): In this example we study the dynamics of active colloids in lattices of harmonic traps.
+* [Convective rolls of active colloids in a harmonic trap](https://github.com/rajeshrinet/pystokes/blob/master/examples/unbounded/activeColloidsSingleTrap/convectiveRolls.ipynb): Here, we show that one-body force and two body torque leads to sustained convective rolls of active colloids in a harmonic trap.
 * [Synchronization of active colloids in a two-dimensional lattice of harmonic
   traps](https://github.com/rajeshrinet/pystokes/blob/master/examples/unbounded/activeColloidsLatticeTraps/holographicTrap.ipynb): In this example we study the dynamics of active colloids in lattices of harmonic traps.
 * [Crowley instability](https://github.com/rajeshrinet/pystokes/blob/master/examples/periodic/passiveColloids/crowleyInstability.py): Demonstration of Crowley instability in a lattice of sedimenting passive colloids
-* [Mobility of a sedimenting lattice](https://github.com/rajeshrinet/pystokes/blob/master/examples/periodic/passiveColloids/mobilitySedimentingLattice.ipynb): Computation of mobility of sedimenting lattice of passive colloids as a function of volume fraction. Comarison with exact results of Zick & Homsy (1982) is also made.
-* [Mollified irreducible multipole approach (MIMA)](https://github.com/rajeshrinet/pystokes/tree/master/examples/mima): MIMA is a Stokes solver which resolves the fluid degrees of freedom. Compuation of fluid flow in 2D and 3D domain of Stokes flow using MIMA has been considered here. 
+* [Mobility of a sedimenting lattice](https://github.com/rajeshrinet/pystokes/blob/master/examples/periodic/passiveColloids/mobilitySedimentingLattice.ipynb): Computation of mobility of sedimenting lattice of passive colloids as a function of volume fraction. Comparison with exact results of Zick & Homsy (1982) is also made.
+* [Mollified irreducible multipole approach (MIMA)](https://github.com/rajeshrinet/pystokes/tree/master/examples/mima): MIMA is a Stokes solver which resolves the fluid degrees of freedom. Computation of fluid flow in 2D and 3D domain of Stokes flow using MIMA has been considered here. 
 
 Some representative examples are given below.
 

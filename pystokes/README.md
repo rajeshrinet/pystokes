@@ -31,6 +31,7 @@ It is suggested to have the given versions of them respectively.
 
 Examples codes are added in the [example](https://github.com/rajeshrinet/pystokes/tree/master/examples) directory. Examples include
 * [Fluid flow](https://github.com/rajeshrinet/pystokes/tree/master/examples/streamplots): Computation of exterior flow produced by the leading slip modes of active colloids in [unbounded](https://github.com/rajeshrinet/pystokes/blob/master/examples/streamplots/notebooks/unboundedFlow.ipynb), and [periodic](https://github.com/rajeshrinet/pystokes/blob/master/examples/streamplots/notebooks/periodic.ipynb) geometries of Stokes flow.
+* [Convective rolls of active colloids in a harmonic trap](https://github.com/rajeshrinet/pystokes/blob/master/examples/unbounded/activeColloidsSingleTrap/convectiveRolls.ipynb): In this example we study the dynamics of active colloids in lattices of harmonic traps.
 * [Synchronization of active colloids in a two-dimensional lattice of harmonic
   traps](https://github.com/rajeshrinet/pystokes/blob/master/examples/unbounded/activeColloidsLatticeTraps/holographicTrap.ipynb): In this example we study the dynamics of active colloids in lattices of harmonic traps.
 * [Crowley instability](https://github.com/rajeshrinet/pystokes/blob/master/examples/periodic/passiveColloids/crowleyInstability.py): Demonstration of Crowley instability in a lattice of sedimenting passive colloids

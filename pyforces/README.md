@@ -1,4 +1,4 @@
-## Force Fields for Stokesian dynamics simulations
+## Force Fields for the simulations of colloidal particles
 This is a library to be used along with pystokes.
 
 

@@ -28,17 +28,3 @@ cdef class Forces:
     cpdef sedimentation(self, double [:] F, double g)
 
 
-    cpdef membraneConfinement(self, double [:] F, double [:] r, double cn, double r0)
-    
-    
-    cpdef membraneBound(self, double [:] F, double [:] r, double cn, double r0)
-
-
-    cpdef multipolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus)
-
-
-    cpdef multiRingpolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus)
-
-
-    cpdef membraneSurface(self, int Nmx, int Nmy, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus )
-    

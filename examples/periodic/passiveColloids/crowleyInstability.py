@@ -55,8 +55,8 @@ dt = 0.01
 fig = plt.figure()
 for tt in range(20):
     ff.sedimentation(F, g=-10)       # call the Sedimentation module of ForceFields 
-    rm.stokesletV(v, r, F, Nb, Nm)           # and StokesletV module of pystokes
-    print v
+    rm.stokesletV(v, r, F, Nb, Nm)   # and StokesletV module of pystokes
+    v=r*0                            # setting v=0 in each time step
     r = (r + v*dt)%L
     x = r[0:Np]
     y = r[Np:2*Np]

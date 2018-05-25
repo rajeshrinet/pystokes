@@ -66,6 +66,7 @@ p[2*Np:3*Np]=-1
 dt = .1
 fig = plt.figure()
 for tt in range(20):
+    v = r*0
     rm.potDipoleV(v, r, p, Nb, Nm)           # and StokesletV module of pystokes
     r = (r + v*dt)%L
     x = r[0:Np]

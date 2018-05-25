@@ -34,8 +34,8 @@ rm = pystokes.periodic.Rbm(a, Np, 1.0/6, L)   # instantiate the classes
 
 fig = plt.figure()
 for tt in range(200):
+    v = v*0
     rm.stressletV(v, r, S, Nb, Nm)           # and StokesletV module of pystokes
-    print v
     r = (r + v*dt)%L
     plt.plot(r[0], r[4], 'o')
     plt.plot(r[1], r[5], '*')

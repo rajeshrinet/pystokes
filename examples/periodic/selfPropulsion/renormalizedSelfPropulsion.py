@@ -22,7 +22,6 @@ mu=1.0/(6*np.pi*eta*a)
 print '\phi', '   ', '\mu' 
 for i in range(np.size(L)):
     v = v*0
-
     r[0], r[1], r[2] = 0.0, 0.0, 0.0
     p[2]=-1
     

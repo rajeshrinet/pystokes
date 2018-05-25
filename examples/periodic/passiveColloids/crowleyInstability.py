@@ -53,10 +53,10 @@ def initialise(r, Np1d, shape):
 initialise(r, Np1d, latticeShape)
 dt = 0.01
 fig = plt.figure()
-for tt in range(20):
+for tt in range(32):
     ff.sedimentation(F, g=-10)       # call the Sedimentation module of ForceFields 
+    v=v*0                            # setting v=0 in each time step
     rm.stokesletV(v, r, F, Nb, Nm)   # and StokesletV module of pystokes
-    v=r*0                            # setting v=0 in each time step
     r = (r + v*dt)%L
     x = r[0:Np]
     y = r[Np:2*Np]
@@ -69,5 +69,5 @@ for tt in range(20):
     ax3D.set_zlim([0, L])
     #plt.savefig('Time= %04d.png'%(tt))   # if u want to save the plots instead
     print tt
-    plt.pause(0.001)
+    plt.pause(0.0000001)
 plt.show()

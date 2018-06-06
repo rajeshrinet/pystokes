@@ -1,4 +1,5 @@
 ## PyStokes 
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples%2Funbounded%2FactiveColloidsLatticeTraps%2FholographicTrap.ipynb)
 
 [PyStokes](https://gitlab.com/rajeshrinet/pystokes) is a Cython library for computing Stokes flows produced by spheres with Dirichlet (velocity) or Neumann (traction) boundary conditions on their surfaces. The solution of Stokes equation is represented as an integral of the velocity and traction over the particle boundaries. The boundary conditions are expanded in a basis of tensorial spherical harmonics and the minimal set of terms that includes all long-ranged hydrodynamic interactions is retained. A linear system of equations is obtained for the unknown coefficients of the traction (for Dirichlet boundary conditions) or the velocity (for Neumann  boundary conditions). The flow and many-body hydrodynamic interactions are obtained from this solution. 
 

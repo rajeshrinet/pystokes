@@ -1,6 +1,5 @@
 cimport cython
 from scipy.io import savemat
-import odespy
 from libc.math cimport sqrt, pow
 from cython.parallel import prange
 import numpy as np

@@ -1,3 +1,4 @@
 python pystokes/setup.py install
+python pyforces/setup.py install
 python examples/unbounded/activeColloidsLatticeTraps/setup.py setup.py install
 python examples/unbounded/activeColloidsSingleTrap/setup.py install

@@ -134,14 +134,16 @@ cdef class trap:
 
 
     def simulate(self, Tf, Npts):
-        def rhs0(rp, t):
-            self.rhs(rp)
-            return self.drpdt
-            
-        # integrate the resulting equation using odespy
-        T, N = Tf, Npts;  time_points = np.linspace(0, T, N+1);  ## intervals at which output is returned by integrator. 
-        solver = odespy.Vode(rhs0, method = 'bdf', atol=1E-7, rtol=1E-6, order=5, nsteps=10**6)
-        solver.set_initial_condition(self.rp0)
-        u, t = solver.solve(time_points)
-        savemat('Np=%s_vs=%4.4f_K=%4.4f.mat'%(self.Np, self.vs, self.k), {'trapCentre':self.trapCentre, 'X':u, 't':t, 'Np':self.Np,'k':self.k, 'vs':self.vs, 'S0':self.S0,})
+        T, N=Tf, Npts 
+        dt = N/T
+        print dt, 1.0*T/N
+        
+        X = np.zeros( (N+1, 6*self.Np), dtype=DTYPE)
+        X[0, :] = self.rp0
+
+        for i in range(N):
+            self.rhs(X[i, :])
+            X[i+1, :] =  X[i, :] + self.drpdt
+
+        savemat('Np=%s_vs=%4.4f_K=%4.4f.mat'%(self.Np, self.vs, self.k), {'trapCentre':self.trapCentre, 'X':X, 't':dt, 'Np':self.Np,'k':self.k, 'vs':self.vs, 'S0':self.S0,})
         return

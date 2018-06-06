@@ -1,0 +1,9 @@
+name: PyStokes
+channels:
+  - conda-forge
+dependencies:
+  - python=2.7
+  - numpy=1.13.1
+  - matplotlib=2.0.2
+  - cython=0.25.2
+  - scipy=1.10

@@ -61,6 +61,9 @@ The library has a fairly comprehensive documentation which describes the method.
 
 * [Flow-induced phase separation of active particles is controlled by boundary conditions](https://doi.org/10.1073/pnas.1718807115) *Proceedings of the National Academy of Sciences (2018)* (Application of generalized Stokes laws to derive mechanisms of flow-induced phase separation). 
 
+* [Microhydrodynamics of active colloids](https://www.imsc.res.in/xmlui/handle/123456789/418) *Homi Bhabha National Institute* (A PhD thesis which presents the theory behind PyStokes and its applications. Read more on PyStokes in chapter 10).
+
+
 ### And all this is free ? 
 
 Yes. Both as in speech and beer. We believe strongly that openness and sharing improves the practice of science and increases the reach of its benefits. This code is released under the [MIT license](http://opensource.org/licenses/MIT). Our choice is guided by the excellent article on [Licensing for the scientist-programmer](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002598). 

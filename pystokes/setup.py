@@ -19,7 +19,7 @@ def check_for_openmp():
     # Attempt to compile a test script.
     # See http://openmp.org/wp/openmp-compilers/
     filename = r'test.c'
-    file = open(filename,'w', 0)
+    file = open(filename,'w')
     file.write(
         "#include <omp.h>\n"
         "#include <stdio.h>\n"

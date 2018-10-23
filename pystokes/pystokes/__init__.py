@@ -1,4 +1,4 @@
-import unbounded
-import periodic
-import mima
-import mima2D
+import pystokes.mima
+import pystokes.mima2D
+import pystokes.periodic
+import pystokes.unbounded

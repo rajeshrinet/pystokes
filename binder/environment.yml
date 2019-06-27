@@ -2,8 +2,12 @@ name: PyStokes
 channels:
   - conda-forge
 dependencies:
-  - python=2.7
+  - python
   - numpy
   - matplotlib
   - cython
-  - scipy
+  - scipy 
+  - bokeh
+  - rise
+  - pip:
+    - jupyter-contrib-nbextensions

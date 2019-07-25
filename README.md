@@ -63,7 +63,7 @@ The library has a fairly comprehensive documentation which describes the method.
 
 * [Microhydrodynamics of active colloids](https://www.imsc.res.in/xmlui/handle/123456789/418) *Homi Bhabha National Institute* (A PhD thesis which presents the theory behind PyStokes and its applications. Read more on PyStokes in chapter 10).
 
-[Competing chemical and hydrodynamic interactions in autophoretic colloidal suspensions](https://doi.org/10.1063/1.5090179) *The Journal of Chemical Physics (2019)* (Method for computing
+* [Competing chemical and hydrodynamic interactions in autophoretic colloidal suspensions](https://doi.org/10.1063/1.5090179) *The Journal of Chemical Physics (2019)* (Method for computing
 many-body phoretic and hydrodynamic interactions between spherical active
 particles from solutions of Laplace and Stokes equations).
 

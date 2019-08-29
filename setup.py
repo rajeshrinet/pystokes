@@ -1,9 +1,9 @@
 import numpy, os, sys, os.path, tempfile, subprocess, shutil
-try:
-    from setuptools import setup, Extension, find_packages
-except ImportError:
-    from distutils.core import setup
-    from distutils.extension import Extension
+#try:
+#    from setuptools import setup, Extension, find_packages
+#except ImportError:
+from distutils.core import setup
+from distutils.extension import Extension
 import Cython.Compiler.Options
 from Cython.Build import cythonize
 

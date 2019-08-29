@@ -1,16 +1,14 @@
 *.pyc
-stokes-notes.pdf
 *.so
-*.dat
-*.c
-*.html
 *.ipynb_checkpoints
 *~
 *.swp
 *.mat
 *.swo
-*.pov
-
+*.html
+*.c
+*egg-info*
+dist
 
 *.aux
 *.lof
@@ -28,7 +26,6 @@ stokes-notes.pdf
 *-blx.bib
 *.run.xml
 build/
-*.lyx#
 
 ## Build tool auxiliary files:
 *.fdb_latexmk
@@ -73,7 +70,6 @@ build/
 
 
 *.tdo
-*.mat
 *.vtk
 *.vtu
 *.pvsm

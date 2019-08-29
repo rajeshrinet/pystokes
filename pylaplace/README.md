@@ -1,1 +1,6 @@
-PyLaplace is Python (Cython) library to study autophoretic interactions of active colloids
+This folder contains the core files of PyStokes repo.
+
+Each file corresponds to the boundary conditions in the flow.
+
+
+utils.pyx has miscellaneous functionalities

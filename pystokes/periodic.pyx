@@ -9,21 +9,23 @@ cdef double IPI = (2/sqrt(PI))
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Rbm:
-    def __init__(self, a, Np, eta, L):
-        self.a  = a                 # radius of the particles
-        self.Np = Np                # number of particles
-        self.eta = eta              # fluid viscosity
-        self.L  = L                 # size of the box used
+    cdef int Np
+    cdef double a, eta, L
+    def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10):
+        self.a   = radius
+        self.Np  = particles
+        self.eta = viscosity
+        self.L   = boxSize
 
 
-    cpdef stokesletV(self, double [:] v, double [:] r, double [:] F, int Nb=6, int Nm=6):
+    cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, int Nb=6, int Nm=6):
         cdef int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
         cdef double L=self.L,  xi=1.5*sqrt(PI)/L, ixi2 = 1/(xi*xi), mu=1.0/(6*PI*self.eta*self.a), mu1=mu*self.a*0.75, siz=Nb*L
         cdef double a2=self.a*self.a/3, aidr2, k0=2*PI/L, ivol=1/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
         cdef double phi = (4.0*PI*self.a*self.a*self.a*Np/3.0)/(L*L*L)#renomalization effects
-        mpp -= mu*0.2*phi*phi  ##quadrupolar correction
+        #mpp -= mu*0.2*phi*phi  ##quadrupolar correction
         
         for i in prange(Np, nogil=True):
             vx=0;  vy=0;  vz=0;
@@ -81,7 +83,7 @@ cdef class Rbm:
         return 
     
     
-    cpdef rotletV(   self, double [:] v, double [:] r, double [:] T, int Nb=6, int Nm=6):
+    cpdef mobilityTR(   self, double [:] v, double [:] r, double [:] T, int Nb=6, int Nm=6):
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)
             double ixi2 = 1/(xi*xi), vx, vy, vz
@@ -135,7 +137,7 @@ cdef class Rbm:
         return 
     
     
-    cpdef stressletV(self, double [:] v, double [:] r, double [:] S, int Nb=6, int Nm=6):
+    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, int Nb=6, int Nm=6):
         cdef: 
             int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1, xx1=3*Np, xx2=4*Np
             double L = self.L,  xi = 0.5*sqrt(PI)/(L), siz=Nb*L
@@ -212,7 +214,7 @@ cdef class Rbm:
         return 
       
 
-    cpdef potDipoleV(self, double [:] v, double [:] r, double [:] D, int Nb=6, int Nm=6):
+    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, int Nb=6, int Nm=6):
         cdef double L = self.L,  xi = sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), ivol=1.0/(L*L*L)
         cdef double ixi2 = 1/(xi*xi), vx, vy, vz
         cdef int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
@@ -272,7 +274,7 @@ cdef class Rbm:
         return
 
 
-    cpdef septletV(  self, double [:] v, double [:] r, double [:] G, int Nb=6, int Nm=6):
+    cpdef propulsionT3s(  self, double [:] v, double [:] r, double [:] G, int Nb=6, int Nm=6):
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)  
             double ixi2 = 1/(xi*xi), vx, vy, vz
@@ -355,7 +357,7 @@ cdef class Rbm:
         return
 
     
-    cpdef vortletV(  self, double [:] v, double [:] r, double [:] V, int Nb=6, int Nm=6):
+    cpdef propulsionT3a(  self, double [:] v, double [:] r, double [:] V, int Nb=6, int Nm=6):
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)
             double ixi2 = 1/(xi*xi)
@@ -415,7 +417,7 @@ cdef class Rbm:
         return
 
 
-    cpdef spinletV(  self, double [:] v, double [:] r, double [:] M, int Nb=6, int Nm=6):
+    cpdef propulsionT4a(  self, double [:] v, double [:] r, double [:] M, int Nb=6, int Nm=6):
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)
             double ixi2 = 1/(xi*xi), vx, vy, vz
@@ -484,7 +486,7 @@ cdef class Rbm:
 
     ## Angular velocities
 
-    cpdef stokesletO(self, double [:] o, double [:] r, double [:] F, int Nb=6, int Nm=6):
+    cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F, int Nb=6, int Nm=6):
         cdef: 
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
             double L = self.L,  xi = sqrt(PI)/(L),
@@ -540,7 +542,7 @@ cdef class Rbm:
         return 
 
 
-    cpdef rotletO(   self, double [:] o, double [:] r, double [:] T, int Nb=6, int Nm=6):
+    cpdef mobilityRR(   self, double [:] o, double [:] r, double [:] T, int Nb=6, int Nm=6):
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L) 
             double ixi2 = 1/(xi*xi), ox, oy, oz
@@ -594,7 +596,7 @@ cdef class Rbm:
         return
 
     
-    cpdef stressletO(self, double [:] o, double [:] r, double [:] S, int Nb=6, int Nm=6):
+    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S, int Nb=6, int Nm=6):
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L) 
             double ixi2 = 1/(xi*xi), ox, oy, oz
@@ -658,7 +660,7 @@ cdef class Rbm:
         pass
 
 
-    cpdef septletO(  self, double [:] o, double [:] r, double [:] G, int Nb=6, int Nm=6):
+    cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] G, int Nb=6, int Nm=6):
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L), 
             double ixi2 = 1/(xi*xi)
@@ -720,7 +722,7 @@ cdef class Rbm:
         return
 
 
-    cpdef vortletO(  self, double [:] o, double [:] r, double [:] V, int Nb=6, int Nm=6):
+    cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V, int Nb=6, int Nm=6):
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)   
             double ixi2 = 1/(xi*xi)
@@ -782,7 +784,7 @@ cdef class Rbm:
         return
 
 
-    cpdef spinletO(  self, double [:] o, double [:] r, double [:] M, int Nb=6, int Nm=6):
+    cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] M, int Nb=6, int Nm=6):
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)
             double ixi2 = 1/(xi*xi), ox, oy, oz
@@ -861,17 +863,20 @@ cdef class Rbm:
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Flow:
-    def __init__(self, a, Np, eta, L, Nt):
-        self.a  = a                 # radius of the particles
-        self.Np = Np                # number of particles
-        self.Nt = Nt                # number of grid points
-        self.eta = eta              # fluid viscosity
-        self.L  = L                 # size of the box used
+    cdef double a
+    cdef int Np, Nt
+    cdef double L, eta
+    def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32, boxsize=10):
+        self.a  = radius
+        self.Np = particles
+        self.Nt = gridpoints
+        self.eta= viscosity
+        self.L  = boxsize
 
-    cpdef stokesletV(self, double [:] vv, double [:] rt, double [:] r, double [:] F, int Nb=6, int Nm=6):
+    cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, int Nb=6, int Nm=6):
         cdef int Np=self.Np, Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
         cdef double L=self.L,  xi=1*sqrt(PI)/L, ixi2 = 1/(xi*xi), mu=1.0/(6*PI*self.eta*self.a), mu1=mu*self.a*0.75, siz=Nb*L
-        cdef double a2=0*self.a*self.a/3, k0=2*PI/L, ivol=1/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
+        cdef double a2=0*self.a*self.a/6, k0=2*PI/L, ivol=1/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
         
@@ -922,7 +927,7 @@ cdef class Flow:
         return 
    
 
-    cpdef stressletV(self, double [:] vv, double [:] rt, double [:] r, double [:] S, int Nb=6, int Nm=6):
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, int Nb=6, int Nm=6):
         cdef: 
             int Np=self.Np,Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
             double L = self.L,  xi = 0.5*sqrt(PI)/(L), siz=Nb*L
@@ -995,7 +1000,7 @@ cdef class Flow:
         return 
     
     
-    cpdef potDipoleV(self, double [:] vv, double [:] rt, double [:] r, double [:] D, int Nb=16, int Nm=16):
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, int Nb=16, int Nm=16):
         cdef: 
             double L = self.L,  xi = 1.5*sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), ivol=1.0/(L*L*L)
             double ixi2 = 1/(xi*xi), vx, vy, vz

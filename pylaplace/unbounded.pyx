@@ -1,0 +1,164 @@
+cimport cython
+from libc.math cimport sqrt
+from cython.parallel import prange
+cdef double PI = 3.14159265359
+import numpy as np
+cimport numpy as np
+
+@cython.boundscheck(False)
+@cython.cdivision(True)
+@cython.nonecheck(False)
+@cython.wraparound(False)
+cdef class Phoresis:
+    cdef readonly int Nx, Ny, Nz, Np
+    cdef readonly np.ndarray Mobility
+    cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, D
+    def __init__(self, radius=1, particles=1, phoreticConstant=1.0):
+        self.a  = radius
+        self.Np = particles
+        self.D  = phoreticConstant
+
+    cpdef elastance00(self, double [:] C0, double [:] r, double [:] J0):
+        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef double dx, dy, dz, idr, h2, hsq, idr2, A1
+        cdef double vx, vy, vz, ii , cc=0 ## cc is the concentration constant
+        cdef double mud = J0[0]/(4*PI*self.D)
+
+        for i in prange(Np, nogil=True):
+            cc=0;
+            for j in range(Np):
+                if i!=j:
+                    dx = r[i]    - r[j]
+                    dy = r[i+Np]  - r[j+Np]
+                    dz = r[i+xx]  - r[j+xx]
+                    idr = 1.0/sqrt(dx*dx + dy*dy + dz*dz)
+                    cc += idr
+
+    
+            C0[i  ]  += mud*cc 
+        return 
+    
+
+    cpdef elastance10(self, double [:] C1, double [:] r, double [:] J0):
+        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef double dx, dy, dz, idr, h2, hsq, idr2, A1
+        cdef double vx, vy, vz, ii , cc=1 ## cc is the concentration constant
+        cdef double mud = 1.0/(4*PI*self.D)
+
+        for i in prange(Np, nogil=True):
+            vx=0; vy=0; vz=0;
+            for j in range(Np):
+                if i!=j:
+                    dx = r[i]    - r[j]
+                    dy = r[i+Np]  - r[j+Np]
+                    dz = r[i+xx]  - r[j+xx]
+                    idr = 1.0/sqrt(dx*dx + dy*dy + dz*dz)
+                    A1 = idr*idr*idr
+                    vx += A1*dx
+                    vy += A1*dy
+                    vz += A1*dz
+
+            C1[i  ]  += mud*vx 
+            C1[i+Np] += mud*vy
+            C1[i+xx] += mud*vz
+        return 
+
+
+    cpdef elastance11(self, double [:] C1, double [:] r, double [:] J1):
+        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef double dx, dy, dz, idr, h2, hsq, idr2, A1, B1
+        cdef double vx, vy, vz, ii , cc=1 ## cc is the concentration constant
+        cdef double mud = 1.0/(16*PI*PI**self.a)
+ 
+        for i in prange(Np, nogil=True):
+            vx=0; vy=0; vz=0;
+            for j in range(Np):
+                if i!=j:
+                    dx = r[i]    - r[j]
+                    dy = r[i+Np] - r[j+Np]
+                    dz = r[i+xx] - r[j+xx] 
+                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                    A1 = idr*idr*idr
+                    B1  = 3*(J1[j]*dx + J1[j+Np]*dy + J1[j+xx]*dz)*idr*idr
+                    vx += A1*(J1[j]    - B1*dx)
+                    vy += A1*(J1[j+Np] - B1*dy)
+                    vz += A1*(J1[j+xx] - B1*dz)
+
+                    ###contributions from the image 
+                    dz = r[i+xx]  + r[j+xx]
+                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                    A1 = idr*idr*idr
+                    B1  = 3*(J1[j]*dx + J1[j+Np]*dy + J1[j+xx]*dz)*idr*idr
+                    vx += A1*(J1[j]    - B1*dx)
+                    vy += A1*(J1[j+Np] - B1*dy)
+                    vz += A1*(J1[j+xx] - B1*dz)
+
+                else:
+                   ''' self contribution from the image point'''
+                   dz = 2*r[i+xx] ; A1=1/(dz*dz*dz)
+                   vx += A1*(   J1[j]    )
+                   vy += A1*(   J1[j+Np] )
+                   vy += A1*(-2*J1[j+xx] )
+
+            C1[i  ]  += mud*J1[i  ]  + mud*vx
+            C1[i+Np] += mud*J1[i+Np] + mud*vy
+            C1[i+xx] += mud*J1[i+xx] + mud*vz
+        return
+
+
+
+
+@cython.boundscheck(False)
+@cython.cdivision(True)
+@cython.nonecheck(False)
+@cython.wraparound(False)
+cdef class Field:
+    cdef readonly int Nx, Ny, Nz, Np, Nt
+    cdef readonly np.ndarray Mobility
+    cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, D
+    def __init__(self, radius=1, particles=1, phoreticConstant=1, gridpoints=32):
+        self.a  = radius
+        self.Np = particles
+        self.Nt = gridpoints
+        self.D  = phoreticConstant
+
+
+    cpdef phoreticField0(self, double [:] c, double [:] rt, double [:] r, double [:] J0):
+        cdef int Np = self.Np, Nt = self.Nt, xx = 2*Np
+        cdef int i, j
+        cdef double dx, dy, dz, idr, idr3, cc, mu1=J0[0]/(4*PI*self.D)
+ 
+        for i in prange(Nt, nogil=True):
+            cc=0
+            for j in range(Np):
+                dx = rt[i]      - r[j]
+                dy = rt[i+Nt]   - r[j+Np]
+                dz = rt[i+2*Nt] - r[j+xx] 
+                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                cc +=idr
+                
+            c[i] += mu1*cc
+        return 
+    
+    
+    cpdef phoreticField1(self, double [:] c, double [:] rt, double [:] r, double [:] J1):
+        cdef int Np = self.Np, Nt = self.Nt, xx = 2*Np
+        cdef int i, j
+        cdef double dx, dy, dz, idr, idr3, cc, mu1=1.0/(4*PI*self.D)
+ 
+        for i in prange(Nt, nogil=True):
+            cc=0
+            for j in range(Np):
+                dx = rt[i]      - r[j]
+                dy = rt[i+Nt]   - r[j+Np]
+                dz = rt[i+2*Nt] - r[j+2*Np] 
+
+                idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                idr3 = idr*idr*idr 
+
+                cc  += idr3*(dx*J1[j] + dy*J1[j+Np] + dz*J1[j+2*Np])
+                
+                cc  += idr3*(dx*J1[j] + dy*J1[j+Np] + dz*J1[j+2*Np])
+
+            c[i] += mu1*cc
+        return 

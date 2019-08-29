@@ -70,7 +70,7 @@ setup(
         extra_link_args=ompArgs 
         )]),
     libraries=[],
-    zip_safe = True,
+    #zip_safe = True,
     packages=['pyforces'],
 )
 
@@ -94,7 +94,7 @@ setup(
         extra_link_args=ompArgs 
         )]),
     libraries=[],
-    zip_safe = True,
+    #zip_safe = True,
     packages=['pylaplace'],
 )
 
@@ -118,7 +118,7 @@ setup(
         extra_link_args=ompArgs 
         )]),
     libraries=[],
-    zip_safe = True,
+    #zip_safe = True,
     packages=['pystokes'],
 )
 

@@ -1,74 +1,67 @@
-import numpy, os, sys, os.path, tempfile, subprocess, shutil
-try:
-    from setuptools import setup, Extension, find_packages
-except ImportError:
-    from distutils.core import setup
-    from distutils.extension import Extension
-import Cython.Compiler.Options
+import numpy
+import os, sys, os.path, tempfile, subprocess, shutil
+from distutils.core import setup
 from Cython.Build import cythonize
+from distutils.extension import Extension
+import Cython.Compiler.Options
+Cython.Compiler.Options.annotate = True
 
-
-
-def checkOpenmpSupport():
-    """ Adapted from https://stackoverflow.com/questions/16549893/programatically-testing-for-openmp-support-from-a-python-setup-script
-    """ 
-    ompTest = \
-    r"""
-    #include <omp.h>
-    #include <stdio.h>
-    int main() {
-    #pragma omp parallel
-    printf("Thread %d, Total number of threads %d\n", omp_get_thread_num(), omp_get_num_threads());
-    }
-    """
+def check_for_openmp():
+    ##Adapted from Goldbaum reply. See https://github.com/pynbody/pynbody/issues/124
+    # Create a temporary directory
     tmpdir = tempfile.mkdtemp()
     curdir = os.getcwd()
     os.chdir(tmpdir)
 
-    filename = r'test.c'
-    with open(filename, 'w') as file:
-        file.write(ompTest)
-    with open(os.devnull, 'w') as fnull:
-        result = subprocess.call(['cc', '-fopenmp', filename],
-                                 stdout=fnull, stderr=fnull)
+    # Get compiler invocation
+    compiler = os.getenv('CC', 'cc')
 
+    # Attempt to compile a test script.
+    # See http://openmp.org/wp/openmp-compilers/
+    filename = r'test.c'
+    file = open(filename,'w')
+    file.write(
+        "#include <omp.h>\n"
+        "#include <stdio.h>\n"
+        "int main() {\n"
+        "#pragma omp parallel\n"
+        "printf(\"Hello from thread %d, nthreads %d\\n\", omp_get_thread_num(), omp_get_num_threads());\n"
+        "}")
+    with open(os.devnull, 'w') as fnull:
+        exit_code = subprocess.call([compiler, '-fopenmp', filename],
+                                    stdout=fnull, stderr=fnull)
+    # Clean up
+    file.close()
     os.chdir(curdir)
-    shutil.rmtree(tmpdir) 
-    if result == 0:
+    shutil.rmtree(tmpdir)
+
+    if exit_code == 0:
         return True
     else:
         return False
 
-if checkOpenmpSupport() == True:
-    ompArgs = ['-fopenmp']
+if check_for_openmp() == True:
+    omp_args = ['-fopenmp']
 else:
-    ompArgs = None 
+    omp_args = None
 
-
-cy_ext_options = {
-    "compiler_directives": {"embedsignature": True,"language_level": sys.version_info[0]},
-    "annotate": True,
-}
-
-
-#installation of PyStokes
 setup(
     name='pystokes',
     version='1.0.0',
-    url='https://gitlab.com/rajeshrinet/pystokes',
-    author = 'The PyStokes team',
-    author_email = 'PyStokes@googlegroups.com',
+    url='https://gitlab.com/rajeshrinet/',
+    author='Rajesh Singh, Abhrajit Laskar, Rajeev Singh and R. Adhikari',
+    author_email='rsingh@imsc.res.in, abhra@imsc.res.in, rajeev@imsc.res.in, rjoy.imsc.res.in',
     license='MIT',
     description='python library for computing Stokes flows',
     long_description='pystokes is a library for computing Stokes flows in various geometries',
     platforms='tested on LINUX',
     ext_modules=cythonize([ Extension("pystokes/*", ["pystokes/*.pyx"],
         include_dirs=[numpy.get_include()],
-        extra_compile_args=ompArgs,
-        extra_link_args=ompArgs 
+        extra_compile_args=omp_args,
+        extra_link_args=omp_args 
         )]),
     libraries=[],
-    zip_safe = True,
     packages=['pystokes'],
 )
+
 

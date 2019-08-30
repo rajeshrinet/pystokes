@@ -45,12 +45,6 @@ else:
     ompArgs = None 
 
 
-cy_ext_options = {
-    "compiler_directives": {"embedsignature": True,"language_level": sys.version_info[0]},
-    "annotate": True,
-}
-
-
 
 
 #installation of PyForces
@@ -67,7 +61,9 @@ setup(
     ext_modules=cythonize([ Extension("pyforces/*", ["pyforces/*.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=ompArgs,
-        extra_link_args=ompArgs 
+        extra_link_args=ompArgs,
+        compiler_directives: {"embedsignature": True,"language_level": sys.version_info[0]},
+        annotate: True,
         )]),
     libraries=[],
     #zip_safe = True,
@@ -91,7 +87,9 @@ setup(
     ext_modules=cythonize([ Extension("pylaplace/*", ["pylaplace/*.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=ompArgs,
-        extra_link_args=ompArgs 
+        extra_link_args=ompArgs,
+        compiler_directives: {"embedsignature": True,"language_level": sys.version_info[0]},
+        annotate: True,
         )]),
     libraries=[],
     #zip_safe = True,
@@ -115,7 +113,9 @@ setup(
     ext_modules=cythonize([ Extension("pystokes/*", ["pystokes/*.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=ompArgs,
-        extra_link_args=ompArgs 
+        extra_link_args=ompArgs,
+        compiler_directives: {"embedsignature": True,"language_level": sys.version_info[0]},
+        annotate: True,
         )]),
     libraries=[],
     #zip_safe = True,

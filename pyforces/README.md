@@ -1,6 +1,3 @@
-This folder contains the core files of PyStokes repo.
+This folder contains the core files of PyForces library.
 
-Each file corresponds to the boundary conditions in the flow.
-
-
-utils.pyx has miscellaneous functionalities
+The file forceFields.pyx has implementation of various body forces and torques acting in colloidal systems. 

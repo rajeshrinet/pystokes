@@ -10,9 +10,6 @@ cimport numpy as np
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Rbm:
-    cdef readonly int Nx, Ny, Nz, Np
-    cdef readonly np.ndarray Mobility
-    cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, eta, mu
     def __init__(self, radius=1, particles=1, viscosity=1.0):
         self.a   = radius
         self.Np  = particles
@@ -352,8 +349,7 @@ cdef class Rbm:
             v[i+Np] += mu1*vy
             v[i+xx] += mu1*vz
         return
-
-
+    
     ## Angular Velocities
     cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F):
         cdef int Np = self.Np, i, j, xx=2*Np
@@ -464,8 +460,6 @@ cdef class Rbm:
             o[i+Np] += mut*T[i+Np] - mu1*oy
             o[i+xx] += mut*T[i+xx] - mu1*oz
         return
-
-
 
 
     ## Noise
@@ -752,8 +746,6 @@ cdef class Rbm:
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Flow:
-    cdef readonly double a, eta
-    cdef readonly int Nt, Np
 
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
         self.a  = radius
@@ -1004,30 +996,3 @@ cdef class Flow:
             vv[i+2*Nt] += mu1*vz
         return 
     
-    
-    cpdef flowField3a(self, double [:] vv, double [:] rt, double [:] r, double [:] V):
-        cdef int Np = self.Np, Nt = self.Nt
-        cdef int i, ii
-        cdef double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz
- 
-        for i in prange(Nt, nogil=True):
-            for ii in range(Np):
-                vxx = V[ii]
-                vyy = V[ii+Np]
-                vxy = V[ii+2*Np]
-                vxz = V[ii+3*Np]
-                vyz = V[ii+4*Np]
-                dx = rt[i]      - r[ii]
-                dy = rt[i+Nt]   - r[ii+Np]
-                dz = rt[i+2*Nt] + r[ii+2*Np] 
-                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
-                idr5 = idr*idr*idr*idr*idr
-                vrx = vxx*dx +  vxy*dy + vxz*dz  
-                vry = vxy*dx +  vyy*dy + vyz*dz  
-                vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
-
-                vv[i]      += 8*( dy*vrz - dz*vry )*idr5
-                vv[i+Nt]   += 8*( dz*vrx - dx*vrz )*idr5
-                vv[i+2*Nt] += 8*( dx*vry - dy*vrx )*idr5 
-        return 
-

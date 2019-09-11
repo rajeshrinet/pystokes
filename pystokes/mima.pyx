@@ -20,9 +20,6 @@ cdef extern from "complex.h" nogil:
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Mima3D:
-    cdef readonly int Nx, Ny, Nz, Np
-    cdef readonly np.ndarray fkx, fky, fkz, vkx, vky, vkz, fk0, fx0
-    cdef readonly double Lx, Ly, Lz, a, facx, facy, facz
     def __init__(self, a_, Np_, Lx_, Ly_, Lz_, Nx_, Ny_, Nz_ ):
         self.a = a_
         self.Np = Np_
@@ -187,7 +184,7 @@ cdef class Mima3D:
         return
     
     
-    cpdef septletV(self, np.ndarray v, double [:] r, double [:] G, double sigma=3, int NN=20):
+    cpdef flowField3s(self, np.ndarray v, double [:] r, double [:] G, double sigma=3, int NN=20):
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
@@ -236,7 +233,7 @@ cdef class Mima3D:
         return
 
 
-    cpdef vortletV(self, np.ndarray v, double [:] r, double [:] V, double sigma=3, int NN=20):
+    cpdef flowField3a(self, np.ndarray v, double [:] r, double [:] V, double sigma=3, int NN=20):
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz, vkx, vky, vkz
@@ -272,7 +269,7 @@ cdef class Mima3D:
         return
 
 
-    cpdef spinletV(self, np.ndarray v, double [:] r, double [:] M, double sigma=3, int NN=20):
+    cpdef flowField4a(self, np.ndarray v, double [:] r, double [:] M, double sigma=3, int NN=20):
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz, mrrr, mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
@@ -422,15 +419,11 @@ cdef class Mima3D:
 
 
 
-# implementation for 2D o mima
+# implementation for 2D mima
 @cython.wraparound(False)
 @cython.boundscheck(False)
 @cython.nonecheck(False)
 cdef class Mima2D:
-    cdef readonly int Nx, Ny, Nz, Np
-    cdef readonly np.ndarray fkx, fky, fkz, vkx, vky, vkz, fk0, fx0
-    cdef readonly double Lx, Ly, Lz, a, facx, facy, facz
-
     def __init__(self, a_, Np_, Lx_, Ly_, Nx_, Ny_):
         self.a = a_
         self.Np = Np_
@@ -480,6 +473,7 @@ cdef class Mima2D:
         self.solve( v, np.concatenate(( self.fkx.ravel(), self.fky.ravel() )) )
         return
 
+    
     cpdef flowField2s(self, np.ndarray v, double [:] r, double [:] S, double sigma=1, int NN=20):
         cdef:
             int i, nx, ny , x, y, Nx, Ny, Np, jx, jy
@@ -544,7 +538,7 @@ cdef class Mima2D:
         return
 
     
-    cpdef septletV(self, np.ndarray v, double [:] r, double [:] p, double sigma=3, int NN=20):
+    cpdef flowField3s(self, np.ndarray v, double [:] r, double [:] p, double sigma=3, int NN=20):
         cdef:
             int i, nx, ny , x, y, Nx, Ny, Np, jx, jy
             double arg, facx, facy, kx, ky, skk, skx, sky, 

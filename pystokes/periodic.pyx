@@ -9,8 +9,6 @@ cdef double IPI = (2/sqrt(PI))
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Rbm:
-    cdef int Np
-    cdef double a, eta, L
     def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10):
         self.a   = radius
         self.Np  = particles
@@ -863,9 +861,6 @@ cdef class Rbm:
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Flow:
-    cdef double a
-    cdef int Np, Nt
-    cdef double L, eta
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32, boxsize=10):
         self.a  = radius
         self.Np = particles

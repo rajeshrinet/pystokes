@@ -11,9 +11,6 @@ cimport numpy as np
 @cython.cdivision(True)
 @cython.nonecheck(False)
 cdef class Rbm:
-    cdef double a, eta, mu
-    cdef int Np 
-    cdef readonly np.ndarray Mobility
 
     def __init__(self, radius=1, particles=1, viscosity=1.0):
         self.a   = radius
@@ -491,9 +488,6 @@ cdef class Rbm:
 @cython.cdivision(True)
 @cython.nonecheck(False)
 cdef class Flow:
-    cdef double a, eta
-    cdef int Np
-    cdef int Nt
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
         self.a  = radius
         self.Np = particles

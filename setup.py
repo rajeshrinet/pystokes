@@ -68,6 +68,7 @@ setup(
     libraries=[],
     #zip_safe = True,
     packages=['pyforces'],
+    package_data={'pyforces': ['*.pxd']}
 )
 
 
@@ -94,6 +95,7 @@ setup(
     libraries=[],
     #zip_safe = True,
     packages=['pylaplace'],
+    package_data={'pylaplace': ['*.pxd']}
 )
 
 
@@ -120,5 +122,6 @@ setup(
     libraries=[],
     #zip_safe = True,
     packages=['pystokes'],
+    package_data={'pystokes': ['*.pxd']}
 )
 

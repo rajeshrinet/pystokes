@@ -7,7 +7,6 @@ from cython.parallel import prange
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Forces:
-    cdef int Np
     def __init__(self, particles=1):
         self.Np = particles
         pass

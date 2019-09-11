@@ -10,9 +10,6 @@ cimport numpy as np
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Phoresis:
-    cdef readonly int Nx, Ny, Nz, Np
-    cdef readonly np.ndarray Mobility
-    cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, D
     def __init__(self, radius=1, particles=1, phoreticConstant=1.0):
         self.a  = radius
         self.Np = particles
@@ -133,9 +130,6 @@ cdef class Phoresis:
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Field:
-    cdef readonly int Nx, Ny, Nz, Np, Nt
-    cdef readonly np.ndarray Mobility
-    cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, D
     def __init__(self, radius=1, particles=1, phoreticConstant=1, gridpoints=32):
         self.a  = radius
         self.Np = particles

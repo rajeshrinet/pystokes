@@ -157,8 +157,6 @@ def plotLogo():
     V2s = pystokes.utils.irreducibleTensors(2, p)
     V3t = pystokes.utils.irreducibleTensors(1, p) 
     
-    
-    
     # space dimension , extent , discretization
     dim, L, Ng = 3, 8, 100
     
@@ -167,11 +165,9 @@ def plotLogo():
     wFlow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
     #iFlow = pystokes.interface.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
     
-    
     # create the grid
     rr, vv = pystokes.utils.gridYZ(dim, L, Ng); 
     wFlow.flowField1s(vv, rr, r, F1s)  
-    
     
     plt.figure(figsize=(26, 8));  Nt=Ng*Ng
     
@@ -211,7 +207,15 @@ def plotStreamlinesXY(vv, rr, r, density=0.82, arrowSize=1.2, mask=0.6, ms=36, o
     rr  = np.hypot(xx-r[0], yy-r[1])
     spd[rr<mask]=0;  spd+=offset
     plt.pcolormesh(xx, yy, np.log(spd), cmap=plt.cm.gray_r, shading='interp')
-    plt.streamplot(xx, yy, vx, vy, color="black", arrowsize =arrowSize, arrowstyle='->', density=density)
+
+    st=11;  sn=st*st;  a0=2;  ss=np.zeros((2, st*st))
+    for i in range(st):
+        for j in range(st):
+            ii = i*st+j
+            ss[0, ii]      = a0*(-5 + i)
+            ss[1, ii]      = a0*(-5 + j)
+
+    plt.streamplot(xx, yy, vx, vy, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density)
     plt.xlim(np.min(xx), np.max(xx))
     plt.ylim(np.min(yy), np.max(yy))
     plt.axis('off')
@@ -226,8 +230,6 @@ def plotStreamlinesXY(vv, rr, r, density=0.82, arrowSize=1.2, mask=0.6, ms=36, o
         plt.title('$l\sigma=3t$', fontsize=26);
     else:
         plt.title(title, fontsize=26);
-
-
 
 
 def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, offset=1e-6, title='None'):
@@ -247,7 +249,14 @@ def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, 
     rr  = np.hypot(yy-r[1], zz-r[2])
     spd[rr<mask]=0;  spd+=offset
     plt.pcolormesh(yy, zz, np.log(spd), cmap=plt.cm.gray_r, shading='interp')
-    plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', density=density)
+
+    st=11;  sn=st*st;  a0=2;  ss=np.zeros((2, st*st))
+    for i in range(st):
+        for j in range(st):
+            ii = i*st+j
+            ss[0, ii]      = a0*(-5 + i)
+            ss[1, ii]      = 1*(0 + j)
+    plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density)
     plt.xlim(np.min(yy), np.max(yy))
     plt.ylim(np.min(zz), np.max(zz))
     plt.axis('off')
@@ -281,7 +290,14 @@ def plotStreamlinesYZsurf(vv, rr, r, density=0.8, arrowSize=1.2, mask=0.6, ms=36
     rr  = np.hypot(yy-r[1], zz-r[2])
     spd[rr<mask]=0;  spd+=offset
     plt.pcolormesh(yy, zz, np.log(spd), cmap=plt.cm.gray_r, shading='interp')
-    plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', density=density)
+    
+    st=11;  sn=st*st;  a0=2;  ss=np.zeros((2, st*st))
+    for i in range(st):
+        for j in range(st):
+            ii = i*st+j
+            ss[0, ii]      = a0*(-5 + i)
+            ss[1, ii]      = 1*(0 + j)
+    plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density)
     plt.xlim(np.min(yy), np.max(yy))
     ww=0.3
     plt.ylim(-ww, np.max(zz))

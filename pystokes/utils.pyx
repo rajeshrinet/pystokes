@@ -339,13 +339,13 @@ def plotContoursYZ(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, offse
     plt.axis('off')
     if title==str('None'):
         pass 
-    elif title==str('l=0'):
-        plt.title('$l=0$', fontsize=26);
-        plt.ylabel('Unbounded domain', fontsize=20)
-    elif title==str('l=1'):
-        plt.title('$l=1$', fontsize=26);
-    elif title==str('l=0 and l=1'):
-        plt.title('$l=0$ and $l=1$', fontsize=26);
+    elif title==str('m=0'):
+        plt.title('$m=0$', fontsize=26);
+        #plt.ylabel('Unbounded domain', fontsize=20)
+    elif title==str('m=1'):
+        plt.title('$m=1$', fontsize=26);
+    elif title==str('m=2'):
+        plt.title('$m=2$', fontsize=26);
     else:
         plt.title(title, fontsize=26);
 

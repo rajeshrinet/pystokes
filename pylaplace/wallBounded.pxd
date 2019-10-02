@@ -33,5 +33,6 @@ cdef class Field:
     cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, D
 
 
-    cpdef phoreticField0(self, double [:] c, double [:] rt, double [:] r, double [:] J1)
+    cpdef phoreticField0(self, double [:] c, double [:] rt, double [:] r, double [:] J0)
     cpdef phoreticField1(self, double [:] c, double [:] rt, double [:] r, double [:] J1)
+    cpdef phoreticField2(self, double [:] c, double [:] rt, double [:] r, double [:] J2)

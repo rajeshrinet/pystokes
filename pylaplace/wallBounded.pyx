@@ -186,3 +186,40 @@ cdef class Field:
 
             c[i] += mu1*cc
         return 
+    
+    
+    cpdef phoreticField2(self, double [:] c, double [:] rt, double [:] r, double [:] J2):
+        cdef int Np = self.Np, Nt = self.Nt, xx = 2*Np
+        cdef int i, j
+        cdef double dx, dy, dz, idr, idr5, cc, mu1=1.0/(4*PI*self.D), jxx, jyy, jxy, jyz, jxz
+ 
+        for i in prange(Nt, nogil=True):
+            cc=0
+            for j in range(Np):
+                jxx = J2[j]
+                jyy = J2[j+Np]
+                jxy = J2[j+2*Np]
+                jxz = J2[j+3*Np]
+                jyz = J2[j+4*Np]
+
+                dx = rt[i]      - r[j]
+                dy = rt[i+Nt]   - r[j+Np]
+                dz = rt[i+2*Nt] - r[j+2*Np] 
+
+                idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                idr5 = idr*idr*idr*idr*idr 
+
+                cc  += jxx*dx*dx + jyy*dy*dy + (-jxx-jyy)*dz*dz
+                cc  +=(jxy*dx*dy + jxz*dx*dz+ jyz*dy*dz)*2
+                
+                ##contributions from the image 
+                dz   = rt[i+2*Nt] + r[j+xx]        
+                idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                idr5 = idr*idr*idr*idr*idr 
+
+                cc  += jxx*dx*dx + jyy*dy*dy + (-jxx-jyy)*dz*dz
+                cc  +=(jxy*dx*dy + jxz*dx*dz+ jyz*dy*dz)*2
+
+            c[i] += mu1*cc
+        return 

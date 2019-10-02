@@ -35,3 +35,4 @@ cdef class Field:
 
     cpdef phoreticField0(self, double [:] c, double [:] rt, double [:] r, double [:] J1)
     cpdef phoreticField1(self, double [:] c, double [:] rt, double [:] r, double [:] J1)
+    cpdef phoreticField2(self, double [:] c, double [:] rt, double [:] r, double [:] J2)

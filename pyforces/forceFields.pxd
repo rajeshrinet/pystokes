@@ -38,6 +38,9 @@ cdef class Forces:
     cpdef membraneBound(self, double [:] F, double [:] r, double cn, double r0)
 
 
+    cpdef spring(self, double [:] F, double [:] r, double bondLength, double springModulus)
+
+
     cpdef multipolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus)
 
 

@@ -220,6 +220,35 @@ cdef class Forces:
             else:
                 pass
         return
+
+
+    cpdef spring(self, double [:] F, double [:] r, double bondLength, double springModulus):
+        cdef int Np = self.Np, xx = 2*Np
+        cdef int Nf=1, Nm=Np
+        cdef:
+            int i, ii, ip, jp, kp
+            double dx12, dy12, dz12, idr12, dx23, dy23, dz23, idr23,
+            double F_bend, F_spring, f1, f3, cos1
+
+        # Spring Force 
+        for ii in prange(Nf,nogil=True):
+            for i in range(Nm-1):
+                ip = Nm*ii + i
+                jp = Nm*ii + i + 1
+                dx12 = r[ip]    - r[jp]
+                dy12 = r[ip+Np] - r[jp+Np]
+                dz12 = r[ip+xx] - r[jp+xx] #
+                F_spring = springModulus*(bondLength/sqrt(dx12*dx12+dy12*dy12+dz12*dz12) - 1.0) # Scalar part of spring force
+
+                F[ip]      += F_spring*dx12
+                F[ip + Np] += F_spring*dy12
+                F[ip + xx] += F_spring*dz12
+                F[jp]      -= F_spring*dx12
+                F[jp + Np] -= F_spring*dy12
+                F[jp + xx] -= F_spring*dz12 
+        return
+
+
     cpdef multipolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus):
         cdef int Np = self.Np, xx = 2*Np
         cdef:

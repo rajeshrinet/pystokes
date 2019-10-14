@@ -1,4 +1,4 @@
-This folder contains the core files of PyStokes repo.
+This folder contains the core files of the PyStokes library.
 
 Each file computed the rigid body motion (RBM) and flow given the colloidal configuration.
 The filenames, as described below, correspond to the boundary conditions in the flow. The boundary conditions are implemented using an appropriate Green's function of Stokes flow. See details at: https://arxiv.org/abs/1910.00909

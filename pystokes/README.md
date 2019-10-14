@@ -1,11 +1,14 @@
 This folder contains the core files of PyStokes repo.
 
-Each file corresponds to the boundary conditions in the flow. Flow is computed in unbounded domain and near a plane surface.
+Each file computed the rigid body motion (RBM) and flow given the colloidal configuration.
+The filenames, as described below, correspond boundary conditions in the flow. The boundary conditions are implemented using an appropriate Green's function of Stokes flow.
 
-utils.pyx has miscellaneous functionalities
 
-
-### Where is the wall?
-A single plane boundary (be it wall or a fluid-fluid interface) is always kept at z=0 in the library such that region of interest is the upper half space for z>0. 
-
+* unbounded.pyx - the fluid flow only vanishes at infinity. Implemented using Oseen tensor.
+* periodic.pyx - Implemented using the Ewald sum of Oseen tensor. The box is of size L.
+* interface.pyx - the normal component of the flow vanishes at the interface (z=0). Implemented using Blake, J. Biomech. 8 179 (1975).
+* wallBounded.pyx - fluid flow around a plane wall at z=0, such that region of interest is the upper half space, z>0. Implemented using Lorentz-Blake tensor. See Blake, Proc. Camb. Phil. Soc. 70 303 (2017).
+* twoWalls.pyx - the two walls are at z=0 and z=H. The physical region is then `0<z<H'. Implemented using the approximate solution of Liron and Mochon. See Liron and Mochon, J. Eng. Math, 10 143 (1976).
+* mima.pyx - Mollified irreducible multipole approach (MIMA) resolves the fluid flow and solves Stokes equation directly. For more details, see chapter 10 of the thesis: https://www.imsc.res.in/xmlui/handle/123456789/418 
+* utils.pyx has miscellaneous functionalities
 

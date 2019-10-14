@@ -1,8 +1,9 @@
 """
-Mollified irreducible multipole approach (MIMA)
-
-For further details of this method, which explicitly resolved the fluid flow, 
-read chapter 10 of the thesis: https://dspace.imsc.res.in/xmlui/handle/123456789/418
+* Mollified irreducible multipole approach (MIMA)
+* MIMA resolves the fluid flow and solves Stokes equation directly.
+* For further details of this method, read chapter 10 of the thesis: 
+  https://dspace.imsc.res.in/xmlui/handle/123456789/418 
+  or at https://www.imsc.res.in/xmlui/handle/123456789/418
 """
 
 cimport cython

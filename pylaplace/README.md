@@ -1,8 +1,9 @@
 This folder contains the core files of PyLaplace repo.
 
-Each file corresponds to the boundary conditions in the bulk. Phoretic interactions is computed in unbounded domain and near a plane surface.
+Each file computed the phoretic motion and phoretic field given the colloidal configuration.
+The filenames, as described below, correspond to the boundary conditions in the flow. The boundary conditions are implemented using an appropriate Green's function of the Laplace equation. See details at: https://arxiv.org/abs/1910.00909
 
-utils.pyx has miscellaneous functionalities
 
-## Where is the wall?
-A single plane boundary (be it wall or a fluid-fluid interface) is always kept at z=0 in the library such that region of interest is the upper half space for z>0. 
+* unbounded.pyx - the phoretic flux vanishes at infinity. I
+* wallBounded.pyx - the phoretic flux vanishes at a plane wall, which is located at z=0, such that region of interest is the upper half space, z>0. 
+* utils.pyx has miscellaneous functionalities

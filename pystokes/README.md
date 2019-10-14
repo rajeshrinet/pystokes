@@ -1,14 +1,14 @@
 This folder contains the core files of PyStokes repo.
 
 Each file computed the rigid body motion (RBM) and flow given the colloidal configuration.
-The filenames, as described below, correspond boundary conditions in the flow. The boundary conditions are implemented using an appropriate Green's function of Stokes flow.
+The filenames, as described below, correspond to the boundary conditions in the flow. The boundary conditions are implemented using an appropriate Green's function of Stokes flow. See details at: https://arxiv.org/abs/1910.00909
 
 
 * unbounded.pyx - the fluid flow only vanishes at infinity. Implemented using Oseen tensor.
 * periodic.pyx - Implemented using the Ewald sum of Oseen tensor. The box is of size L.
 * interface.pyx - the normal component of the flow vanishes at the interface (z=0). Implemented using Blake, J. Biomech. 8 179 (1975).
-* wallBounded.pyx - fluid flow around a plane wall at z=0, such that region of interest is the upper half space, z>0. Implemented using Lorentz-Blake tensor. See Blake, Proc. Camb. Phil. Soc. 70 303 (2017).
-* twoWalls.pyx - the two walls are at z=0 and z=H. The physical region is then `0<z<H'. Implemented using the approximate solution of Liron and Mochon. See Liron and Mochon, J. Eng. Math, 10 143 (1976).
+* wallBounded.pyx - fluid flow near a plane wall at z=0. The flow vanishes (no-slip boundary condition) at the plane wall. That region of interest is the upper half space, z>0. Implemented using Lorentz-Blake tensor. See Blake, Proc. Camb. Phil. Soc. 70 303 (2017).
+* twoWalls.pyx - two no-slip walls are at z=0 and z=H. The physical region is then `0<z<H'. Implemented using the approximate solution of Liron and Mochon. See Liron and Mochon, J. Eng. Math, 10 143 (1976).
 * mima.pyx - Mollified irreducible multipole approach (MIMA) resolves the fluid flow and solves Stokes equation directly. For more details, see chapter 10 of the thesis: https://www.imsc.res.in/xmlui/handle/123456789/418 
 * utils.pyx has miscellaneous functionalities
 

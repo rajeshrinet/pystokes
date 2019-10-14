@@ -14,8 +14,6 @@
 
 
 ## News
-**03rd October 2019** -- 'Hydrodynamic and phoretic interactions of active particles in Python' is now available at: https://arxiv.org/abs/1910.00909
-
 **26th July 2019** -- PyStokes can be combined with [PyLaplace](https://github.com/rajeshrinet/pystokes/tree/master/pylaplace) to compute hydrodynamic *and* phoretic interactions in autophoretic suspensions.  
 
 
@@ -91,6 +89,8 @@ Other examples include
 
 
 ## Publications
+
+* [Hydrodynamic and phoretic interactions of active particles in Python](https://arxiv.org/abs/1910.00909), Rajesh Singh and R. Adhikari, arXiv:1910.00909, 2019. *(Please cite this paper if you use PyStokes in your research)*.
 
 * [Competing phoretic and hydrodynamic interactions in autophoretic colloidal suspensions](https://aip.scitation.org/doi/full/10.1063/1.5090179), Rajesh Singh, R. Adhikari, and M. E. Cates, **J. Chem. Phys.** 151, 044901 (2019)
 

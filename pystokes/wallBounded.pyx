@@ -78,9 +78,9 @@ cdef class Rbm:
                     idr5 = idr3*idr*idr
                     Fdotidr = F[j+xx]*dz*idr*idr
 
-                    vx += -(F[j]   )*idr  - a2*(2*F[j]    )*idr3
-                    vy += -(F[j+Np] )*idr - a2*(2*F[j+Np] )*idr3
-                    vz += -(F[j+xx] + Fdotidr*dz )*idr-a2*(2*F[j+xx] - 6*Fdotidr*dz )*idr3
+                    vx += -(F[j]               )*idr - a2*(2*F[j]    )*idr3
+                    vy += -(F[j+Np]            )*idr - a2*(2*F[j+Np] )*idr3
+                    vz += -(F[j+xx]+Fdotidr*dz )*idr - a2*(2*F[j+xx] - 6*Fdotidr*dz )*idr3
 
                     tempF  = -F[j+xx]     # F_i = M_ij F_j, reflection of the strength
                     Fdotidr = tempF*dz*idr*idr

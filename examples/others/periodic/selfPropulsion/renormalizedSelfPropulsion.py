@@ -19,23 +19,23 @@ vv  = np.zeros(np.size(L))
 phi = np.zeros(np.size(L) )
 
 mu=1.0/(6*np.pi*eta*a)
-print '\phi', '   ', '\mu' 
+print ('\phi', '   ', '\mu' )
 for i in range(np.size(L)):
     v = v*0
     r[0], r[1], r[2] = 0.0, 0.0, 0.0
     p[2]=-1
     
     pRbm = pystokes.periodic.Rbm(a, Np, eta, L[i])   
-    pRbm.potDipoleV(v, r, 0.4*p, Nb, Nm)           # and StokesletV module of pystokes
+    pRbm.propulsionT3t(v, r, 0.4*p, Nb, Nm)           # and StokesletV module of pystokes
     
     phi[i] = (4*np.pi*a**3)/(3*L[i]**3)
     mu00 = p[2]
     vv[i] = v[2]/mu00     
-    print phi[i], '   ', vv[i]
+    print (phi[i], '   ', vv[i])
 
 
 slope, intercept = np.polyfit(phi, vv, 1)
-print slope, intercept
+print (slope, intercept)
 
 plt.plot(phi, vv, '-o', color="#A60628")
 plt.xlabel(r'$\phi$', fontsize=20)

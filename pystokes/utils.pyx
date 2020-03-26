@@ -86,8 +86,9 @@ cpdef irreducibleTensors(l, p, Y0=1):
     return YY
 
 
-def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this'):
-    from scipy.io import savemat; from scipy.integrate import odeint
+def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat'):
+    from scipy.io import savemat; 
+    from scipy.integrate import odeint
 
     time_points=np.linspace(0, Tf, Npts+1);
     def rhs0(rp, t): 

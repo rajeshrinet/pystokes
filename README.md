@@ -35,7 +35,7 @@ PyStokes requires the following software
 ## Examples
 
 
-```bash
+```Python
 # Example 1: Flow field due to $2s$ mode of active slip
 import pystokes, numpy as np, matplotlib.pyplot as plt
 
@@ -58,7 +58,7 @@ flow.flowField2s(vv, rr, r, V2s)
 pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='2s')
 ```
 
-```bash
+```Python
 #Example 2: Phoretic field due to active surface flux of l=0 mode
 import pylaplace, numpy as np, matplotlib.pyplot as plt
 # particle radius, fluid viscosity, and number of particles

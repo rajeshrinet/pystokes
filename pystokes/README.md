@@ -12,29 +12,27 @@ The main files are:
 * mima.pyx - Mollified irreducible multipole approach (MIMA) resolves the fluid flow and solves Stokes equation directly. For more details, see chapter 10 of the thesis: https://www.imsc.res.in/xmlui/handle/123456789/418 
 * utils.pyx - has miscellaneous functionalities
 
-Corresponding to each .pyx file, there is a .pxd file. A .pxd file contains declaration of cdef classes, methods, etc. It is essential when calling PyStokes from another Cython file. Read more: https://cython.readthedocs.io/en/latest/src/tutorial/pxd_files.html
+
+## Force fields
+* forceFields.pyx has implementation of various body forces and torques acting in colloidal systems.
 
 
-
-
-This folder contains the core files of the PyForces library.
-
-The file forceFields.pyx has implementation of various body forces and torques acting in colloidal systems. 
-
-Corresponding to each .pyx file, there is a .pxd file, which contains declaration of classes, methods, etc. It is essential when calling PyForces from another Cython file.
-
-
-
-
-This folder contains the core files of the PyLaplace library.
-
+## Phoretic fields
 Each file computed the phoretic motion and phoretic field given the colloidal configuration.
 The filenames, as described below, correspond to the boundary conditions in the flow. The boundary conditions are implemented using an appropriate Green's function of the Laplace equation. See details at: https://arxiv.org/abs/1910.00909
 
 
-The main files are:
 * unbounded.pyx - the phoretic flux vanishes at infinity. 
 * wallBounded.pyx - the phoretic flux vanishes at a plane wall, which is located at z=0, such that region of interest is the upper half space, z>0. 
-* utils.pyx has miscellaneous functionalities
 
-Corresponding to each .pyx file, there is a .pxd file, which contains declaration of classes, methods, etc. It is essential when calling PyLaplace from another Cython file.
+
+Corresponding to each .pyx file, there is a .pxd file. A .pxd file contains declaration of cdef classes, methods, etc. It is essential when calling PyStokes from another Cython file. Read more: https://cython.readthedocs.io/en/latest/src/tutorial/pxd_files.html
+
+
+ 
+
+
+
+
+
+

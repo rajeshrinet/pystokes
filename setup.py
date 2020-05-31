@@ -46,7 +46,7 @@ else:
 #installation of PyStokes
 setup(
     name='pystokes',
-    version='2.0.0',
+    version='1.0.1',
     url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',
@@ -62,7 +62,7 @@ setup(
         compiler_directives={"language_level": sys.version_info[0]},
         ),
     libraries=[],
-    #zip_safe = True,
+    zip_safe = True,
     packages=['pystokes'],
     package_data={'pystokes': ['*.pxd']}
 )

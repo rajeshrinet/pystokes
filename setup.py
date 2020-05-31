@@ -46,13 +46,14 @@ else:
 #installation of PyStokes
 setup(
     name='pystokes',
-    version='1.0.1',
+    version='2.1.1',
     url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',
     license='MIT',
-    description='python library for computing Stokes flows',
-    long_description='pystokes is a library for computing Stokes flows in various geometries',
+    description='Stokesian hydrodynamics in Python',
+    long_description='Pystokes is a library for computing \
+    hydrodynamic and phoretic interactions of active particles in Python',
     platforms='tested on LINUX',
     ext_modules=cythonize([ Extension("pystokes/*", ["pystokes/*.pyx"],
         include_dirs=[numpy.get_include()],
@@ -64,6 +65,7 @@ setup(
     libraries=[],
     zip_safe = True,
     packages=['pystokes'],
+    install_requires=['cython','numpy','scipy'],
     package_data={'pystokes': ['*.pxd']}
 )
 

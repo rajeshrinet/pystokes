@@ -22,8 +22,8 @@ Each file computed the phoretic motion and phoretic field given the colloidal co
 The filenames, as described below, correspond to the boundary conditions in the flow. The boundary conditions are implemented using an appropriate Green's function of the Laplace equation. See details at: https://arxiv.org/abs/1910.00909
 
 
-* unbounded.pyx - the phoretic flux vanishes at infinity. 
-* wallBounded.pyx - the phoretic flux vanishes at a plane wall, which is located at z=0, such that region of interest is the upper half space, z>0. 
+* phoreticUnbounded.pyx - the phoretic flux vanishes at infinity. 
+* phoreticWallBounded.pyx - the phoretic flux vanishes at a plane wall, which is located at z=0, such that region of interest is the upper half space, z>0. 
 
 
 Corresponding to each .pyx file, there is a .pxd file. A .pxd file contains declaration of cdef classes, methods, etc. It is essential when calling PyStokes from another Cython file. Read more: https://cython.readthedocs.io/en/latest/src/tutorial/pxd_files.html

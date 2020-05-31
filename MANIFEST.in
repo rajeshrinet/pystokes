@@ -1,0 +1,2 @@
+include pystokes/*pyx
+include pystokes/*pxd

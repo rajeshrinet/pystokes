@@ -14,7 +14,7 @@
 
 
 ## News
-**26th July 2019** -- PyStokes can be combined with [PyLaplace](https://github.com/rajeshrinet/pystokes/tree/master/pylaplace) to compute hydrodynamic *and* phoretic interactions in autophoretic suspensions.  
+**26th July 2019** -- PyStokes can compute hydrodynamic *and* phoretic interactions in autophoretic suspensions.  
 
 
 ## Installation

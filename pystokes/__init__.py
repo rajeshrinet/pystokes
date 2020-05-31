@@ -5,3 +5,7 @@ import pystokes.twoWalls
 import pystokes.unbounded
 import pystokes.utils
 import pystokes.wallBounded
+import pystokes.forceFields
+import pystokes.phoreticUnbounded
+import pystokes.phoreticUtils
+import pystokes.phoreticWallBounded

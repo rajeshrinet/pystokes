@@ -1,12 +1,8 @@
-import numpy, os, sys, os.path, tempfile, subprocess, shutil
-#try:
-#    from setuptools import setup, Extension, find_packages
-#except ImportError:
-from distutils.core import setup
-from distutils.extension import Extension
-import Cython.Compiler.Options
 from Cython.Build import cythonize
-
+from setuptools import setup, Extension
+import Cython.Compiler.Options
+Cython.Compiler.Options.annotate=True
+import numpy, os, sys, os.path, tempfile, subprocess, shutil
 
 
 def checkOpenmpSupport():
@@ -47,65 +43,11 @@ else:
 
 
 
-#installation of PyForces
-setup(
-    name='pyforces',
-    version='1.0.0',
-    url='https://gitlab.com/rajeshrinet/pystokes',
-    author = 'The PyStokes team',
-    author_email = 'PyStokes@googlegroups.com',
-    license='MIT',
-    description='force fields for computing Stokes flows',
-    long_description='pyforces is the library for force fields used in computing Stokes flows',
-    platforms='tested on LINUX',
-    ext_modules=cythonize([ Extension("pyforces/*", ["pyforces/*.pyx"],
-        include_dirs=[numpy.get_include()],
-        extra_compile_args=ompArgs,
-        extra_link_args=ompArgs,
-        )],
-        compiler_directives={"language_level": sys.version_info[0]},
-        ),
-    libraries=[],
-    #zip_safe = True,
-    packages=['pyforces'],
-    package_data={'pyforces': ['*.pxd']}
-)
-
-
-
-
-#installation of PyLaplace
-setup(
-    name='pylaplace',
-    version='1.0.0',
-    url='https://gitlab.com/rajeshrinet/pystokes',
-    author = 'The PyStokes team',
-    author_email = 'PyStokes@googlegroups.com',
-    license='MIT',
-    description='Solving Laplace equation in python',
-    long_description='python library for numerical simulation of long-ranged interactions between colloids given by the Laplace equation',
-    platforms='tested on LINUX',
-    ext_modules=cythonize([ Extension("pylaplace/*", ["pylaplace/*.pyx"],
-        include_dirs=[numpy.get_include()],
-        extra_compile_args=ompArgs,
-        extra_link_args=ompArgs,
-        )],
-        compiler_directives={"language_level": sys.version_info[0]},
-        ),
-    libraries=[],
-    #zip_safe = True,
-    packages=['pylaplace'],
-    package_data={'pylaplace': ['*.pxd']}
-)
-
-
-
-
 #installation of PyStokes
 setup(
     name='pystokes',
-    version='1.0.0',
-    url='https://gitlab.com/rajeshrinet/pystokes',
+    version='2.0.0',
+    url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',
     license='MIT',

@@ -167,7 +167,7 @@ if __name__ == '__main__':
         else:
             raise argparse.ArgumentTypeError('Boolean value expected.')
     parser = argparse.ArgumentParser(
-        description='Run notebook unit tests for PyRoss.',
+        description='Run notebook unit tests for PyStokes.',
     )
     # Unit tests
     parser.add_argument(

@@ -145,7 +145,7 @@ def initialCondition(Np, h0=3.1):
 
 def plotLogo():
     """Plots the PyStokes Logo"""
-    import pystokes, pyforces 
+    import pystokes 
     import numpy as np, matplotlib.pyplot as plt
     # particle radius, fluid viscosity, and number of particles
     b, eta, Np = 1.0, 1.0/6.0, 4

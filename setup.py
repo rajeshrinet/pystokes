@@ -1,7 +1,8 @@
 import numpy, os, sys, os.path, tempfile, subprocess, shutil
 import os, sys
+from distutils.core import setup
 from Cython.Build import cythonize
-from setuptools import setup, Extension
+from distutils.extension import Extension
 import Cython.Compiler.Options
 Cython.Compiler.Options.annotate=True
 

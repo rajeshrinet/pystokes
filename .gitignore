@@ -1,4 +1,3 @@
-__pycache__
 *.pyc
 *.so
 *.ipynb_checkpoints
@@ -6,11 +5,49 @@ __pycache__
 *.swp
 *.mat
 *.swo
-*.html
+pystokes/*.html
+pystokes/*.c
+pystokes/*.so
+pystokes/*.cpp
 *.c
 *egg-info*
 dist
+build/
+.DS_Store
+*.npy
 
+
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
+*.alg
+*.loa
+# amsthm
+*.thm
+# beamer
+*.nav
+*.snm
+*.vrb
+# hyperref
+*.brf
+# makeidx
+*.idx
+*.ilg
+*.ind
+*.ist
+# minitoc
+*.maf
+*.mtc
+*.mtc0
+*.pyg
+*.tdo
+*.vtk
+*.vtu
+*.pvsm
+*.npz
+*.pvd
 *.aux
 *.lof
 *.log
@@ -18,7 +55,6 @@ dist
 *.fls
 *.out
 *.toc
-
 *.dvi
 *.bbl
 *.bcf
@@ -26,55 +62,6 @@ dist
 *-blx.aux
 *-blx.bib
 *.run.xml
-build/
-
-## Build tool auxiliary files:
-*.fdb_latexmk
-*.synctex.gz
-*.synctex.gz(busy)
-*.pdfsync
-
-*.alg
-*.loa
-
-# amsthm
-*.thm
-
-# beamer
-*.nav
-*.snm
-*.vrb
-
-
-# hyperref
-*.brf
-
-
-# makeidx
-*.idx
-*.ilg
-*.ind
-*.ist
-
-# minitoc
-*.maf
-*.mtc
-*.mtc0
-
-*.pyg
-
-
-# sagetex
-*.sagetex.sage
-*.sagetex.py
-*.sagetex.scmd
-
-
-*.tdo
-*.vtk
-*.vtu
-*.pvsm
-*.npz
-*.pvd
 build/ 
-.DS_Store
+examples/arrestedClusters
+examples/crystallization

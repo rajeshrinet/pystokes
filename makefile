@@ -5,9 +5,6 @@ recursive=True
 make:
 	@echo Installing pyross...
 	${PYTHON} setup.py install
-	@echo adding githook...
-	cp .githooks/pre-push .git/hooks/
-	chmod +x .git/hooks/pre-push
 
 clean-local:
 	@echo removing local compiled files

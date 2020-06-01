@@ -67,7 +67,7 @@ setup(
     packages=['pystokes'],
     install_requires=['cython','numpy','scipy'],
     extras_require={
-            'plotting': ['matplotlib']
+            'plotting': ['matplotlib'],
             'notebook': ['jupyter', 'nbconvert']
             },
     package_data={'pystokes': ['*.pxd']}

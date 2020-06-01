@@ -26,12 +26,12 @@ Clone (or download) the repository and use a terminal to install using
 >> python setup.py install
 ```
 
-Alternatively, use [anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html) to install PyRoss and its dependencies in a pyross [environment](https://github.com/rajeshrinet/pyross/blob/master/environment.yml)
+Alternatively, use [anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html) to install PyStokes and its dependencies in a pystokes [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml)
 ```bash
->> git clone https://github.com/rajeshrinet/pyross.git
->> cd pyross
+>> git clone https://github.com/rajeshrinet/pystokes.git
+>> cd pystokes
 >> make env
->> conda activate pyross
+>> conda activate pystokes
 >> make
 ```
 

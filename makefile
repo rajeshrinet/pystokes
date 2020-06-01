@@ -23,7 +23,7 @@ env:
 
 test:
 	@echo testing pystokes...
-	cd tests && python testUnbounded.py
+	cd tests && python installTests.py
 
 nbtest:
 	@echo testing example notebooks...

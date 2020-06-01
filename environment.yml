@@ -1,4 +1,4 @@
-name: PyStokes
+name: pystokes
 channels:
   - conda-forge
 dependencies:

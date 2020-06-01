@@ -3,26 +3,26 @@ path=examples
 recursive=True
 
 make:
-	@echo Installing pyross...
+	@echo Installing pystokes...
 	${PYTHON} setup.py install
 
 clean-local:
 	@echo removing local compiled files
-	rm pyross/*.c pyross/*.html pyross/*.cpp
+	rm pystokes/*.c pystokes/*.html pystokes/*.cpp
 
 clean:
 	@echo removing all compiled files
 	${PYTHON} setup.py clean
-	rm pyross/*.c pyross/*.html pyross/*.cpp
+	rm pystokes/*.c pystokes/*.html
 	
 env:
 	@echo creating conda environment...
 	conda env create --file environment.yml
-	# conda activate pyross
-	@echo use make to install pyross
+	# conda activate pystokes
+	@echo use make to install pystokes
 
 test:
-	@echo testing pyross...
+	@echo testing pystokes...
 	cd tests && python quick_test.py
 
 nbtest:

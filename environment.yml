@@ -7,3 +7,6 @@ dependencies:
   - matplotlib
   - cython
   - scipy 
+  - jupyter
+  - ipython
+  - nbconvert

@@ -1,5 +1,5 @@
 ## PyStokes: Stokesian hydrodynamics in Python  
-[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder) 
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples) 
 ![Installation](https://github.com/rajeshrinet/pystokes/workflows/Installation/badge.svg)
 ![License](https://img.shields.io/github/license/rajeshrinet/pystokes) 
 ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/Notebooks/badge.svg)

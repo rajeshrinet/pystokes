@@ -31,7 +31,11 @@ PyStokes requires the following software
 - Python 2.6+ or Python 3.4+
 - [Cython 0.25.x+](http://docs.cython.org/en/latest/index.html) |  [Matplotlib 2.0.x+](https://matplotlib.org) | [NumPy 1.x+](http://www.numpy.org) |  [OdesPy](https://github.com/rajeshrinet/odespy) (optional) | [SciPy 1.1.x+](https://www.scipy.org/) 
 
-
+### Pip
+Alternatively, install the latest pip version using
+```
+pip install pystokes
+```
 ## Examples
 
 

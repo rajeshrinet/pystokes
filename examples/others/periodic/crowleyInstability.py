@@ -1,7 +1,5 @@
 # Crowley instability
-from __future__ import division
-import pystokes
-import pyforces
+import pystokes 
 import matplotlib.pyplot as plt 
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
@@ -17,7 +15,7 @@ F = np.zeros(dim*Np)                # Forces on the particles
 Nb, Nm = 1, 4
 
 rm = pystokes.periodic.Rbm(a, Np, 1.0/6, L)   # instantiate the classes
-ff = pyforces.forceFields.Forces(Np)
+ff = pystokes.forceFields.Forces(Np)
 
 def initialise(r, Np1d, shape):
     ''' this is the module to initialise the particles on the lattice'''
@@ -56,18 +54,18 @@ fig = plt.figure()
 for tt in range(32):
     ff.sedimentation(F, g=-10)       # call the Sedimentation module of ForceFields 
     v=v*0                            # setting v=0 in each time step
-    rm.stokesletV(v, r, F, Nb, Nm)   # and StokesletV module of pystokes
+    rm.mobilityTT(v, r, F, Nb, Nm)   # and StokesletV module of pystokes
     r = (r + v*dt)%L
     x = r[0:Np]
     y = r[Np:2*Np]
     z = r[2*Np:3*Np]
     cc = x*x + y*y + z*z 
     ax3D = fig.add_subplot(111, projection='3d')
-    scatCollection = ax3D.scatter(x, y, z, s=30,  c=cc, cmap=plt.cm.spectral )
+    scatCollection = ax3D.scatter(x, y, z, s=30,  c=cc, cmap=plt.cm.RdBu )
     ax3D.set_xlim([0, L])
     ax3D.set_ylim([0, L])
     ax3D.set_zlim([0, L])
     #plt.savefig('Time= %04d.png'%(tt))   # if u want to save the plots instead
-    print tt
+    print (tt)
     plt.pause(0.0000001)
 plt.show()

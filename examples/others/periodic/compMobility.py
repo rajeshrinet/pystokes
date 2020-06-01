@@ -2,7 +2,6 @@
 import matplotlib.pyplot as plt 
 import numpy as np
 import pystokes, os, sys
-import pyforces
 
 #Parameters
 a, eta, dim = 1.0, 1.0/6, 3
@@ -25,7 +24,7 @@ for i in range(np.size(L)):
 
     r[0], r[1], r[2] = 0.0, 0.0, 0.0
 
-    ff = pyforces.forceFields.Forces(Np)
+    ff = pystokes.forceFields.Forces(Np)
     ff.sedimentation(F, g=-1)                          
     
     pRbm = pystokes.periodic.Rbm(a, Np, eta, L[i])   

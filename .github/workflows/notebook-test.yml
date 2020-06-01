@@ -14,13 +14,13 @@ jobs:
       - name: Setup Miniconda
         uses: goanpeca/setup-miniconda@v1.2.0
         with:
-         activate-environment: pyross
+         activate-environment: pystokes
          environment-file: environment.yml
          # auto-activate-base: true
-      - name: make-pyross
+      - name: make-pystokes
         shell: bash -l {0}
         run: |
-          conda activate pyross
+          conda activate pystokes
           make
           # make nbtest
       - name: testing-forecast

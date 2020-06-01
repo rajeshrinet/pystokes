@@ -40,7 +40,11 @@ PyStokes requires the following software
 - Python 2.6+ or Python 3.4+
 - [Cython 0.25.x+](http://docs.cython.org/en/latest/index.html) |  [Matplotlib 2.0.x+](https://matplotlib.org) | [NumPy 1.x+](http://www.numpy.org) |  [OdesPy](https://github.com/rajeshrinet/odespy) (optional) | [SciPy 1.1.x+](https://www.scipy.org/) 
 
-
+### Pip
+Alternatively, install the latest pip version using
+```
+pip install pystokes
+```
 ## Examples
 
 
@@ -69,7 +73,7 @@ pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='
 
 ```Python
 #Example 2: Phoretic field due to active surface flux of l=0 mode
-import pylaplace, numpy as np, matplotlib.pyplot as plt
+import pystokes, numpy as np, matplotlib.pyplot as plt
 # particle radius, fluid viscosity, and number of particles
 b, eta, Np = 1.0, 1.0/6.0, 1
 
@@ -81,13 +85,14 @@ J0 = np.ones(Np)  # strength of chemical monopolar flux
 dim, L, Ng = 3, 10, 64;
 
 # instantiate the Flow class
-phoreticField = pylaplace.unbounded.Field(radius=b, particles=Np, phoreticConstant=eta, gridpoints=Ng*Ng)
+phoreticField = pystokes.phoreticUnbounded.Field(radius=b, particles=Np, phoreticConstant=eta, gridpoints=Ng*Ng)
 
 # create grid, evaluate phoretic field and plot
 rr, vv = pystokes.utils.gridYZ(dim, L, Ng)
 phoreticField.phoreticField0(vv, rr, r, J0)  
 pystokes.utils.plotContoursYZ(vv, rr, r, density=.8, offset=1e-16,  title='l=0') 
 ```
+
 Other examples include
 * [Irreducible Active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex1-unboundedFlow.ipynb)
 * [Effect of plane boundaries on active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex2-flowPlaneSurface.ipynb)

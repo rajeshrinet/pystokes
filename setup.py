@@ -1,8 +1,9 @@
+import numpy, os, sys, os.path, tempfile, subprocess, shutil
+import os, sys
 from Cython.Build import cythonize
 from setuptools import setup, Extension
 import Cython.Compiler.Options
 Cython.Compiler.Options.annotate=True
-import numpy, os, sys, os.path, tempfile, subprocess, shutil
 
 
 def checkOpenmpSupport():
@@ -46,7 +47,7 @@ else:
 #installation of PyStokes
 setup(
     name='pystokes',
-    version='2.1.0',
+    version='2.1.1',
     url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',

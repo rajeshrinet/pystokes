@@ -18,7 +18,12 @@ def run_notebook_tests(path, recursive=False):
     basepath = os.path.dirname(__file__)
     nbpath = os.path.abspath(os.path.join(basepath, "..", path))
     # Ignore books with deliberate errors, but check they still exist
-    ignore_list = []
+    cwd =os.getcwd()
+    ignore_list = [os.path.join(cwd, 'ex3-crystalNucleation.ipynb'),
+                   os.path.join(cwd, 'ex4-crystallization.ipynb'),
+                   os.path.join(cwd, 'ex6-arrestedCluster.ipynb'),
+                   os.path.join(cwd, 'ex7-benchmark.ipynb'),
+                    ]
 
     for ignored_book in ignore_list:
         if not os.path.isfile(ignored_book):

@@ -4,7 +4,7 @@ recursive=True
 
 make:
 	@echo Installing pystokes...
-	${PYTHON} setup.py install
+	${PYTHON} setup.py install build_ext --inplace
 
 clean-local:
 	@echo removing local compiled files
@@ -13,7 +13,7 @@ clean-local:
 clean:
 	@echo removing all compiled files
 	${PYTHON} setup.py clean
-	rm pystokes/*.c pystokes/*.html
+	rm pystokes/*.c pystokes/*.html pystokes/*so
 	
 env:
 	@echo creating conda environment...

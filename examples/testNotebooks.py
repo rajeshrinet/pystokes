@@ -1,13 +1,19 @@
 import datetime, os, re, subprocess, sys, argparse, time, unittest
 
 
+ignoreFlag=True   # change to False if not to ignore  
+
+
 def run_notebook_tests(path, recursive=False):
     """
     Runs Jupyter notebook tests. Exits if they fail.
     """
     basepath = os.path.dirname(__file__)
     nbpath = os.path.abspath(os.path.join(basepath, "..", path))
-    # Ignore books with deliberate errors, but check they still exist
+    '''
+    Ignore notebooks which take longer or have deliberate errors, 
+    but check they still exists
+    '''
     cwd =os.getcwd()
     ignore_list = [os.path.join(cwd, 'ex3-crystalNucleation.ipynb'),
                    os.path.join(cwd, 'ex4-crystallization.ipynb'),
@@ -38,7 +44,7 @@ def list_notebooks(root, recursive=False, ignore_list=None, notebooks=None):
     """
     if notebooks is None:
         notebooks = []
-    if ignore_list is None:
+    if ignore_list is None or ignoreFlag==False:
         ignore_list = []
     try:
         for filename in os.listdir(root):

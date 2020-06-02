@@ -1,5 +1,6 @@
 import numpy, os, sys, os.path, tempfile, subprocess, shutil
 import os, sys
+#from setuptools import setup, Extension
 from distutils.core import setup
 from Cython.Build import cythonize
 from distutils.extension import Extension
@@ -65,13 +66,11 @@ setup(
         compiler_directives={"language_level": sys.version_info[0]},
         ),
     libraries=[],
-    zip_safe = True,
     packages=['pystokes'],
-    install_requires=['cython','numpy','scipy'],
-    extras_require={
-            'plotting': ['matplotlib'],
-            'notebook': ['jupyter', 'nbconvert']
-            },
+    #install_requires=['cython','numpy','scipy'],
+    #extras_require={
+    #        'plotting': ['matplotlib'],
+    #        'notebook': ['jupyter', 'nbconvert']},
     package_data={'pystokes': ['*.pxd']}
 )
 

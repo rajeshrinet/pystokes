@@ -1,14 +1,4 @@
-import datetime
-import os
-import re
-import subprocess
-import sys
-import unittest
-import argparse
-import time
-# for i in sys.path:
-#     if 'pystokes' in i or i == '':
-#         sys.path.remove(i)
+import datetime, os, re, subprocess, sys, argparse, time, unittest
 
 
 def run_notebook_tests(path, recursive=False):

@@ -5,12 +5,12 @@ Stokesian hydrodynamic in an infinite space
 
 Rbm
 ----------------------------------------
-.. autoclass:: pyross.unbounded.Rbm
+.. autoclass:: pystokes.unbounded.Rbm
     :members:
 
 
 Flow
 --------------------------
-.. autoclass:: pyross.unbounded.Flow
+.. autoclass:: pystokes.unbounded.Flow
     :members:
 

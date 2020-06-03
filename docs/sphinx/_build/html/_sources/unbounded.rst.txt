@@ -1,16 +1,16 @@
-Parallel plane no-slip walls 
+Unbounded domain
 ==================================
 
-Stokesian hydrodynamic in a Hele-Shaw cell 
+Stokesian hydrodynamic in an infinite space 
 
 Rbm
 ----------------------------------------
-.. autoclass:: pyross.twoWall.Rbm
+.. autoclass:: pystokes.unbounded.Rbm
     :members:
 
 
 Flow
 --------------------------
-.. autoclass:: pyross.twoWall.Flow
+.. autoclass:: pystokes.unbounded.Flow
     :members:
 

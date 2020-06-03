@@ -6,7 +6,7 @@
 ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/Notebooks/badge.svg)
 ![stars](https://img.shields.io/github/stars/rajeshrinet/pystokes)
 
-[About](#about) | [News](#news) | [Installation](#installation) | [Examples](#examples) | [Publications ](#publications)| [Support](#support) | [License](#license)
+[About](#about) | [News](#news) | [Installation](#installation) |  [Documentation](https://pystokes.readthedocs.io/en/latest/) | [Examples](#examples) | [Publications ](#publications)| [Support](#support) | [License](#license)
 
 ![Imagel](examples/banner.png)
 

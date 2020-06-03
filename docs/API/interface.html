@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Deterministic simulations" href="mima.html" />
+    <link rel="next" title="MIMA" href="mima.html" />
     <link rel="prev" title="PyStokes API" href="index.html" /> 
 </head>
 
@@ -86,12 +86,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#flow">Flow</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="mima.html">Deterministic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mima.html">MIMA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Periodic domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Parallel plane no-slip walls</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unbounded.html">Unbounded domain</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Plane no-slip wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forceFields.html">Deterministic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forceFields.html">ForceFields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: unbounded</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: wallBounded</a></li>
 </ul>
@@ -163,9 +164,46 @@
 <p>Stokesian hydrodynamic in the half-space bounded by a plane no-shear surface</p>
 <div class="section" id="rbm">
 <h2>Rbm<a class="headerlink" href="#rbm" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pystokes.interface.Rbm">
+<em class="property">class </em><code class="sig-prename descclassname">pystokes.interface.</code><code class="sig-name descname">Rbm</code><a class="headerlink" href="#pystokes.interface.Rbm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rigid body motion (RBM)</p>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius</strong> (<em>float</em>) – Radius of the particles.</p></li>
+<li><p><strong>particles</strong> (<em>int</em>) – Number of particles</p></li>
+<li><p><strong>viscosity</strong> (<em>viscosity of the fluid</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>An example of the RBM</p>
+</dd></dl>
+
 </div>
 <div class="section" id="flow">
 <h2>Flow<a class="headerlink" href="#flow" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pystokes.interface.Flow">
+<em class="property">class </em><code class="sig-prename descclassname">pystokes.interface.</code><code class="sig-name descname">Flow</code><a class="headerlink" href="#pystokes.interface.Flow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flow at given points</p>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius</strong> (<em>float</em>) – Radius of the particles.</p></li>
+<li><p><strong>particles</strong> (<em>int</em>) – Number of particles</p></li>
+<li><p><strong>viscosity</strong> (<em>viscosity of the fluid</em>) – </p></li>
+<li><p><strong>gridpoints</strong> (<em>int</em>) – Number of grid points</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>An example of the RBM</p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -177,7 +215,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="mima.html" class="btn btn-neutral float-right" title="Deterministic simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="mima.html" class="btn btn-neutral float-right" title="MIMA" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="PyStokes API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

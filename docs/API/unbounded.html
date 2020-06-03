@@ -36,7 +36,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Utils" href="utils.html" />
-    <link rel="prev" title="Periodic domain" href="periodic.html" /> 
+    <link rel="prev" title="Parallel plane no-slip walls" href="twoWalls.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,8 +82,9 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="interface.html">Plane no-shear wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mima.html">Deterministic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mima.html">MIMA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Periodic domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Parallel plane no-slip walls</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Unbounded domain</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#rbm">Rbm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#flow">Flow</a></li>
@@ -91,7 +92,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Plane no-slip wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forceFields.html">Deterministic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forceFields.html">ForceFields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: unbounded</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: wallBounded</a></li>
 </ul>
@@ -163,9 +164,46 @@
 <p>Stokesian hydrodynamic in an infinite space</p>
 <div class="section" id="rbm">
 <h2>Rbm<a class="headerlink" href="#rbm" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pystokes.unbounded.Rbm">
+<em class="property">class </em><code class="sig-prename descclassname">pystokes.unbounded.</code><code class="sig-name descname">Rbm</code><a class="headerlink" href="#pystokes.unbounded.Rbm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rigid body motion (RBM)</p>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius</strong> (<em>float</em>) – Radius of the particles.</p></li>
+<li><p><strong>particles</strong> (<em>int</em>) – Number of particles</p></li>
+<li><p><strong>viscosity</strong> (<em>viscosity of the fluid</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>An example of the RBM</p>
+</dd></dl>
+
 </div>
 <div class="section" id="flow">
 <h2>Flow<a class="headerlink" href="#flow" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pystokes.unbounded.Flow">
+<em class="property">class </em><code class="sig-prename descclassname">pystokes.unbounded.</code><code class="sig-name descname">Flow</code><a class="headerlink" href="#pystokes.unbounded.Flow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flow at given points</p>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius</strong> (<em>float</em>) – Radius of the particles.</p></li>
+<li><p><strong>particles</strong> (<em>int</em>) – Number of particles</p></li>
+<li><p><strong>viscosity</strong> (<em>viscosity of the fluid</em>) – </p></li>
+<li><p><strong>gridpoints</strong> (<em>int</em>) – Number of grid points</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>An example of the RBM</p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -180,7 +218,7 @@
         <a href="utils.html" class="btn btn-neutral float-right" title="Utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="periodic.html" class="btn btn-neutral float-left" title="Periodic domain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="twoWalls.html" class="btn btn-neutral float-left" title="Parallel plane no-slip walls" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

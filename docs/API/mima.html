@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Deterministic simulations &mdash; PyStokes 2.1.1 documentation</title>
+  <title>MIMA &mdash; PyStokes 2.1.1 documentation</title>
   
 
   
@@ -82,16 +82,17 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="interface.html">Plane no-shear wall</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Deterministic simulations</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MIMA</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#mima3d">Mima3D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mima2d">Mima2D</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Periodic domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Parallel plane no-slip walls</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unbounded.html">Unbounded domain</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Plane no-slip wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forceFields.html">Deterministic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forceFields.html">ForceFields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: unbounded</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: wallBounded</a></li>
 </ul>
@@ -139,7 +140,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Deterministic simulations</li>
+      <li>MIMA</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -158,14 +159,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="deterministic-simulations">
-<h1>Deterministic simulations<a class="headerlink" href="#deterministic-simulations" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mima">
+<h1>MIMA<a class="headerlink" href="#mima" title="Permalink to this headline">¶</a></h1>
 <p>Mollified irreducible multipole approach (MIMA) to Stokesian hydrodynamics</p>
 <div class="section" id="mima3d">
 <h2>Mima3D<a class="headerlink" href="#mima3d" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pystokes.mima.Mima3D">
+<em class="property">class </em><code class="sig-prename descclassname">pystokes.mima.</code><code class="sig-name descname">Mima3D</code><a class="headerlink" href="#pystokes.mima.Mima3D" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pystokes.mima.Mima3D.solve">
+<code class="sig-name descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>solve takes two numpy arrays v and fk.  Here, fk is
+the Fourier transform of the force field on the grid and v is an empty
+arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="mima2d">
 <h2>Mima2D<a class="headerlink" href="#mima2d" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pystokes.mima.Mima2D">
+<em class="property">class </em><code class="sig-prename descclassname">pystokes.mima.</code><code class="sig-name descname">Mima2D</code><a class="headerlink" href="#pystokes.mima.Mima2D" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pystokes.mima.Mima2D.solve">
+<code class="sig-name descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima2D.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>solve takes two numpy arrays v and fk. Here, fk is
+the Fourier transform of the force field on the grid and v is an empty
+arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

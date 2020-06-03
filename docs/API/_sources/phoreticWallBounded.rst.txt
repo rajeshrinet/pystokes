@@ -5,12 +5,12 @@ Phoretic mootion in an infinite space
 
 Phoresis
 ----------------------------------------
-.. autoclass:: pyross.phoreticWallBounded.Phoreis
+.. autoclass:: pystokes.phoreticWallBounded.Phoresis
     :members:
 
 
 Field
 --------------------------
-.. autoclass:: pyross.phoreticWallBounded.Field
+.. autoclass:: pystokes.phoreticWallBounded.Field
     :members:
 

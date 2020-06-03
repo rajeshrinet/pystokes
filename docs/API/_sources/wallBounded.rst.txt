@@ -5,12 +5,12 @@ Stokesian hydrodynamic in the half-space bounded by a plane no-slip wall
 
 Rbm
 ----------------------------------------
-.. autoclass:: pyross.wallBounded.Rbm
+.. autoclass:: pystokes.wallBounded.Rbm
     :members:
 
 
 Flow
 --------------------------
-.. autoclass:: pyross.wallBounded.Flow
+.. autoclass:: pystokes.wallBounded.Flow
     :members:
 

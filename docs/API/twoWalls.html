@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Plane no-slip wall &mdash; PyStokes 2.1.1 documentation</title>
+  <title>Parallel plane no-slip walls &mdash; PyStokes 2.1.1 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ForceFields" href="forceFields.html" />
-    <link rel="prev" title="Utils" href="utils.html" /> 
+    <link rel="next" title="Unbounded domain" href="unbounded.html" />
+    <link rel="prev" title="Periodic domain" href="periodic.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,14 +84,14 @@
 <li class="toctree-l1"><a class="reference internal" href="interface.html">Plane no-shear wall</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mima.html">MIMA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Periodic domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Parallel plane no-slip walls</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unbounded.html">Unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Plane no-slip wall</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Parallel plane no-slip walls</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#rbm">Rbm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#flow">Flow</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="unbounded.html">Unbounded domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Plane no-slip wall</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forceFields.html">ForceFields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: unbounded</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: wallBounded</a></li>
@@ -140,13 +140,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Plane no-slip wall</li>
+      <li>Parallel plane no-slip walls</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/wallBounded.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/twoWalls.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -159,14 +159,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="plane-no-slip-wall">
-<h1>Plane no-slip wall<a class="headerlink" href="#plane-no-slip-wall" title="Permalink to this headline">¶</a></h1>
-<p>Stokesian hydrodynamic in the half-space bounded by a plane no-slip wall</p>
+  <div class="section" id="parallel-plane-no-slip-walls">
+<h1>Parallel plane no-slip walls<a class="headerlink" href="#parallel-plane-no-slip-walls" title="Permalink to this headline">¶</a></h1>
+<p>Stokesian hydrodynamic in a Hele-Shaw cell</p>
 <div class="section" id="rbm">
 <h2>Rbm<a class="headerlink" href="#rbm" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="pystokes.wallBounded.Rbm">
-<em class="property">class </em><code class="sig-prename descclassname">pystokes.wallBounded.</code><code class="sig-name descname">Rbm</code><a class="headerlink" href="#pystokes.wallBounded.Rbm" title="Permalink to this definition">¶</a></dt>
+<dt id="pystokes.twoWalls.Rbm">
+<em class="property">class </em><code class="sig-prename descclassname">pystokes.twoWalls.</code><code class="sig-name descname">Rbm</code><a class="headerlink" href="#pystokes.twoWalls.Rbm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rigid body motion (RBM)</p>
 <p>…</p>
 <dl class="field-list simple">
@@ -179,15 +179,15 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<p>An example of the RBM</p>
+<p>An example of the Rbm</p>
 </dd></dl>
 
 </div>
 <div class="section" id="flow">
 <h2>Flow<a class="headerlink" href="#flow" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="pystokes.wallBounded.Flow">
-<em class="property">class </em><code class="sig-prename descclassname">pystokes.wallBounded.</code><code class="sig-name descname">Flow</code><a class="headerlink" href="#pystokes.wallBounded.Flow" title="Permalink to this definition">¶</a></dt>
+<dt id="pystokes.twoWalls.Flow">
+<em class="property">class </em><code class="sig-prename descclassname">pystokes.twoWalls.</code><code class="sig-name descname">Flow</code><a class="headerlink" href="#pystokes.twoWalls.Flow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flow at given points</p>
 <p>…</p>
 <dl class="field-list simple">
@@ -215,10 +215,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="forceFields.html" class="btn btn-neutral float-right" title="ForceFields" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="unbounded.html" class="btn btn-neutral float-right" title="Unbounded domain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="utils.html" class="btn btn-neutral float-left" title="Utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="periodic.html" class="btn btn-neutral float-left" title="Periodic domain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

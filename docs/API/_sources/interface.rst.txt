@@ -5,12 +5,12 @@ Stokesian hydrodynamic in the half-space bounded by a plane no-shear surface
 
 Rbm
 ----------------------------------------
-.. autoclass:: pyross.interface.Rbm
+.. autoclass:: pystokes.interface.Rbm
     :members:
 
 
 Flow
 --------------------------
-.. autoclass:: pyross.interface.Flow
+.. autoclass:: pystokes.interface.Flow
     :members:
 

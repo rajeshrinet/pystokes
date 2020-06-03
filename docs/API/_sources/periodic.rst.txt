@@ -5,12 +5,12 @@ Stokesian hydrodynamic in a three-dimensional periodic domain
 
 Rbm
 ----------------------------------------
-.. autoclass:: pyross.periodic.Rbm
+.. autoclass:: pystokes.periodic.Rbm
     :members:
 
 
 Flow
 --------------------------
-.. autoclass:: pyross.periodic.Flow
+.. autoclass:: pystokes.periodic.Flow
     :members:
 

@@ -10,6 +10,23 @@ cimport numpy as np
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Rbm:
+    """
+    Rigid body motion (RBM)
+    
+    ...
+
+    Parameters
+    ----------
+    radius: float
+        Radius of the particles.    
+    particles: int
+        Number of particles 
+    viscosity: viscosity of the fluid 
+    Examples
+    --------
+    An example of the RBM
+
+    """
     def __init__(self, radius=1, particles=1, viscosity=1.0):
         self.a   = radius
         self.Np  = particles
@@ -731,21 +748,31 @@ cdef class Rbm:
 
 
 
-
-##########################
-##########################
-##########################
-##########################
-##########################
-#########################
-##########################
-##########################
-## Flow at given points
 @cython.boundscheck(False)
 @cython.cdivision(True)
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Flow:
+    """
+    Flow at given points
+    
+    ...
+
+    Parameters
+    ----------
+    radius: float
+        Radius of the particles.    
+    particles: int
+        Number of particles 
+    viscosity: viscosity of the fluid 
+    gridpoints: int 
+        Number of grid points
+
+    Examples
+    --------
+    An example of the RBM
+
+    """
 
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
         self.a  = radius

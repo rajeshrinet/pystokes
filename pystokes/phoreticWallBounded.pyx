@@ -10,6 +10,24 @@ cimport numpy as np
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Phoresis:
+    """
+    Phoresis 
+    
+    ...
+
+    Parameters
+    ----------
+    radius: float
+        Radius of the particles.    
+    particles: int
+        Number of particles 
+    phoreticConstant: float 
+        PhoreticConstant 
+    Examples
+    --------
+    An example of Phoresis
+
+    """
     def __init__(self, radius=1, particles=1, phoreticConstant=1.0):
         self.a  = radius
         self.Np = particles
@@ -130,6 +148,23 @@ cdef class Phoresis:
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Field:
+    """
+    Phoretic field at given points
+    
+    ...
+
+    Parameters
+    ----------
+    radius: float
+        Radius of the particles.    
+    particles: int
+        Number of particles 
+    phoreticConstant: float
+        PhoreticConstant of the fluid 
+    gridpoints: int 
+        Number of grid points
+    """
+
     def __init__(self, radius=1, particles=1, phoreticConstant=1, gridpoints=32):
         self.a  = radius
         self.Np = particles

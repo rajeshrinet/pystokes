@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PyStokes API &mdash; PyStokes 2.1.1 documentation</title>
+  <title>Deterministic simulations &mdash; PyStokes 2.1.1 documentation</title>
   
 
   
@@ -35,7 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Plane no-shear wall" href="interface.html" /> 
+    <link rel="next" title="Periodic domain" href="periodic.html" />
+    <link rel="prev" title="Plane no-shear wall" href="interface.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +50,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> PyStokes
+            <a href="index.html" class="icon icon-home"> PyStokes
           
 
           
@@ -79,9 +80,13 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="interface.html">Plane no-shear wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mima.html">Deterministic simulations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Deterministic simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mima3d">Mima3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mima2d">Mima2D</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Periodic domain</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unbounded.html">Unbounded domain</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
@@ -103,7 +108,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">PyStokes</a>
+          <a href="index.html">PyStokes</a>
         
       </nav>
 
@@ -132,15 +137,15 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>PyStokes API</li>
+      <li>Deterministic simulations</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/mima.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -153,25 +158,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pystokes-api">
-<h1>PyStokes API<a class="headerlink" href="#pystokes-api" title="Permalink to this headline">¶</a></h1>
-<p>PyStokes is a numerical library for Stokesian hydrodynamics. It uses a grid-free method, combining the integral representation of Stokes equation, spectral expansion, and Galerkin discretization, to compute hydrodynamic interactions between spheres with slip boundary conditions on their surfaces. The library also computes suspension scale quantities, such as rheological response, energy dissipation and fluid flow. The computational cost is quadratic in the number of particles and upto 1e5 particles have been accommodated on multicore computers. The library has been used to model bacterial suspensions, active colloids and autophoretic particles.</p>
-<a class="reference internal image-reference" href="_images/banner.png"><img alt="PyRoss banner" src="_images/banner.png" style="width: 800px;" /></a>
+  <div class="section" id="deterministic-simulations">
+<h1>Deterministic simulations<a class="headerlink" href="#deterministic-simulations" title="Permalink to this headline">¶</a></h1>
+<p>Mollified irreducible multipole approach (MIMA) to Stokesian hydrodynamics</p>
+<div class="section" id="mima3d">
+<h2>Mima3D<a class="headerlink" href="#mima3d" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="api-reference">
-<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Plane no-shear wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mima.html">Deterministic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="periodic.html">Periodic domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unbounded.html">Unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Plane no-slip wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forceFields.html">Deterministic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: unbounded</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: wallBounded</a></li>
-</ul>
+<div class="section" id="mima2d">
+<h2>Mima2D<a class="headerlink" href="#mima2d" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -183,8 +177,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="interface.html" class="btn btn-neutral float-right" title="Plane no-shear wall" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="periodic.html" class="btn btn-neutral float-right" title="Periodic domain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="interface.html" class="btn btn-neutral float-left" title="Plane no-shear wall" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PyStokes API &mdash; PyStokes 2.1.1 documentation</title>
+  <title>Parallel plane no-slip walls &mdash; PyStokes 2.1.1 documentation</title>
   
 
   
@@ -34,8 +34,7 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Plane no-shear wall" href="interface.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +48,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> PyStokes
+            <a href="index.html" class="icon icon-home"> PyStokes
           
 
           
@@ -103,7 +102,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">PyStokes</a>
+          <a href="index.html">PyStokes</a>
         
       </nav>
 
@@ -132,15 +131,15 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>PyStokes API</li>
+      <li>Parallel plane no-slip walls</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/twoWall.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -153,25 +152,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pystokes-api">
-<h1>PyStokes API<a class="headerlink" href="#pystokes-api" title="Permalink to this headline">¶</a></h1>
-<p>PyStokes is a numerical library for Stokesian hydrodynamics. It uses a grid-free method, combining the integral representation of Stokes equation, spectral expansion, and Galerkin discretization, to compute hydrodynamic interactions between spheres with slip boundary conditions on their surfaces. The library also computes suspension scale quantities, such as rheological response, energy dissipation and fluid flow. The computational cost is quadratic in the number of particles and upto 1e5 particles have been accommodated on multicore computers. The library has been used to model bacterial suspensions, active colloids and autophoretic particles.</p>
-<a class="reference internal image-reference" href="_images/banner.png"><img alt="PyRoss banner" src="_images/banner.png" style="width: 800px;" /></a>
+  <div class="section" id="parallel-plane-no-slip-walls">
+<h1>Parallel plane no-slip walls<a class="headerlink" href="#parallel-plane-no-slip-walls" title="Permalink to this headline">¶</a></h1>
+<p>Stokesian hydrodynamic in a Hele-Shaw cell</p>
+<div class="section" id="rbm">
+<h2>Rbm<a class="headerlink" href="#rbm" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="api-reference">
-<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Plane no-shear wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mima.html">Deterministic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="periodic.html">Periodic domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unbounded.html">Unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Plane no-slip wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forceFields.html">Deterministic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: unbounded</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: wallBounded</a></li>
-</ul>
+<div class="section" id="flow">
+<h2>Flow<a class="headerlink" href="#flow" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -180,13 +168,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="interface.html" class="btn btn-neutral float-right" title="Plane no-shear wall" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-    </div>
   
 
   <hr/>

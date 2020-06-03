@@ -15,12 +15,10 @@ import sys
 
 # -- Project information -----------------------------------------------------
 
-project = 'PyRoss'
-copyright = '2020, Ronojoy Adhikari, Austen Bolitho, Tim Ekeh, Julian Kappler, Lukas Kikuchi, Irene Li, Patrick Pietzonka, Benjamin Remez, Paul Rohrbach, and Rajesh Singh'
-author = 'Ronojoy Adhikari, Austen Bolitho, Tim Ekeh, Julian Kappler, Lukas Kikuchi, Irene Li, Patrick Pietzonka, Benjamin Remez, Paul Rohrbach, and Rajesh Singh'
+project = 'PyStokes'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = '2.1.1'
 
 
 # -- General configuration ---------------------------------------------------

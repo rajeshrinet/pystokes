@@ -1,7 +1,7 @@
-Phoresis: wallBounded 
-==================================
+Phoresis: in the half-space bounded by a plane 
+===============================================
 
-Phoretic mootion in an infinite space 
+Phoretic motion in an infinite space 
 
 Phoresis
 ----------------------------------------

@@ -12,17 +12,22 @@ cimport numpy as np
 @cython.nonecheck(False)
 cdef class Rbm:
     """
-    Rigid body motion (RBM)
+    Rigid body motion (RBM): velocity and angular velocity
     
+    This methods in the class takes input arrays of positions, 
+    and velocity or angular velocity, along with forces or torques or slip
+    The array of velocity and angular velocities is then update by each method. 
     ...
 
-    Parameters
+
     ----------
     radius: float
-        Radius of the particles.    
+        Radius of the particles (a).    
     particles: int
-        Number of particles 
-    viscosity: viscosity of the fluid 
+        Number of particles (Np)
+    viscosity: float 
+        Viscosity of the fluid (eta)
+
     Examples
     --------
     An example of the RBM
@@ -38,6 +43,24 @@ cdef class Rbm:
         self.Mobility = np.zeros( (3*self.Np, 3*self.Np), dtype=np.float64)
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F):
+        """
+        Compute velocity due to body forces F using $mu^{TT}\cdot F$ 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        """
+
+
         cdef int Np  = self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr2, vx, vy, vz, vv1, vv2, aa = (2.0*self.a*self.a)/3.0 
         cdef double mu = 1.0/(6*PI*self.eta*self.a), mu1 = mu*self.a*0.75       

@@ -1,4 +1,4 @@
-Utils 
+Utils: Miscellaneous function
 ==================================
 
 :members:

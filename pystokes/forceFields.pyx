@@ -7,11 +7,51 @@ from cython.parallel import prange
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Forces:
+    """
+    Computes forces
+
+    Methods in the class take input: arrays of positions, forces 
+    and parameters for a potential. 
+    The array of forces is then update by each method. 
+
+    ...
+
+    Parameters
+    ----------
+    particles: int
+        Number of particles (Np)
+
+
+    """
     def __init__(self, particles=1):
         self.Np = particles
         pass
 
     cpdef lennardJones(self, double [:] F, double [:] r, double lje=0.01, double ljr=3):
+        """
+        The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)
+        
+            We choose \phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
+            ljr: minimum of the LJ potential and rr=ljr/r.
+
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        lje: float
+            Strength of the LJ 
+        ljr: float
+            Range of the LJ 
+
+
+        """
+
         cdef int Np = self.Np, i, j, xx = 2*Np
         cdef double dx, dy, dz, dr2, idr, rminbyr, fac, fx, fy, fz
 
@@ -37,10 +77,30 @@ cdef class Forces:
 
 
     cpdef lennardJonesWall(self, double [:] F, double [:] r, double lje=0.0100, double ljr=3, double wlje=0.01, double wljr=3.0):
-        '''
-        ljr: minimum of the LJ potential and rr=ljr/r.
-        We choose \phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
-        '''
+        """
+        The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)
+        
+            We choose \phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
+            ljr: minimum of the LJ potential and rr=ljr/r.
+
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        lje: float
+            Strength of the LJ 
+        ljr: float
+            Range of the LJ 
+
+
+        """
+
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh
 
@@ -74,10 +134,11 @@ cdef class Forces:
 
     cpdef softSpringWall(self, double [:] F, double [:] r, double pk=0.0100, double prmin=3,
     double wk=0.01, double wrmin=3.0, double wlje= 0.001, double wljr = 1.5):
-        '''
-        both lj and soft spring potential between wall and particles and spring between particles
+        """ 
         F = -k(r-rmin)
-        '''
+        """
+
+
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh, facss
 
@@ -144,10 +205,31 @@ cdef class Forces:
 
 
     cpdef lennardJonesXWall(self, double [:] F, double [:] r, double wlje=0.12, double wljr=3.0):
-        '''
-        ljr: minimum of the LJ potential and rr=ljr/r.
-        We choose \phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
-        '''
+        """
+        The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)
+        
+            We choose \phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
+            ljr: minimum of the LJ potential and rr=ljr/r.
+            This force is only in z-direction due to wall at x=0
+
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        lje: float
+            Strength of the LJ 
+        ljr: float
+            Range of the LJ 
+
+
+        """
+
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh
 
@@ -166,7 +248,7 @@ cdef class Forces:
 
     cpdef harmonicConfinement(self, double [:] F, double [:] r, double cn):
         '''
-        Forces on colloids in harmonic trap
+        Forces on colloids in a harmonic trap
         '''
         cdef int Np = self.Np, i
         for i in prange(3*Np, nogil=True):
@@ -175,9 +257,26 @@ cdef class Forces:
 
 
     cpdef opticalConfinement(self, double [:] F, double [:] r, double [:] r0, double [:] k):
-        '''
+        """
         Force on colloids in optical traps of varying stiffnesses
-        '''
+        
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        r0: np.array
+            An array of trap centers
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        k: float 
+            Stiffness of the trap
+        """
+
         cdef int Np = self.Np, i, i1, xx = 2*Np
         for i in prange(Np, nogil=True):
             F[i  ]  -= k[i]*(r[i]    - r0[i]  )
@@ -187,6 +286,22 @@ cdef class Forces:
 
 
     cpdef sedimentation(self, double [:] F, double g):
+        """
+        Force on colloids in sedimentation 
+        
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        g: float 
+            Gravity 
+        """
         cdef int Np = self.Np, i, xx = 2*Np
         for i in prange(Np, nogil=True):
 #            F[i   ] +=  0
@@ -196,6 +311,26 @@ cdef class Forces:
 
 
     cpdef membraneConfinement(self, double [:] F, double [:] r, double cn, double r0):
+        """
+        Force on colloids in membraneSurface 
+        
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        r0: np.array
+            An array of trap centers
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        cn: float 
+            Stiffness of the trap
+        """
+
         cdef int Np = self.Np, xx = 2*Np
         cdef int i
         cdef double r0byr
@@ -206,7 +341,27 @@ cdef class Forces:
             F[i+xx] -= cn*(1 - r0byr)*r[i+xx]
         return
 
+
     cpdef membraneBound(self, double [:] F, double [:] r, double cn, double r0):
+        """
+        Force on colloids in membraneSurface 
+        
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        r0: np.array
+            An array of trap centers
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        cn: float 
+            Stiffness of the trap
+        """
         cdef int Np = self.Np, xx = 2*Np
         cdef int i
         cdef double r0byr, dist
@@ -223,6 +378,25 @@ cdef class Forces:
 
 
     cpdef spring(self, double [:] F, double [:] r, double bondLength, double springModulus):
+        """
+        Force on colloids connected by a spring in a single polymer
+        
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+            An array of size 3*Np,
+        bondLength: float
+            The size of natural spring 
+        springModulus: float 
+            Stiffness of the trap
+        """
+
         cdef int Np = self.Np, xx = 2*Np
         cdef int Nf=1, Nm=Np
         cdef:
@@ -250,6 +424,24 @@ cdef class Forces:
 
 
     cpdef multipolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus):
+        """
+        Force on colloids in many polymers connected by a spring 
+        
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+            An array of size 3*Np,
+        bondLength: float
+            The size of natural spring 
+        springModulus: float 
+            Stiffness of the trap
+        """
         cdef int Np = self.Np, xx = 2*Np
         cdef:
             int i, ii, ip, jp, kp
@@ -316,6 +508,24 @@ cdef class Forces:
         return
 
     cpdef multiRingpolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus):
+        """
+        Force on colloids connected by a spring in a ring polymer
+        
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+            An array of size 3*Np,
+        bondLength: float
+            The size of natural spring 
+        springModulus: float 
+            Stiffness of the trap
+        """
         cdef int Np = self.Np, xx = 2*Np
         cdef:
              int i, ii, ip, jp, kp
@@ -383,6 +593,28 @@ cdef class Forces:
 
 
     cpdef membraneSurface(self, int Nmx, int Nmy, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus):
+        """
+        Force on colloids connected as a membrane 
+        
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        bondLength: float
+            The size of natural spring 
+        springModulus: float 
+            Stiffness of the trap
+        bendModulus: float 
+            Bending cost
+        """
+
+
         cdef int Np = self.Np, xx = 2*Np
         cdef:
             int i1, i2, ip, jp, kp

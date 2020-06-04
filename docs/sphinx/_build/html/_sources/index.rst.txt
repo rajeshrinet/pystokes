@@ -19,13 +19,13 @@ API Reference
    :maxdepth: 1
 
    
-   interface
-   mima
-   periodic
-   twoWalls
    unbounded
-   utils
+   interface
    wallBounded
-   forceFields
+   twoWalls
+   periodic
+   mima
    phoreticUnbounded
    phoreticWallBounded
+   forceFields
+   utils

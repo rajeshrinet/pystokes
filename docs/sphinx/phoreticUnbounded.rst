@@ -1,7 +1,7 @@
-Phoresis: unbounded  
+Phoresis: in the unbounded domain
 ==================================
 
-Phoretic mootion in an infinite space 
+Phoretic motion in an infinite space 
 
 Phoresis
 ----------------------------------------

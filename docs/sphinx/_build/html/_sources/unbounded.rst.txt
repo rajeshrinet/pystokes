@@ -1,9 +1,9 @@
-Unbounded domain
+Stokes flow in an unbounded domain
 ==================================
 
-Stokesian hydrodynamic in an infinite space 
+Hydrodynamic interactions of active particles in an unbounded domain. 
 
-Rbm
+RBM (Rigid Body Motion: Velocity and Angular Velocity)
 ----------------------------------------
 .. autoclass:: pystokes.unbounded.Rbm
     :members:

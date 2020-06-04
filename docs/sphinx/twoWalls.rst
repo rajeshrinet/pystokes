@@ -1,10 +1,10 @@
-Parallel plane no-slip walls 
-==================================
+Stokes flow in parallel plane no-slip walls 
+===========================================
 
 Stokesian hydrodynamic in a Hele-Shaw cell 
 
-Rbm
-----------------------------------------
+RBM (Rigid Body Motion: Velocity and Angular Velocity)
+------------------------------------------------------
 .. autoclass:: pystokes.twoWalls.Rbm
     :members:
 

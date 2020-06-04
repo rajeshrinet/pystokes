@@ -1,10 +1,10 @@
-Periodic domain 
-==================================
+Stokes flow in a periodic domain 
+================================
 
-Stokesian hydrodynamic in a three-dimensional periodic domain 
+Hydrodynamic interactions of active particles in a periodic 3D space 
 
-Rbm
-----------------------------------------
+RBM (Rigid Body Motion: Velocity and Angular Velocity)
+------------------------------------------------------
 .. autoclass:: pystokes.periodic.Rbm
     :members:
 

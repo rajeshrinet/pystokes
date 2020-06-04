@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Unbounded domain &mdash; PyStokes 2.1.1 documentation</title>
+  <title>Stokes flow in an unbounded domain &mdash; PyStokes 2.1.1 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Utils" href="utils.html" />
-    <link rel="prev" title="Periodic domain" href="periodic.html" /> 
+    <link rel="next" title="Stokes flow in a space bounded by a no-shear plane" href="interface.html" />
+    <link rel="prev" title="PyStokes API" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -81,19 +81,20 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Plane no-shear wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mima.html">MIMA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="periodic.html">Periodic domain</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Unbounded domain</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#rbm">Rbm</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Stokes flow in an unbounded domain</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#rbm-rigid-body-motion-velocity-and-angular-velocity">RBM (Rigid Body Motion: Velocity and Angular Velocity)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#flow">Flow</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Plane no-slip wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forceFields.html">ForceFields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: unbounded</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: wallBounded</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Stokes flow in a space bounded by a no-shear plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Stokes flow in a space bounded by a no-slip plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Stokes flow in parallel plane no-slip walls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="periodic.html">Stokes flow in a periodic domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mima.html">MIMA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: in the unbounded domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: in the half-space bounded by a plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forceFields.html">Force fields in colloidal systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils: Miscellaneous function</a></li>
 </ul>
 
             
@@ -139,7 +140,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Unbounded domain</li>
+      <li>Stokes flow in an unbounded domain</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -158,27 +159,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="unbounded-domain">
-<h1>Unbounded domain<a class="headerlink" href="#unbounded-domain" title="Permalink to this headline">¶</a></h1>
-<p>Stokesian hydrodynamic in an infinite space</p>
-<div class="section" id="rbm">
-<h2>Rbm<a class="headerlink" href="#rbm" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="stokes-flow-in-an-unbounded-domain">
+<h1>Stokes flow in an unbounded domain<a class="headerlink" href="#stokes-flow-in-an-unbounded-domain" title="Permalink to this headline">¶</a></h1>
+<p>Hydrodynamic interactions of active particles in an unbounded domain.</p>
+<div class="section" id="rbm-rigid-body-motion-velocity-and-angular-velocity">
+<h2>RBM (Rigid Body Motion: Velocity and Angular Velocity)<a class="headerlink" href="#rbm-rigid-body-motion-velocity-and-angular-velocity" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pystokes.unbounded.Rbm">
 <em class="property">class </em><code class="sig-prename descclassname">pystokes.unbounded.</code><code class="sig-name descname">Rbm</code><a class="headerlink" href="#pystokes.unbounded.Rbm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rigid body motion (RBM)</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>radius</strong> (<em>float</em>) – Radius of the particles.</p></li>
-<li><p><strong>particles</strong> (<em>int</em>) – Number of particles</p></li>
-<li><p><strong>viscosity</strong> (<em>viscosity of the fluid</em>) – </p></li>
-</ul>
+<dd><p>Rigid body motion (RBM): velocity and angular velocity</p>
+<p>This methods in the class takes input arrays of positions,
+and velocity or angular velocity, along with forces or torques or slip
+The array of velocity and angular velocities is then update by each method.
+…</p>
+<dl class="simple">
+<dt>radius: float</dt><dd><p>Radius of the particles (a).</p>
+</dd>
+<dt>particles: int</dt><dd><p>Number of particles (Np)</p>
+</dd>
+<dt>viscosity: float</dt><dd><p>Viscosity of the fluid (eta)</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
 <p>An example of the RBM</p>
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.mobilityTT">
+<code class="sig-name descname">mobilityTT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityTT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to body forces F using $mu^{TT}cdot F$
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -214,10 +236,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="utils.html" class="btn btn-neutral float-right" title="Utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="interface.html" class="btn btn-neutral float-right" title="Stokes flow in a space bounded by a no-shear plane" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="periodic.html" class="btn btn-neutral float-left" title="Periodic domain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="PyStokes API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -1,10 +1,10 @@
-Plane no-shear wall 
-==================================
+Stokes flow in a space bounded by a no-shear plane 
+==================================================
 
-Stokesian hydrodynamic in the half-space bounded by a plane no-shear surface
+Hydrodynamic interactions of active particles in the half-space bounded by a plane no-shear surface
 
-Rbm
-----------------------------------------
+RBM (Rigid Body Motion: Velocity and Angular Velocity)
+------------------------------------------------------
 .. autoclass:: pystokes.interface.Rbm
     :members:
 

@@ -25,6 +25,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -167,11 +168,16 @@
 <dl class="py class">
 <dt id="pystokes.unbounded.Rbm">
 <em class="property">class </em><code class="sig-prename descclassname">pystokes.unbounded.</code><code class="sig-name descname">Rbm</code><a class="headerlink" href="#pystokes.unbounded.Rbm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rigid body motion (RBM): velocity and angular velocity</p>
-<p>This methods in the class takes input arrays of positions,
-and velocity or angular velocity, along with forces or torques or slip
-The array of velocity and angular velocities is then update by each method.
-…</p>
+<dd><p>Rigid body motion (RBM) - velocity and angular velocity</p>
+<dl class="simple">
+<dt>Methods in this class take following inputes</dt><dd><ul class="simple">
+<li><p>input arrays of positions, velocity or angular velocity,</p></li>
+<li><p>along with an array of forces or torques or a slip mode</p></li>
+</ul>
+</dd>
+</dl>
+<p>The array of velocity or angular velocities is then update by each method.</p>
+<p>…</p>
 <dl class="simple">
 <dt>radius: float</dt><dd><p>Radius of the particles (a).</p>
 </dd>
@@ -183,9 +189,83 @@ The array of velocity and angular velocities is then update by each method.
 <p class="rubric">Examples</p>
 <p>An example of the RBM</p>
 <dl class="py method">
+<dt id="pystokes.unbounded.Rbm.calcNoiseMuTT">
+<code class="sig-name descname">calcNoiseMuTT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.calcNoiseMuTT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute translation Brownian motion
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.mobilityRR">
+<code class="sig-name descname">mobilityRR</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute angular velocity due to body torques using <span class="math notranslate nohighlight">\(o=mu(r)^{RR}\cdot T\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>T</strong> (<em>np.array</em>) – An array of forces
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.mobilityRT">
+<code class="sig-name descname">mobilityRT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityRT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute angular velocity due to body forces using <span class="math notranslate nohighlight">\(o=mu(r)^{RT}\cdot F\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.mobilityTR">
+<code class="sig-name descname">mobilityTR</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityTR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to body torque using <span class="math notranslate nohighlight">\(v=mu(r)^{TR}\cdot T\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>T</strong> (<em>np.array</em>) – An array of torques
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pystokes.unbounded.Rbm.mobilityTT">
 <code class="sig-name descname">mobilityTT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityTT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to body forces F using $mu^{TT}cdot F$
+<dd><p>Compute velocity due to body forces using <span class="math notranslate nohighlight">\(v=mu(r)^{TT}\cdot F\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -196,6 +276,177 @@ An array of size 3*Np,</p></li>
 An array of size 3*Np,</p></li>
 <li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
 An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.propulsionR2s">
+<code class="sig-name descname">propulsionR2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR2s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute angular velocity due to 2s mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{R,2s}\cdot S\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>S</strong> (<em>np.array</em>) – An array of 2s mode of the slip
+An array of size 5*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.propulsionR3a">
+<code class="sig-name descname">propulsionR3a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR3a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute angular velocity due to 3a mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{R,3a}\cdot V\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>V</strong> (<em>np.array</em>) – An array of 3a mode of the slip
+An array of size 5*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.propulsionR3s">
+<code class="sig-name descname">propulsionR3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR3s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute angular velocity due to 3s mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{R,3s}\cdot G\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>G</strong> (<em>np.array</em>) – An array of 3s mode of the slip
+An array of size 7*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.propulsionR4a">
+<code class="sig-name descname">propulsionR4a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR4a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute angular velocity due to 4a mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{R,4a}\cdot M\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>M</strong> (<em>np.array</em>) – An array of 4a mode of the slip
+An array of size 7*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.propulsionT2s">
+<code class="sig-name descname">propulsionT2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT2s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to 2s mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,2s}\cdot S\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>S</strong> (<em>np.array</em>) – An array of 2s mode of the slip
+An array of size 5*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.propulsionT3a">
+<code class="sig-name descname">propulsionT3a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT3a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to 3a mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,3a}\cdot V\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>V</strong> (<em>np.array</em>) – An array of 3a mode of the slip
+An array of size 5*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.propulsionT3s">
+<code class="sig-name descname">propulsionT3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT3s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to 3s mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,3s}\cdot G\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>G</strong> (<em>np.array</em>) – An array of 3s mode of the slip
+An array of size 7*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.propulsionT3t">
+<code class="sig-name descname">propulsionT3t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT3t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to 3t mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,3t}\cdot D\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>D</strong> (<em>np.array</em>) – An array of 3t mode of the slip
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Rbm.propulsionT4a">
+<code class="sig-name descname">propulsionT4a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT4a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to 4a mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,4a}\cdot M\)</span>
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>M</strong> (<em>np.array</em>) – An array of 4a mode of the slip
+An array of size 7*Np,</p></li>
 </ul>
 </dd>
 </dl>
@@ -223,6 +474,153 @@ An array of size 3*Np,</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <p>An example of the RBM</p>
+<dl class="py method">
+<dt id="pystokes.unbounded.Flow.flowField1s">
+<code class="sig-name descname">flowField1s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField1s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points due body forces
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>F</strong> (<em>np.array</em>) – An array of body force
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Flow.flowField2a">
+<code class="sig-name descname">flowField2a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField2a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points due body Torque
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>T</strong> (<em>np.array</em>) – An array of body torque
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Flow.flowField2s">
+<code class="sig-name descname">flowField2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField2s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 2s mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>S</strong> (<em>np.array</em>) – An array of 2s mode of the slip
+An array of size 5*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Flow.flowField3a">
+<code class="sig-name descname">flowField3a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField3a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 3a mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>V</strong> (<em>np.array</em>) – An array of 3a mode of the slip
+An array of size 5*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Flow.flowField3s">
+<code class="sig-name descname">flowField3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField3s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 3s mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>G</strong> (<em>np.array</em>) – An array of 3s mode of the slip
+An array of size 7*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Flow.flowField3t">
+<code class="sig-name descname">flowField3t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField3t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points due to 3t mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>D</strong> (<em>np.array</em>) – An array of 3t mode of the slip
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.unbounded.Flow.flowField4a">
+<code class="sig-name descname">flowField4a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField4a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 4a mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>M</strong> (<em>np.array</em>) – An array of 4a mode of the slip
+An array of size 7*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>

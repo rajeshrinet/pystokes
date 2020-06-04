@@ -1,4 +1,3 @@
-from __future__ import division
 cimport cython
 from libc.math cimport sqrt, pow, exp
 from cython.parallel import prange
@@ -51,11 +50,14 @@ cdef class Forces:
 
 
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
 @cython.cdivision(True)
 @cython.nonecheck(False)
 cdef class Torques:
     cdef int Np
+    cpdef gravitaxis(self)
+    cpdef bottomHeaviness(self)
 
 

@@ -11,7 +11,7 @@ cdef class Forces:
     """
     Computes forces in a system of colloidal particles
 
-    Methods in the Forces class take input: 
+    Methods in the Forces class take input,
         * arrays of positions, forces 
         * parameters for a given potential
     
@@ -760,7 +760,7 @@ cdef class Torques:
     """
     Computes torques in a system of colloidal particles
 
-    Methods in the Torques class take input: 
+    Methods in the Torques class take input,
         * arrays of positions, Torques 
         * parameters for a given potential
     
@@ -779,16 +779,16 @@ cdef class Torques:
         self.Np = particles 
 
 
-#    cpdef gravitaxis(self):
-#        """
-#        Gravitaxis 
-#        """
-#        pass
-#    
-#
-#    cpdef bottomHeaviness(self):
-#        """
-#        Torque due to bottom-heaviness
-#        """
-#        pass
-#        
+    cpdef gravitaxis(self):
+        """
+        Gravitaxis 
+        """
+        pass
+    
+
+    cpdef bottomHeaviness(self):
+        """
+        Torque due to bottom-heaviness
+        """
+        pass
+        

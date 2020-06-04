@@ -12,13 +12,15 @@ cimport numpy as np
 @cython.nonecheck(False)
 cdef class Rbm:
     """
-    Rigid body motion (RBM): velocity and angular velocity
+    Rigid body motion (RBM) - velocity and angular velocity
     
-    This methods in the class takes input arrays of positions, 
-    and velocity or angular velocity, along with forces or torques or slip
-    The array of velocity and angular velocities is then update by each method. 
-    ...
+    Methods in this class take following inputes
+        * input arrays of positions, velocity or angular velocity, 
+        * along with an array of forces or torques or a slip mode
 
+    The array of velocity or angular velocities is then update by each method. 
+    
+    ...
 
     ----------
     radius: float
@@ -45,7 +47,7 @@ cdef class Rbm:
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F):
         """
-        Compute velocity due to body forces F using $mu^{TT}\cdot F$ 
+        Compute velocity due to body forces using :math:`v=mu(r)^{TT}\cdot F` 
         ...
 
         Parameters
@@ -89,6 +91,24 @@ cdef class Rbm:
                
    
     cpdef mobilityTR(self, double [:] v, double [:] r, double [:] T):
+        """
+        Compute velocity due to body torque using :math:`v=mu(r)^{TR}\cdot T` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of torques
+            An array of size 3*Np,
+        """
+
+
         cdef int Np = self.Np, i, j, xx=2*Np 
         cdef double dx, dy, dz, idr, idr3, vx, vy, vz
         cdef double mu1 = 1.0/(8*PI*self.eta)       
@@ -113,6 +133,22 @@ cdef class Rbm:
     
     
     cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S):
+        """
+        Compute velocity due to 2s mode of the slip :math:`v=pi(r)^{T,2s}\cdot S` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        """
         cdef int Np = self.Np, i, j, xx=2*Np, xx1=3*Np, xx2=4*Np
         cdef double dx, dy, dz, dr, idr,  idr3
         cdef double aa=(self.a*self.a*8.0)/3.0, vv1, vv2, aidr2
@@ -154,6 +190,23 @@ cdef class Rbm:
 
 
     cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D):
+        """
+        Compute velocity due to 3t mode of the slip :math:`v=pi(r)^{T,3t}\cdot D` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*Np,
+        """
+
         cdef int Np = self.Np, i, j, xx=2*Np  
         cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
  
@@ -179,6 +232,23 @@ cdef class Rbm:
 
 
     cpdef propulsionT3a(self, double [:] v, double [:] r, double [:] V):
+        """
+        Compute velocity due to 3a mode of the slip :math:`v=pi(r)^{T,3a}\cdot V` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        V: np.array
+            An array of 3a mode of the slip
+            An array of size 5*Np,
+        """
+
         cdef int Np = self.Np, i, j 
         cdef double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz
  
@@ -208,6 +278,23 @@ cdef class Rbm:
 
 
     cpdef propulsionT3s(self, double [:] v, double [:] r, double [:] G):
+        """
+        Compute velocity due to 3s mode of the slip :math:`v=pi(r)^{T,3s}\cdot G` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        G: np.array
+            An array of 3s mode of the slip
+            An array of size 7*Np,
+        """
+
         cdef int Np = self.Np, i, j 
         cdef double dx, dy, dz, idr, idr5, idr7, aidr2, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
  
@@ -244,6 +331,23 @@ cdef class Rbm:
 
 
     cpdef propulsionT4a(self, double [:] v, double [:] r, double [:] M):
+        """
+        Compute velocity due to 4a mode of the slip :math:`v=pi(r)^{T,4a}\cdot M` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        M: np.array
+            An array of 4a mode of the slip
+            An array of size 7*Np,
+        """
+
         cdef int Np = self.Np, i, j 
         cdef double dx, dy, dz, idr, idr7
         cdef double mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
@@ -277,6 +381,24 @@ cdef class Rbm:
 
     ## Angular velocities
     cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F):
+        """
+        Compute angular velocity due to body forces using :math:`o=mu(r)^{RT}\cdot F` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        """
+
+
         cdef int Np = self.Np, i, j, xx=2*Np 
         cdef double dx, dy, dz, idr, idr3, ox, oy, oz, mu1 = 1.0/(8*PI*self.eta)
  
@@ -300,6 +422,23 @@ cdef class Rbm:
 
                
     cpdef mobilityRR(   self, double [:] o, double [:] r, double [:] T):
+        """
+        Compute angular velocity due to body torques using :math:`o=mu(r)^{RR}\cdot T` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of forces
+            An array of size 3*Np,
+        """
+
         cdef int Np = self.Np, i, j, xx=2*Np 
         cdef double dx, dy, dz, idr, idr3, Tdotidr, ox, oy, oz, mur = 1.0/(8*PI*self.eta*self.a**3),  mu1 = 1.0/(8*PI*self.eta) 
  
@@ -325,6 +464,23 @@ cdef class Rbm:
 
     
     cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S):
+        """
+        Compute angular velocity due to 2s mode of the slip :math:`v=pi(r)^{R,2s}\cdot S` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        """
+
         cdef int Np = self.Np, i, j, xx=2*Np 
         cdef double dx, dy, dz, idr, idr5, ox, oy, oz
         cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (28.0*self.a*self.a*self.a)/24
@@ -358,6 +514,23 @@ cdef class Rbm:
     
     
     cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V):
+        """
+        Compute angular velocity due to 3a mode of the slip :math:`v=pi(r)^{R,3a}\cdot V` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        V: np.array
+            An array of 3a mode of the slip
+            An array of size 5*Np,
+        """
+
         cdef int Np = self.Np, i, j 
         cdef double dx, dy, dz, idr, idr2, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz
  
@@ -388,6 +561,24 @@ cdef class Rbm:
 
 
     cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] G):
+        """
+        Compute angular velocity due to 3s mode of the slip :math:`v=pi(r)^{R,3s}\cdot G` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        G: np.array
+            An array of 3s mode of the slip
+            An array of size 7*Np,
+        """
+
+
         cdef int Np = self.Np, i, j 
         cdef double dx, dy, dz, idr, idr7, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
  
@@ -420,6 +611,24 @@ cdef class Rbm:
 
 
     cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] M):
+        """
+        Compute angular velocity due to 4a mode of the slip :math:`v=pi(r)^{R,4a}\cdot M` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        M: np.array
+            An array of 4a mode of the slip
+            An array of size 7*Np,
+        """
+
+
         cdef int Np = self.Np, i, j 
         cdef double dx, dy, dz, idr, idr7, idr9, mrrr, mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
  
@@ -455,6 +664,19 @@ cdef class Rbm:
 
 
     cpdef calcNoiseMuTT(self, double [:] v, double [:] r):
+        """
+        Compute translation Brownian motion 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        """
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
         cdef double mu=self.mu, mu1=2*mu*self.a*0.75, a2=self.a*self.a/3.0
@@ -550,6 +772,8 @@ cdef class Flow:
     An example of the RBM
 
     """
+
+
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
         self.a  = radius
         self.Np = particles
@@ -557,6 +781,26 @@ cdef class Flow:
         self.eta= viscosity
 
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F):
+        """
+        Compute flow field at field points due body forces
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of body force
+            An array of size 3*Np,
+        """
+
         cdef int Np = self.Np,  Nt = self.Nt
         cdef int i, ii, xx = 2*Np
         cdef double dx, dy, dz, idr, idr2, vv1, vv2, vx, vy, vz, mu1 = 1/(8*PI*self.eta), aa = self.a*self.a/3.0
@@ -580,8 +824,29 @@ cdef class Flow:
             vv[i +   Nt]  += vy*mu1
             vv[i +  2*Nt] += vz*mu1
         return 
-               
+
+
     cpdef flowField2a(self, double [:] vv, double [:] rt, double [:] r, double [:] T):
+        """
+        Compute flow field at field points due body Torque 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of body torque
+            An array of size 3*Np,
+        """
+
         cdef int Np = self.Np, Nt = self.Nt
         cdef int i, ii, xx = 2*Np
         cdef double dx, dy, dz, idr, idr3, vx, vy, vz, mur1 = 1.0/(8*PI*self.eta)
@@ -603,7 +868,28 @@ cdef class Flow:
             vv[i + 2*Nt] += vz*mur1
         return  
 
+
     cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S):
+        """
+        Compute flow field at field points  due to 2s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        """
+
         cdef int Np = self.Np, Nt = self.Nt
         cdef int i, ii, xx= 2*Np, xx1= 3*Np, xx2 = 4*Np
         cdef double dx, dy, dz, idr, idr3, aidr2, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
@@ -644,6 +930,26 @@ cdef class Flow:
 
 
     cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D):
+        """
+        Compute flow field at field points due to 3t mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*Np,
+        """
+
         cdef int Np = self.Np, Nt = self.Nt
         cdef  int i, ii 
         cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz,mud1 = -1.0*(self.a**5)/10
@@ -670,6 +976,26 @@ cdef class Flow:
 
 
     cpdef flowField3s(self, double [:] vv, double [:] rt, double [:] r, double [:] G):
+        """
+        Compute flow field at field points  due to 3s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        G: np.array
+            An array of 3s mode of the slip
+            An array of size 7*Np,
+        """
+
         cdef int Np = self.Np, Nt = self.Nt
         cdef int i, ii, 
         cdef double dx, dy, dz, idr, idr5, idr7
@@ -704,6 +1030,26 @@ cdef class Flow:
 
 
     cpdef flowField3a(self, double [:] vv, double [:] rt, double [:] r, double [:] V):
+        """
+        Compute flow field at field points  due to 3a mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        V: np.array
+            An array of 3a mode of the slip
+            An array of size 5*Np,
+        """
+
         cdef int Np = self.Np, Nt = self.Nt
         cdef int i, ii
         cdef double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz
@@ -731,6 +1077,26 @@ cdef class Flow:
 
 
     cpdef flowField4a(self, double [:] vv, double [:] rt, double [:] r, double [:] M):
+        """
+        Compute flow field at field points  due to 4a mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        M: np.array
+            An array of 4a mode of the slip
+            An array of size 7*Np,
+        """
+
         cdef int Np = self.Np, Nt = self.Nt
         cdef int i, ii
         cdef double dx, dy, dz, idr, idr7

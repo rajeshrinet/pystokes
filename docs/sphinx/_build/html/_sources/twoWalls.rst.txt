@@ -1,4 +1,4 @@
-Stokes flow in parallel plane no-slip walls 
+Flow in Hele-Shaw cell
 ===========================================
 
 Stokesian hydrodynamic in a Hele-Shaw cell 

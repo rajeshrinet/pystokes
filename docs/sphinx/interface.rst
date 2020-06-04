@@ -1,4 +1,4 @@
-Stokes flow in a space bounded by a no-shear plane 
+Flow bounded by a no-shear plane 
 ==================================================
 
 Hydrodynamic interactions of active particles in the half-space bounded by a plane no-shear surface

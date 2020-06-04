@@ -1,4 +1,4 @@
-Phoresis: in the unbounded domain
+Phoresis in an unbounded domain
 ==================================
 
 Phoretic motion in an infinite space 

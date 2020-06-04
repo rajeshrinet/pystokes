@@ -1,7 +1,7 @@
-Phoresis: in the half-space bounded by a plane 
+Phoresis in a space bounded by a plane 
 ===============================================
 
-Phoretic motion in an infinite space 
+Phoresis in the half-space bounded by a plane no-slip wall 
 
 Phoresis
 ----------------------------------------

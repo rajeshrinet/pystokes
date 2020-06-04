@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Stokes flow in a space bounded by a no-shear plane" href="interface.html" />
+    <link rel="next" title="Flow bounded by a no-shear plane" href="interface.html" />
     <link rel="prev" title="PyStokes API" href="index.html" /> 
 </head>
 
@@ -87,13 +87,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#flow">Flow</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Stokes flow in a space bounded by a no-shear plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Stokes flow in a space bounded by a no-slip plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Stokes flow in parallel plane no-slip walls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Flow bounded by a no-shear plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Flow bounded by a no-slip plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Flow in Hele-Shaw cell</a></li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Stokes flow in a periodic domain</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mima.html">Mollified irreducible multipole approach</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: in the unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: in the half-space bounded by a plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis in an unbounded domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis in a space bounded by a plane</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forceFields.html">Force fields in colloidal systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utils: Miscellaneous function</a></li>
 </ul>
@@ -169,13 +169,9 @@
 <dt id="pystokes.unbounded.Rbm">
 <em class="property">class </em><code class="sig-prename descclassname">pystokes.unbounded.</code><code class="sig-name descname">Rbm</code><a class="headerlink" href="#pystokes.unbounded.Rbm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rigid body motion (RBM) - velocity and angular velocity</p>
-<dl class="simple">
-<dt>Methods in this class take following inputes</dt><dd><ul class="simple">
-<li><p>input arrays of positions, velocity or angular velocity,</p></li>
-<li><p>along with an array of forces or torques or a slip mode</p></li>
-</ul>
-</dd>
-</dl>
+<p>Methods in this class update velocities or angular velocities
+using the inputs of -  arrays of positions, velocity or angular velocity,
+along with an array of forces or torques or a slip mode</p>
 <p>The array of velocity or angular velocities is then update by each method.</p>
 <p>…</p>
 <dl class="simple">
@@ -208,7 +204,7 @@ An array of size 3*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.mobilityRR">
 <code class="sig-name descname">mobilityRR</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityRR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to body torques using <span class="math notranslate nohighlight">\(o=mu(r)^{RR}\cdot T\)</span>
+<dd><p>Compute angular velocity due to body torques using <span class="math notranslate nohighlight">\(o=\mu^{RR}\cdot T\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -227,7 +223,7 @@ An array of size 3*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.mobilityRT">
 <code class="sig-name descname">mobilityRT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityRT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to body forces using <span class="math notranslate nohighlight">\(o=mu(r)^{RT}\cdot F\)</span>
+<dd><p>Compute angular velocity due to body forces using <span class="math notranslate nohighlight">\(o=\mu^{RT}\cdot F\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -246,7 +242,7 @@ An array of size 3*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.mobilityTR">
 <code class="sig-name descname">mobilityTR</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityTR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to body torque using <span class="math notranslate nohighlight">\(v=mu(r)^{TR}\cdot T\)</span>
+<dd><p>Compute velocity due to body torque using <span class="math notranslate nohighlight">\(v=\mu^{TR}\cdot T\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -265,7 +261,7 @@ An array of size 3*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.mobilityTT">
 <code class="sig-name descname">mobilityTT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityTT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to body forces using <span class="math notranslate nohighlight">\(v=mu(r)^{TT}\cdot F\)</span>
+<dd><p>Compute velocity due to body forces using <span class="math notranslate nohighlight">\(v=\mu^{TT}\cdot F\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -284,7 +280,7 @@ An array of size 3*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.propulsionR2s">
 <code class="sig-name descname">propulsionR2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR2s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to 2s mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{R,2s}\cdot S\)</span>
+<dd><p>Compute angular velocity due to 2s mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{R,2s}\cdot S\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -303,7 +299,7 @@ An array of size 5*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.propulsionR3a">
 <code class="sig-name descname">propulsionR3a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR3a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to 3a mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{R,3a}\cdot V\)</span>
+<dd><p>Compute angular velocity due to 3a mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{R,3a}\cdot V\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -322,7 +318,7 @@ An array of size 5*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.propulsionR3s">
 <code class="sig-name descname">propulsionR3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR3s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to 3s mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{R,3s}\cdot G\)</span>
+<dd><p>Compute angular velocity due to 3s mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{R,3s}\cdot G\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -341,7 +337,7 @@ An array of size 7*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.propulsionR4a">
 <code class="sig-name descname">propulsionR4a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR4a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to 4a mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{R,4a}\cdot M\)</span>
+<dd><p>Compute angular velocity due to 4a mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{R,4a}\cdot M\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -360,7 +356,7 @@ An array of size 7*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.propulsionT2s">
 <code class="sig-name descname">propulsionT2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT2s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 2s mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,2s}\cdot S\)</span>
+<dd><p>Compute velocity due to 2s mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,2s}\cdot S\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -379,7 +375,7 @@ An array of size 5*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.propulsionT3a">
 <code class="sig-name descname">propulsionT3a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT3a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 3a mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,3a}\cdot V\)</span>
+<dd><p>Compute velocity due to 3a mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,3a}\cdot V\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -398,7 +394,7 @@ An array of size 5*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.propulsionT3s">
 <code class="sig-name descname">propulsionT3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT3s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 3s mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,3s}\cdot G\)</span>
+<dd><p>Compute velocity due to 3s mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,3s}\cdot G\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -417,7 +413,7 @@ An array of size 7*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.propulsionT3t">
 <code class="sig-name descname">propulsionT3t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT3t" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 3t mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,3t}\cdot D\)</span>
+<dd><p>Compute velocity due to 3t mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,3t}\cdot D\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -436,7 +432,7 @@ An array of size 3*Np,</p></li>
 <dl class="py method">
 <dt id="pystokes.unbounded.Rbm.propulsionT4a">
 <code class="sig-name descname">propulsionT4a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT4a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 4a mode of the slip <span class="math notranslate nohighlight">\(v=pi(r)^{T,4a}\cdot M\)</span>
+<dd><p>Compute velocity due to 4a mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,4a}\cdot M\)</span>
 …</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -634,7 +630,7 @@ An array of size 7*Np,</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="interface.html" class="btn btn-neutral float-right" title="Stokes flow in a space bounded by a no-shear plane" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="interface.html" class="btn btn-neutral float-right" title="Flow bounded by a no-shear plane" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="PyStokes API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

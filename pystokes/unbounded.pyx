@@ -14,9 +14,9 @@ cdef class Rbm:
     """
     Rigid body motion (RBM) - velocity and angular velocity
     
-    Methods in this class take following inputes
-        * input arrays of positions, velocity or angular velocity, 
-        * along with an array of forces or torques or a slip mode
+    Methods in this class update velocities or angular velocities 
+    using the inputs of -  arrays of positions, velocity or angular velocity, 
+    along with an array of forces or torques or a slip mode
 
     The array of velocity or angular velocities is then update by each method. 
     
@@ -47,7 +47,7 @@ cdef class Rbm:
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F):
         """
-        Compute velocity due to body forces using :math:`v=mu(r)^{TT}\cdot F` 
+        Compute velocity due to body forces using :math:`v=\mu^{TT}\cdot F` 
         ...
 
         Parameters
@@ -92,7 +92,7 @@ cdef class Rbm:
    
     cpdef mobilityTR(self, double [:] v, double [:] r, double [:] T):
         """
-        Compute velocity due to body torque using :math:`v=mu(r)^{TR}\cdot T` 
+        Compute velocity due to body torque using :math:`v=\mu^{TR}\cdot T` 
         ...
 
         Parameters
@@ -134,7 +134,7 @@ cdef class Rbm:
     
     cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S):
         """
-        Compute velocity due to 2s mode of the slip :math:`v=pi(r)^{T,2s}\cdot S` 
+        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot S` 
         ...
 
         Parameters
@@ -191,7 +191,7 @@ cdef class Rbm:
 
     cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D):
         """
-        Compute velocity due to 3t mode of the slip :math:`v=pi(r)^{T,3t}\cdot D` 
+        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot D` 
         ...
 
         Parameters
@@ -233,7 +233,7 @@ cdef class Rbm:
 
     cpdef propulsionT3a(self, double [:] v, double [:] r, double [:] V):
         """
-        Compute velocity due to 3a mode of the slip :math:`v=pi(r)^{T,3a}\cdot V` 
+        Compute velocity due to 3a mode of the slip :math:`v=\pi^{T,3a}\cdot V` 
         ...
 
         Parameters
@@ -279,7 +279,7 @@ cdef class Rbm:
 
     cpdef propulsionT3s(self, double [:] v, double [:] r, double [:] G):
         """
-        Compute velocity due to 3s mode of the slip :math:`v=pi(r)^{T,3s}\cdot G` 
+        Compute velocity due to 3s mode of the slip :math:`v=\pi^{T,3s}\cdot G` 
         ...
 
         Parameters
@@ -332,7 +332,7 @@ cdef class Rbm:
 
     cpdef propulsionT4a(self, double [:] v, double [:] r, double [:] M):
         """
-        Compute velocity due to 4a mode of the slip :math:`v=pi(r)^{T,4a}\cdot M` 
+        Compute velocity due to 4a mode of the slip :math:`v=\pi^{T,4a}\cdot M` 
         ...
 
         Parameters
@@ -382,7 +382,7 @@ cdef class Rbm:
     ## Angular velocities
     cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F):
         """
-        Compute angular velocity due to body forces using :math:`o=mu(r)^{RT}\cdot F` 
+        Compute angular velocity due to body forces using :math:`o=\mu^{RT}\cdot F` 
         ...
 
         Parameters
@@ -423,7 +423,7 @@ cdef class Rbm:
                
     cpdef mobilityRR(   self, double [:] o, double [:] r, double [:] T):
         """
-        Compute angular velocity due to body torques using :math:`o=mu(r)^{RR}\cdot T` 
+        Compute angular velocity due to body torques using :math:`o=\mu^{RR}\cdot T` 
         ...
 
         Parameters
@@ -465,7 +465,7 @@ cdef class Rbm:
     
     cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S):
         """
-        Compute angular velocity due to 2s mode of the slip :math:`v=pi(r)^{R,2s}\cdot S` 
+        Compute angular velocity due to 2s mode of the slip :math:`v=\pi^{R,2s}\cdot S` 
         ...
 
         Parameters
@@ -515,7 +515,7 @@ cdef class Rbm:
     
     cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V):
         """
-        Compute angular velocity due to 3a mode of the slip :math:`v=pi(r)^{R,3a}\cdot V` 
+        Compute angular velocity due to 3a mode of the slip :math:`v=\pi^{R,3a}\cdot V` 
         ...
 
         Parameters
@@ -562,7 +562,7 @@ cdef class Rbm:
 
     cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] G):
         """
-        Compute angular velocity due to 3s mode of the slip :math:`v=pi(r)^{R,3s}\cdot G` 
+        Compute angular velocity due to 3s mode of the slip :math:`v=\pi^{R,3s}\cdot G` 
         ...
 
         Parameters
@@ -612,7 +612,7 @@ cdef class Rbm:
 
     cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] M):
         """
-        Compute angular velocity due to 4a mode of the slip :math:`v=pi(r)^{R,4a}\cdot M` 
+        Compute angular velocity due to 4a mode of the slip :math:`v=\pi^{R,4a}\cdot M` 
         ...
 
         Parameters

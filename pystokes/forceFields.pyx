@@ -2,16 +2,19 @@ cimport cython
 from libc.math cimport sqrt, pow
 from cython.parallel import prange
 
+
 @cython.boundscheck(False)
 @cython.cdivision(True)
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Forces:
     """
-    Computes forces
+    Computes forces in a system of colloidal particles
 
-    Methods in the class take input: arrays of positions, forces 
-    and parameters for a potential. 
+    Methods in the Forces class take input: 
+        * arrays of positions, forces 
+        * parameters for a given potential
+    
     The array of forces is then update by each method. 
 
     ...
@@ -25,7 +28,7 @@ cdef class Forces:
     """
     def __init__(self, particles=1):
         self.Np = particles
-        pass
+
 
     cpdef lennardJones(self, double [:] F, double [:] r, double lje=0.01, double ljr=3):
         """
@@ -745,3 +748,47 @@ cdef class Forces:
                 Fj[jp+xx] -= f1+f3
                 Fk[kp+xx] += f3
         return
+
+
+
+
+@cython.boundscheck(False)
+@cython.cdivision(True)
+@cython.nonecheck(False)
+@cython.wraparound(False)
+cdef class Torques:
+    """
+    Computes torques in a system of colloidal particles
+
+    Methods in the Torques class take input: 
+        * arrays of positions, Torques 
+        * parameters for a given potential
+    
+    The array of torques is then update by each method. 
+
+    ...
+
+    Parameters
+    ----------
+    particles: int
+        Number of particles (Np)
+
+
+    """
+    def __init__(self, particles=1):
+        self.Np = particles 
+
+
+#    cpdef gravitaxis(self):
+#        """
+#        Gravitaxis 
+#        """
+#        pass
+#    
+#
+#    cpdef bottomHeaviness(self):
+#        """
+#        Torque due to bottom-heaviness
+#        """
+#        pass
+#        

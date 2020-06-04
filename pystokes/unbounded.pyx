@@ -42,6 +42,7 @@ cdef class Rbm:
 
         self.Mobility = np.zeros( (3*self.Np, 3*self.Np), dtype=np.float64)
 
+
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F):
         """
         Compute velocity due to body forces F using $mu^{TT}\cdot F$ 

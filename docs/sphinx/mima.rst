@@ -1,4 +1,4 @@
-MIMA 
+Mollified irreducible multipole approach 
 ==================================
 
 Mollified irreducible multipole approach (MIMA) to Stokesian hydrodynamics

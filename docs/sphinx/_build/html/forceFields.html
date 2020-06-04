@@ -86,7 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Stokes flow in a space bounded by a no-slip plane</a></li>
 <li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Stokes flow in parallel plane no-slip walls</a></li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Stokes flow in a periodic domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mima.html">MIMA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mima.html">Mollified irreducible multipole approach</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: in the unbounded domain</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: in the half-space bounded by a plane</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Force fields in colloidal systems</a><ul>
@@ -166,10 +166,15 @@
 <dl class="py class">
 <dt id="pystokes.forceFields.Forces">
 <em class="property">class </em><code class="sig-prename descclassname">pystokes.forceFields.</code><code class="sig-name descname">Forces</code><a class="headerlink" href="#pystokes.forceFields.Forces" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes forces</p>
-<p>Methods in the class take input: arrays of positions, forces
-and parameters for a potential.
-The array of forces is then update by each method.</p>
+<dd><p>Computes forces in a system of colloidal particles</p>
+<dl class="simple">
+<dt>Methods in the Forces class take input:</dt><dd><ul class="simple">
+<li><p>arrays of positions, forces</p></li>
+<li><p>parameters for a given potential</p></li>
+</ul>
+</dd>
+</dl>
+<p>The array of forces is then update by each method.</p>
 <p>…</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -438,7 +443,7 @@ An array of size 3*Np,</p></li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 
+        &copy; Copyright 2020, Rajesh Singh and Ronojoy Adhikari
 
     </p>
   </div>

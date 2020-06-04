@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MIMA &mdash; PyStokes 2.1.1 documentation</title>
+  <title>Mollified irreducible multipole approach &mdash; PyStokes 2.1.1 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Periodic domain" href="periodic.html" />
-    <link rel="prev" title="Plane no-shear wall" href="interface.html" /> 
+    <link rel="next" title="Phoresis: in the unbounded domain" href="phoreticUnbounded.html" />
+    <link rel="prev" title="Stokes flow in a periodic domain" href="periodic.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -81,19 +81,20 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Plane no-shear wall</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">MIMA</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="unbounded.html">Stokes flow in an unbounded domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Stokes flow in a space bounded by a no-shear plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Stokes flow in a space bounded by a no-slip plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Stokes flow in parallel plane no-slip walls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="periodic.html">Stokes flow in a periodic domain</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mollified irreducible multipole approach</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#mima3d">Mima3D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mima2d">Mima2D</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="periodic.html">Periodic domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unbounded.html">Unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Plane no-slip wall</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forceFields.html">ForceFields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: unbounded</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: wallBounded</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: in the unbounded domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: in the half-space bounded by a plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forceFields.html">Force fields in colloidal systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils: Miscellaneous function</a></li>
 </ul>
 
             
@@ -139,7 +140,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>MIMA</li>
+      <li>Mollified irreducible multipole approach</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -158,8 +159,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="mima">
-<h1>MIMA<a class="headerlink" href="#mima" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mollified-irreducible-multipole-approach">
+<h1>Mollified irreducible multipole approach<a class="headerlink" href="#mollified-irreducible-multipole-approach" title="Permalink to this headline">¶</a></h1>
 <p>Mollified irreducible multipole approach (MIMA) to Stokesian hydrodynamics</p>
 <div class="section" id="mima3d">
 <h2>Mima3D<a class="headerlink" href="#mima3d" title="Permalink to this headline">¶</a></h2>
@@ -203,10 +204,10 @@ arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="periodic.html" class="btn btn-neutral float-right" title="Periodic domain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="phoreticUnbounded.html" class="btn btn-neutral float-right" title="Phoresis: in the unbounded domain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="interface.html" class="btn btn-neutral float-left" title="Plane no-shear wall" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="periodic.html" class="btn btn-neutral float-left" title="Stokes flow in a periodic domain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -215,7 +216,7 @@ arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 
+        &copy; Copyright 2020, Rajesh Singh and Ronojoy Adhikari
 
     </p>
   </div>

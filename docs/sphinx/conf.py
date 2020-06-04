@@ -16,6 +16,8 @@ import sys
 # -- Project information -----------------------------------------------------
 
 project = 'PyStokes'
+copyright = '2020, Rajesh Singh and Ronojoy Adhikari'
+
 
 # The full version, including alpha/beta/rc tags
 release = '2.1.1'

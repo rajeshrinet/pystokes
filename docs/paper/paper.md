@@ -1,0 +1,47 @@
+---
+title: 'PyStokes: Stokesian hydrodynamics in Python'
+tags:
+  - Python
+  - Cython
+  - Colloids
+  - Force fields
+  - hydrodynamic interactions
+  - phoretic interactions
+authors:
+  - name: Rajesh Singh
+    orcid: 0000-0003-0266-9691
+    affiliation: 1
+  - name: Ronojoy Adhikari
+    affiliation: 1
+affiliations:
+ - name: DAMTP, Centre for Mathematical Sciences, University of Cambridge, Wilberforce Road, Cambridge CB3 0WA, UK
+   index: 1
+date: 6 June 2020
+bibliography: paper.bib
+---
+
+# Summary
+
+Hydrodynamic and phoretic interactions between “active particles” in a viscous fluid are central to the understanding of their collective dynamics [@ebbens2010pursuit, @zhang2017active]. Under experimentally relevant conditions, the motion of the fluid is governed by the Stokes equation and that of the phoretic field, if one is present, by the Laplace equation. The “activity” appears in these equations as boundary conditions on the particle surfaces that prescribe the slip velocity in the Stokes equation and flux of the phoretic field in the Laplace equation. The slip velocity and the phoretic flux are related by a linear constitutive law that can be derived from a detailed analysis of the boundary layer physics [@anderson1989colloid]. The Stokes and Laplace equations are coupled by this linear constitutive law only at the particle boundaries. The linearity of the governing equations and of the coupling boundary conditions allows for a formally exact solution of the problem of determining the force per unit area on the particle surfaces. This formally exact solution can be approximated to any desired degree of accuracy by a truncated series expansion in a complete basis of functions on the particle boundaries. This, in turn, leads to an efficient and accurate numerical method for computing hydrodynamic and phoretic interactions between active particles [@singh2015many, @singh2018generalized, @singh2019competing].
+
+The principal features that set this method apart are (a) the restriction of independent fluid and phoretic degrees of freedom to the particle boundaries (b) the freedom from grids, both in the bulk of the fluid and on the particle boundaries and (c) the ability to handle, within the same numerical framework, a wide variety of geometries and boundary conditions, including unbounded volumes, volumes bounded by plane walls or interfaces, periodic volumes and, indeed, any geometry-boundary condition combination for which the Green's functions of the governing equations are simply evaluated.
+
+The purpose of this article is to demonstrate the power of the numerical method, as implemented in Python libraries, through six fully coded examples that simulate experimental phenomena. Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, dynamically typed, interpreted language without sacrificing performance.
+
+Our presentation is in the style of literate programming and draws inspiration from similar articles by Weideman and Reddy [@weideman2000matlab], Higham [@higham2001algorithmic], and Trefethen [@trefethen2000spectral]. The article is best read alongside installing the libraries PyStokes, PyLaplace and PyForces and executing the example codes. These three libraries are available on GitHub at \href{https://github.com/rajeshrinet/pystokes}{https://github.com/rajeshrinet/pystokes}  where detailed installation instructions can also be found. A subset of the library features is available as a Binder file which requires no installation. All software is released under the MIT license.
+
+
+# Methods
+
+Our method relies on the reduction of linear elliptic partial differential equations to systems of linear algebraic equations. The four key mathematical steps underpinning it are illustrated in this 
+
+![\label{fig:example}](figure.png)
+
+The first step is the representation of the solution of an elliptic partial differential equation (PDE) in a three-dimensional volume V as an integral over the boundary of the volume S [@fkg1930bandwertaufgaben, @ladyzhenskaya1969, @youngren1975stokes, @zick1982stokes, @pozrikidis1992, @muldowney1995spectral, @cheng2005heritage, @singh2015many]. For the Laplace equation, this is the classical theorem of Green [@jackson1962classical]; for the Stokes equation, it is the generalization obtained by Lorentz [@fkg1930bandwertaufgaben, @lorentz1896eene, @ladyzhenskaya1969]. The integral representation leads to a linear integral equation that provides a functional relation between the field and its flux on S. Thus, if the surface flux in the Laplace equation is specified, the surface concentration is determined by the solution of the Laplace boundary integral equation. Similarly, if the surface velocity in the Stokes equation is specified, the surface traction is determined by the solution of the Stokes boundary integral equation. This transformation of the governing PDEs is the most direct way of relating boundary conditions (surface flux, slip velocities) to boundary values (surface concentration, surface traction). It reduces the dimensionality of the problem from a three-dimensional one in V to a two-dimensional one on S. The second step is the spectral expansion of the field and its flux in terms of global basis functions on S. We use the geometry-adapted tensorial spherical harmonics, which provide an unified way of expanding both scalar and vector quantities on the surface of a sphere. These functions are both complete and orthogonal and provide representations of the three-dimensional rotation group [@hess2015tensors]. Thus, symmetries of the active boundary conditions can be represented in a straightforward and transparent manner. The third step is the discretization of the integral equation using the procedure of Ritz and Galerkin [@boyd2001chebyshev, @finlayson1966method], which reduces it to an infinite-dimensional self-adjoint linear system in the expansion coefficients. This exploits the orthogonality of the basis functions on the sphere. The matrix elements of the linear system can be evaluated analytically in terms of the Green's functions of the respective elliptic equations. The fourth step is the truncation of the infinite-dimensional linear system to a finite-dimensional one that can be solved by standard methods of linear algebra adapted for self-adjoint systems [@saad2003iterative]. Analytical solution can be obtained by Jacobi iteration, which is equivalent to Smoluchowski's method of reflections. Numerical solutions can be obtained by the conjugate gradient method, at a cost quadratic in the number of unknowns. From this solution, we can reconstruct the field and the flux on the boundary, use these to determine the fields in the bulk, and from there, compute derived quantities. These steps have been elaborated in several papers [@ghose2014irreducible, @singh2015many, @singh2016crystallization, @singh2018generalized, @singh2019competing] and we do not repeat them in detail here. 
+
+
+# Acknowledgements
+
+RS is funded by a Royal Society-SERB Newton International Fellowship. RA thanks the Isaac Newton Trust for an Early Career Support grant. We would like to thank collaborators and colleagues, in both theory and experiment, for numerous discussions that have enriched our understanding of hydrodynamic and phoretic phenomena. In alphabetical order, they are: Ayan Banerjee, Mike Cates, Shyam Date, Aleks Donev, Erika Eiser, Daan Frenkel, Somdeb Ghose, Ray Goldstein, John Hinch, Abhrajit Laskar, Tony Ladd, Raj Kumar Manna, Ignacio Pagonabarraga, Dave Pine, Thalappil Pradeep, Rajiah Simon, Howard Stone, Ganesh Subramanian, P. B. Sunil Kumar, and Shashi Thutupalli. We acknowledge design ideas and code contributions from Rajeev Singh and Abhrajit Laskar in the initial stages of development. This work was funded in part by the European Research Council under the EU’s Horizon 2020 Program.
+
+# References

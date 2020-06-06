@@ -3,10 +3,10 @@ title: 'PyStokes: Stokesian hydrodynamics in Python'
 tags:
   - Python
   - Cython
-  - Colloids
-  - Force fields
-  - hydrodynamic interactions
-  - phoretic interactions
+  - Active particles
+  - Stokes flow
+  - Hydrodynamic interactions
+  - Phoretic interactions
 authors:
   - name: Rajesh Singh
     orcid: 0000-0003-0266-9691
@@ -26,9 +26,9 @@ Hydrodynamic and phoretic interactions between “active particles” in a visco
 
 The principal features that set this method apart are (a) the restriction of independent fluid and phoretic degrees of freedom to the particle boundaries (b) the freedom from grids, both in the bulk of the fluid and on the particle boundaries and (c) the ability to handle, within the same numerical framework, a wide variety of geometries and boundary conditions, including unbounded volumes, volumes bounded by plane walls or interfaces, periodic volumes and, indeed, any geometry-boundary condition combination for which the Green's functions of the governing equations are simply evaluated.
 
-The purpose of this article is to demonstrate the power of the numerical method, as implemented in Python libraries, through six fully coded examples that simulate experimental phenomena. Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, dynamically typed, interpreted language without sacrificing performance.
+The purpose of this article is to demonstrate the power of the numerical method, as implemented in a Python library, through  fully coded examples that simulate experimental phenomena. Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, dynamically typed, interpreted language without sacrificing performance.
 
-Our presentation is in the style of literate programming and draws inspiration from similar articles by Weideman and Reddy [@weideman2000matlab], Higham [@higham2001algorithmic], and Trefethen [@trefethen2000spectral]. The article is best read alongside installing the library [PyStokes](https://github.com/rajeshrinet/pystokes)  where detailed installation instructions can also be found. You can take PyStokes for a spin without installation: [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples) 
+You can take PyStokes for a spin without installation: [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples) 
 . All software is released under the MIT license.
 
 

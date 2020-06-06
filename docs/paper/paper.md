@@ -28,7 +28,8 @@ The principal features that set this method apart are (a) the restriction of ind
 
 The purpose of this article is to demonstrate the power of the numerical method, as implemented in Python libraries, through six fully coded examples that simulate experimental phenomena. Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, dynamically typed, interpreted language without sacrificing performance.
 
-Our presentation is in the style of literate programming and draws inspiration from similar articles by Weideman and Reddy [@weideman2000matlab], Higham [@higham2001algorithmic], and Trefethen [@trefethen2000spectral]. The article is best read alongside installing the libraries PyStokes, PyLaplace and PyForces and executing the example codes. These three libraries are available on GitHub at \href{https://github.com/rajeshrinet/pystokes}{https://github.com/rajeshrinet/pystokes}  where detailed installation instructions can also be found. A subset of the library features is available as a Binder file which requires no installation. All software is released under the MIT license.
+Our presentation is in the style of literate programming and draws inspiration from similar articles by Weideman and Reddy [@weideman2000matlab], Higham [@higham2001algorithmic], and Trefethen [@trefethen2000spectral]. The article is best read alongside installing the library [PyStokes](https://github.com/rajeshrinet/pystokes)  where detailed installation instructions can also be found. You can take PyStokes for a spin without installation: [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples) 
+. All software is released under the MIT license.
 
 
 # Methods

@@ -422,7 +422,7 @@ cdef class Rbm:
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T):
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
-        cdef double ox, oy, oz, mut=1.0/(8*PI*self.eta*self.a**3), mu1=1.0/(8*PI*self.eta)
+        cdef double ox, oy, oz, mut=1.0/(8*PI*self.eta*self.a**3), mu1=1.0/(8*4*PI*self.eta)
 
         for i in prange(Np, nogil=True):
             ox=0; oy=0; oz=0;

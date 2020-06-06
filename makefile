@@ -23,9 +23,9 @@ env:
 
 test:
 	@echo testing pystokes...
-	cd pystokes && python installTests.py
+	cd tests && python installTests.py
 
 nbtest:
 	@echo testing example notebooks...
 	@echo test $(path)
-	cd examples && python testNotebooks.py --path $(path) --recursive $(recursive)
+	cd tests && python testNotebooks.py --path $(path) --recursive $(recursive)

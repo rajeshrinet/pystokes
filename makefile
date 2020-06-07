@@ -28,10 +28,12 @@ test:
 
 pypitest:
 	@echo testing pystokes...
+	python setup.py sdist bdist_wheel
 	python -m twine upload --repository testpypi dist/*
 
 pypi:
 	@echo testing pystokes...
+	python setup.py sdist bdist_wheel	
 	python -m twine upload dist/*
 
 

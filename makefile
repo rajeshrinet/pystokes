@@ -13,8 +13,8 @@ clean-local:
 clean:
 	@echo removing all compiled files
 	${PYTHON} setup.py clean
-	rm pystokes/*.c pystokes/*.html 
-	
+	rm pystokes/*.c pystokes/*.html
+
 env:
 	@echo creating conda environment...
 	conda env create --file environment.yml
@@ -24,6 +24,16 @@ env:
 test:
 	@echo testing pystokes...
 	cd tests && python installTests.py
+
+
+pypitest:
+	@echo testing pystokes...
+	python -m twine upload --repository testpypi dist/*
+
+pypi:
+	@echo testing pystokes...
+	python -m twine upload dist/*
+
 
 nbtest:
 	@echo testing example notebooks...

@@ -28,7 +28,7 @@ The principal features that set this method apart are (a) the restriction of ind
 
 The purpose of this article is to demonstrate the power of the numerical method, as implemented in a Python library, through  fully coded examples that simulate experimental phenomena. Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, dynamically typed, interpreted language without sacrificing performance.
 
-You can take PyStokes for a spin without installation: [Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). All software is released under the MIT license.
+You can take PyStokes for a spin without installation: [Binder demo of PyStokes](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). All software is released under the MIT license.
 
 
 # Methods
@@ -41,14 +41,14 @@ The first step is the representation of the solution of an elliptic partial diff
 
 PyStokes can be used to compute fluid flow on a given set of grid points 
 ```python
-flow = pystokes.unbounded.Flow(radius=1, particles=1, viscosity=1, 
+Flow = pystokes.unbounded.Flow(radius=1, particles=1, viscosity=1, 
         gridpoints=4096) 
 ```
 or rigid body motion of hydrodynamically interacting colloidal spheres
 ```python
 Rbm = pystokes.unbounded.Rbm(radius=1, particles=1024, viscosity=1) 
 ```
-in various geometries of Stokes flow. The above code can be modified such that `unbounded` is replaced by  other geometries of Stokes flow such as`wallBounded`, `interface`, `periodic`, etc. The instantiation can then be used to compute `flow` and `Rbm` due to body forces, body torques and each irreducible mode of the surface slip.  PyStokes can also be used to obtain phoretic field 
+in various geometries of Stokes flow. The above code can be modified such that `unbounded` is replaced by  other geometries of Stokes flow such as `wallBounded`, `interface`, `periodic`, etc. The above instantiation can then be used to compute `Flow` and `Rbm` due to body forces, body torques, and each irreducible mode of the surface slip.  PyStokes can also be used to obtain phoretic field 
 ```python
 phoreticField = pystokes.phoreticUnbounded.Field(radius=1, particles=1, 
                 phoreticConstant=1, gridpoints=4096)
@@ -58,7 +58,7 @@ and phoretic motion
 phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024, 
             phoreticConstant=1)
 ```
-Force fields commonly encountered in colloidal system have also been implemented in `pystokes.forceFields`. More details and fully coded examples are availble on [GitHub page of PyStokes](https://github.com/rajeshrinet/pystokes).
+for different boundary conditions. Commonly used force fields in colloidal system have also been implemented in `pystokes.forceFields` for completeness. More details and fully coded examples are availble on [GitHub page of PyStokes](https://github.com/rajeshrinet/pystokes).
 
 # Acknowledgements
 

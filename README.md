@@ -1,4 +1,4 @@
-## PyStokes: Stokesian hydrodynamics in Python  
+## PyStokes: Phoresis and Stokesian hydrodynamics in Python  
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples) 
 [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest)
 ![Installation](https://github.com/rajeshrinet/pystokes/workflows/Installation/badge.svg)
@@ -13,7 +13,7 @@
 
 ## About
 
-[PyStokes](https://gitlab.com/rajeshrinet/pystokes) is a numerical library for Stokesian hydrodynamics. It uses a grid-free method, combining the integral representation of Stokes equation, spectral expansion, and Galerkin discretization, to compute hydrodynamic interactions between spheres with slip boundary conditions on their surfaces. The library also computes suspension scale quantities, such as rheological response, energy dissipation and fluid flow. The computational cost is quadratic in the number of particles and upto 1e5 particles have been accommodated on multicore computers. The library has been used to model **bacterial suspensions**,  **active colloids** and **autophoretic particles**. 
+[PyStokes](https://gitlab.com/rajeshrinet/pystokes) is a numerical library for Phoresis and Stokesian hydrodynamics in Python. It uses a grid-free method, combining the integral representation of Stokes and Laplace equations, spectral expansion, and Galerkin discretization, to compute phoretic and hydrodynamic interactions between spheres with slip boundary conditions on their surfaces. The library also computes suspension scale quantities, such as rheological response, energy dissipation and fluid flow. The computational cost is quadratic in the number of particles and upto 1e5 particles have been accommodated on multicore computers. The library has been used to model **bacterial suspensions**,  **active colloids** and **autophoretic particles**. 
 
 ![Crystallization of active colloids](examples/crystallite.gif)
 

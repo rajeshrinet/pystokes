@@ -28,8 +28,7 @@ The principal features that set this method apart are (a) the restriction of ind
 
 The purpose of this article is to demonstrate the power of the numerical method, as implemented in a Python library, through  fully coded examples that simulate experimental phenomena. Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, dynamically typed, interpreted language without sacrificing performance.
 
-You can take PyStokes for a spin without installation: [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples) 
-. All software is released under the MIT license.
+You can take PyStokes for a spin without installation: [Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). All software is released under the MIT license.
 
 
 # Methods

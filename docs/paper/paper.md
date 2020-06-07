@@ -41,21 +41,22 @@ The first step is the representation of the solution of an elliptic partial diff
 
 PyStokes can be used to compute fluid flow on a given set of grid points 
 ```python
-# instantiate the Flow class of unbounded
-flow = pystokes.unbounded.Flow(radius=1, particles=1, viscosity=1, gridpoints=4096) 
+flow = pystokes.unbounded.Flow(radius=1, particles=1, viscosity=1, 
+        gridpoints=4096) 
 ```
 or rigid body motion of hydrodynamically interacting colloidal spheres
 ```python
-# instantiate the Rbm class of unbounded
 Rbm = pystokes.unbounded.Rbm(radius=1, particles=1024, viscosity=1) 
 ```
-in various geometries of Stokes flow. The above code can be modified such that `unbounded` is replaced by `wallBounded`, `interface`, `periodic` etc. The instantiation can then be used to compute `flow` and `Rbm` due to each irreducible mode of the force per unit area on the surface of the particle.  PyStokes can also be used to obtain phoretic field 
+in various geometries of Stokes flow. The above code can be modified such that `unbounded` is replaced by  other geometries of Stokes flow such as`wallBounded`, `interface`, `periodic`, etc. The instantiation can then be used to compute `flow` and `Rbm` due to body forces, body torques and each irreducible mode of the surface slip.  PyStokes can also be used to obtain phoretic field 
 ```python
-phoreticField = pystokes.phoreticUnbounded.Field(radius=1, particles=1, phoreticConstant=1, gridpoints=4096)
+phoreticField = pystokes.phoreticUnbounded.Field(radius=1, particles=1, 
+                phoreticConstant=1, gridpoints=4096)
 ```
 and phoretic motion
 ```python
-phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024, phoreticConstant=2)
+phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024, 
+            phoreticConstant=1)
 ```
 Force fields commonly encountered in colloidal system have also been implemented in `pystokes.forceFields`. More details and fully coded examples are availble on [GitHub page of PyStokes](https://github.com/rajeshrinet/pystokes).
 

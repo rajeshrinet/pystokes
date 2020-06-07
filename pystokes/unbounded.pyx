@@ -30,11 +30,7 @@ cdef class Rbm:
     viscosity: float 
         Viscosity of the fluid (eta)
 
-    Examples
-    --------
-    An example of the RBM
-
-    """
+   """
 
     def __init__(self, radius=1, particles=1, viscosity=1.0):
         self.a   = radius
@@ -61,6 +57,35 @@ cdef class Rbm:
         F: np.array
             An array of forces
             An array of size 3*Np,
+    
+        Examples
+        --------
+        An example of the RBM 
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, vs, Np, eta = 1.0, 1.0, 128, 0.1
+
+        >>> #initialise
+        >>> r = pystokes.utils.initialCondition(Np)  # initial random distribution of positions
+        >>> p = np.zeros(3*Np); p[2*Np:3*Np] = -1    # initial orientation of the colloids
+        >>> 
+        >>> rbm   = pystokes.unbounded.Rbm(radius=b, particles=Np, viscosity=eta)
+        >>> force = pystokes.forceFields.Forces(particles=Np)
+        >>> 
+        >>> def rhs(rp):
+        >>>     # assign fresh values at each time step
+        >>>     r = rp[0:3*Np];   p = rp[3*Np:6*Np]
+        >>>     F, v, o = np.zeros(3*Np), np.zeros(3*Np), np.zeros(3*Np)
+        >>> 
+        >>>     force.lennardJonesWall(F, r, lje=0.01, ljr=5, wlje=1.2, wljr=3.4)
+        >>>     rbm.mobilityTT(v, r, F)
+        >>>     return np.concatenate( (v,o) )
+        >>> 
+        >>> # simulate the resulting system
+        >>> Tf, Npts = 150, 200
+        >>> pystokes.utils.simulate(np.concatenate((r,p)), 
+        >>>      Tf,Npts,rhs,integrator='odeint', filename='crystallization')
         """
 
 
@@ -149,6 +174,7 @@ cdef class Rbm:
             An array of 2s mode of the slip
             An array of size 5*Np,
         """
+
         cdef int Np = self.Np, i, j, xx=2*Np, xx1=3*Np, xx2=4*Np
         cdef double dx, dy, dz, dr, idr,  idr3
         cdef double aa=(self.a*self.a*8.0)/3.0, vv1, vv2, aidr2
@@ -397,7 +423,6 @@ cdef class Rbm:
             An array of forces
             An array of size 3*Np,
         """
-
 
         cdef int Np = self.Np, i, j, xx=2*Np 
         cdef double dx, dy, dz, idr, idr3, ox, oy, oz, mu1 = 1.0/(8*PI*self.eta)
@@ -677,6 +702,7 @@ cdef class Rbm:
             An array of positions
             An array of size 3*Np,
         """
+
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
         cdef double mu=self.mu, mu1=2*mu*self.a*0.75, a2=self.a*self.a/3.0
@@ -799,6 +825,30 @@ cdef class Flow:
         F: np.array
             An array of body force
             An array of size 3*Np,
+    
+        Examples
+        --------
+        An example of the Flow field due to $1s$ mode of force per unit area
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> F1s  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.unbounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
+        >>> flow.flowField1s(vv, rr, r, F1s)
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
 
         cdef int Np = self.Np,  Nt = self.Nt
@@ -845,6 +895,31 @@ cdef class Flow:
         T: np.array
             An array of body torque
             An array of size 3*Np,
+    
+        Examples
+        --------
+        An example of the RBM 
+
+        # Example 1: Flow field due to $2a$ mode of force per unit area
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> V2a  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
+        >>> flow.flowField2a(vv, rr, r, V2a)
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='2s')
         """
 
         cdef int Np = self.Np, Nt = self.Nt
@@ -888,6 +963,30 @@ cdef class Flow:
         S: np.array
             An array of 2s mode of the slip
             An array of size 5*Np,
+        
+        Examples
+        --------
+        An example of the Flow field due to $3t$ mode of active slip
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> V3t  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
+        >>> flow.flowField3t(vv, rr, r, V3t)
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
 
         cdef int Np = self.Np, Nt = self.Nt
@@ -948,6 +1047,30 @@ cdef class Flow:
         D: np.array
             An array of 3t mode of the slip
             An array of size 3*Np,
+ 
+        Examples
+        --------
+        An example of the Flow field due to $3t$ mode of active slip
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> V3t  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
+        >>> flow.flowField3t(vv, rr, r, V3t)
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='2s')
         """
 
         cdef int Np = self.Np, Nt = self.Nt

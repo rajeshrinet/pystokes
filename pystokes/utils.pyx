@@ -21,8 +21,25 @@ ctypedef np.float_t DTYPE_t
 
 def gridXY(dim, L, Ng):
     """
-    returns the grid in XY direction centered around zero
+    Returns the grid in XY direction centered around zero
+    ...
+
+    Parameters
+    ----------
+    L  : float  
+        Length of the grid 
+    Ng : int 
+         Number of grid points
+
+    Examples
+    --------
+    An example of creating grid 
+    
+    >>> import numpy as np, pystokes 
+    >>> dim, L, Ng = 3, 10, 32
+    >>>  rr, vv = pystokes.utils.gridXY(dim, L, Ng)
     """
+
     Nt = Ng*Ng
     rr, vv = np.zeros(dim*Nt), np.zeros(dim*Nt)
     X, Y = np.meshgrid(np.linspace(-L, L, Ng), np.linspace(-L, L, Ng))
@@ -32,8 +49,25 @@ def gridXY(dim, L, Ng):
 
 def gridYZ(dim, L, Ng):
     """
-    returns the grid in YZ direction centered around zero
+    Returns the grid in YZ direction centered around zero
+    ...
+
+    Parameters
+    ----------
+    L  : float  
+        Length of the grid 
+    Ng : int 
+         Number of grid points
+
+    Examples
+    --------
+    An example of creating grid 
+    
+    >>> import numpy as np, pystokes 
+    >>> dim, L, Ng = 3, 10, 32
+    >>>  rr, vv = pystokes.utils.gridYZ(dim, L, Ng)
     """
+
     Nt = Ng*Ng
     rr, vv = np.zeros(dim*Nt), np.zeros(dim*Nt)
     X, Y = np.meshgrid(np.linspace(-L, L, Ng), np.linspace(-0, L, Ng))
@@ -48,9 +82,17 @@ def gridYZ(dim, L, Ng):
 cpdef irreducibleTensors(l, p, Y0=1):
     """
     Uniaxial paramterization of the tensorial harmonics (Yl) of order l
-    l  : tensorialHarmonics of order l
-    p  : axis along which the mode is paramterized
-    Y0 : strength of the mode
+    ...
+
+    Parameters
+    ----------
+    l  : int 
+        Tensorial Harmonics of order l
+    p  : np.rrray 
+        An array of size 3
+        Axis along which the mode is paramterized
+    Y0 : float 
+        Strength of the mode
     
     returns: Yl - tensorialHarmonics of rank l
     """
@@ -89,6 +131,28 @@ cpdef irreducibleTensors(l, p, Y0=1):
 
 
 def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat'):
+    """
+    Simulates using choice of integrator
+    
+    ...
+
+    Parameters
+    ----------
+    rp0 : np.array 
+        Initial condition 
+    Tf  : int 
+         Final time 
+    Npts: int 
+        Number of points to return data 
+    rhs : Python Function
+        Right hand side to integrate 
+    integrator: string 
+        Default is 'odeint' of scipy 
+    filename: string 
+        filename to write the data. 
+        Deafult is 'this.mat'
+    """
+
     from scipy.io import savemat; 
     from scipy.integrate import odeint
 

@@ -25,6 +25,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -81,13 +82,13 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="unbounded.html">Stokes flow in an unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Stokes flow in a space bounded by a no-shear plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Stokes flow in a space bounded by a no-slip plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Stokes flow in parallel plane no-slip walls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Flow bounded by a no-shear plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Flow bounded by a no-slip plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Flow in Hele-Shaw cell</a></li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Stokes flow in a periodic domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mima.html">MIMA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: in the unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: in the half-space bounded by a plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mima.html">Mollified irreducible multipole approach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis in an unbounded domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis in a space bounded by a plane</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forceFields.html">Force fields in colloidal systems</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Utils: Miscellaneous function</a></li>
 </ul>
@@ -156,10 +157,88 @@
             
   <div class="section" id="utils-miscellaneous-function">
 <h1>Utils: Miscellaneous function<a class="headerlink" href="#utils-miscellaneous-function" title="Permalink to this headline">¶</a></h1>
+<dl class="py method">
+<dt id="pystokes.utils.irreducibleTensors">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">irreducibleTensors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.utils.irreducibleTensors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniaxial paramterization of the tensorial harmonics (Yl) of order l
+…</p>
 <dl class="field-list simple">
-<dt class="field-odd">members</dt>
-<dd class="field-odd"><p></p></dd>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<em>int</em>) – Tensorial Harmonics of order l</p></li>
+<li><p><strong>p</strong> (<em>np.rrray</em>) – An array of size 3
+Axis along which the mode is paramterized</p></li>
+<li><p><strong>Y0</strong> (<em>float</em>) – Strength of the mode</p></li>
+<li><p><strong>returns</strong> (<em>Yl - tensorialHarmonics of rank l</em>) – </p></li>
+</ul>
+</dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.utils.gridXY">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">gridXY</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.utils.gridXY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the grid in XY direction centered around zero
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>float</em>) – Length of the grid</p></li>
+<li><p><strong>Ng</strong> (<em>int</em>) – Number of grid points</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>An example of creating grid</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">pystokes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">32</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="n">rr</span><span class="p">,</span> <span class="n">vv</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">gridXY</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.utils.gridYZ">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">gridYZ</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.utils.gridYZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the grid in YZ direction centered around zero
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>float</em>) – Length of the grid</p></li>
+<li><p><strong>Ng</strong> (<em>int</em>) – Number of grid points</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>An example of creating grid</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">pystokes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">32</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="n">rr</span><span class="p">,</span> <span class="n">vv</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">gridYZ</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.utils.simulate">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.utils.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulates using choice of integrator</p>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rp0</strong> (<em>np.array</em>) – Initial condition</p></li>
+<li><p><strong>Tf</strong> (<em>int</em>) – Final time</p></li>
+<li><p><strong>Npts</strong> (<em>int</em>) – Number of points to return data</p></li>
+<li><p><strong>rhs</strong> (<em>Python Function</em>) – Right hand side to integrate</p></li>
+<li><p><strong>integrator</strong> (<em>string</em>) – Default is ‘odeint’ of scipy</p></li>
+<li><p><strong>filename</strong> (<em>string</em>) – filename to write the data.
+Deafult is ‘this.mat’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 

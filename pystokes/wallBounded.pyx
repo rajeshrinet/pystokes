@@ -37,6 +37,51 @@ cdef class Rbm:
 
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F):
+        """
+        Compute velocity due to body forces using :math:`v=\mu^{TT}\cdot F` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+    
+        Examples
+        --------
+        An example of the RBM 
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, vs, Np, eta = 1.0, 1.0, 128, 0.1
+        >>> #initialise
+        >>> r = pystokes.utils.initialCondition(Np)  # initial random distribution of positions
+        >>> p = np.zeros(3*Np); p[2*Np:3*Np] = -1    # initial orientation of the colloids
+        >>> 
+        >>> rbm = pystokes.wallBounded.Rbm(radius=b, particles=Np, viscosity=eta)
+        >>> force = pystokes.forceFields.Forces(particles=Np)
+        >>> 
+        >>> def rhs(rp):
+        >>>     # assign fresh values at each time step
+        >>>     r = rp[0:3*Np];   p = rp[3*Np:6*Np]
+        >>>     F, v, o = np.zeros(3*Np), np.zeros(3*Np), np.zeros(3*Np)
+        >>> 
+        >>>     force.lennardJonesWall(F, r, lje=0.01, ljr=5, wlje=1.2, wljr=3.4)
+        >>>     rbm.mobilityTT(v, r, F)
+        >>>     return np.concatenate( (v,o) )
+        >>> 
+        >>> # simulate the resulting system
+        >>> Tf, Npts = 150, 200
+        >>> pystokes.utils.simulate(np.concatenate((r,p)), 
+        >>>    Tf,Npts,rhs,integrator='odeint', filename='crystallization')
+        """
+
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz
@@ -125,6 +170,23 @@ cdef class Rbm:
 
 
     cpdef mobilityTR(self, double [:] v, double [:] r, double [:] T):
+        """
+        Compute velocity due to body torque using :math:`v=\mu^{TR}\cdot T` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of torques
+            An array of size 3*Np,
+        """
+
         cdef int Np = self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2,
         cdef double vx, vy, vz,
@@ -178,6 +240,23 @@ cdef class Rbm:
 
 
     cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S):
+        """
+        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot S` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        """
+
         cdef int Np=self.Np, i, j, xx=2*Np, xx1=3*Np , xx2=4*Np
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr4, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
@@ -297,6 +376,23 @@ cdef class Rbm:
 
 
     cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D):
+        """
+        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot D` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*Np,
+        """
+
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2
         cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mu1 = -1.0*(self.a**5)/10
@@ -366,9 +462,29 @@ cdef class Rbm:
             v[i+Np] += mu1*vy
             v[i+xx] += mu1*vz
         return
-    
+   
+
+
     ## Angular Velocities
     cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F):
+        """
+        Compute angular velocity due to body forces using :math:`o=\mu^{RT}\cdot F` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        """
+
+
         cdef int Np = self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, rlz, Fdotidr, h2
         cdef double ox, oy, oz, mu1=1.0/(8*PI*self.eta)
@@ -420,6 +536,23 @@ cdef class Rbm:
 
 
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T):
+        """
+        Compute angular velocity due to body torques using :math:`o=\mu^{RR}\cdot T` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of forces
+            An array of size 3*Np,
+        """
+
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
         cdef double ox, oy, oz, mut=1.0/(8*PI*self.eta*self.a**3), mu1=1.0/(8*4*PI*self.eta)
@@ -481,6 +614,20 @@ cdef class Rbm:
 
     ## Noise
     cpdef calcNoiseMuTT(self, double [:] v, double [:] r):
+        """
+        Compute translation Brownian motion 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        """
+
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
         cdef double mu=self.mu, mu1=2*mu*self.a*0.75, a2=self.a*self.a/3.0
@@ -631,6 +778,20 @@ cdef class Rbm:
 
 
     cpdef calcNoiseMuRR(self, double [:] o, double [:] r):
+        """
+        Compute rotational Brownian motion 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        """
+
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
         cdef double mur=1/(8*np.pi*self.eta), mu1=0.25*sqrt(2.0)*mur, mm=4/(self.a**3)
@@ -783,6 +944,50 @@ cdef class Flow:
 
 
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F):
+        """
+        Compute flow field at field points due body forces
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of body force
+            An array of size 3*Np,
+    
+        Examples
+        --------
+        An example of the Flow field due to $1s$ mode of force per unit area
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> F1s  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridYZ(dim, L, Ng)
+        >>> flow.flowField1s(vv, rr, r, F1s)
+        >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='1s')
+        """
+
         cdef int i, j, Np=self.Np, Nt=self.Nt, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, tempF, hsq, h2
         cdef double vx, vy, vz, mu1=1.0/(8*PI*self.eta), a2=self.a*self.a/6.0
@@ -841,7 +1046,53 @@ cdef class Flow:
             #    print vv[i+xx]
         return 
     
+    
     cpdef flowField2a(  self, double [:] vv, double [:] rt, double [:] r, double [:] T):
+        """
+        Compute flow field at field points due body Torque 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of body torque
+            An array of size 3*Np,
+    
+        Examples
+        --------
+        An example of the RBM 
+
+        # Example 1: Flow field due to $2a$ mode of force per unit area
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> V2a  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridYZ(dim, L, Ng)
+        >>> flow.flowField2a(vv, rr, r, V2a)
+        >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='2s')
+        """
+
         cdef int Np = self.Np, i, j, xx=2*Np, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2, 
         cdef double vx, vy, vz, mu1 = 1.0/(8*PI*self.eta)
@@ -894,6 +1145,49 @@ cdef class Flow:
     
    
     cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S):
+        """
+        Compute flow field at field points  due to 2s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        
+        Examples
+        --------
+        An example of the Flow field due to $3t$ mode of active slip
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> V3t  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridYZ(dim, L, Ng)
+        >>> flow.flowField3t(vv, rr, r, V3t)
+        >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='1s')
+        """
         cdef int Np=self.Np,  Nt=self.Nt, xx=2*Np, xx1=3*Np, xx2=4*Np
         cdef int i, j  
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
@@ -977,6 +1271,50 @@ cdef class Flow:
 
    
     cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D):
+        """
+        Compute flow field at field points due to 3t mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*Np,
+ 
+        Examples
+        --------
+        An example of the Flow field due to $3t$ mode of active slip
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> V3t  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridYZ(dim, L, Ng)
+        >>> flow.flowField3t(vv, rr, r, V3t)
+        >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='1s')
+        """
+
         cdef int i, j, Np=self.Np, Nt=self.Nt, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2
         cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mu1 = -1.0*(self.a**5)/10

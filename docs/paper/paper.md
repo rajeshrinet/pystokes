@@ -61,6 +61,7 @@ phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024,
 for different boundary conditions. Commonly used force fields in colloidal system have also been implemented in `pystokes.forceFields` for completeness. 
 The PyStokes library has been used to model suspensions of microorganisms [@bolitho2020; @singh2016crystallization], synthetic autophoretic particles [@singh2016crystallization; @singh2019competing] and self-propelling droplets [@thutupalli2018FIPS].
 More details and fully coded examples are available on [GitHub page of PyStokes](https://github.com/rajeshrinet/pystokes).
+
 # Acknowledgements
 
 We would like to thank collaborators and colleagues, in both theory and experiment, for numerous discussions that have enriched our understanding of hydrodynamic and phoretic phenomena. In alphabetical order, they are: Ayan Banerjee, Mike Cates, Shyam Date, Aleks Donev, Erika Eiser, Daan Frenkel, Somdeb Ghose, Ray Goldstein, John Hinch, Abhrajit Laskar, Tony Ladd, Raj Kumar Manna, Ignacio Pagonabarraga, Dave Pine, Thalappil Pradeep, Rajiah Simon, Howard Stone, Ganesh Subramanian, P. B. Sunil Kumar, and Shashi Thutupalli. We acknowledge design ideas and code contributions from Rajeev Singh and Abhrajit Laskar in the initial stages of development. This work was funded in part by the European Research Council under the EU’s Horizon 2020 Program, Grant No. 740269; Royal Society-SERB Newton International Fellowship to RS; and an Early Career Grant to RA from the Isaac Newton Trust.

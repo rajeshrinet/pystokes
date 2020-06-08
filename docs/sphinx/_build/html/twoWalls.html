@@ -170,17 +170,74 @@
 <em class="property">class </em><code class="sig-prename descclassname">pystokes.twoWalls.</code><code class="sig-name descname">Rbm</code><a class="headerlink" href="#pystokes.twoWalls.Rbm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rigid body motion (RBM)</p>
 <p>…</p>
+<dl class="simple">
+<dt>radius: float</dt><dd><p>Radius of the particles (a).</p>
+</dd>
+<dt>particles: int</dt><dd><p>Number of particles (Np)</p>
+</dd>
+<dt>viscosity: float</dt><dd><p>Viscosity of the fluid (eta)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pystokes.twoWalls.Rbm.mobilityTT">
+<code class="sig-name descname">mobilityTT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.twoWalls.Rbm.mobilityTT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to body forces using <span class="math notranslate nohighlight">\(v=\mu^{TT}\cdot F\)</span>
+…</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>radius</strong> (<em>float</em>) – Radius of the particles.</p></li>
-<li><p><strong>particles</strong> (<em>int</em>) – Number of particles</p></li>
-<li><p><strong>viscosity</strong> (<em>viscosity of the fluid</em>) – </p></li>
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
+An array of size 3*Np,</p></li>
+<li><p><strong>H</strong> (<em>float</em>) – Height of the Hele-Shaw cell</p></li>
 </ul>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<p>An example of the Rbm</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.twoWalls.Rbm.propulsionT2s">
+<code class="sig-name descname">propulsionT2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.twoWalls.Rbm.propulsionT2s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to 2s mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>S</strong> (<em>np.array</em>) – An array of forces
+An array of size 5*Np,</p></li>
+<li><p><strong>H</strong> (<em>float</em>) – Height of the Hele-Shaw cell</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.twoWalls.Rbm.propulsionT3t">
+<code class="sig-name descname">propulsionT3t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.twoWalls.Rbm.propulsionT3t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute velocity due to 3t mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
+An array of size 3*Np,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>D</strong> (<em>np.array</em>) – An array of forces
+An array of size 3*Np,</p></li>
+<li><p><strong>H</strong> (<em>float</em>) – Height of the Hele-Shaw cell</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -203,6 +260,72 @@
 </dl>
 <p class="rubric">Examples</p>
 <p>An example of the RBM</p>
+<dl class="py method">
+<dt id="pystokes.twoWalls.Flow.flowField1s">
+<code class="sig-name descname">flowField1s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.twoWalls.Flow.flowField1s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points due body forces
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>F</strong> (<em>np.array</em>) – An array of body force
+An array of size 3*Np,</p></li>
+<li><p><strong>H</strong> (<em>float</em>) – Height of the Hele-Shaw cell</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.twoWalls.Flow.flowField2s">
+<code class="sig-name descname">flowField2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.twoWalls.Flow.flowField2s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points due to 2s mode of th slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>S</strong> (<em>np.array</em>) – An array of 2s mode of the slip
+An array of size 5*Np,</p></li>
+<li><p><strong>H</strong> (<em>float</em>) – Height of the Hele-Shaw cell</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.twoWalls.Flow.flowField3t">
+<code class="sig-name descname">flowField3t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.twoWalls.Flow.flowField3t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points due to 3t mode of th slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
+An array of size 3*Nt,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size 3*Np,</p></li>
+<li><p><strong>D</strong> (<em>np.array</em>) – An array of 2s mode of the slip
+An array of size r*Np,</p></li>
+<li><p><strong>H</strong> (<em>float</em>) – Height of the Hele-Shaw cell</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>

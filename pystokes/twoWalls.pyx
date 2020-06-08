@@ -17,18 +17,15 @@ cdef class Rbm:
     
     ...
 
-    Parameters
     ----------
     radius: float
-        Radius of the particles.    
+        Radius of the particles (a).    
     particles: int
-        Number of particles 
-    viscosity: viscosity of the fluid 
-    Examples
-    --------
-    An example of the Rbm
-    """
-
+        Number of particles (Np)
+    viscosity: float 
+        Viscosity of the fluid (eta)
+       """
+ 
 
     def __init__(self, a, Np, eta):
         self.a  = a                 # radius of the particles
@@ -36,6 +33,25 @@ cdef class Rbm:
         self.eta = eta                # number of particles
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, double H):
+        """
+        Compute velocity due to body forces using :math:`v=\mu^{TT}\cdot F` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        H: float 
+            Height of the Hele-Shaw cell 
+        """
+
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H
@@ -62,6 +78,25 @@ cdef class Rbm:
     
     
     cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, double H):
+        """
+        Compute velocity due to 2s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of forces
+            An array of size 5*Np,
+        H: float 
+            Height of the Hele-Shaw cell 
+        """
+
         cdef int Np=self.Np, i, j, xx=2*Np, xx1=3*Np , xx2=4*Np   
         cdef double dx, dy, dz, idr, idr2, idr4, idr6, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
@@ -99,13 +134,31 @@ cdef class Rbm:
 
    
     cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, double H):
+        """
+        Compute velocity due to 3t mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of forces
+            An array of size 3*Np,
+        H: float 
+            Height of the Hele-Shaw cell 
+        """
+
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr2, idr5, Ddotidr, tempD, hsq, h2, tH=2*H
         cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5
         cdef double fac0 = 6/(PI*self.eta*H*H*H), fac1, fac2
 
         for i in prange(Np, nogil=True):
-        #for i in range(Np):
             vx=0; vy=0; vz=0;
             for j in range(Np):
                 dx = r[i]    - r[j]
@@ -123,7 +176,6 @@ cdef class Rbm:
             v[i+Np] += vy*mud
             v[i+xx] += vz*mud
 
-        #print v[9+0], v[9+1], v[9+2], v[9+3], v[9+4], v[9+5], v[9+6], v[9+7], v[9+8]         
 
 
 
@@ -161,6 +213,28 @@ cdef class Flow:
 
 
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, double H):
+        """
+        Compute flow field at field points due body forces
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of body force
+            An array of size 3*Np,
+        H: float 
+            Height of the Hele-Shaw cell 
+        """
+
         cdef int i, j, Np=self.Np, xx=2*Np, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H
@@ -185,6 +259,27 @@ cdef class Flow:
 
 
     cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, double H):
+        """
+        Compute flow field at field points due to 2s mode of th slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip 
+            An array of size 5*Np,
+        H: float 
+            Height of the Hele-Shaw cell 
+        """
         cdef int i, j, Np=self.Np, xx=2*Np, Nt=self.Nt, xx1=3*Np, xx2=4*Np
         cdef double dx, dy, dz, idr, idr2, idr4, idr6, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
@@ -218,6 +313,27 @@ cdef class Flow:
 
 
     cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, double H):
+        """
+        Compute flow field at field points due to 3t mode of th slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 2s mode of the slip 
+            An array of size r*Np,
+        H: float 
+            Height of the Hele-Shaw cell 
+        """
         cdef int i, j, Np=self.Np, xx=2*Np, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr2, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H, Ddotidr

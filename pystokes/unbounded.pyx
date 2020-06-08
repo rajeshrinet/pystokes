@@ -764,10 +764,6 @@ cdef class Rbm:
             v[i+Np] += vy
             v[i+xx] += vz
 
-        #'''to check the one-body solution near a plane wall'''
-        #muPerp = mu*(1 - 9*self.a/(8*r[2]) + 0.5*(self.a/r[2])**3 ),
-        #muParl = mu*(1 - 9*self.a/(16*r[2]) + 0.125*(self.a/r[2])**3 )
-        #print self.Mobility/sqrt(2), muParl, muPerp  # note that there is a factor of sqrt(2)
         return
 
 

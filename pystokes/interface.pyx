@@ -228,10 +228,10 @@ cdef class Rbm:
                     vy += (T3*dx - T1*dz )*idr3
                     vz += (T1*dy - T2*dx )*idr3
 
-                    #rlz = (dx*T[j+Np] - dy*T[j])*idr*idr
-                    #vx += ll2*(h2*(T[j+Np]-3*rlz*dx) + 6*dz*dx*rlz)*idr3
-                    #vy += ll2*(h2*(-T[j]  -3*rlz*dy) + 6*dz*dy*rlz)*idr3
-                    #vz += ll2*(h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
+                    rlz = (dx*T[j+Np] - dy*T[j])*idr*idr
+                    vx += ll2*(h2*(T[j+Np]-3*rlz*dx) + 6*dz*dx*rlz)*idr3
+                    vy += ll2*(h2*(-T[j]  -3*rlz*dy) + 6*dz*dy*rlz)*idr3
+                    vz += ll2*(h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
                 else:
                     ''' the self contribution from the image point'''
                     dz = r[i+xx] + r[j+xx]
@@ -243,8 +243,8 @@ cdef class Rbm:
                     vx += (T2*dz )*idr3
                     vy += (-T1 *dz )*idr3
 
-                    #vx += ll2*h2*T[j+Np]*idr3
-                    #vy += -ll2*h2*T[j]*idr3
+                    vx += ll2*h2*T[j+Np]*idr3
+                    vy += -ll2*h2*T[j]*idr3
 
             v[i]    -= mu1*vx
             v[i+Np] -= mu1*vy
@@ -338,13 +338,13 @@ cdef class Rbm:
                     srr = ll*(sxx*dx*dx + syy*dy*dy + szz*dz*dz 
                             + 2*sxy*dx*dy + 2*sxz*dx*dz + 2*syz*dy*dz)*idr2;
                     
-                    vx += h2*( (dz*(-6*srx + 15*srr*dx)-3*srz*dx)*idr5 + (sxz)*idr3) ;
-                    vy += h2*( (dz*(-6*sry + 15*srr*dy)-3*srz*dy)*idr5 + (syz)*idr3) ;
-                    vz += h2*( (dz*(-6*srz + 15*srr*dz)-3*srz*dz)*idr5 + (szz + 3*srr)*idr3);
+                    vx += ll*h2*( (dz*(-6*srx + 15*srr*dx)-3*srz*dx)*idr5 + (sxz)*idr3) ;
+                    vy += ll*h2*( (dz*(-6*sry + 15*srr*dy)-3*srz*dy)*idr5 + (syz)*idr3) ;
+                    vz += ll*h2*( (dz*(-6*srz + 15*srr*dz)-3*srz*dz)*idr5 + (szz + 3*srr)*idr3);
 
-                    vx += hsq*(12*srx - 30*srr*dx)*idr5
-                    vy += hsq*(12*sry - 30*srr*dy)*idr5
-                    vz += hsq*(12*srz - 30*srr*dz)*idr5
+                    vx += ll*hsq*(12*srx - 30*srr*dx)*idr5
+                    vy += ll*hsq*(12*sry - 30*srr*dy)*idr5
+                    vz += ll*hsq*(12*srz - 30*srr*dz)*idr5
 
                 else:
                     ''' the self contribution from the image point'''
@@ -538,8 +538,8 @@ cdef class Rbm:
                     ox += (F[j+Np]*dz )*idr3
                     oy += (- F[j] *dz )*idr3
 
-                    #ox += (h2*F[j+Np])*idr3
-                    #oy += (h2*-F[j]  )*idr3
+                    ox += ll*(h2*F[j+Np])*idr3
+                    oy += ll*(h2*-F[j]  )*idr3
 
             o[i  ]  += mu1*ox
             o[i+Np] += mu1*oy

@@ -312,7 +312,7 @@ cdef class Rbm:
                     vy += -2*(dz*(syz-3*srz*dy*idr2)+ szz*dy)*idr3;
                     vz += -2*(dz*(szz-3*srz*dz*idr2)+ szz*dz - srz)*idr3;
 
-                    vx += h2*( sxz-3*srz*dx*idr2)*idr3;#? h2
+                    vx += h2*( sxz-3*srz*dx*idr2)*idr3;
                     vy += h2*( syz-3*srz*dy*idr2)*idr3;
                     vz += h2*( szz-3*srz*dz*idr2)*idr3;
 
@@ -1037,8 +1037,6 @@ cdef class Flow:
             vv[i  ]    += mu1*vx
             vv[i+Nt]   += mu1*vy
             vv[i+2*Nt] += mu1*vz
-            #with gil:
-            #    print vv[i+xx]
         return 
     
     

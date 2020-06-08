@@ -23,7 +23,7 @@ env:
 
 test:
 	@echo testing pystokes...
-	cd tests && python installTests.py
+	cd pystokes/tests && python installTests.py
 
 
 pypitest:
@@ -40,4 +40,4 @@ pypi:
 nbtest:
 	@echo testing example notebooks...
 	@echo test $(path)
-	cd tests && python testNotebooks.py --path $(path) --recursive $(recursive)
+	cd pystokes/tests && python testNotebooks.py --path $(path) --recursive $(recursive)

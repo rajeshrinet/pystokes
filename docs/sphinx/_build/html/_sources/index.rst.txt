@@ -1,7 +1,7 @@
 PyStokes API
 ==================================
 .. image:: ../../examples/banner.png
-  :width: 800
+  :width: 700
   :alt: PyRoss banner
 
 

@@ -19,14 +19,12 @@ cdef class Rbm:
     Parameters
     ----------
     radius: float
-        Radius of the particles.    
+        Radius of the particles (a)
     particles: int
-        Number of particles 
-    viscosity: viscosity of the fluid 
-    Examples
-    --------
-    An example of the RBM
-
+        Number of particles (Np) 
+    viscosity: float  
+        Viscosity of the fluid (eta)
+    
     """
 
 
@@ -57,6 +55,34 @@ cdef class Rbm:
         ll: float 
             viscosity ratio of the two fluids 
             Default is zero 
+        
+        Examples
+        --------
+        An example of the RBM 
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, vs, Np, eta = 1.0, 1.0, 128, 0.1
+        >>> #initialise
+        >>> r = pystokes.utils.initialCondition(Np)  # initial random distribution of positions
+        >>> p = np.zeros(3*Np); p[2*Np:3*Np] = -1    # initial orientation of the colloids
+        >>> 
+        >>> rbm = pystokes.interface.Rbm(radius=b, particles=Np, viscosity=eta)
+        >>> force = pystokes.forceFields.Forces(particles=Np)
+        >>> 
+        >>> def rhs(rp):
+        >>>     # assign fresh values at each time step
+        >>>     r = rp[0:3*Np];   p = rp[3*Np:6*Np]
+        >>>     F, v, o = np.zeros(3*Np), np.zeros(3*Np), np.zeros(3*Np)
+        >>> 
+        >>>     force.lennardJonesWall(F, r, lje=0.01, ljr=5, wlje=1.2, wljr=3.4)
+        >>>     rbm.mobilityTT(v, r, F)
+        >>>     return np.concatenate( (v,o) )
+        >>> 
+        >>> # simulate the resulting system
+        >>> Tf, Npts = 150, 200
+        >>> pystokes.utils.simulate(np.concatenate((r,p)), 
+        >>>    Tf,Npts,rhs,integrator='odeint', filename='crystallization')
         """
 
         cdef int i, j, Np=self.Np, xx=2*Np
@@ -288,7 +314,6 @@ cdef class Rbm:
                     Sljrjy = syx*dx +  syy*dy + syz*dz ;
                     Sljrjz = szx*dx +  szy*dy + szz*dz ;
                     srr = (sxx*dx*dx + syy*dy*dy + szz*dz*dz +  2*sxy*dx*dy)*idr2 ;
-                    #srx = sxy*dx + sxy*dy + szz*dz # old most probably wrong
                     srx = sxx*dx + sxy*dy + sxz*dz
                     sry = syx*dx + syy*dy + syz*dz
                     srz = sxz*dx + syz*dy + szz*dz
@@ -297,28 +322,29 @@ cdef class Rbm:
                     vy += (Sljrly - Sljrjy - trS*dy + 3*srr*dy)*idr3
                     vz += (Sljrlz - Sljrjz - trS*dz + 3*srr*dz)*idr3
 
-                    #vx += -2*(dz*(sxz-3*srz*dx*idr2)+ szz*dx)*idr3;
-                    #vy += -2*(dz*(syz-3*srz*dy*idr2)+ szz*dy)*idr3;
-                    #vz += -2*(dz*(szz-3*srz*dz*idr2)+ szz*dz - srz)*idr3;
-                    #
-                    #vx += h2*( sxz-3*srz*dx*idr2)*idr3;#? h2
-                    #vy += h2*( syz-3*srz*dy*idr2)*idr3;
-                    #vz += h2*( szz-3*srz*dz*idr2)*idr3;
-                    #
-                    ##reflecting both the indices of stresslet, S_jl M_lm M_jk
-                    #szx = -szx ; syz = -syz; szz = -szz;
-                    #srx = (sxx*dx +  sxy*dy + sxz*dz )
-                    #sry = (sxy*dx +  syy*dy + syz*dz )
-                    #srz = (sxz*dx +  syz*dy + szz*dz )
-                    #srr = (sxx*dx*dx + syy*dy*dy + szz*dz*dz + 2*sxy*dx*dy + 2*sxz*dx*dz + 2*syz*dy*dz)*idr2;
-                    #
-                    #vx += h2*( (dz*(-6*srx + 15*srr*dx)-3*srz*dx)*idr5 + (sxz)*idr3) ;
-                    #vy += h2*( (dz*(-6*sry + 15*srr*dy)-3*srz*dy)*idr5 + (syz)*idr3) ;
-                    #vz += h2*( (dz*(-6*srz + 15*srr*dz)-3*srz*dz)*idr5 + (szz + 3*srr)*idr3);
+                    vx += -ll*2*(dz*(sxz-3*srz*dx*idr2)+ szz*dx)*idr3;
+                    vy += -ll*2*(dz*(syz-3*srz*dy*idr2)+ szz*dy)*idr3;
+                    vz += -ll*2*(dz*(szz-3*srz*dz*idr2)+ szz*dz - srz)*idr3;
+                    
+                    vx += ll*h2*( sxz-3*srz*dx*idr2)*idr3;
+                    vy += ll*h2*( syz-3*srz*dy*idr2)*idr3;
+                    vz += ll*h2*( szz-3*srz*dz*idr2)*idr3;
+                    
+                    #reflecting both the indices of stresslet, S_jl M_lm M_jk
+                    szx = -szx ; syz = -syz; szz = -szz;
+                    srx = ll*(sxx*dx +  sxy*dy + sxz*dz )
+                    sry = ll*(sxy*dx +  syy*dy + syz*dz )
+                    srz = ll*(sxz*dx +  syz*dy + szz*dz )
+                    srr = ll*(sxx*dx*dx + syy*dy*dy + szz*dz*dz 
+                            + 2*sxy*dx*dy + 2*sxz*dx*dz + 2*syz*dy*dz)*idr2;
+                    
+                    vx += h2*( (dz*(-6*srx + 15*srr*dx)-3*srz*dx)*idr5 + (sxz)*idr3) ;
+                    vy += h2*( (dz*(-6*sry + 15*srr*dy)-3*srz*dy)*idr5 + (syz)*idr3) ;
+                    vz += h2*( (dz*(-6*srz + 15*srr*dz)-3*srz*dz)*idr5 + (szz + 3*srr)*idr3);
 
-                    #vx += hsq*(12*srx - 30*srr*dx)*idr5
-                    #vy += hsq*(12*sry - 30*srr*dy)*idr5
-                    #vz += hsq*(12*srz - 30*srr*dz)*idr5
+                    vx += hsq*(12*srx - 30*srr*dx)*idr5
+                    vy += hsq*(12*sry - 30*srr*dy)*idr5
+                    vz += hsq*(12*srz - 30*srr*dz)*idr5
 
                 else:
                     ''' the self contribution from the image point'''
@@ -342,27 +368,27 @@ cdef class Rbm:
                     vy += -Sljrjy*idr3 ;
                     vz += (Sljrlz - Sljrjz - trS*dz +3*srr*dz)*idr3 ;
 
-                    #vx += -2*(dz*(sxz))*idr3;
-                    #vy += -2*(dz*(syz))*idr3;
-                    #vz += -2*(dz*(szz-3*srz*dz*idr2)+ szz*dz - srz)*idr3;
-                    #
-                    #vx += h2*sxz*idr3;
-                    #vy += h2*syz*idr3;
-                    #vz += h2*( szz-3*srz*dz*idr2)*idr3;
-                    #
-                    ##reflecting both the indices of stresslet, S_jl M_lm M_jk
-                    #szx = -szx ; syz = -syz; szz = -szz;
-                    #srx = sxz*dz;
-                    #sry = syz*dz;
-                    #srz = szz*dz;
-                    #
-                    #vx += h2*(dz*(-6*srx )*idr5 + (sxz)*idr3) ;
-                    #vy += h2*(dz*(-6*sry )*idr5 + (syz)*idr3) ;
-                    #vz += h2*((dz*(-6*srz + 15*srr*dz)-3*srz*dz)*idr5 + (4*szz)*idr3);
+                    vx += -2*ll*(dz*(sxz))*idr3;
+                    vy += -2*ll*(dz*(syz))*idr3;
+                    vz += -2*ll*(dz*(szz-3*srz*dz*idr2)+ szz*dz - srz)*idr3;
+                    
+                    vx += ll*h2*sxz*idr3;
+                    vy += ll*h2*syz*idr3;
+                    vz += ll*h2*( szz-3*srz*dz*idr2)*idr3;
+                    
+                    #reflecting both the indices of stresslet, S_jl M_lm M_jk
+                    szx = -szx ; syz = -syz; szz = -szz;
+                    srx = ll*sxz*dz;
+                    sry = ll*syz*dz;
+                    srz = ll*szz*dz;
+                    
+                    vx += ll*h2*(dz*(-6*srx )*idr5 + (sxz)*idr3) ;
+                    vy += ll*h2*(dz*(-6*sry )*idr5 + (syz)*idr3) ;
+                    vz += ll*h2*((dz*(-6*srz + 15*srr*dz)-3*srz*dz)*idr5 + (4*szz)*idr3);
 
-                    #vx += hsq*12*srx*idr5
-                    #vy += hsq*12*sry*idr5
-                    #vz += hsq*(12*srz - 30*szz*dz)*idr5
+                    vx += ll*hsq*12*srx*idr5
+                    vy += ll*hsq*12*sry*idr5
+                    vz += ll*hsq*(12*srz - 30*szz*dz)*idr5
 
             v[i]    += vx*mus
             v[i+Np] += vy*mus
@@ -423,16 +449,16 @@ cdef class Rbm:
                     vy += (2*D2 - 6*Ddotidr*dy )*idr3
                     vz += (2*D3 - 6*Ddotidr*dz )*idr3
 
-                    #tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
-                    #Ddotidr = ( D[j]*dx + D[j+Np]*dy + tempD*dz )*idr*idr
-                    #
-                    #vx += 12*dz*( dz*D[j]   - 5*dz*Ddotidr*dx + 2*tempD*dx )*idr5
-                    #vy += 12*dz*( dz*D[j+Np]- 5*dz*Ddotidr*dy + 2*tempD*dy )*idr5
-                    #vz += 12*dz*( dz*tempD  - 5*dz*Ddotidr*dz + 2*tempD*dz )*idr5
+                    tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
+                    Ddotidr = ( D[j]*dx + D[j+Np]*dy + tempD*dz )*idr*idr
+                    
+                    vx += ll*12*dz*( dz*D[j]   - 5*dz*Ddotidr*dx + 2*tempD*dx )*idr5
+                    vy += ll*12*dz*( dz*D[j+Np]- 5*dz*Ddotidr*dy + 2*tempD*dy )*idr5
+                    vz += ll*12*dz*( dz*tempD  - 5*dz*Ddotidr*dz + 2*tempD*dz )*idr5
 
-                    #vx += -6*h2*(dz*D[j]   -5*Ddotidr*dx*dz + tempD*dx)*idr5
-                    #vy += -6*h2*(dz*D[j+Np]-5*Ddotidr*dy*dz + tempD*dy)*idr5
-                    #vz += -6*h2*(dz*tempD  -5*Ddotidr*dz*dz + tempD*dz)*idr5 -6*h2*Ddotidr*idr3
+                    vx += -ll*6*h2*(dz*D[j]   -5*Ddotidr*dx*dz + tempD*dx)*idr5
+                    vy += -ll*6*h2*(dz*D[j+Np]-5*Ddotidr*dy*dz + tempD*dy)*idr5
+                    vz += -ll*6*h2*(dz*tempD  -5*Ddotidr*dz*dz + tempD*dz)*idr5 -6*h2*Ddotidr*idr3
 
                 else:
                     ''' self contribution from the image point'''
@@ -449,16 +475,16 @@ cdef class Rbm:
                     vy += (2*D2 )*idr3
                     vz += (2*D3 - 6*Ddotidr*dz )*idr3
 
-                    #tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
-                    #Ddotidr = tempD*dz*idr*idr
-                    #
-                    #vx += 12*dz*( dz*D[j]   )*idr5
-                    #vy += 12*dz*( dz*D[j+Np])*idr5
-                    #vz += 12*dz*( dz*tempD  - 5*dz*Ddotidr*dz + 2*tempD*dz )*idr5
+                    tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
+                    Ddotidr = tempD*dz*idr*idr
+                    
+                    vx += ll*12*dz*( dz*D[j]   )*idr5
+                    vy += ll*12*dz*( dz*D[j+Np])*idr5
+                    vz += ll*12*dz*( dz*tempD  - 5*dz*Ddotidr*dz + 2*tempD*dz )*idr5
 
-                    #vx += -6*h2*(dz*D[j]   )*idr5
-                    #vy += -6*h2*(dz*D[j+Np])*idr5
-                    #vz += -6*h2*(dz*tempD  -5*Ddotidr*dz*dz + tempD*dz)*idr5 -6*h2*Ddotidr*idr3
+                    vx += -ll*6*h2*(dz*D[j]   )*idr5
+                    vy += -ll*6*h2*(dz*D[j+Np])*idr5
+                    vz += -ll*6*h2*(dz*tempD  -5*Ddotidr*dz*dz + tempD*dz)*idr5 -6*h2*Ddotidr*idr3
 
             v[i  ]  += mu1*vx
             v[i+Np] += mu1*vy
@@ -499,9 +525,9 @@ cdef class Rbm:
                     oy += (-F[j+xx]*dx - F[j]   *dz )*idr3
                     oz += (F[j]   *dy - F[j+Np]*dx )*idr3
 
-                    #ox += (h2*(F[j+Np]-3*rlz*dx) + 6*dz*dx*rlz)*idr3
-                    #oy += (h2*(-F[j]  -3*rlz*dy) + 6*dz*dy*rlz)*idr3
-                    #oz += (h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
+                    ox += (ll*h2*(F[j+Np]-3*rlz*dx) + 6*dz*dx*rlz)*idr3
+                    oy += (ll*h2*(-F[j]  -3*rlz*dy) + 6*dz*dy*rlz)*idr3
+                    oz += (ll*h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
 
                 else:
                     ''' the self contribution from the image point'''
@@ -553,16 +579,16 @@ cdef class Rbm:
                     oy += (2*T[j+Np] - 6*Tdotidr*dy )*idr3
                     oz += (-2*T[j+xx] - 6*Tdotidr*dz )*idr3
 
-                    #tempT = -T[j+xx]     # D_i = M_ij D_j, reflection of the strength
-                    #Tdotidr = ( T[j]*dx + T[j+Np]*dy + tempT*dz )*idr*idr
-                    #
-                    #ox += 12*dz*( dz*T[j]   - 5*dz*Tdotidr*dx + 2*tempT*dx )*idr5
-                    #oy += 12*dz*( dz*T[j+Np]- 5*dz*Tdotidr*dy + 2*tempT*dy )*idr5
-                    #oz += 12*dz*( dz*tempT  - 5*dz*Tdotidr*dz + 2*tempT*dz )*idr5
+                    tempT = -T[j+xx]     # D_i = M_ij D_j, reflection of the strength
+                    Tdotidr = ( T[j]*dx + T[j+Np]*dy + tempT*dz )*idr*idr
+                    
+                    ox += ll*12*dz*( dz*T[j]   - 5*dz*Tdotidr*dx + 2*tempT*dx )*idr5
+                    oy += ll*12*dz*( dz*T[j+Np]- 5*dz*Tdotidr*dy + 2*tempT*dy )*idr5
+                    oz += ll*12*dz*( dz*tempT  - 5*dz*Tdotidr*dz + 2*tempT*dz )*idr5
 
-                    #ox += -6*h2*(dz*T[j]   -5*Tdotidr*dx*dz + tempT*dx)*idr5
-                    #oy += -6*h2*(dz*T[j+Np]-5*Tdotidr*dy*dz + tempT*dy)*idr5
-                    #oz += -6*h2*(dz*tempT  -5*Tdotidr*dz*dz + tempT*dz)*idr5 -6*h2*Tdotidr*idr3
+                    ox += -ll*6*h2*(dz*T[j]   -5*Tdotidr*dx*dz + tempT*dx)*idr5
+                    oy += -ll*6*h2*(dz*T[j+Np]-5*Tdotidr*dy*dz + tempT*dy)*idr5
+                    oz += -ll*6*h2*(dz*tempT  -5*Tdotidr*dz*dz + tempT*dz)*idr5 -6*h2*Tdotidr*idr3
 
                 else:
 
@@ -684,10 +710,6 @@ cdef class Rbm:
             v[i+Np] += vy
             v[i+xx] += vz
 
-        #'''to check the one-body solution near a plane wall'''
-        #muPerp = mu*(1 - 9*self.a/(8*r[2]) + 0.5*(self.a/r[2])**3 ),
-        #muParl = mu*(1 - 9*self.a/(16*r[2]) + 0.125*(self.a/r[2])**3 )
-        #print self.Mobility/sqrt(2), muParl, muPerp  # note that there is a factor of sqrt(2)
         return
 
 

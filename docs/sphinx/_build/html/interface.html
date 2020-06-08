@@ -173,14 +173,12 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>radius</strong> (<em>float</em>) – Radius of the particles.</p></li>
-<li><p><strong>particles</strong> (<em>int</em>) – Number of particles</p></li>
-<li><p><strong>viscosity</strong> (<em>viscosity of the fluid</em>) – </p></li>
+<li><p><strong>radius</strong> (<em>float</em>) – Radius of the particles (a)</p></li>
+<li><p><strong>particles</strong> (<em>int</em>) – Number of particles (Np)</p></li>
+<li><p><strong>viscosity</strong> (<em>float</em>) – Viscosity of the fluid (eta)</p></li>
 </ul>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<p>An example of the RBM</p>
 <dl class="py method">
 <dt id="pystokes.interface.Rbm.calcNoiseMuTT">
 <code class="sig-name descname">calcNoiseMuTT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.interface.Rbm.calcNoiseMuTT" title="Permalink to this definition">¶</a></dt>
@@ -238,6 +236,33 @@ Default is zero</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>An example of the RBM</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pystokes</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># particle radius, self-propulsion speed, number and fluid viscosity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="n">Np</span><span class="p">,</span> <span class="n">eta</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mf">0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#initialise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">initialCondition</span><span class="p">(</span><span class="n">Np</span><span class="p">)</span>  <span class="c1"># initial random distribution of positions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">);</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">Np</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>    <span class="c1"># initial orientation of the colloids</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rbm</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">Rbm</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">particles</span><span class="o">=</span><span class="n">Np</span><span class="p">,</span> <span class="n">viscosity</span><span class="o">=</span><span class="n">eta</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">force</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">forceFields</span><span class="o">.</span><span class="n">Forces</span><span class="p">(</span><span class="n">particles</span><span class="o">=</span><span class="n">Np</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">rp</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># assign fresh values at each time step</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">r</span> <span class="o">=</span> <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">];</span>   <span class="n">p</span> <span class="o">=</span> <span class="n">rp</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">:</span><span class="mi">6</span><span class="o">*</span><span class="n">Np</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">F</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">o</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">force</span><span class="o">.</span><span class="n">lennardJonesWall</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">lje</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">ljr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">wlje</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">wljr</span><span class="o">=</span><span class="mf">3.4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">rbm</span><span class="o">.</span><span class="n">mobilityTT</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">o</span><span class="p">)</span> <span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># simulate the resulting system</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Tf</span><span class="p">,</span> <span class="n">Npts</span> <span class="o">=</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">r</span><span class="p">,</span><span class="n">p</span><span class="p">)),</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">Tf</span><span class="p">,</span><span class="n">Npts</span><span class="p">,</span><span class="n">rhs</span><span class="p">,</span><span class="n">integrator</span><span class="o">=</span><span class="s1">&#39;odeint&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;crystallization&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">

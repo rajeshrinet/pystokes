@@ -18,15 +18,14 @@ cdef class Rbm:
     Parameters
     ----------
     radius: float
-        Radius of the particles.    
+        Radius of the particles (a)
     particles: int
-        Number of particles 
-    viscosity: viscosity of the fluid 
-    Examples
-    --------
-    An example of the RBM
-
+        Number of particles (Np) 
+    viscosity: float  
+        Viscosity of the fluid (eta)
+    
     """
+
     def __init__(self, radius=1, particles=1, viscosity=1.0):
         self.a   = radius
         self.Np  = particles
@@ -770,10 +769,6 @@ cdef class Rbm:
             v[i+Np] += vy
             v[i+xx] += vz
 
-        #'''to check the one-body solution near a plane wall'''
-        #muPerp = mu*(1 - 9*self.a/(8*r[2]) + 0.5*(self.a/r[2])**3 ),
-        #muParl = mu*(1 - 9*self.a/(16*r[2]) + 0.125*(self.a/r[2])**3 )
-        #print self.Mobility/2, muParl, muPerp  # note that there is a factor of 2
         return
 
 
@@ -1344,7 +1339,7 @@ cdef class Flow:
                 vx += -(2*D[j]    - 6*Ddotidr*dx )*idr3
                 vy += -(2*D[j+Np] - 6*Ddotidr*dy )*idr3
                 vz += -(2*D[j+xx] - 6*Ddotidr*dz )*idr3
-               # #
+                
                 tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
                 Ddotidr = ( D[j]*dx + D[j+Np]*dy + tempD*dz )*idr*idr
                 

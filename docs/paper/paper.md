@@ -38,12 +38,12 @@ The principal features that set this method apart are (a) the restriction of ind
 including unbounded volumes, volumes bounded by plane walls or interfaces, periodic volumes and, indeed, 
 any geometry-boundary condition combination for which the Green's functions of the governing equations are simply evaluated.
 
-The purpose of this article is to demonstrate the power of the numerical method, as implemented in a Python library, that can be used to simulate experimental phenomena. 
-The PyStokes library has been used to model suspensions of microorganisms [@bolitho2020; @singh2016crystallization], synthetic autophoretic 
-particles [@singh2016crystallization; @singh2019competing] and self-propelling droplets [@thutupalli2018FIPS].
+The PyStokes library has been used to model suspensions of microorganisms [@bolitho2020; @singh2016crystallization], 
+synthetic autophoretic particles [@singh2016crystallization; @singh2019competing] and 
+self-propelling droplets [@thutupalli2018FIPS].
 Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, 
 dynamically typed, interpreted language without sacrificing performance. You can take PyStokes for a spin without 
-installation: [Binder demo of PyStokes](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). 
+installation: [using Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). 
 
 
 # Methods

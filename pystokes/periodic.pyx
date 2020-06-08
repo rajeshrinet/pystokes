@@ -9,6 +9,28 @@ cdef double IPI = (2/sqrt(PI))
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Rbm:
+    """
+    Rigid body motion (RBM) - velocity and angular velocity
+    
+    Methods in this class update velocities or angular velocities 
+    using the inputs of -  arrays of positions, velocity or angular velocity, 
+    along with an array of forces or torques or a slip mode
+
+    The array of velocity or angular velocities is then update by each method. 
+    
+    ...
+
+    ----------
+    radius: float
+        Radius of the particles (a).    
+    particles: int
+        Number of particles (Np)
+    viscosity: float 
+        Viscosity of the fluid (eta)
+    boxSize: float 
+        Length of the box which is reperated periodicly in 3D
+
+   """
     def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10):
         self.a   = radius
         self.Np  = particles
@@ -17,6 +39,29 @@ cdef class Rbm:
 
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, int Nb=6, int Nm=6):
+        """
+        Compute velocity due to body forces using :math:`v=\mu^{TT}\cdot F` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 10
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 1
+        """
+
         cdef int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
         cdef double L=self.L,  xi=1.5*sqrt(PI)/L, ixi2 = 1/(xi*xi), mu=1.0/(6*PI*self.eta*self.a), mu1=mu*self.a*0.75, siz=Nb*L
         cdef double a2=self.a*self.a/3, aidr2, k0=2*PI/L, ivol=1/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
@@ -82,6 +127,29 @@ cdef class Rbm:
     
     
     cpdef mobilityTR(   self, double [:] v, double [:] r, double [:] T, int Nb=6, int Nm=6):
+        """
+        Compute velocity due to body torque using :math:`v=\mu^{TR}\cdot T` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of torques
+            An array of size 3*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)
             double ixi2 = 1/(xi*xi), vx, vy, vz
@@ -136,6 +204,29 @@ cdef class Rbm:
     
     
     cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, int Nb=6, int Nm=6):
+        """
+        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot S` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1, xx1=3*Np, xx2=4*Np
             double L = self.L,  xi = 0.5*sqrt(PI)/(L), siz=Nb*L
@@ -213,6 +304,29 @@ cdef class Rbm:
       
 
     cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, int Nb=6, int Nm=6):
+        """
+        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot D` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef double L = self.L,  xi = sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), ivol=1.0/(L*L*L)
         cdef double ixi2 = 1/(xi*xi), vx, vy, vz
         cdef int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
@@ -273,6 +387,28 @@ cdef class Rbm:
 
 
     cpdef propulsionT3s(  self, double [:] v, double [:] r, double [:] G, int Nb=6, int Nm=6):
+        """
+        Compute velocity due to 3s mode of the slip :math:`v=\pi^{T,3s}\cdot G` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        G: np.array
+            An array of 3s mode of the slip
+            An array of size 7*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)  
             double ixi2 = 1/(xi*xi), vx, vy, vz
@@ -356,6 +492,29 @@ cdef class Rbm:
 
     
     cpdef propulsionT3a(  self, double [:] v, double [:] r, double [:] V, int Nb=6, int Nm=6):
+        """
+        Compute velocity due to 3a mode of the slip :math:`v=\pi^{T,3a}\cdot V` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        V: np.array
+            An array of 3a mode of the slip
+            An array of size 5*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)
             double ixi2 = 1/(xi*xi)
@@ -416,6 +575,29 @@ cdef class Rbm:
 
 
     cpdef propulsionT4a(  self, double [:] v, double [:] r, double [:] M, int Nb=6, int Nm=6):
+        """
+        Compute velocity due to 4a mode of the slip :math:`v=\pi^{T,4a}\cdot M` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        M: np.array
+            An array of 4a mode of the slip
+            An array of size 7*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)
             double ixi2 = 1/(xi*xi), vx, vy, vz
@@ -485,6 +667,29 @@ cdef class Rbm:
     ## Angular velocities
 
     cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F, int Nb=6, int Nm=6):
+        """
+        Compute angular velocity due to body forces using :math:`o=\mu^{RT}\cdot F` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
             double L = self.L,  xi = sqrt(PI)/(L),
@@ -541,6 +746,28 @@ cdef class Rbm:
 
 
     cpdef mobilityRR(   self, double [:] o, double [:] r, double [:] T, int Nb=6, int Nm=6):
+        """
+        Compute angular velocity due to body torques using :math:`o=\mu^{RR}\cdot T` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of forces
+            An array of size 3*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L) 
             double ixi2 = 1/(xi*xi), ox, oy, oz
@@ -595,6 +822,29 @@ cdef class Rbm:
 
     
     cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S, int Nb=6, int Nm=6):
+        """
+        Compute angular velocity due to 2s mode of the slip :math:`v=\pi^{R,2s}\cdot S` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L) 
             double ixi2 = 1/(xi*xi), ox, oy, oz
@@ -659,6 +909,29 @@ cdef class Rbm:
 
 
     cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] G, int Nb=6, int Nm=6):
+        """
+        Compute angular velocity due to 3s mode of the slip :math:`v=\pi^{R,3s}\cdot G` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        G: np.array
+            An array of 3s mode of the slip
+            An array of size 7*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L), 
             double ixi2 = 1/(xi*xi)
@@ -721,6 +994,29 @@ cdef class Rbm:
 
 
     cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V, int Nb=6, int Nm=6):
+        """
+        Compute angular velocity due to 3a mode of the slip :math:`v=\pi^{R,3a}\cdot V` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        V: np.array
+            An array of 3a mode of the slip
+            An array of size 5*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)   
             double ixi2 = 1/(xi*xi)
@@ -783,6 +1079,29 @@ cdef class Rbm:
 
 
     cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] M, int Nb=6, int Nm=6):
+        """
+        Compute angular velocity due to 4a mode of the slip :math:`v=\pi^{R,4a}\cdot M` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        M: np.array
+            An array of 4a mode of the slip
+            An array of size 7*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)
             double ixi2 = 1/(xi*xi), ox, oy, oz
@@ -861,6 +1180,24 @@ cdef class Rbm:
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Flow:
+    """
+    Flow at given points
+    
+    ...
+
+    Parameters
+    ----------
+    radius: float
+        Radius of the particles.    
+    particles: int
+        Number of particles 
+    viscosity: viscosity of the fluid 
+    gridpoints: int 
+        Number of grid points
+    boxsize: int 
+        Box size
+
+    """
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32, boxsize=10):
         self.a  = radius
         self.Np = particles
@@ -868,7 +1205,58 @@ cdef class Flow:
         self.eta= viscosity
         self.L  = boxsize
 
+
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, int Nb=6, int Nm=6):
+        """
+        Compute flow field at field points due body forces
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of body force
+            An array of size 3*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+    
+        Examples
+        --------
+        An example of the Flow field due to $1s$ mode of force per unit area
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> F1s  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.periodic.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng,
+        >>>         boxSize=L)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
+        >>> flow.flowField1s(vv, rr, r, F1s)
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
+        """
         cdef int Np=self.Np, Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
         cdef double L=self.L,  xi=1*sqrt(PI)/L, ixi2 = 1/(xi*xi), mu=1.0/(6*PI*self.eta*self.a), mu1=mu*self.a*0.75, siz=Nb*L
         cdef double a2=0*self.a*self.a/6, k0=2*PI/L, ivol=1/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
@@ -923,6 +1311,32 @@ cdef class Flow:
    
 
     cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, int Nb=6, int Nm=6):
+        """
+        Compute flow field at field points  due to 2s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+
         cdef: 
             int Np=self.Np,Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
             double L = self.L,  xi = 0.5*sqrt(PI)/(L), siz=Nb*L
@@ -996,6 +1410,32 @@ cdef class Flow:
     
     
     cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, int Nb=16, int Nm=16):
+        """
+        Compute flow field at field points due to 3t mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*Np,
+        Nb: int 
+            Number of periodic boxed summed 
+            Default is 6
+        Nm: int 
+            Number of Fourier modes summed
+            Default is 6
+        """
+ 
         cdef: 
             double L = self.L,  xi = 1.5*sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), ivol=1.0/(L*L*L)
             double ixi2 = 1/(xi*xi), vx, vy, vz

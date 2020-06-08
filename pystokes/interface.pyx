@@ -39,6 +39,26 @@ cdef class Rbm:
         self.Mobility = np.zeros( (3*self.Np, 3*self.Np), dtype=np.float64)
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, double ll=0):
+        """
+        Compute velocity due to body forces using :math:`v=\mu^{TT}\cdot F` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        ll: float 
+            viscosity ratio of the two fluids 
+            Default is zero 
+        """
+
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, F1, F2, F3
@@ -128,6 +148,26 @@ cdef class Rbm:
 
 
     cpdef mobilityTR(self, double [:] v, double [:] r, double [:] T, double ll=0):
+        """
+        Compute velocity due to body forces using :math:`v=\mu^{TR}\cdot T` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of forces
+            An array of size 3*Np,
+        ll: float 
+            viscosity ratio of the two fluids 
+            Default is zero 
+        """
+
         cdef int Np = self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2,
         cdef double vx, vy, vz, T1, T2, T3
@@ -187,6 +227,23 @@ cdef class Rbm:
 
 
     cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, double ll=0):
+        """
+        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot S` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        """
+
         cdef int Np=self.Np, i, j, xx=2*Np, xx1=3*Np , xx2=4*Np
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
@@ -314,6 +371,23 @@ cdef class Rbm:
 
 
     cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, double ll=0):
+        """
+        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot D` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*Np,
+        """
+
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2, D1, D2, D3
         cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mu1 = -1.0*(self.a**5)/10
@@ -507,120 +581,22 @@ cdef class Rbm:
         return
 
 
-    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S, double ll=0):
-        cdef int Np=self.Np, i, j, xx=2*Np, xx1=3*Np , xx2=4*Np
-        cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7
-        cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
-        cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz, rlz, smr3, smkrk3
-        cdef double ox, oy, oz, mus = (28.0*self.a**3)/24, h
-
-        for i in prange(Np, nogil=True):
-            ox=0;   oy=0;   oz=0;
-            sxz = S[i+xx1];
-            syz = S[i+xx2];
-            for j in range(Np):
-                #sxx = S[j    ]  ;
-                #syy = S[j+Np ];
-                #sxy = S[j+xx ];
-                #sxz = S[j+xx1];
-                #syz = S[j+xx2];
-                if i != j:
-                    pass
-                    #syx = sxy;
-                    # szx = sxz;
-                    # szy = syz;
-                    #szz = -sxx-syy;
-                    #dx = r[i]   - r[j]
-                    #dy = r[i+Np] - r[j+Np]
-                    #h=r[j+xx]
-                    #dz = r[i+xx] - r[j+xx]
-                    #idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                    #idr5 = idr*idr*idr*idr*idr
-                    #srx = sxx*dx +  sxy*dy + sxz*dz
-                    #sry = sxy*dx +  syy*dy + syz*dz
-                    #srz = sxz*dx +  syz*dy - (sxx+syy)*dz
-
-                    #ox += 3*(sry*dz - srz*dy )*idr5
-                    #oy += 3*(srz*dx - srx*dz )*idr5
-                    #oz += 3*(srx*dy - sry*dx )*idr5
-                    #
-                    ####contributions from the image
-                    #dz = r[i+xx] + r[j+xx]
-                    #idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                    #idr2=idr*idr
-                    #idr3 = idr2*idr
-                    #idr5 = idr3*idr2
-                    #
-                    #rlz = (dx*syz - dy*sxz)*idr*idr
-                    #ox += (2*syz  - 6*rlz*dx)*idr3
-                    #oy += (-2*sxz - 6*rlz*dy)*idr3
-                    #oz += (       - 6*rlz*dz)*idr3
-                    #
-                    ###reflecting the second index of stresslet, S_jl M_lm
-                    #sxz=-sxz; syz=-syz; szz=-szz;
-                    #
-                    #smr3 = sxz*dy-syz*dx
-                    #ox += 6*(dz*(sxx*dy-syx*dx) + smr3*dx)*idr5
-                    #ox += 6*(dz*(sxy*dy-syy*dx) + smr3*dy)*idr5
-                    #oz += 6*(dz*(sxz*dy-syz*dx) + smr3*dz)*idr5
-
-                    #Sljrjx = sxx*dx +  sxy*dy + sxz*dz ;
-                    #Sljrjy = syx*dx +  syy*dy + syz*dz ;
-                    #Sljrjz = szx*dx +  szy*dy + szz*dz ;
-                    #srr = (sxx*dx*dx + syy*dy*dy + szz*dz*dz +  2*sxy*dx*dy)*idr2 ;
-                    #
-                    #ox += 2*syz*idr3 - 3*(Sljrjy*dz - Sljrjz*dy)*idr5
-                    #oy += 2*szx*idr3 - 3*(Sljrjz*dx - Sljrjx*dz)*idr5
-                    #oz +=              3*(Sljrjx*dy - Sljrjy*dx)*idr5
-                    #
-                    #smkrk3 = 30*(dx*Sljrjy-dy*Sljrjx)*idr5*idr2
-                    #ox += (h+dz)*smkrk3*dx
-                    #ox += (h+dz)*smkrk3*dy
-                    #oz += (h+dz)*smkrk3*dz
-
-                    #ox += 2*syz*idr3  - 3*(Sljrjy*dz - Sljrjz*dy )*idr5
-                    #oy += -2*szy*idr3 - 3*(Sljrjz*dx - Sljrjx*dz )*idr5
-                    #oz +=             - 3*(Sljrjx*dy - Sljrjy*dx )*idr5
-                    #
-                    #ox += 6*h*(-Sljrjy + (sxx*dy-syx*dx))*idr5
-                    #oy += 6*h*(Sljrjx  + (sxy*dy-syy*dx))*idr5
-                    #ox +=                (sxz*dy-syz*dx)*idr5
-                else:
-                    ### self contributions from the image
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/dz
-                    idr3 = idr*idr*idr
-                    ox += -8*( syz)*idr3
-                    oy += -8*(-sxz)*idr3
-                    ##reflecting the second index of stresslet, S_jl M_lm
-                    #sxz=-sxz; syz=-syz; szz=-szz;
-                    #
-                    #Sljrjx = sxz*dz ;
-                    #Sljrjy = syz*dz ;
-                    #Sljrjz = szz*dz ;
-                    #srr = szz*dz*dz*idr2 ;
-                    #
-                    #ox += 2*syz*idr3 - 3*(Sljrjy*dz)*idr5
-                    #oy += 2*szx*idr3 - 3*(- Sljrjx*dz)*idr5
-                    #
-                    #smkrk3 = 30*(dx*Sljrjy-dy*Sljrjx)*idr5*idr2
-                    #oz += (h+dz)*smkrk3*dz
-
-                    #ox += 2*syz*idr3  - 3*(Sljrjy*dz )*idr5
-                    #oy += -2*szy*idr3 - 3*(- Sljrjx*dz )*idr5
-                    #
-                    #ox += 6*h*(-Sljrjy )*idr5
-                    #oy += 6*h*(Sljrjx  )*idr5
-
-            o[i]    += ox
-            o[i+Np] += oy
-#            o[i+xx] += oz
-        return
-
-
 
     ## Noise
     cpdef calcNoiseMuTT(self, double [:] v, double [:] r):
+        """
+        Compute translation Brownian motion 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        """
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
         cdef double mu=self.mu, mu1=2*mu*self.a*0.75, a2=self.a*self.a/3.0
@@ -751,6 +727,50 @@ cdef class Flow:
 
 
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F):
+        """
+        Compute flow field at field points due body forces
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of body force
+            An array of size 3*Np,
+    
+        Examples
+        --------
+        An example of the Flow field due to $1s$ mode of force per unit area
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> F1s  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.interface.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridYZ(dim, L, Ng)
+        >>> flow.flowField1s(vv, rr, r, F1s)
+        >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='1s')
+        """
+
         cdef int i, j, Np=self.Np, Nt=self.Nt, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, tempF, hsq, h2, F3
         cdef double vx, vy, vz, mu1=1.0/(8*PI*self.eta), a2=self.a*self.a/6.0
@@ -788,9 +808,8 @@ cdef class Flow:
             vv[i  ]    += mu1*vx
             vv[i+Nt]   += mu1*vy
             vv[i+2*Nt] += mu1*vz
-            #with gil:
-            #    print vv[i+xx]
         return 
+
     
     cpdef flowField2a(  self, double [:] vv, double [:] rt, double [:] r, double [:] T):
         cdef int Np = self.Np, i, j, xx=2*Np, Nt=self.Nt

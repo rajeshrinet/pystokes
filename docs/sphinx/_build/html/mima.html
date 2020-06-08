@@ -25,6 +25,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -35,7 +36,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Phoresis: in the unbounded domain" href="phoreticUnbounded.html" />
+    <link rel="next" title="Phoresis in an unbounded domain" href="phoreticUnbounded.html" />
     <link rel="prev" title="Stokes flow in a periodic domain" href="periodic.html" /> 
 </head>
 
@@ -82,17 +83,17 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="unbounded.html">Stokes flow in an unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Stokes flow in a space bounded by a no-shear plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Stokes flow in a space bounded by a no-slip plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Stokes flow in parallel plane no-slip walls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Flow bounded by a no-shear plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Flow bounded by a no-slip plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Flow in Hele-Shaw cell</a></li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Stokes flow in a periodic domain</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Mollified irreducible multipole approach</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#mima3d">Mima3D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mima2d">Mima2D</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis: in the unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis: in the half-space bounded by a plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis in an unbounded domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis in a space bounded by a plane</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forceFields.html">Force fields in colloidal systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utils: Miscellaneous function</a></li>
 </ul>
@@ -167,12 +168,167 @@
 <dl class="py class">
 <dt id="pystokes.mima.Mima3D">
 <em class="property">class </em><code class="sig-prename descclassname">pystokes.mima.</code><code class="sig-name descname">Mima3D</code><a class="headerlink" href="#pystokes.mima.Mima3D" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
+<dd><p>Mollified irreducible multipole approach (MIMA) of a 3D Stokes flow
+MIMA resolves the fluid flow and solves Stokes equation directly.
+For further details of this method, read chapter 10 of the thesis:
+<a class="reference external" href="https://dspace.imsc.res.in/xmlui/handle/123456789/418">https://dspace.imsc.res.in/xmlui/handle/123456789/418</a>
+or at <a class="reference external" href="https://www.imsc.res.in/xmlui/handle/123456789/418">https://www.imsc.res.in/xmlui/handle/123456789/418</a></p>
+<dl class="py method">
+<dt id="pystokes.mima.Mima3D.flowField1s">
+<code class="sig-name descname">flowField1s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.flowField1s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to body forces
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>F</strong> (<em>np.array</em>) – An array of body forces
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima3D.flowField2a">
+<code class="sig-name descname">flowField2a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.flowField2a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to body torques
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>T</strong> (<em>np.array</em>) – An array of body torques
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima3D.flowField2s">
+<code class="sig-name descname">flowField2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.flowField2s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 2s mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>V</strong> (<em>np.array</em>) – An array of 2s mode of the slip
+An array of size 5*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima3D.flowField3a">
+<code class="sig-name descname">flowField3a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.flowField3a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 3a mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>V</strong> (<em>np.array</em>) – An array of 3a mode of the slip
+An array of size 5*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima3D.flowField3s">
+<code class="sig-name descname">flowField3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.flowField3s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 3s mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>G</strong> (<em>np.array</em>) – An array of 3s mode of the slip
+An array of size 7*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima3D.flowField3t">
+<code class="sig-name descname">flowField3t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.flowField3t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 3t mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>D</strong> (<em>np.array</em>) – An array of 4a mode of the slip
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima3D.flowField4a">
+<code class="sig-name descname">flowField4a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.flowField4a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 4a mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>M</strong> (<em>np.array</em>) – An array of 4a mode of the slip
+An array of size 7*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima3D.interpolate">
+<code class="sig-name descname">interpolate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>interpolates velocity to off-grid points</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pystokes.mima.Mima3D.solve">
 <code class="sig-name descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima3D.solve" title="Permalink to this definition">¶</a></dt>
 <dd><p>solve takes two numpy arrays v and fk.  Here, fk is
 the Fourier transform of the force field on the grid and v is an empty
 arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2</p>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny x Nz,</p></li>
+<li><p><strong>fk</strong> (<em>np.array</em>) – An array of force per unit in Fourier space
+An array of size Nx x Ny x Nz,</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -183,12 +339,125 @@ arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2</p>
 <dl class="py class">
 <dt id="pystokes.mima.Mima2D">
 <em class="property">class </em><code class="sig-prename descclassname">pystokes.mima.</code><code class="sig-name descname">Mima2D</code><a class="headerlink" href="#pystokes.mima.Mima2D" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
+<dd><p>Mollified irreducible multipole approach (MIMA) of a 2D Stokes flow
+MIMA resolves the fluid flow and solves Stokes equation directly.
+For further details of this method, read chapter 10 of the thesis:
+<a class="reference external" href="https://dspace.imsc.res.in/xmlui/handle/123456789/418">https://dspace.imsc.res.in/xmlui/handle/123456789/418</a>
+or at <a class="reference external" href="https://www.imsc.res.in/xmlui/handle/123456789/418">https://www.imsc.res.in/xmlui/handle/123456789/418</a></p>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>float</em>) – Radius of the particles (a).</p></li>
+<li><p><strong>Np</strong> (<em>int</em>) – Number of particles (Np)</p></li>
+<li><p><strong>Lx</strong> (<em>float</em>) – Size of domain in x-direction</p></li>
+<li><p><strong>Ly</strong> (<em>float</em>) – Size of domain in y-direction</p></li>
+<li><p><strong>Nx</strong> (<em>float</em>) – </p></li>
+<li><p><strong>Number of grid points in x-direction</strong> (<em>N</em>) – </p></li>
+<li><p><strong>Ny</strong> (<em>float</em>) – Number of grid-points in y-direction</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pystokes.mima.Mima2D.flowField1s">
+<code class="sig-name descname">flowField1s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima2D.flowField1s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to body forces
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny,</p></li>
+<li><p><strong>F</strong> (<em>np.array</em>) – An array of body forces
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima2D.flowField2s">
+<code class="sig-name descname">flowField2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima2D.flowField2s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 2s mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny,</p></li>
+<li><p><strong>S</strong> (<em>np.array</em>) – An array of 2s mode of the slip
+An array of size 5*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima2D.flowField3s">
+<code class="sig-name descname">flowField3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima2D.flowField3s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 3s mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny,</p></li>
+<li><p><strong>p</strong> (<em>np.array</em>) – An array of orientation of particles
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima2D.flowField3t">
+<code class="sig-name descname">flowField3t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima2D.flowField3t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute flow field at field points  due to 2s mode of the slip
+…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny,</p></li>
+<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
+An array of size Nx x Ny,</p></li>
+<li><p><strong>D</strong> (<em>np.array</em>) – An array of 2s mode of the slip
+An array of size 3*Np,</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pystokes.mima.Mima2D.interpolate">
+<code class="sig-name descname">interpolate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima2D.interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>interpolates velocity to off-grid points</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pystokes.mima.Mima2D.solve">
 <code class="sig-name descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.mima.Mima2D.solve" title="Permalink to this definition">¶</a></dt>
-<dd><p>solve takes two numpy arrays v and fk. Here, fk is
+<dd><p>solve takes two numpy arrays v and fk.  Here, fk is
 the Fourier transform of the force field on the grid and v is an empty
-arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2</p>
+arrray of same size.
+Returns the updated value of v = f(1-k k/k^2)/k^2</p>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.array</em>) – An array of flow at field points
+An array of size Nx x Ny,</p></li>
+<li><p><strong>fk</strong> (<em>np.array</em>) – An array of force per unit in Fourier space
+An array of size Nx x Ny,</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -204,7 +473,7 @@ arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="phoreticUnbounded.html" class="btn btn-neutral float-right" title="Phoresis: in the unbounded domain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="phoreticUnbounded.html" class="btn btn-neutral float-right" title="Phoresis in an unbounded domain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="periodic.html" class="btn btn-neutral float-left" title="Stokes flow in a periodic domain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -19,7 +19,9 @@ cdef class Mima3D:
     For further details of this method, read chapter 10 of the thesis: 
     https://dspace.imsc.res.in/xmlui/handle/123456789/418 
     or at https://www.imsc.res.in/xmlui/handle/123456789/418
+
     """
+
     def __init__(self, a_, Np_, Lx_, Ly_, Lz_, Nx_, Ny_, Nz_ ):
         self.a = a_
         self.Np = Np_
@@ -573,6 +575,7 @@ cdef class Mima2D:
     
     ...
 
+    Parameters
     ----------
     a: float
         Radius of the particles (a).    

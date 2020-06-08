@@ -35,10 +35,9 @@ cdef class Rbm:
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T, double ll=?)
 
 
-    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S, double ll=?)
-
-
     cpdef calcNoiseMuTT(self, double [:] v, double [:] r)
+
+
 
 @cython.wraparound(False)
 @cython.boundscheck(False)

@@ -69,7 +69,7 @@ Analytical solution can be obtained by Jacobi iteration, which is equivalent to 
 gradient method, at a cost quadratic in the number of unknowns. From this solution, we can reconstruct the field and the flux on the boundary, use these to determine the 
 fields in the bulk, and from there, compute derived quantities. These steps have been elaborated in several 
 papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh2018generalized; @singh2019competing; @bolitho2020] and we do not repeat them in detail here. 
-The arXiv preprint of this article contains more detailed examples [@singh2019Hydrodynamic].
+The arXiv preprint of this article contains extended documentation and more detailed examples [@singh2019Hydrodynamic].
 
 PyStokes can be used to compute fluid flow on a given set of grid points 
 ```python

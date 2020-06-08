@@ -1,11 +1,3 @@
-"""
-* Mollified irreducible multipole approach (MIMA)
-* MIMA resolves the fluid flow and solves Stokes equation directly.
-* For further details of this method, read chapter 10 of the thesis: 
-  https://dspace.imsc.res.in/xmlui/handle/123456789/418 
-  or at https://www.imsc.res.in/xmlui/handle/123456789/418
-"""
-
 cimport cython
 from libc.math cimport sqrt, exp, pow, erfc, sin, cos
 from cython.parallel import prange
@@ -21,6 +13,13 @@ cdef extern from "complex.h" nogil:
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Mima3D:
+    """
+    Mollified irreducible multipole approach (MIMA) of a 3D Stokes flow
+    MIMA resolves the fluid flow and solves Stokes equation directly.
+    For further details of this method, read chapter 10 of the thesis: 
+    https://dspace.imsc.res.in/xmlui/handle/123456789/418 
+    or at https://www.imsc.res.in/xmlui/handle/123456789/418
+    """
     def __init__(self, a_, Np_, Lx_, Ly_, Lz_, Nx_, Ny_, Nz_ ):
         self.a = a_
         self.Np = Np_
@@ -46,6 +45,22 @@ cdef class Mima3D:
        
 
     cpdef flowField1s(self, np.ndarray v, double [:] r, double [:] F, double sigma=3, int NN=20):
+        """
+        Compute flow field at field points  due to body forces 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny x Nz,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny x Nz,
+        F: np.array
+            An array of body forces
+            An array of size 3*Np,
+        """
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz
@@ -81,6 +96,22 @@ cdef class Mima3D:
 
 
     cpdef flowField2a(self, np.ndarray v, double [:] r, double [:] T, double sigma=3, int NN=20):
+        """
+        Compute flow field at field points  due to body torques 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny x Nz,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny x Nz,
+        T: np.array
+            An array of body torques
+            An array of size 3*Np,
+        """
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz
@@ -115,6 +146,22 @@ cdef class Mima3D:
 
 
     cpdef flowField2s(self, np.ndarray v, double [:] r, double [:] S, double sigma=3, int NN=20):
+        """
+        Compute flow field at field points  due to 2s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny x Nz,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny x Nz,
+        V: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        """
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz, skx, sky, skz
@@ -152,6 +199,22 @@ cdef class Mima3D:
 
 
     cpdef flowField3t(self, np.ndarray v, double [:] r, double [:] D, double sigma=3, int NN=20):
+        """
+        Compute flow field at field points  due to 3t mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny x Nz,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny x Nz,
+        D: np.array
+            An array of 4a mode of the slip
+            An array of size 3*Np,
+        """
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz
@@ -186,6 +249,22 @@ cdef class Mima3D:
     
     
     cpdef flowField3s(self, np.ndarray v, double [:] r, double [:] G, double sigma=3, int NN=20):
+        """
+        Compute flow field at field points  due to 3s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny x Nz,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny x Nz,
+        G: np.array
+            An array of 3s mode of the slip
+            An array of size 7*Np,
+        """
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
@@ -235,6 +314,22 @@ cdef class Mima3D:
 
 
     cpdef flowField3a(self, np.ndarray v, double [:] r, double [:] V, double sigma=3, int NN=20):
+        """
+        Compute flow field at field points  due to 3a mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny x Nz,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny x Nz,
+        V: np.array
+            An array of 3a mode of the slip
+            An array of size 5*Np,
+        """
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz, vkx, vky, vkz
@@ -271,6 +366,22 @@ cdef class Mima3D:
 
 
     cpdef flowField4a(self, np.ndarray v, double [:] r, double [:] M, double sigma=3, int NN=20):
+        """
+        Compute flow field at field points  due to 4a mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny x Nz,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny x Nz,
+        M: np.array
+            An array of 4a mode of the slip
+            An array of size 7*Np,
+        """
         cdef:
             int i, nx, ny, nz , x, y, z, Nx, Ny, Nz, Np, jx, jy, jz
             double arg, facx, facy, facz, kx, ky, kz, mrrr, mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
@@ -319,9 +430,24 @@ cdef class Mima3D:
 
 
     cpdef solve(self, np.ndarray v, np.ndarray fk ):
-        ''' solve takes two numpy arrays v and fk.  Here, fk is 
+        """
+        solve takes two numpy arrays v and fk.  Here, fk is 
         the Fourier transform of the force field on the grid and v is an empty 
-        arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2''' 
+        arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2
+
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny x Nz,
+        fk: np.array
+            An array of force per unit in Fourier space 
+            An array of size Nx x Ny x Nz,
+
+        """
+
         cdef int jx, jy, jz, Nx, Ny, Nz
         cdef double facx, facy, facz, a2, k2, kx, ky, kz, skx, sky, skz
         cdef double complex fdotk
@@ -362,8 +488,18 @@ cdef class Mima3D:
 
     
     cdef fourierFk(self, double sigma, int NN = 20):
-        ''' this module construct an initial Gaussian mollified force force on a grid.
-        And returns the Fourier transform of this which can then be used by the method solve()'''
+        """
+        This method construct an initial Gaussian mollified force force on a grid.
+        And returns the Fourier transform of this which can then be used by the method solve()
+        
+        Parameters
+        ----------
+        sigma: float
+            Standard deviation of the Gaussian mollifier
+        NN: int
+            Default is 20
+        """
+
         cdef:
             double scale = pow(2*PI*sigma*sigma, 3/2) 
             int Nx, Ny, Nz, nx, ny, nz
@@ -383,6 +519,9 @@ cdef class Mima3D:
 
 
     cpdef interpolate(self, double [:] V, double [:] r, np.ndarray vv, double sigma=3, int NN=20):
+        """
+        interpolates velocity to off-grid points
+        """
         cdef int i, nx, ny, nz, x, y, z, Nx, Ny, Nz, Np
         cdef double arg, pdotdr 
         cdef double scale = pow(2*PI*sigma*sigma, 3/2) 
@@ -425,6 +564,30 @@ cdef class Mima3D:
 @cython.boundscheck(False)
 @cython.nonecheck(False)
 cdef class Mima2D:
+    """
+    Mollified irreducible multipole approach (MIMA) of a 2D Stokes flow
+    MIMA resolves the fluid flow and solves Stokes equation directly.
+    For further details of this method, read chapter 10 of the thesis: 
+    https://dspace.imsc.res.in/xmlui/handle/123456789/418 
+    or at https://www.imsc.res.in/xmlui/handle/123456789/418
+    
+    ...
+
+    ----------
+    a: float
+        Radius of the particles (a).    
+    Np: int
+        Number of particles (Np)
+    Lx: float 
+        Size of domain in x-direction
+    Ly: float 
+        Size of domain in y-direction
+    Nx: float 
+    N   Number of grid points in x-direction
+    Ny: float 
+        Number of grid-points in y-direction
+
+    """
     def __init__(self, a_, Np_, Lx_, Ly_, Nx_, Ny_):
         self.a = a_
         self.Np = Np_
@@ -445,6 +608,22 @@ cdef class Mima2D:
 
     
     cpdef flowField1s(self, np.ndarray v, double [:] r, double [:] F, double sigma=1, int NN=20):
+        """
+        Compute flow field at field points  due to body forces 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny,
+        F: np.array
+            An array of body forces
+            An array of size 3*Np,
+        """
         cdef:
             int i, nx, ny , x, y, Nx, Ny, Np, jx, jy
             double arg, facx, facy, kx, ky,
@@ -476,6 +655,22 @@ cdef class Mima2D:
 
     
     cpdef flowField2s(self, np.ndarray v, double [:] r, double [:] S, double sigma=1, int NN=20):
+        """
+        Compute flow field at field points  due to 2s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny,
+        S: np.array
+            An array of 2s mode of the slip 
+            An array of size 5*Np,
+        """
         cdef:
             int i, nx, ny , x, y, Nx, Ny, Np, jx, jy
             double arg, facx, facy, kx, ky, skk, skx, sky, 
@@ -509,6 +704,22 @@ cdef class Mima2D:
 
 
     cpdef flowField3t(self, np.ndarray v, double [:] r, double [:] D, double sigma=3, int NN=20):
+        """
+        Compute flow field at field points  due to 2s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny,
+        D: np.array
+            An array of 2s mode of the slip 
+            An array of size 3*Np,
+        """
         cdef:
             int i, nx, ny , x, y, Nx, Ny, Np, jx, jy
             double arg, facx, facy, kx, ky, skk, skx, sky, 
@@ -540,6 +751,22 @@ cdef class Mima2D:
 
     
     cpdef flowField3s(self, np.ndarray v, double [:] r, double [:] p, double sigma=3, int NN=20):
+        """
+        Compute flow field at field points  due to 3s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny,
+        r: np.array
+            An array of positions
+            An array of size Nx x Ny,
+        p: np.array
+            An array of orientation of particles 
+            An array of size 3*Np,
+        """
         cdef:
             int i, nx, ny , x, y, Nx, Ny, Np, jx, jy
             double arg, facx, facy, kx, ky, skk, skx, sky, 
@@ -572,14 +799,27 @@ cdef class Mima2D:
         
         self.solve( v, np.concatenate(( self.fkx.ravel(), self.fky.ravel() )) )
         return
-   
 
     
-    #####
     cpdef solve(self, np.ndarray v, np.ndarray fk, ):
-        ''' solve takes two numpy arrays v and fk. Here, fk is 
+        """
+        solve takes two numpy arrays v and fk.  Here, fk is 
         the Fourier transform of the force field on the grid and v is an empty 
-        arrray of same size. It return  the updated value of v = f(1-k k/k^2)/k^2''' 
+        arrray of same size. 
+        Returns the updated value of v = f(1-k k/k^2)/k^2
+
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of flow at field points
+            An array of size Nx x Ny,
+        fk: np.array
+            An array of force per unit in Fourier space 
+            An array of size Nx x Ny,
+
+        """
         cdef int jx, jy, Nx, Ny
         cdef double facx, facy,  a2, k2, kx, ky, kz
         cdef double complex fdotk
@@ -610,8 +850,18 @@ cdef class Mima2D:
 
 
     cdef fourierFk(self, double sigma, double scale):
-        ''' this module construct an initial Gaussian mollified force force on a grid.
-        And returns the Fourier transform of this which can then be used by the method solve()'''
+        """
+        This method construct an initial Gaussian mollified force force on a grid.
+        And returns the Fourier transform of this which can then be used by the method solve()
+        
+        Parameters
+        ----------
+        sigma: float
+            Standard deviation of the Gaussian mollifier
+        scale: float
+            Scale of the Gaussian mollifier
+        """
+
         cdef:
             int Nx, Ny, nx, ny
             double [:, :] fx0 = self.fx0
@@ -628,6 +878,10 @@ cdef class Mima2D:
     
 
     cpdef interpolate(self, double [:] V, double [:] r, np.ndarray vv, double sigma=3, int NN=20):
+        """
+        interpolates velocity to off-grid points
+        """
+        
         cdef int i, nx, ny, nz, x, y, Nx, Ny, Np
         cdef double arg, pdotdr 
         cdef double scale = pow(2*PI*sigma*sigma, 2/2) 

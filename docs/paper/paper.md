@@ -43,7 +43,7 @@ synthetic autophoretic particles [@singh2016crystallization; @singh2019competing
 self-propelling droplets [@thutupalli2018FIPS].
 Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, 
 dynamically typed, interpreted language without sacrificing performance. You can take PyStokes for a spin without 
-installation: [using Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). 
+installation: [launch Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). 
 
 
 # Methods

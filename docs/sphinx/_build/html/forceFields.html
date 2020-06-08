@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Utils: Miscellaneous function" href="utils.html" />
-    <link rel="prev" title="Phoresis in a space bounded by a plane" href="phoreticWallBounded.html" /> 
+    <link rel="prev" title="Phoresis in a space bounded by a wall" href="phoreticWallBounded.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,13 +83,13 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="unbounded.html">Stokes flow in an unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Flow bounded by a no-shear plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Flow bounded by a no-slip plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Flow in Hele-Shaw cell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Stokes flow near interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Stokes flow bounded by a wall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Stokes flow in a Hele-Shaw cell</a></li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Stokes flow in a periodic domain</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mima.html">Mollified irreducible multipole approach</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis in an unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis in a space bounded by a plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis in a space bounded by a wall</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Force fields in colloidal systems</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#forces">Forces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#torques">Torques</a></li>
@@ -447,12 +447,18 @@ An array of size 3*Np,</p></li>
 <dt id="pystokes.forceFields.Torques.bottomHeaviness">
 <code class="sig-name descname">bottomHeaviness</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Torques.bottomHeaviness" title="Permalink to this definition">¶</a></dt>
 <dd><p>Torque due to bottom-heaviness</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Torques.gravitaxis">
-<code class="sig-name descname">gravitaxis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Torques.gravitaxis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gravitaxis</p>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>np.array</em>) – An array of Orientations
+An array of size 3*Np,</p></li>
+<li><p><strong>F</strong> (<em>np.array</em>) – An array of Torques
+An array of size 3*Np,</p></li>
+<li><p><strong>bh</strong> (<em>float</em>) – bottomHeaviness</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -471,7 +477,7 @@ An array of size 3*Np,</p></li>
         <a href="utils.html" class="btn btn-neutral float-right" title="Utils: Miscellaneous function" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="phoreticWallBounded.html" class="btn btn-neutral float-left" title="Phoresis in a space bounded by a plane" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="phoreticWallBounded.html" class="btn btn-neutral float-left" title="Phoresis in a space bounded by a wall" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

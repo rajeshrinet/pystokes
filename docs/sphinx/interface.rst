@@ -1,4 +1,4 @@
-Flow bounded by a no-shear plane 
+Stokes flow near interfaces
 ==================================================
 
 Hydrodynamic interactions of active particles in the half-space bounded by a plane no-shear surface

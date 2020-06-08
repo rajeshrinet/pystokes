@@ -779,16 +779,27 @@ cdef class Torques:
         self.Np = particles 
 
 
-    cpdef gravitaxis(self):
-        """
-        Gravitaxis 
-        """
-        pass
-    
-
-    cpdef bottomHeaviness(self):
+    cpdef bottomHeaviness(self, double [:] T, double [:] p, double bh=1.0):
         """
         Torque due to bottom-heaviness
-        """
-        pass
         
+        ...
+
+        Parameters
+        ----------
+        p: np.array
+            An array of Orientations
+            An array of size 3*Np,
+        F: np.array
+            An array of Torques
+            An array of size 3*Np,
+        bh: float 
+            bottomHeaviness 
+        """
+        cdef int Np = self.Np, i, xx = 2*Np
+        for i in prange(Np, nogil=True):
+            T[i   ] +=  -bh*p[i+Np]  # torque is bh\times p
+            T[i+Np] +=  bh*p[i]
+            T[i+xx] +=  0
+        return
+

@@ -29,7 +29,9 @@ The filenames, as described below, correspond to the boundary conditions in the 
 Corresponding to each .pyx file, there is a .pxd file. A .pxd file contains declaration of cdef classes, methods, etc. It is essential when calling PyStokes from another Cython file. Read more: https://cython.readthedocs.io/en/latest/src/tutorial/pxd_files.html
 
 
- 
+## tests 
+The folder tests contain unit testing framework for PyStokes
+
 
 
 

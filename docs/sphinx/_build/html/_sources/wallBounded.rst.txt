@@ -1,4 +1,4 @@
-Flow bounded by a no-slip plane 
+Stokes flow bounded by a wall 
 =================================================
 
 Hydrodynamic interactions of active particles in the half-space bounded by a plane no-slip surface

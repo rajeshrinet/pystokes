@@ -24,7 +24,7 @@ cdef class Rbm:
         Number of particles (Np)
     viscosity: float 
         Viscosity of the fluid (eta)
-       """
+    """
  
 
     def __init__(self, a, Np, eta):
@@ -200,11 +200,8 @@ cdef class Flow:
     gridpoints: int 
         Number of grid points
 
-    Examples
-    --------
-    An example of the RBM
-
     """
+
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
         self.a  = radius
         self.Np = particles

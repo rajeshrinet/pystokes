@@ -57,7 +57,6 @@ cdef class Forces:
 @cython.nonecheck(False)
 cdef class Torques:
     cdef int Np
-    cpdef gravitaxis(self)
-    cpdef bottomHeaviness(self)
 
+    cpdef bottomHeaviness(self, double [:] T, double [:] p, double bh=?)
 

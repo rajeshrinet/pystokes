@@ -1,4 +1,4 @@
-Flow in Hele-Shaw cell
+Stokes flow in a Hele-Shaw cell
 ===========================================
 
 Stokesian hydrodynamic in a Hele-Shaw cell 

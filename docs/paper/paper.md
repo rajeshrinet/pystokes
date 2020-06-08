@@ -94,6 +94,12 @@ phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024,
 
 # Acknowledgements
 
-We would like to thank collaborators and colleagues, in both theory and experiment, for numerous discussions that have enriched our understanding of hydrodynamic and phoretic phenomena. In alphabetical order, they are: Ayan Banerjee, Mike Cates, Shyam Date, Aleks Donev, Erika Eiser, Daan Frenkel, Somdeb Ghose, Ray Goldstein, John Hinch, Abhrajit Laskar, Tony Ladd, Raj Kumar Manna, Ignacio Pagonabarraga, Dave Pine, Thalappil Pradeep, Sriram Ramaswamy, Rajiah Simon, Howard Stone, Ganesh Subramanian, P. B. Sunil Kumar, Shashi Thutupalli, and Chantal Valeriani. We acknowledge design ideas and code contributions from Rajeev Singh and Abhrajit Laskar in the initial stages of development. This work was funded in parts by the European Research Council under the EU’s Horizon 2020 Program, Grant No. 740269; a Royal Society-SERB Newton International Fellowship to RS; and an Early Career Grant to RA from the Isaac Newton Trust.
+We thank A Banerjee, ME Cates, S Date, A Donev, E Eiser, D Frenkel, S Ghose, R
+Goldstein, J Hinch, A Laskar, AJC Ladd, RK Manna, I Pagonabarraga, DJ Pine, T
+Pradeep, R Simon, HA Stone, G Subramanian, PB Sunil Kumar, and S Thutupalli 
+for useful discussions. 
+We acknowledge code contributions from Rajeev Singh and Abhrajit Laskar in the initial stages of development. 
+This work was funded in parts by the European Research Council under the EU’s Horizon 2020 Program, Grant No. 740269; 
+a Royal Society-SERB Newton International Fellowship to RS; and an Early Career Grant to RA from the Isaac Newton Trust.
 
 # References

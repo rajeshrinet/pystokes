@@ -49,7 +49,9 @@ installation: [launch Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/ma
 # Methods
 
 Our method relies on the reduction of linear elliptic partial differential equations to systems of linear algebraic equations. The four key mathematical steps are:
+
 ![Key mathematical steps underpinning the PyStokes codebase.\label{fig:example}](figure.png)
+
 The first step is the representation of the solution of an elliptic partial differential equation (PDE) in a three-dimensional volume $V$ as an integral over the 
 boundary of the surface $S$ [@fkg1930bandwertaufgaben; @ladyzhenskaya1969; @youngren1975stokes; @zick1982stokes; @pozrikidis1992; @muldowney1995spectral; @cheng2005heritage; @singh2015many]. 
 For the Laplace equation, this is the classical theorem of Green [@jackson1962classical]; for the Stokes equation, it is the generalization obtained by 
@@ -69,7 +71,7 @@ Analytical solution can be obtained by Jacobi iteration, which is equivalent to 
 gradient method, at a cost quadratic in the number of unknowns. From this solution, we can reconstruct the field and the flux on the boundary, use these to determine the 
 fields in the bulk, and from there, compute derived quantities. These steps have been elaborated in several 
 papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh2018generalized; @singh2019competing; @bolitho2020] and we do not repeat them in detail here. 
-The arXiv preprint of this article contains extended documentation and more detailed examples [@singh2019Hydrodynamic].
+The arXiv preprint of this article contains more detailed examples [@singh2019Hydrodynamic].
 
 PyStokes can be used to compute fluid flow on a given set of grid points 
 ```python

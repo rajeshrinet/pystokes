@@ -1,7 +1,7 @@
 ## PyStokes: Phoresis and Stokesian hydrodynamics in Python  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples) 
-[![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest)
 ![Installation](https://github.com/rajeshrinet/pystokes/workflows/Installation/badge.svg)
 ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/Notebooks/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/pystokes.svg)](https://badge.fury.io/py/pystokes)
 [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)
 ![License](https://img.shields.io/github/license/rajeshrinet/pystokes) 

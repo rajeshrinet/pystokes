@@ -23,6 +23,8 @@
 
 
 ## Installation
+You can take PyStokes for a spin **without installation**: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). Please be patient while [Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples) loads.
+
 Clone (or download) the repository and use a terminal to install using 
 
 ```bash

@@ -50,7 +50,7 @@ First, install the required dependencies:
 - [Cython 0.25.x+](http://docs.cython.org/en/latest/index.html)
 - [Matplotlib 2.0.x+](https://matplotlib.org)
 - [NumPy 1.x+](http://www.numpy.org)
-- [OdesPy](https://github.com/rajeshrinet/odespy) (optional)
+- [OdesPy](https://github.com/rajeshrinet/odespy) (optional list of integrators, default is `scipy.integrate.odeint`)
 - [SciPy 1.1.x+](https://www.scipy.org/) 
 
 Then clone the repository and use a terminal to install using 

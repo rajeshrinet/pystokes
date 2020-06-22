@@ -7,6 +7,9 @@ import inspect
 import numpy as np
 import scipy as sp
 
+
+
+
 class UnboundedTest(unittest.TestCase):
     
     def test_translation(self):
@@ -26,6 +29,8 @@ class UnboundedTest(unittest.TestCase):
         self.assertTrue((np.asarray(diff) < 0.001).all(),
                        msg=f"Stokes law for translation is not satisfied")
 
+ 
+
 
     def test_rotation(self):
         r = np.array([0,0,0.])
@@ -43,6 +48,8 @@ class UnboundedTest(unittest.TestCase):
         diff = W1[2] - W2[2] 
         self.assertTrue((np.asarray(diff) < 0.001).all(),
                        msg=f"Stokes law for rotation is not satisfied")
+
+
 
 
 class WallBoundedTest(unittest.TestCase):
@@ -83,7 +90,29 @@ class WallBoundedTest(unittest.TestCase):
         diff = V1[2] - V2[2] 
         self.assertTrue((np.asarray(diff) < 0.001).all(),
                        msg=f"Stokes law for translation perp to wall is not satisfied")
-    
+   
+
+
+
+class PeriodicTest(unittest.TestCase):
+    def test_effectiveMobility(self):
+        a, eta, Np = 1.0, 1.0/6, 1
+        v = np.zeros(3*Np)
+        r = np.zeros(3*Np)
+        F = np.zeros(3*Np); F[2]=-1
+        
+        ll = ((4*np.pi/3)**(1.0/3))/0.3   # length of simulation box
+        pRbm = pystokes.periodic.Rbm(a, Np, eta, ll)
+
+        pRbm.mobilityTT(v, r, F)
+
+        mu=1.0/(6*np.pi*eta*a)
+        diff = -v[2]/mu - 0.498
+        self.assertTrue((np.asarray(diff) < 0.01).all(),
+                       msg=f"Effective mobility does not match Zick & Homsy (1982)")
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

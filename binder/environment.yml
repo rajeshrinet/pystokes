@@ -1,0 +1,15 @@
+name: pystokes
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - numpy
+  - matplotlib
+  - cython
+  - scipy 
+  - jupyter
+  - ipython
+  - nbconvert
+  - pip
+  - pip:
+    - pystokes

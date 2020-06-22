@@ -9,7 +9,7 @@ def run_notebook_tests(path, recursive=False):
     Runs Jupyter notebook tests. Exits if they fail.
     """
     basepath = os.path.dirname(__file__)
-    nbpath = os.path.abspath(os.path.join(basepath, "../..", path))
+    nbpath = os.path.abspath(os.path.join(basepath, "..", path))
     '''
     Ignore notebooks which take longer or have deliberate errors, 
     but check they still exists

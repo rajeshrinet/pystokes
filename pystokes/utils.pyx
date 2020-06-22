@@ -157,22 +157,45 @@ def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat'):
     from scipy.integrate import odeint
 
     time_points=np.linspace(0, Tf, Npts+1);
-    def rhs0(rp, t): 
+    def dxdtEval(rp, t): 
         return rhs(rp)
     
     if integrator=='odeint':
-        u = odeint(rhs0, rp0, time_points, mxstep=5000000)
-        savemat(filename, {'X':u, 't':time_points})
+        X = odeint(dxdtEval, rp0, time_points, mxstep=5000000)
 
     elif integrator=='odespy-vode':
         import odespy
-        solver = odespy.Vode(rhs0, method = 'bdf', atol=1E-7, rtol=1E-6, order=5, nsteps=10**6)
+        solver = odespy.Vode(dxdtEval, method = 'bdf', 
+        atol=1E-7, rtol=1E-6, order=5, nsteps=10**6)
         solver.set_initial_condition(rp0)
-        u, t = solver.solve(time_points) 
-        savemat(filename, {'X':u, 't':time_points})
+        X, t = solver.solve(time_points) 
+
+    elif integrator=='odespy-rkf45':
+        import odespy
+        solver = odespy.RKF45(dxdtEval)
+        solver.set_initial_condition(rp0)
+        X, t = solver.solve(time_points) 
+
+    elif integrator=='odespy-rk4':
+        import odespy
+        solver = odespy.RK4(dxdtEval)
+        solver.set_initial_condition(rp0)
+        X, t = solver.solve(time_points) 
 
     else:
-        print("Error: Integration failed! \n Please set integrator='odeint' to use the scipy odeint (Deafult). \n Use integrator='odespy-vode' to use vode from odespy (github.com/rajeshrinet/odespy). \n Alternatively, write your own integrator to evolve the system in time \n")
+        raise Exception("Error: Integration method not found! \n \
+                        Please set integrator='odeint' to use \n \
+                        the scipy.integrate's odeint (Default)\n \
+                        Use integrator='odespy-vode' to use vode \
+                        from odespy (github.com/rajeshrinet/odespy).\n \
+                        Use integrator='odespy-rkf45' to use RKF45  \
+                        from odespy (github.com/rajeshrinet/odespy).\n \
+                        Use integrator='odespy-rk4' to use RK4 from \
+                        odespy (github.com/rajeshrinet/odespy).     \n \
+                        Alternatively, write your own integrator to \
+                        evolve the system in time and store the data.\n")
+
+    savemat(filename, {'X':X, 't':time_points})
     return
 
 

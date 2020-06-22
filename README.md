@@ -25,15 +25,9 @@
 ## Installation
 You can take PyStokes for a spin **without installation**: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). Please be patient while [Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples) loads.
 
-Clone (or download) the repository and use a terminal to install using 
+### Via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
 
-```bash
->> git clone https://github.com/rajeshrinet/pystokes.git
->> cd pystokes
->> python setup.py install
-```
-
-Alternatively, use [anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html) to install PyStokes and its dependencies in a pystokes [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml)
+To install PyStokes and its dependencies in a pystokes [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml):
 ```bash
 >> git clone https://github.com/rajeshrinet/pystokes.git
 >> cd pystokes
@@ -42,16 +36,30 @@ Alternatively, use [anaconda](https://docs.conda.io/projects/continuumio-conda/e
 >> make
 ```
 
-PyStokes requires the following software 
+### Via pip
 
-- Python 2.6+ or Python 3.4+
-- [Cython 0.25.x+](http://docs.cython.org/en/latest/index.html) |  [Matplotlib 2.0.x+](https://matplotlib.org) | [NumPy 1.x+](http://www.numpy.org) |  [OdesPy](https://github.com/rajeshrinet/odespy) (optional) | [SciPy 1.1.x+](https://www.scipy.org/) 
-
-### Pip
 Install the latest [PyPI](https://pypi.org/project/pystokes) version
 ```
 pip install pystokes
 ```
+
+### From a checkout of this repository:
+
+First, install the required dependencies:
+- Python 2.6+ or Python 3.4+
+- [Cython 0.25.x+](http://docs.cython.org/en/latest/index.html)
+- [Matplotlib 2.0.x+](https://matplotlib.org)
+- [NumPy 1.x+](http://www.numpy.org)
+- [OdesPy](https://github.com/rajeshrinet/odespy) (optional)
+- [SciPy 1.1.x+](https://www.scipy.org/) 
+
+Then clone the repository and use a terminal to install using 
+```bash
+>> git clone https://github.com/rajeshrinet/pystokes.git
+>> cd pystokes
+>> python setup.py install
+```
+
 ## Examples
 
 

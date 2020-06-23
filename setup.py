@@ -54,7 +54,7 @@ else:
 
 setup(
     name='pystokes',
-    version='2.1.2',
+    version='2.1.3',
     url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',
@@ -68,7 +68,7 @@ setup(
         extra_compile_args=ompArgs,
         extra_link_args=ompArgs,
         )],
-        compiler_directives={"language_level": sys.version_info[0]},
+        compiler_directives={'language_level' : "3"},
         ),
     libraries=[],
     packages=['pystokes'],

@@ -57,6 +57,7 @@ Then clone the repository and use a terminal to install using
 ```bash
 >> git clone https://github.com/rajeshrinet/pystokes.git
 >> cd pystokes
+>> pip install -r requirements.txt
 >> python setup.py install
 ```
 

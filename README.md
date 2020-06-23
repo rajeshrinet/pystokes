@@ -39,8 +39,8 @@ To install PyStokes and its dependencies in a pystokes [environment](https://git
 ### Via pip
 
 Install the latest [PyPI](https://pypi.org/project/pystokes) version
-```
-pip install pystokes
+```bash
+>> pip install pystokes
 ```
 
 ### From a checkout of this repository:
@@ -59,6 +59,19 @@ Then clone the repository and use a terminal to install using
 >> cd pystokes
 >> python setup.py install
 ```
+
+### Testing
+Short test of initialisation and running
+
+```bash
+>> make test
+```
+
+Long test of all example notebooks 
+```bash
+>> make nbtest 
+```
+
 
 ## Examples
 

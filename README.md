@@ -27,7 +27,7 @@ You can take PyStokes for a spin **without installation**: [![Binder](https://my
 
 ### Via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
 
-To install PyStokes and its dependencies in a pystokes [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml):
+To install PyStokes and its dependencies in a `pystokes` [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml):
 ```bash
 >> git clone https://github.com/rajeshrinet/pystokes.git
 >> cd pystokes
@@ -68,6 +68,7 @@ Short test of installation and running
 ```
 
 Long test of all example notebooks 
+
 ```bash
 >> make nbtest 
 ```
@@ -134,12 +135,12 @@ Other examples include
 
 * [Hydrodynamic and phoretic interactions of active particles in Python](https://arxiv.org/abs/1910.00909), Rajesh Singh and R. Adhikari, arXiv:1910.00909, 2019. *(Please cite this paper if you use PyStokes in your research)*.
 
-* [Competing phoretic and hydrodynamic interactions in autophoretic colloidal suspensions](https://aip.scitation.org/doi/full/10.1063/1.5090179), Rajesh Singh, R. Adhikari, and M. E. Cates, **J. Chem. Phys.** 151, 044901 (2019)
+* [Competing phoretic and hydrodynamic interactions in autophoretic colloidal suspensions](https://aip.scitation.org/doi/full/10.1063/1.5090179), Rajesh Singh, R. Adhikari, and M. E. Cates, **The Journal of Chemical Physics** 151, 044901 (2019)
 
 * [Generalized Stokes laws for active colloids and their applications](https://iopscience.iop.org/article/10.1088/2399-6528/aaab0d), Rajesh Singh and R. Adhikari, **Journal of Physics Communications**, 2, 025025 (2018)
 
 
-* [Flow-induced phase separation of active particles is controlled by boundary conditions](https://www.pnas.org/content/115/21/5403), Shashi Thutupalli, Delphine Geyer, Rajesh Singh, R. Adhikari, and Howard A. Stone, **PNAS**, 115, 5403 (2018)  
+* [Flow-induced phase separation of active particles is controlled by boundary conditions](https://www.pnas.org/content/115/21/5403), Shashi Thutupalli, Delphine Geyer, Rajesh Singh, R. Adhikari, and Howard A. Stone, **Proceedings of the National Academy of Sciences**, 115, 5403 (2018)  
 
 * [Universal hydrodynamic mechanisms for crystallization in active colloidal suspensions](https://doi.org/10.1103/PhysRevLett.117.228002), Rajesh Singh and R. Adhikari,  **Physical Review Letters**, 117, 228002 (2016)
 

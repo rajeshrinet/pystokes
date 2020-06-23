@@ -61,7 +61,7 @@ Then clone the repository and use a terminal to install using
 ```
 
 ### Testing
-Short test of initialisation and running
+Short test of installation and running
 
 ```bash
 >> make test

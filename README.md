@@ -47,7 +47,7 @@ Install the latest [PyPI](https://pypi.org/project/pystokes) version
 >> pip install pystokes
 ```
 
-### From a checkout of this repository:
+### From a checkout of this repo
 
 Install PyStokes and required dependencies using
  

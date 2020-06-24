@@ -1,5 +1,8 @@
 # PyStokes changelogs
 
+## 2.1.5 
+* Add pyproject.toml
+
 ## 2.1.1 
 * Second release of PyStokes
 

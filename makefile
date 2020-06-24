@@ -23,8 +23,12 @@ env:
 
 test:
 	@echo testing pystokes...
-	cd tests && python installTests.py
+	cd tests && python short_tests.py
 
+nbtest:
+	@echo testing example notebooks...
+	@echo test $(path)
+	cd tests && python notebook_tests.py --path $(path) --recursive $(recursive)
 
 pypitest:
 	@echo testing pystokes...
@@ -36,8 +40,3 @@ pypi:
 	python setup.py sdist bdist_wheel	
 	python -m twine upload dist/*
 
-
-nbtest:
-	@echo testing example notebooks...
-	@echo test $(path)
-	cd tests && python testNotebooks.py --path $(path) --recursive $(recursive)

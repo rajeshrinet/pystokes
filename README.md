@@ -2,8 +2,10 @@
 ![Installation](https://github.com/rajeshrinet/pystokes/workflows/Installation/badge.svg)
 ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/Notebooks/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest)
-[![PyPI version](https://badge.fury.io/py/pystokes.svg)](https://badge.fury.io/py/pystokes)
+[![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes)
 [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)
+![stars](https://img.shields.io/github/stars/rajeshrinet/pystokes) 
+![forks](https://img.shields.io/github/forks/rajeshrinet/pystokes) 
 ![License](https://img.shields.io/github/license/rajeshrinet/pystokes) 
 
 [About](#about) | [News](#news) | [Installation](#installation) |  [Documentation](https://pystokes.readthedocs.io/en/latest/) | [Examples](#examples) | [Publications ](#publications)| [Support](#support) | [License](#license)
@@ -66,14 +68,14 @@ Short test of installation and running
 
 ```bash
 >> cd tests
->> python installTests.py
+>> python short_tests.py
 ```
 
-Long test of all example notebooks 
+Long test of example notebooks 
 
 ```bash
 >> cd tests
->> python testNotebooks.py
+>> python notebook_tests.py
 ```
 
 

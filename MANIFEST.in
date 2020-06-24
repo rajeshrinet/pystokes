@@ -1,2 +1,5 @@
 include pystokes/*pyx
 include pystokes/*pxd
+include LICENSE
+include requirements.txt
+include README.md

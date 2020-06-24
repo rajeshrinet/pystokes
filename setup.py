@@ -54,7 +54,7 @@ with open('requirements.txt', 'r') as rm:
 
 setup(
     name='pystokes',
-    version='2.1.4',
+    version='2.1.5',
     url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',

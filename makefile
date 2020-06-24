@@ -23,12 +23,12 @@ env:
 
 test:
 	@echo testing pystokes...
-	cd tests && python short_tests.py
+	cd tests && python shortTests.py
 
 nbtest:
 	@echo testing example notebooks...
 	@echo test $(path)
-	cd tests && python notebook_tests.py --path $(path) --recursive $(recursive)
+	cd tests && python notebookTests.py --path $(path) --recursive $(recursive)
 
 pypitest:
 	@echo testing pystokes...

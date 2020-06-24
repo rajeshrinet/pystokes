@@ -29,7 +29,8 @@ You can take PyStokes for a spin **without installation**: [![Binder](https://my
 
 ### Via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
 
-To install PyStokes and its dependencies in a `pystokes` [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml):
+Install PyStokes and its dependencies in a `pystokes` [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml):
+
 ```bash
 >> git clone https://github.com/rajeshrinet/pystokes.git
 >> cd pystokes
@@ -41,21 +42,15 @@ To install PyStokes and its dependencies in a `pystokes` [environment](https://g
 ### Via pip
 
 Install the latest [PyPI](https://pypi.org/project/pystokes) version
+
 ```bash
 >> pip install pystokes
 ```
 
 ### From a checkout of this repository:
 
-First, install the required dependencies:
-- Python 2.6+ or Python 3.4+
-- [Cython 0.25.x+](http://docs.cython.org/en/latest/index.html)
-- [Matplotlib 2.0.x+](https://matplotlib.org)
-- [NumPy 1.x+](http://www.numpy.org)
-- [OdesPy](https://github.com/rajeshrinet/odespy) (optional list of integrators, default is `scipy.integrate.odeint`)
-- [SciPy 1.1.x+](https://www.scipy.org/) 
-
-Then clone the repository and use a terminal to install using 
+Install PyStokes and required dependencies using
+ 
 ```bash
 >> git clone https://github.com/rajeshrinet/pystokes.git
 >> cd pystokes
@@ -68,14 +63,14 @@ Short test of installation and running
 
 ```bash
 >> cd tests
->> python short_tests.py
+>> python shortTests.py
 ```
 
 Long test of example notebooks 
 
 ```bash
 >> cd tests
->> python notebook_tests.py
+>> python notebookTests.py
 ```
 
 

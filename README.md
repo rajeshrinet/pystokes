@@ -65,13 +65,15 @@ Then clone the repository and use a terminal to install using
 Short test of installation and running
 
 ```bash
->> make test
+>> cd tests
+>> python installTests.py
 ```
 
 Long test of all example notebooks 
 
 ```bash
->> make nbtest 
+>> cd tests
+>> python testNotebooks.py
 ```
 
 

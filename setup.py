@@ -1,9 +1,7 @@
 import numpy, os, sys, os.path, tempfile, subprocess, shutil
 import os, sys
 from setuptools import setup, Extension
-from distutils.core import setup
 from Cython.Build import cythonize
-from distutils.extension import Extension
 import Cython.Compiler.Options
 Cython.Compiler.Options.annotate=True
 
@@ -50,11 +48,13 @@ else:
     ompArgs = None 
 
 
+with open('requirements.txt', 'r') as rm:
+    reqs = [l.strip() for l in rm]
 
 
 setup(
     name='pystokes',
-    version='2.1.3',
+    version='2.1.4',
     url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',
@@ -72,7 +72,7 @@ setup(
         ),
     libraries=[],
     packages=['pystokes'],
-    install_requires=['cython','numpy','scipy','matplotlib','jupyter','nbconvert'],
+    install_requires=reqs,
     package_data={'pystokes': ['*.pxd']}
 )
 

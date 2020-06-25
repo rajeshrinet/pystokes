@@ -23,10 +23,7 @@ jobs:
         run: |
           conda activate pystokes
           make
-          # make nbtest
-      - name: Generate coverage report
-        run: |
-          pytest tests/shortTests.py --cov=./ --cov-report=xml
+          pytest tests/shortTests.py --cov=./ --cov-report=xml 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

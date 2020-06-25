@@ -3,6 +3,7 @@
 ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/Notebooks/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest)
 [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes)
+[![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes)
 [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)
 ![stars](https://img.shields.io/github/stars/rajeshrinet/pystokes) 
 ![forks](https://img.shields.io/github/forks/rajeshrinet/pystokes) 
@@ -10,7 +11,7 @@
 
 [About](#about) | [News](#news) | [Installation](#installation) |  [Documentation](https://pystokes.readthedocs.io/en/latest/) | [Examples](#examples) | [Publications ](#publications)| [Support](#support) | [License](#license)
 
-![Imagel](examples/banner.png)
+![Imagel](https://raw.githubusercontent.com/rajeshrinet/pystokes/master/examples/banner.png)
 
 
 ## About

@@ -5,7 +5,7 @@ on: [push, pull_request]
 
 jobs:
 
-  build-and-test:
+  codecov:
     name: Codecov Workflow 
     runs-on: ubuntu-latest
 
@@ -25,7 +25,7 @@ jobs:
           make
           pytest tests/shortTests.py --cov=./ --cov-report=xml 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml

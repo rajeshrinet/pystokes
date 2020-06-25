@@ -1,10 +1,9 @@
-name: codecov
+name: codecov test 
 
 on: [push, pull_request]
 
 
 jobs:
-
   codecov:
     name: Codecov Workflow 
     runs-on: ubuntu-latest

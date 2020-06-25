@@ -1,6 +1,6 @@
 name: tests
 
-on: push
+on: [push, pull_request]
 
 
 jobs:
@@ -28,11 +28,12 @@ jobs:
         shell: bash -l {0}
         run: |
           make test 
-      - name: Wemake Python Stylguide
-        uses: wemake-services/wemake-python-styleguide@0.13.4
-        continue-on-error: true
+      - name: Generate coverage report
+        run: |
+          pytest tests/shortTests.py --cov=./ --cov-report=xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
         with:
-          reporter: 'github-pr-review'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: unittests

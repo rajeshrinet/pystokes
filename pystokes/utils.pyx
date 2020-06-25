@@ -5,14 +5,10 @@ and plotting flow and phoretic fields
 
 import  numpy as np
 cimport numpy as np
-import matplotlib.pyplot as plt
 cimport cython
 from libc.math cimport sqrt, pow, log
 from cython.parallel import prange
 cdef double PI = 3.1415926535
-from matplotlib import rc
-from matplotlib import cm, colors
-from mpl_toolkits.mplot3d import Axes3D
 
 DTYPE   = np.float
 DTYP1   = np.int32
@@ -130,6 +126,8 @@ cpdef irreducibleTensors(l, p, Y0=1):
     return YY
 
 
+
+
 def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat'):
     """
     Simulates using choice of integrator
@@ -199,6 +197,8 @@ def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat'):
     return
 
 
+
+
 def initialCondition(Np, h0=3.1):
     '''
     Assigns initial condition. 
@@ -228,6 +228,8 @@ def initialCondition(Np, h0=3.1):
     #rp0[4*Np:5*Np] = np.zeros(Np)
     #rp0[5*Np:6*Np] = -np.ones(Np)
     return rp0 
+
+
 
 
 def plotLogo():
@@ -280,12 +282,15 @@ def plotLogo():
     plt.text(r[Np+3]-.46, r[2*Np+3]-.54, 'es', fontsize=111);
 
 
+
+
 def plotStreamlinesXY(vv, rr, r, density=0.82, arrowSize=1.2, mask=0.6, ms=36, offset=1e-6, title='None'):
     """
     Plots streamlines in XY plane given the position and velocity; 
     vv: one dimensional arrays of velocity
     rr: one dimensional arrays of positions where velocity is computed
     """
+    import matplotlib.pyplot as plt
     Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
     xx, yy = rr[0:Nt].reshape(Ng, Ng), rr[Nt:2*Nt].reshape(Ng, Ng)
     vx, vy = vv[0:Nt].reshape(Ng, Ng), vv[Nt:2*Nt].reshape(Ng, Ng)
@@ -322,12 +327,15 @@ def plotStreamlinesXY(vv, rr, r, density=0.82, arrowSize=1.2, mask=0.6, ms=36, o
         plt.title(title, fontsize=26);
 
 
+
+
 def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, offset=1e-6, title='None'):
     """
     Plots streamlines in YZ plane given the position and velocity; 
     vv: one dimensional arrays of velocity
     rr: one dimensional arrays of positions where velocity is computed
     """
+    import matplotlib.pyplot as plt
     Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
     yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
     vy, vz = vv[Nt:2*Nt].reshape(Ng, Ng), vv[2*Nt:3*Nt].reshape(Ng, Ng)
@@ -363,12 +371,15 @@ def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, 
         plt.title(title, fontsize=26);
 
 
+
+
 def plotStreamlinesYZsurf(vv, rr, r, density=0.8, arrowSize=1.2, mask=0.6, ms=36, offset=1e-6, title='None'):
     """
     Plots streamlines in YZ plane given the position and velocity; The surface is also plotted
     vv: one dimensional arrays of velocity
     rr: one dimensional arrays of positions where velocity is computed
     """
+    import matplotlib.pyplot as plt
     Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
     yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
     vy, vz = vv[Nt:2*Nt].reshape(Ng, Ng), vv[2*Nt:3*Nt].reshape(Ng, Ng)
@@ -406,12 +417,16 @@ def plotStreamlinesYZsurf(vv, rr, r, density=0.8, arrowSize=1.2, mask=0.6, ms=36
         plt.title(title, fontsize=26);
 
 
+
+
+
 def plotContoursYZ(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, offset=1e-6, title='None'):
     """
     Plots streamlines in YZ plane given the position and velocity; 
     vv: one dimensional arrays of velocity
     rr: one dimensional arrays of positions where velocity is computed
     """
+    import matplotlib.pyplot as plt
     Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
     yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
 
@@ -440,6 +455,8 @@ def plotContoursYZ(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, offse
         plt.title(title, fontsize=26);
 
 
+
+
 def plotContoursYZsurf(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, offset=1e-6, title='None'):
     """
     Plots streamlines in YZ plane given the position and velocity; 
@@ -447,6 +464,7 @@ def plotContoursYZsurf(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, o
     vv: one dimensional arrays of velocity
     rr: one dimensional arrays of positions where velocity is computed
     """
+    import matplotlib.pyplot as plt
     Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
     yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
 
@@ -481,7 +499,9 @@ def plotContoursYZsurf(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, o
     #    plt.title('$l=1$', fontsize=26);
 
 
+
 def plotTrajectory(twoBodyDynamics, T, bins=50):
+    import matplotlib.pyplot as plt
     f=plt.figure(figsize=(24, 11), edgecolor='gray', linewidth=4);  
     ax=f.add_subplot(221);
     x1, x2 = twoBodyDynamics(T[0])
@@ -532,24 +552,30 @@ def plotTrajectory(twoBodyDynamics, T, bins=50):
     plt.yticks(fontsize=24)
     
 
+
 def createCircle(R, alpha=1):
+    import matplotlib.pyplot as plt
     return plt.Circle((0,0), radius= R, color='silver', alpha=alpha) 
 
+
+
 def showShape(patch):
+    import matplotlib.pyplot as plt
     ax=plt.gca()
     ax.add_patch(patch)
     plt.axis('scaled')
     #plt.show()
 
 
+
 def plotConfigs(t=[0,1], ms=36, tau=1, filename='None'):
+    import matplotlib.pyplot as plt
     tNew= np.asanyarray(tau)*t
     from scipy.io import loadmat 
     data  = loadmat(filename)
     X     = data['X']
     xx = int(np.size(X[0,:]));  Np = int(xx/6);   
     color='gray'
-
 
 
     plt.figure(figsize=(28, 10), edgecolor='gray', linewidth=4)
@@ -631,6 +657,7 @@ def plotConfigs(t=[0,1], ms=36, tau=1, filename='None'):
     return 
 
 
+
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.boundscheck(False)
@@ -696,30 +723,31 @@ def plotPhoreticField(l, c0=1):
     speedVls = z
     
     # Set the aspect ratio to 1 so our sphere looks spherical
+    import matplotlib.pyplot as plt
     fig = plt.figure(figsize=(4, 4))
     ax = fig.add_subplot(111, projection='3d')
 
     if l==0:
         speedVls = c0 + z*0
-        ax.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=cm.RdBu_r(speedVls))
+        ax.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=plt.cm.RdBu_r(speedVls))
         ax.set_axis_off()
         plt.show()
     
     elif l==1:
         speedVls = c0*np.cos(theta)
-        ax.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=cm.RdBu_r(speedVls))
+        ax.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=plt.cm.RdBu_r(speedVls))
         ax.set_axis_off()
         plt.show()
     
     elif l==2:
         speedVls = 4*c0*(np.cos(theta)*np.cos(theta) - 1.0/3)
-        ax.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=cm.RdBu_r(speedVls))
+        ax.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=plt.cm.RdBu_r(speedVls))
         ax.set_axis_off()
         plt.show()
     
     elif l==3:
         speedVls = 4*c0*(np.cos(theta)*np.cos(theta)*np.cos(theta) - 3*np.cos(theta)/5.0)
-        ax.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=cm.RdBu_r(speedVls))
+        ax.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=plt.cm.RdBu_r(speedVls))
         ax.set_axis_off()
         plt.show()
 

@@ -26,7 +26,7 @@ class UnboundedTest(unittest.TestCase):
         
         diff = V1[2] - V2[2] 
         self.assertTrue((np.asarray(diff) < 0.001).all(),
-                       msg=f"Stokes law for translation is not satisfied")
+                       "Stokes law for translation is not satisfied")
 
 
     def test_rotation(self):
@@ -44,7 +44,7 @@ class UnboundedTest(unittest.TestCase):
         
         diff = W1[2] - W2[2] 
         self.assertTrue((np.asarray(diff) < 0.001).all(),
-                       msg=f"Stokes law for rotation is not satisfied")
+                       "Stokes law for rotation is not satisfied")
 
 
 
@@ -68,7 +68,7 @@ class WallBoundedTest(unittest.TestCase):
         
         diff = V1[1] - V2[1] 
         self.assertTrue((np.asarray(diff) < 0.001).all(),
-                       msg=f"Stokes law for translation || to wall is not satisfied")
+                       "Stokes law for translation || to wall is not satisfied")
 
 
     def test_perpTranslation(self):
@@ -87,7 +87,7 @@ class WallBoundedTest(unittest.TestCase):
         
         diff = V1[2] - V2[2] 
         self.assertTrue((np.asarray(diff) < 0.001).all(),
-                       msg=f"Stokes law for translation perp to wall is not satisfied")
+                       "Stokes law for translation perp to wall is not satisfied")
    
 
 
@@ -109,7 +109,7 @@ class PeriodicTest(unittest.TestCase):
         mu=1.0/(6*np.pi*eta*a)
         diff = -v[2]/mu - 0.498
         self.assertTrue((np.asarray(diff) < 0.002).all(),
-                       msg=f"Effective mobility does not match Zick & Homsy (1982)")
+                       "Effective mobility does not match Zick & Homsy (1982)")
 
 
 

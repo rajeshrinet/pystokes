@@ -48,9 +48,6 @@ else:
     ompArgs = None 
 
 
-with open('requirements.txt', 'r') as rm:
-    reqs = [l.strip() for l in rm]
-
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -83,8 +80,8 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         ],
-    install_requires=reqs
+    install_requires=['cython','numpy','scipy','matplotlib']
 )
 

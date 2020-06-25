@@ -1,5 +1,9 @@
 # PyStokes changelogs
 
+
+## 2.1.8 
+* Update tests and utils so that it contnues python 2 support 
+
 ## 2.1.5 
 * Add pyproject.toml
 

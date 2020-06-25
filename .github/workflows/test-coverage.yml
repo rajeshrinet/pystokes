@@ -1,0 +1,38 @@
+name: tests
+
+on: push
+
+
+jobs:
+
+  build-and-test:
+    name: build and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+    
+      - name: Setup Miniconda
+        uses: goanpeca/setup-miniconda@v1.2.0
+        with:
+         activate-environment: pystokes
+         environment-file: environment.yml
+         # auto-activate-base: true
+      - name: make-pystokes
+        shell: bash -l {0}
+        run: |
+          conda activate pystokes
+          make
+          # make nbtest
+      - name: testing
+        shell: bash -l {0}
+        run: |
+          make test 
+      - name: Wemake Python Stylguide
+        uses: wemake-services/wemake-python-styleguide@0.13.4
+        continue-on-error: true
+        with:
+          reporter: 'github-pr-review'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

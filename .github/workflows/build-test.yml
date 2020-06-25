@@ -1,11 +1,11 @@
-name: Installation
+name: build
 
 on: push
 
 jobs:
 
   build-and-test:
-    name: Install and test
+    name: install and test
     runs-on: ubuntu-latest
     strategy:
       matrix:

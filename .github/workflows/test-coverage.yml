@@ -1,10 +1,11 @@
-name: codecov test 
+name: codecov
 
 on: [push, pull_request]
 
 
 jobs:
-  codecov:
+
+  build-and-test:
     name: Codecov Workflow 
     runs-on: ubuntu-latest
 
@@ -23,9 +24,6 @@ jobs:
           conda activate pystokes
           make
           pytest tests/shortTests.py --cov=./ --cov-report=xml 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v1.0.2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          flags: unittests
+          token: ${{secrets.CODECOV_TOKEN}} #required

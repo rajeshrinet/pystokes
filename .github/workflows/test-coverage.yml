@@ -1,4 +1,4 @@
-name: tests
+name: codecov
 
 on: [push, pull_request]
 
@@ -6,7 +6,7 @@ on: [push, pull_request]
 jobs:
 
   build-and-test:
-    name: build and test
+    name: Codecov Workflow 
     runs-on: ubuntu-latest
 
     steps:
@@ -24,12 +24,10 @@ jobs:
           conda activate pystokes
           make
           # make nbtest
-      - name: testing
-        shell: bash -l {0}
-        run: |
-          make test 
       - name: Generate coverage report
         run: |
+          pip install pytest 
+          pip install pytest-cov
           pytest tests/shortTests.py --cov=./ --cov-report=xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1

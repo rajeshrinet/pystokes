@@ -10,3 +10,5 @@ dependencies:
   - jupyter
   - ipython
   - nbconvert
+  - pytest 
+  - pytest-cov

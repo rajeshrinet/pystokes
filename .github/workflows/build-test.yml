@@ -21,7 +21,7 @@ jobs:
       - name: install-pystokes
         shell: bash -l {0}
         run: |
-          python setup.py install
+          pip install -r requirements.txt && python setup.py install
           make
       - name: test-pystokes
         shell: bash -l {0}

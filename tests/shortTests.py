@@ -48,7 +48,6 @@ class UnboundedTest(unittest.TestCase):
 
 
 
-
 class WallBoundedTest(unittest.TestCase):
     
 
@@ -83,6 +82,49 @@ class WallBoundedTest(unittest.TestCase):
         V2 = 0*mu*F
 
         uRbm = pystokes.wallBounded.Rbm(a, Np, eta)
+        uRbm.mobilityTT(V2, r, F)
+        
+        diff = V1[2] - V2[2] 
+        self.assertTrue((np.asarray(diff) < 0.001).all(),
+                       "Stokes law for translation perp to wall is not satisfied")
+   
+
+
+
+class InterfaceTest(unittest.TestCase):
+    
+
+    def test_parallelTranslation(self):
+        r = np.array([0,0,1.])
+        F = np.array([0,1,0.])
+
+        a, Np, eta = 1, 1, 1 
+        mu = 1/(6*np.pi*a*eta)
+        mu = mu*(1 + 3./8 + 1/16)  # add the standard wall-correction
+
+        V1 = mu*F
+        V2 = 0*mu*F
+
+        uRbm = pystokes.interface.Rbm(a, Np, eta)
+        uRbm.mobilityTT(V2, r, F)
+        
+        diff = V1[1] - V2[1] 
+        self.assertTrue((np.asarray(diff) < 0.001).all(),
+                       "Stokes law for translation || to wall is not satisfied")
+
+
+    def test_perpTranslation(self):
+        r = np.array([0,0,1.])
+        F = np.array([0,0,1.])
+
+        a, Np, eta = 1, 1, 1 
+        mu = 1/(6*np.pi*a*eta)
+        mu = mu*(1 - 3/4. + 1./8)  # add the standard wall-correction
+
+        V1 = mu*F
+        V2 = 0*mu*F
+
+        uRbm = pystokes.interface.Rbm(a, Np, eta)
         uRbm.mobilityTT(V2, r, F)
         
         diff = V1[2] - V2[2] 

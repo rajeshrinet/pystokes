@@ -2,6 +2,7 @@
 ![Installation](https://github.com/rajeshrinet/pystokes/workflows/build/badge.svg)
 ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest)
+[![codecov](https://codecov.io/gh/rajeshrinet/pystokes/branch/master/graph/badge.svg)](https://codecov.io/gh/rajeshrinet/pystokes)
 [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes)
 [![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes)
 [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)

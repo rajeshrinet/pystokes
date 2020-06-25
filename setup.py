@@ -57,7 +57,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pystokes',
-    version='2.1.6',
+    version='2.1.7',
     url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',
@@ -83,10 +83,7 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         ],
     install_requires=reqs
 )

@@ -7,7 +7,8 @@ import unittest
 import inspect
 import numpy as np
 import scipy as sp
-
+from pystokes.unbounded import Rbm
+from pystokes.unbounded import Flow
 
 class UnboundedTest(unittest.TestCase):
     

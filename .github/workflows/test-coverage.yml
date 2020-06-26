@@ -18,11 +18,10 @@ jobs:
          activate-environment: pystokes
          environment-file: environment.yml
          # auto-activate-base: true
-      - name: make-pystokes
+      - name: make-pystokes-cov
         shell: bash -l {0}
         run: |
           conda activate pystokes
-          make 
           make cycov 
       - uses: codecov/codecov-action@v1.0.2
         with:

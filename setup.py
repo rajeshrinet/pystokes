@@ -4,6 +4,10 @@ from setuptools import setup, Extension
 from Cython.Build import cythonize
 import Cython.Compiler.Options
 Cython.Compiler.Options.annotate=True
+from Cython.Compiler.Options import get_directive_defaults; 
+directive_defaults = get_directive_defaults() 
+directive_defaults['linetrace'] = True
+directive_defaults['binding'] = True
 
 
 def checkOpenmpSupport():
@@ -65,6 +69,7 @@ setup(
     platforms='tested on LINUX',
     ext_modules=cythonize([ Extension('pystokes/*', ['pystokes/*.pyx'],
         include_dirs=[numpy.get_include()],
+        define_macros=[('CYTHON_TRACE', '1')],
         extra_compile_args=ompArgs,
         extra_link_args=ompArgs,
         )],

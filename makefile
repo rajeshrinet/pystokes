@@ -40,3 +40,6 @@ pypi:
 	python setup.py sdist bdist_wheel	
 	python -m twine upload dist/*
 
+cycov:
+	python setup.py build_ext --force --inplace --define CYTHON_TRACE
+	pytest tests/shortTests.py  --cov=./ --cov-report=xml

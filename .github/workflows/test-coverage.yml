@@ -23,8 +23,7 @@ jobs:
         run: |
           conda activate pystokes
           make 
-          cython  --annotate-coverage coverage.xml pystokes/*pyx
-          pytest tests/shortTests.py --cov=./ --cov-report=xml
+          make cycov 
       - uses: codecov/codecov-action@v1.0.2
         with:
           token: ${{secrets.CODECOV_TOKEN}} #required

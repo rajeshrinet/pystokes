@@ -22,7 +22,8 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate pystokes
-          make
+          make 
+          cython  --annotate-coverage coverage.xml pystokes/*pyx
           pytest tests/shortTests.py --cov=./ --cov-report=xml
       - uses: codecov/codecov-action@v1.0.2
         with:

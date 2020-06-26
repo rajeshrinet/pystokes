@@ -2,7 +2,6 @@
 ![Installation](https://github.com/rajeshrinet/pystokes/workflows/build/badge.svg)
 ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest)
-![Codecov](https://img.shields.io/codecov/c/github/rajeshrinet/pystokes)
 [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes)
 [![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes)
 [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)
@@ -29,7 +28,7 @@ You can take PyStokes for a spin **without installation**: [![Binder](https://my
 
 ### Via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
 
-Install PyStokes and its dependencies in a `pystokes` [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml):
+Install PyStokes and its dependencies in an [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml) named pystokes:
 
 ```bash
 >> git clone https://github.com/rajeshrinet/pystokes.git
@@ -152,3 +151,4 @@ Other examples include
 
 ## License
 We believe that openness and sharing improves the practice of science and increases the reach of its benefits. This code is released under the [MIT license](http://opensource.org/licenses/MIT). Our choice is guided by the excellent article on [Licensing for the scientist-programmer](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002598). 
+		

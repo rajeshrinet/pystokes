@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools >= 40.8; python_version > '3'",
+requires = ["setuptools",
     "wheel",
     "cython",
     "numpy",

@@ -1,4 +1,5 @@
 [run]
 plugins = Cython.Coverage
 omit = setup.py
+omit = pystokes/__init__.py
 

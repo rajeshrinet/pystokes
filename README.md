@@ -7,7 +7,15 @@
 [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)
 ![License](https://img.shields.io/github/license/rajeshrinet/pystokes) 
 
-[About](#about) | [News](#news) | [Installation](#installation) |  [Documentation](https://pystokes.readthedocs.io/en/latest/) | [Examples](#examples) | [Publications ](#publications)| [Support](#support) | [License](#license)
+[About](#about) 
+| [News](#news) 
+| [Installation](#installation) 
+| [Documentation](https://pystokes.readthedocs.io/en/latest/) 
+| [Examples](#examples) 
+| [Publications ](#publications)
+| [Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery)
+| [Support](#support) 
+| [License](#license)
 
 ![Imagel](https://raw.githubusercontent.com/rajeshrinet/pystokes/master/examples/banner.png)
 

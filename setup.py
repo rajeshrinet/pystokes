@@ -4,14 +4,11 @@ from setuptools import setup, Extension
 from Cython.Build import cythonize
 import Cython.Compiler.Options
 Cython.Compiler.Options.annotate=True
-#from Cython.Compiler.Options import get_directive_defaults
-#directive_defaults = get_directive_defaults() 
-#directive_defaults['linetrace'] = True
-#directive_defaults['binding'] = True
 
 
 def checkOpenmpSupport():
-    ''' Adapted from https://stackoverflow.com/questions/16549893/programatically-testing-for-openmp-support-from-a-python-setup-script
+    ''' 
+    Adapted from https://stackoverflow.com/questions/16549893/ 
     ''' 
     ompTest = \
     r'''
@@ -63,10 +60,10 @@ setup(
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',
     license='MIT',
-    description='Stokesian hydrodynamics in Python',
+    description='Phoresis and Stokesian hydrodynamics in Python',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    platforms='tested on LINUX',
+    platforms='tested on macOS and LINUX',
     ext_modules=cythonize([ Extension('pystokes/*', ['pystokes/*.pyx'],
         include_dirs=[numpy.get_include()],
         extra_compile_args=ompArgs,

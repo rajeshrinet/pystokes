@@ -47,7 +47,7 @@ dynamically typed, interpreted language without sacrificing performance.
 
 # Methods
 
-Our method relies on the reduction of linear elliptic partial differential equations to systems of linear algebraic equations using following steps.  
+Our method relies on the reduction of linear elliptic partial differential equations to systems of linear algebraic equations using following steps:  
 
 ![Key mathematical steps underpinning the PyStokes codebase.\label{fig:example}](figure.png)
 
@@ -68,10 +68,10 @@ the linear system can be evaluated analytically in terms of the Green's function
 infinite-dimensional linear system to a finite-dimensional one that can be solved by standard methods of linear algebra adapted for self-adjoint systems [@saad2003iterative]. 
 Analytical solution can be obtained by Jacobi iteration, which is equivalent to Smoluchowski's method of reflections. Numerical solutions can be obtained by the conjugate 
 gradient method, at a cost quadratic in the number of unknowns. From this solution, we can reconstruct the field and the flux on the boundary, use these to determine the 
-fields in the bulk, and from there, compute derived quantities. These steps have been elaborated in several 
-papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh2018generalized; @singh2019competing; @bolitho2020] and we do not repeat them in detail here. 
+fields in the bulk, and from there, compute derived quantities. 
 
-\autoref{fig:figS} shows the the overall organization of the library. The expansion coefficients of the slip can be either specified (in the case of microorganisms) or obtained as a solution of Laplace equation (in the case of autophoretic particles [@singh2019competing]). Once the coefficients are determined, PyStokes solves the following equation numerically to obtain velocity and angular velocity of the $i$-th particle [@singh2015many; @singh2018generalized] 
+The above steps have been elaborated in several 
+papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh2018generalized; @singh2019competing; @bolitho2020] and we do not repeat them in detail here. Briefly, the expansion coefficients of the slip can be either specified (microorganisms) or obtained as a solution of Laplace equation (autophoretic particles). Once the coefficients are determined, PyStokes solves the following equation numerically to obtain velocity and angular velocity of the $i$-th particle
 \begin{align}
 {\mathbf{V}}_{i}&=
 \boldsymbol{\mu}_{ij}^{TT}\cdot{\mathbf{F}_{j}^{P}}+ 
@@ -84,14 +84,14 @@ papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh
 \sum_{l\sigma=1s}^{\infty}\underbrace{
 \boldsymbol{\pi}_{ij}^{(R,\,l\sigma)}\cdot\mathbf{{\mathbf{V}}}_{j}^{(l\sigma)}}_{\text{Active}},\qquad \boldsymbol{\pi}_{ij}^{(\alpha, l\sigma)}:\text{ propulsion tensors}.
 \end{align}
-In the above, sum over the repeated particle indices $j$ is implied and
+In the above, $\alpha,\beta=(T,R)$, repeated particle indices $j$ is summed, and
 \begin{equation}
 \mathbf{F}_{i}^{P}:\text{ body force},\quad \mathbf{T}_{i}^{P}:\text{ body torque},\quad \mathbf{V}_{i}^{(l\sigma)}:\text{ expansion coefficients of active slip}.
 \end{equation}
-Thus, hydrodynamic interactions between particles with no-slip boundary conditions can be computed entirely in terms of mobility matrices [@kim2005]. There exists numerical libraries [@hinsen1995; @libstokes] to study such particles. The active contributions due to the slip boundary condition is given in terms of propulsion tensors [@singh2015many]. To the best of our knowledge, PyStokes is the only numerical implementation of propulsion matrices to model hydrodynamic interactions of active particles. These tensors are obtained in terms of a Green's function of Stokes equation which satisfies appropriate boundary conditions in the bulk fluid [singh2018generalized].    
+Thus, hydrodynamic interactions between particles with no-slip boundary conditions can be computed entirely in terms of mobility matrices, as implemented in existing numerical libraries [@hinsen1995; @libstokes], to study suspensions of passive particles. The active contributions due to the slip boundary condition is given in terms of propulsion tensors [@singh2015many]. To the best of our knowledge, PyStokes is the only numerical implementation of propulsion matrices to model suspensions of active particles.      
 
 
-The principal features that set our method apart are (a) the restriction of independent fluid and phoretic degrees of freedom to the particle boundaries 
+To summarize, the principal features that set our method apart are (a) the restriction of independent fluid and phoretic degrees of freedom to the particle boundaries 
 (b) the freedom from grids, both in the bulk of the fluid and on the particle boundaries and 
 (c) the ability to handle, within the same numerical framework, a wide variety of geometries and boundary conditions, 
 including unbounded volumes, volumes bounded by plane walls or interfaces, periodic volumes and, indeed, 
@@ -111,7 +111,7 @@ Flow = pystokes.unbounded.Flow(radius=1, particles=1, viscosity=1,
 ```python
 Rbm = pystokes.unbounded.Rbm(radius=1, particles=1024, viscosity=1) 
 ```
-in various geometries of Stokes flow, by replacing `unbounded` with `wallBounded`, `interface`, `periodic`, etc. The above instantiation can then be used to compute `Flow` and `Rbm` due to body forces, body torques, and each irreducible mode of the surface slip.
+
 
 * obtain phoretic field of active particles
 ```python
@@ -125,7 +125,9 @@ phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024,
             phoreticConstant=1)
 ```
 
-* `pystokes.forceFields` contains implementation of force fields commonly used in colloidal systems for completeness. The arXiv preprint [@singh2019Hydrodynamic] of this article contains more detailed documentation and examples.
+* `pystokes.forceFields` contains implementation of force fields commonly used in colloidal systems for completeness. 
+
+The above instantiation can then be used to compute `Flow` and `Rbm` due to body forces, body torques, and each irreducible mode of the surface slip in various geometries of Stokes flow, by replacing `unbounded` with `wallBounded`, `interface`, `periodic`, etc. The arXiv preprint [@singh2019Hydrodynamic] of this article contains more detailed documentation and examples.
   
 
 # Acknowledgements

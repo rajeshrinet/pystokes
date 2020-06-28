@@ -22,7 +22,7 @@ bibliography: paper.bib
 
 # Summary
 
-The PyStokes library allows to study active particles in a Stokesian fluid [@kim2005]. Active particles are distinguished by their ability to produce flow, and thus motion, in the absence of external forces or torques on them. Examples of active particles include auto-phoretic synthetic particles [@ebbens2010pursuit], and microorganisms [@brennen1977]. An auto-phoretic particle self-propels due to non-equilibrium processes, such as chemical reactions on its surface [@anderson1989colloid]. Examples of phoresis (phoretic field) are electrophoresis (electric field), diffusiophoresis (concentration of chemical field), thermophoresis (temperature field) etc [@anderson1989colloid]. A particle is "active" if it creates the phoretic field itself (for example, by a built-in chemical asymmetry on its surface), and the phenomena is called self-phoresis [@ebbens2010pursuit; @zhang2017active]. 
+The PyStokes library allows to study active particles in a Stokesian fluid [@kim2005]. Active particles are distinguished by their ability to produce flow, and thus motion, in the absence of external forces or torques on them. Examples of active particles include auto-phoretic synthetic particles [@ebbens2010pursuit] and microorganisms [@brennen1977]. An auto-phoretic particle self-propels due to non-equilibrium processes, such as chemical reactions, on its surface [@anderson1989colloid]. Examples of phoresis (phoretic field) are electrophoresis (electric field), diffusiophoresis (concentration of chemical field), thermophoresis (temperature field) etc [@anderson1989colloid]. A particle is "active" if it creates the phoretic field itself (for example, by a built-in chemical asymmetry on its surface), and the resulting phenomena is called self-phoresis [@ebbens2010pursuit; @zhang2017active]. 
 
 Hydrodynamic and phoretic interactions between active particles in a viscous fluid are central to the understanding of their collective dynamics. 
 Under experimentally relevant conditions, the motion of the fluid is governed by the Stokes equation and that of the phoretic field, if one is present, by the Laplace equation. 
@@ -37,7 +37,7 @@ method for computing hydrodynamic and phoretic interactions between active parti
 
 ![Library structure: input and output of the library and equations that determine the hydrodynamic and phoretic interactions between active particles in a three-dimensional domain $V$, how these “blocks” are coupled at the particle boundaries $S_{i}$. Particle indices are $i=1,\ldots,N$ and harmonic indices are $l=1,2,\ldots$ and $\sigma=s,a,t$. {fig:figS}](FigSchema.png)
 
-Figure \autoref{fig:figS} shows the the overall organization of the library. PyStokes allows to solve both Laplace and Stokes equation. To solve Laplace equation, the library takes input a set of expansion coefficients $\mathbf{J}_{i}^{(l)} $ for the prescribed active flux $j^{\mathcal A}$ on the surface of the $i$-th particle and computes the expansion coefficients of the surface concentration. The active slip velocity $\boldsymbol{v}^{\mathcal{A}}$ is obtained from this using the linear coupling relation $\boldsymbol{v}^{\mathcal{A}}=\mu_{c}\boldsymbol{\nabla}_{s}c$ [@anderson1989colloid]. The library outputs the expansion coefficients $\mathbf{V}_{i}^{(l\sigma)}$ of the active slip. To solve Stokes equation, the library takes as input these expansion coefficients, which may also be specified independently, and any body forces $\mathbf{F}_{i}^{B}$ and body torques $\mathbf{T}_{i}^{B}$ acting on the particles and returns their rigid body motion in terms of the velocities $\mathbf{V}_{i}$ and angular velocities $\boldsymbol{\Omega}_{i}$. The PyStokes library can be used to compute the hydrodynamically interacting motion of squirming particles where the slip can be specified independently of a phoretic field, or the dynamics of passive suspensions where the slip vanishes and forces and torques are prescribed.
+Figure \autoref{fig:figS} shows the the overall organization of the library. PyStokes allows to solve both Laplace and Stokes equation. To solve Laplace equation, the library takes input a set of expansion coefficients ${**J**}^{(l)} $ for the prescribed active flux on the surface of the $i$-th particle and computes the expansion coefficients of the surface concentration. The active slip velocity is obtained from this using the linear coupling relation given in Figure \autoref{fig:figS} [@anderson1989colloid]. The library outputs the expansion coefficients $**V**^{(l\sigma)}$ of the active slip. To solve Stokes equation, the library takes as input these expansion coefficients, which may also be specified independently, and any body forces $**F**^{B}$ and body torques $**T**^{B}$ acting on the particles and returns their rigid body motion in terms of the velocities $**V**$ and angular velocities $**\Omega**$. The PyStokes library can be used to compute the hydrodynamically interacting motion of squirming particles where the slip can be specified independently of a phoretic field, or the dynamics of passive suspensions where the slip vanishes and forces and torques are prescribed.
 
 Hydrodynamic interactions with no-slip boundary conditions can be computed in terms in mobility matrices @kim2005]. There exist libraries which computes these matrices [@hinsen1995; @libstokes]. As described above, we model active particles by a slip boundary conditions and the resulting hydrodynamic interactions are in terms of propulsion tensors [@singh2015many]. To the best of our knowledge PyStokes is the only numerical implementation of propulsion matrices to model hydrodynamic interactions of active particles. The PyStokes library has been used to model suspensions of microorganisms [@bolitho2020; @singh2016crystallization], 
 synthetic autophoretic particles [@singh2016crystallization; @singh2019competing] and 
@@ -94,7 +94,7 @@ in various geometries of Stokes flow, by replacing `unbounded` with `wallBounded
 phoreticField = pystokes.phoreticUnbounded.Field(radius=1, particles=1, 
                 phoreticConstant=1, gridpoints=4096)
 ```
-and phoretic motion
+and phoretic motion (phoresis)
 ```python
 phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024, 
             phoreticConstant=1)
@@ -107,8 +107,7 @@ phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024,
 We thank A Banerjee, ME Cates, S Date, A Donev, E Eiser, D Frenkel, S Ghose, R
 Goldstein, J Hinch, A Laskar, AJC Ladd, RK Manna, I Pagonabarraga, DJ Pine, T
 Pradeep, R Simon, HA Stone, G Subramanian, PB Sunil Kumar, and S Thutupalli 
-for useful discussions. 
-We acknowledge code contributions from Rajeev Singh and Abhrajit Laskar in the initial stages of development. 
+for useful discussions; Rajeev Singh and Abhrajit Laskar for code contributions in the initial stages of development. 
 This work was funded in parts by the European Research Council under the EU’s Horizon 2020 Program, Grant No. 740269; 
 a Royal Society-SERB Newton International Fellowship to RS; and an Early Career Grant to RA from the Isaac Newton Trust.
 

@@ -45,10 +45,12 @@ Our software implementation uses a polylgot programming approach that combines t
 dynamically typed, interpreted language without sacrificing performance. You can take PyStokes for a spin without 
 installation: [launch Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). 
 
+![Library structure: input and output of the library and equations that determine the hydrodynamic and phoretic interactions between active particles in a three-dimensional domain $V$, how these “blocks” are coupled at the particle boundaries $S_{i}$. Particle indices are $i=1,\ldots,N$ and harmonic indices are $l=1,2,\ldots$ and $\sigma=s,a,t$. {fig:figS}](FigSchema.png)
+
 
 # Methods
 
-Our method relies on the reduction of linear elliptic partial differential equations to systems of linear algebraic equations. The four key mathematical steps are:
+Our method relies on the reduction of linear elliptic partial differential equations to systems of linear algebraic equations using following steps.  
 
 ![Key mathematical steps underpinning the PyStokes codebase.\label{fig:example}](figure.png)
 
@@ -71,7 +73,9 @@ Analytical solution can be obtained by Jacobi iteration, which is equivalent to 
 gradient method, at a cost quadratic in the number of unknowns. From this solution, we can reconstruct the field and the flux on the boundary, use these to determine the 
 fields in the bulk, and from there, compute derived quantities. These steps have been elaborated in several 
 papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh2018generalized; @singh2019competing; @bolitho2020] and we do not repeat them in detail here. 
-The arXiv preprint of this article contains more detailed examples [@singh2019Hydrodynamic].
+
+
+
 
 PyStokes can be used to compute fluid flow on a given set of grid points 
 ```python
@@ -92,7 +96,10 @@ and phoretic motion
 phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024, 
             phoreticConstant=1)
 ```
-`pystokes.forceFields` contains implementation of force fields commonly used in colloidal systems for completeness. 
+`pystokes.forceFields` contains implementation of force fields commonly used in colloidal systems for completeness. The arXiv preprint [@singh2019Hydrodynamic] of this article contains a more detailed documentation and examples.
+
+
+# Discussion and conclusion
 
 # Acknowledgements
 

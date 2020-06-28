@@ -22,7 +22,9 @@ bibliography: paper.bib
 
 # Summary
 
-Hydrodynamic and phoretic interactions between “active particles” in a viscous fluid are central to the understanding of their collective dynamics [@ebbens2010pursuit; @zhang2017active]. 
+The PyStokes library allows to study active particles in a Stokesian fluid [@kim2005]. Active particles are distinguished by their ability to produce flow, and thus motion, in the absence of external forces or torques on them. Examples of active particles include auto-phoretic synthetic particles [@ebbens2010pursuit], and microorganisms [@brennen1977]. An auto-phoretic particle self-propels due to non-equilibrium processes, such as chemical reactions on its surface [@anderson1989colloid]. Examples of phoresis (phoretic field) are electrophoresis (electric field), diffusiophoresis (concentration of chemical field), thermophoresis (temperature field) etc [@anderson1989colloid]. A particle is "active" if it creates the phoretic field itself (for example, by a built-in chemical asymmetry on its surface), and the phenomena is called self-phoresis [@ebbens2010pursuit; @zhang2017active]. 
+
+Hydrodynamic and phoretic interactions between active particles in a viscous fluid are central to the understanding of their collective dynamics. 
 Under experimentally relevant conditions, the motion of the fluid is governed by the Stokes equation and that of the phoretic field, if one is present, by the Laplace equation. 
 The “activity” appears in these equations as boundary conditions on the particle surfaces that prescribe the slip velocity in the Stokes equation and flux of the phoretic field in the Laplace equation. 
 The slip velocity and the phoretic flux are related by a linear constitutive law that can be derived from a detailed analysis of the boundary layer physics [@anderson1989colloid]. 
@@ -32,20 +34,23 @@ the force per unit area on the particle surfaces. This formally exact solution c
 truncated series expansion in a complete basis of functions on the particle boundaries. This, in turn, leads to an efficient and accurate numerical 
 method for computing hydrodynamic and phoretic interactions between active particles [@singh2015many; @singh2018generalized; @singh2019competing].
 
-The principal features that set this method apart are (a) the restriction of independent fluid and phoretic degrees of freedom to the particle boundaries 
-(b) the freedom from grids, both in the bulk of the fluid and on the particle boundaries and 
-(c) the ability to handle, within the same numerical framework, a wide variety of geometries and boundary conditions, 
-including unbounded volumes, volumes bounded by plane walls or interfaces, periodic volumes and, indeed, 
-any geometry-boundary condition combination for which the Green's functions of the governing equations are simply evaluated.
+
+![Library structure: input and output of the library and equations that determine the hydrodynamic and phoretic interactions between active particles in a three-dimensional domain $V$, how these “blocks” are coupled at the particle boundaries $S_{i}$. Particle indices are $i=1,\ldots,N$ and harmonic indices are $l=1,2,\ldots$ and $\sigma=s,a,t$. {fig:figS}](FigSchema.png)
+
+Figure \autoref{fig:figS} shows the the overall organization of the library. PyStokes allows to solve both Laplace and Stokes equation. To solve Laplace equation, the library takes input a set of expansion coefficients $\mathbf{J}_{i}^{(l)} $ for the prescribed active flux $j^{\mathcal A}$ on the surface of the $i$-th particle and computes the expansion coefficients of the surface concentration. The active slip velocity $\boldsymbol{v}^{\mathcal{A}}$ is obtained from this using the linear coupling relation $\boldsymbol{v}^{\mathcal{A}}=\mu_{c}\boldsymbol{\nabla}_{s}c$ [@anderson1989colloid]. The library outputs the expansion coefficients $\mathbf{V}_{i}^{(l\sigma)}$ of the active slip. To solve Stokes equation, the library takes as input these expansion coefficients, which may also be specified independently, and any body forces $\mathbf{F}_{i}^{B}$ and body torques $\mathbf{T}_{i}^{B}$ acting on the particles and returns their rigid body motion in terms of the velocities $\mathbf{V}_{i}$ and angular velocities $\boldsymbol{\Omega}_{i}$. The PyStokes library can be used to compute the hydrodynamically interacting motion of squirming particles where the slip can be specified independently of a phoretic field, or the dynamics of passive suspensions where the slip vanishes and forces and torques are prescribed.
 
 Hydrodynamic interactions with no-slip boundary conditions can be computed in terms in mobility matrices @kim2005]. There exist libraries which computes these matrices [@hinsen1995; @libstokes]. As described above, we model active particles by a slip boundary conditions and the resulting hydrodynamic interactions are in terms of propulsion tensors [@singh2015many]. To the best of our knowledge PyStokes is the only numerical implementation of propulsion matrices to model hydrodynamic interactions of active particles. The PyStokes library has been used to model suspensions of microorganisms [@bolitho2020; @singh2016crystallization], 
 synthetic autophoretic particles [@singh2016crystallization; @singh2019competing] and 
 self-propelling droplets [@thutupalli2018FIPS].
 Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, 
-dynamically typed, interpreted language without sacrificing performance. You can take PyStokes for a spin without 
-installation: [launch Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=examples). 
+dynamically typed, interpreted language without sacrificing performance.  
 
-![Library structure: input and output of the library and equations that determine the hydrodynamic and phoretic interactions between active particles in a three-dimensional domain $V$, how these “blocks” are coupled at the particle boundaries $S_{i}$. Particle indices are $i=1,\ldots,N$ and harmonic indices are $l=1,2,\ldots$ and $\sigma=s,a,t$. {fig:figS}](FigSchema.png)
+
+The principal features that set this method apart are (a) the restriction of independent fluid and phoretic degrees of freedom to the particle boundaries 
+(b) the freedom from grids, both in the bulk of the fluid and on the particle boundaries and 
+(c) the ability to handle, within the same numerical framework, a wide variety of geometries and boundary conditions, 
+including unbounded volumes, volumes bounded by plane walls or interfaces, periodic volumes and, indeed, 
+any geometry-boundary condition combination for which the Green's functions of the governing equations are simply evaluated.
 
 
 # Methods
@@ -75,8 +80,6 @@ fields in the bulk, and from there, compute derived quantities. These steps have
 papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh2018generalized; @singh2019competing; @bolitho2020] and we do not repeat them in detail here. 
 
 
-
-
 PyStokes can be used to compute fluid flow on a given set of grid points 
 ```python
 Flow = pystokes.unbounded.Flow(radius=1, particles=1, viscosity=1, 
@@ -96,10 +99,8 @@ and phoretic motion
 phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024, 
             phoreticConstant=1)
 ```
-`pystokes.forceFields` contains implementation of force fields commonly used in colloidal systems for completeness. The arXiv preprint [@singh2019Hydrodynamic] of this article contains a more detailed documentation and examples.
-
-
-# Discussion and conclusion
+`pystokes.forceFields` contains implementation of force fields commonly used in colloidal systems for completeness. The arXiv preprint [@singh2019Hydrodynamic] of this article contains more detailed documentation and examples.
+  
 
 # Acknowledgements
 

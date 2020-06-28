@@ -25,7 +25,7 @@ bibliography: paper.bib
 The PyStokes library is for studying hydrodynamic and phoretic interactions of active particles in Python. Active particles are distinguished by their ability to produce flow, and thus motion, in the absence of external forces or torques on them. Examples of active particles include auto-phoretic synthetic particles [@ebbens2010pursuit] and microorganisms [@brennen1977]. An auto-phoretic particle self-propels due to non-equilibrium processes, such as chemical reactions, on its surface [@anderson1989colloid]. Examples of phoresis (phoretic field) are electrophoresis (electric field), diffusiophoresis (concentration of chemical field), thermophoresis (temperature field) etc [@anderson1989colloid]. A particle is "active" if it creates the phoretic field itself (for example, by a built-in chemical asymmetry on its surface), and the resulting phenomena is called self-phoresis [@ebbens2010pursuit]. 
 
 
-![Library structure and equations that determine the hydrodynamic and phoretic interactions between active particles in a three-dimensional domain $V$. The equations need to be solved with boundary conditions on the surface $S_{i}$ of the particles. Particle indices are $i=1,\ldots,N$ and harmonic indices are $l=1,2,\ldots$ and $\sigma=s,a,t$. \label{fig:figS}](FigSchema.png)
+![Input and output structure of PyStokes to determine the hydrodynamic and phoretic interactions between active particles in a three-dimensional domain $V$. The equations are coupled by active boundary conditions on the surface $S_{i}$ of the particles. Particle indices are $i=1,\ldots,N$ and harmonic indices are $l=1,2,\ldots$ and $\sigma=s,a,t$ (see text). \label{fig:figS}](FigSchema.png)
 
 Hydrodynamic and phoretic interactions between active particles in a viscous fluid are central to the understanding of their collective dynamics. 
 Under experimentally relevant conditions, the motion of the fluid is governed by the Stokes equation and that of the phoretic field, if one is present, by the Laplace equation. 
@@ -60,7 +60,7 @@ by the solution of the Laplace boundary integral equation. Similarly, if the sur
 by the solution of the Stokes boundary integral equation. This transformation of the governing PDEs is the most direct way of relating boundary conditions (surface flux, slip velocities) 
 to boundary values (surface concentration, surface traction). It reduces the dimensionality of the problem from a three-dimensional one in $V$ to a two-dimensional one on $S$. 
 The second step is the spectral expansion of the field and its flux in terms of global basis functions on $S$. We use the geometry-adapted tensorial spherical harmonics, 
-which provide an unified way of expanding both scalar and vector quantities on the surface of a sphere. These functions are both complete and orthogonal and provide representations of 
+which provide a unified way of expanding both scalar and vector quantities on the surface of a sphere. These functions are both complete and orthogonal and provide representations of 
 the three-dimensional rotation group [@hess2015tensors]. Thus, symmetries of the active boundary conditions can be represented in a straightforward and transparent manner. 
 The third step is the discretization of the integral equation using the procedure of Ritz and Galerkin [@boyd2001chebyshev; @finlayson1966method], which reduces it to an 
 infinite-dimensional self-adjoint linear system in the expansion coefficients. This exploits the orthogonality of the basis functions on the sphere. The matrix elements of 
@@ -71,7 +71,7 @@ gradient method, at a cost quadratic in the number of unknowns. From this soluti
 fields in the bulk, and from there, compute derived quantities. 
 
 The above steps have been elaborated in several 
-papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh2018generalized; @singh2019competing; @bolitho2020] and we do not repeat them in detail here. Briefly, the expansion coefficients of the slip can be either specified (microorganisms) or obtained as a solution of Laplace equation (autophoretic particles). Once the coefficients are determined, PyStokes solves the following equation numerically to obtain velocity and angular velocity of the $i$-th particle
+papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh2018generalized; @singh2019competing] and we do not repeat them in detail here. Briefly, the expansion coefficients of the slip can be either specified or obtained as a solution of Laplace equation. Once the coefficients are determined, the following equation are solved numerically to obtain velocity and angular velocity of the $i$-th particle
 \begin{align}
 {\mathbf{V}}_{i}&=
 \boldsymbol{\mu}_{ij}^{TT}\cdot{\mathbf{F}_{j}^{P}}+ 
@@ -85,9 +85,9 @@ papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh
 \boldsymbol{\pi}_{ij}^{(R,\,l\sigma)}\cdot\mathbf{{\mathbf{V}}}_{j}^{(l\sigma)}}_{\text{Active}},\qquad \boldsymbol{\pi}_{ij}^{(\alpha, l\sigma)}:\text{ propulsion tensors}.
 \end{align}
 In the above, $\alpha,\beta=(T,R)$, repeated particle indices $j$ is summed, and
-\begin{equation}
-\mathbf{F}_{i}^{P}:\text{ body force},\quad \mathbf{T}_{i}^{P}:\text{ body torque},\quad \mathbf{V}_{i}^{(l\sigma)}:\text{ expansion coefficients of active slip}.
-\end{equation}
+\begin{equation*}
+\mathbf{F}_{i}^{P}:\text{body force},\quad \mathbf{T}_{i}^{P}:\text{body torque},\quad \mathbf{V}_{i}^{(l\sigma)}: l\sigma\text{-th expansion coefficients of active slip}.
+\end{equation*}
 Thus, hydrodynamic interactions between particles with no-slip boundary conditions can be computed entirely in terms of mobility matrices, as implemented in existing numerical libraries [@hinsen1995; @libstokes], to study suspensions of passive particles. The active contributions due to the slip boundary condition is given in terms of propulsion tensors [@singh2015many]. To the best of our knowledge, PyStokes is the only numerical implementation of propulsion matrices to model suspensions of active particles.      
 
 
@@ -101,7 +101,7 @@ any geometry-boundary condition combination for which the Green's functions of t
 
 The PyStokes library can be instantiated in the following way to 
 
-* compute fluid flow on a given set of grid points 
+* compute fluid flow of active particles at an arbitray set of grid points 
 ```python
 Flow = pystokes.unbounded.Flow(radius=1, particles=1, viscosity=1, 
         gridpoints=4096) 
@@ -113,13 +113,13 @@ Rbm = pystokes.unbounded.Rbm(radius=1, particles=1024, viscosity=1)
 ```
 
 
-* obtain phoretic field of active particles
+* obtain phoretic field of active particles at an arbitray set of grid points
 ```python
 phoreticField = pystokes.phoreticUnbounded.Field(radius=1, particles=1, 
                 phoreticConstant=1, gridpoints=4096)
 ```
 
-* phoretic motion (phoresis)
+* phoretic field at surface of active particles
 ```python
 phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024, 
             phoreticConstant=1)

@@ -35,27 +35,39 @@ The Stokes and Laplace equations are coupled by this linear constitutive law onl
 The linearity of the governing equations and of the coupling boundary conditions allows for a formally exact solution of the problem of determining 
 the force per unit area on the particle surfaces. This formally exact solution can be approximated to any desired degree of accuracy by a 
 truncated series expansion in a complete basis of functions on the particle boundaries. This, in turn, leads to an efficient and accurate numerical 
-method for computing hydrodynamic and phoretic interactions between active particles [@singh2015many; @singh2018generalized; @singh2019competing].
+method for computing hydrodynamic and phoretic interactions between active particles.
 
-
-
-\autoref{fig:figS} shows the the overall organization of the library. To solve Laplace equation, the library takes input a set of expansion coefficients $$\mathbf{J}_{i}^{(l)}$$ for the prescribed active flux $$j^{\mathcal A}$$ on the surface of the $i$-th particle and computes the expansion coefficients of the surface concentration. The active slip velocity $$\boldsymbol{v}^{\mathcal{A}}$$ is obtained from this using the linear coupling relation $$\boldsymbol{v}^{\mathcal{A}}=\mu_{c}\boldsymbol{\nabla}_{s}c$$ [@anderson1989colloid]. The library outputs the expansion coefficients $$\mathbf{V}_{i}^{(l\sigma)}$$ of the active slip. To solve Stokes equation, the library takes as input these expansion coefficients, which may also be specified independently, and any body forces $$\mathbf{F}_{i}^{B}$$ and body torques $$\mathbf{T}_{i}^{B}$$ acting on the particles and returns their rigid body motion in terms of the velocities $$\mathbf{V}_{i}$$ and angular velocities $$\boldsymbol{\Omega}_{i}$$. The PyStokes library can be used to compute the hydrodynamically interacting motion of squirming particles where the slip can be specified independently of a phoretic field, or the dynamics of passive suspensions where the slip vanishes and forces and torques are prescribed. 
-
-Hydrodynamic interactions with no-slip boundary conditions can be computed in terms in mobility matrices @kim2005]. There exist libraries which computes these matrices [@hinsen1995; @libstokes]. As described above, we model active particles by a slip boundary conditions and the resulting hydrodynamic interactions are in terms of propulsion tensors [@singh2015many]. To the best of our knowledge PyStokes is the only numerical implementation of propulsion matrices to model hydrodynamic interactions of active particles. The PyStokes library has been used to model suspensions of microorganisms [@bolitho2020; @singh2016crystallization], 
-synthetic autophoretic particles [@singh2016crystallization; @singh2019competing] and 
-self-propelling droplets [@thutupalli2018FIPS].
-Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, 
-dynamically typed, interpreted language without sacrificing performance.  
-
-
-The principal features that set this method apart are (a) the restriction of independent fluid and phoretic degrees of freedom to the particle boundaries 
-(b) the freedom from grids, both in the bulk of the fluid and on the particle boundaries and 
-(c) the ability to handle, within the same numerical framework, a wide variety of geometries and boundary conditions, 
-including unbounded volumes, volumes bounded by plane walls or interfaces, periodic volumes and, indeed, 
-any geometry-boundary condition combination for which the Green's functions of the governing equations are simply evaluated.
 
 
 # Methods
+
+\autoref{fig:figS} shows the the overall organization of the library. The expansion coefficients of the slip can be either specified (in the case of microorganisms) or obtained as a solution of Laplace equation (in the case of autophoretic particles [@singh2019competing]). Once the coefficients are determined, PyStokes solves the following equation numerically to obtain velocity and angular velocity of the $i$-th particle [@singh2015many; @singh2018generalized] 
+\begin{align}
+{\mathbf{V}}_{i}&=
+\boldsymbol{\mu}_{ij}^{TT}\cdot{\mathbf{F}_{j}^{P}}+ 
+\boldsymbol{\mu}_{ij}^{TR}\cdot{\mathbf{T}_{j}^{P}} + 
+\sum_{l\sigma=1s}^{\infty}\boldsymbol{\pi}_{ij}^{(T,\,l\sigma)}\cdot{\mathbf{V}_{j}^{(l\sigma)}},\qquad \boldsymbol{\mu}_{ij}^{\alpha\beta}\quad:\text{ mobility matrices},
+\\
+{\mathbf{\Omega}}_{i}&=\underbrace{
+\boldsymbol{\mu}_{ij}^{RT}\cdot\mathbf{F}_{j}^{P}+
+\boldsymbol{\mu}_{ij}^{RR}\cdot\mathbf{T}_{j}^{P}}_{\text{Passive}}+
+\sum_{l\sigma=1s}^{\infty}\underbrace{
+\boldsymbol{\pi}_{ij}^{(R,\,l\sigma)}\cdot\mathbf{{\mathbf{V}}}_{j}^{(l\sigma)}}_{\text{Active}},\qquad \boldsymbol{\pi}_{ij}^{(\alpha, l\sigma)}:\text{ propulsion tensors}.
+\end{align}
+In the above, sum over the repeated particle indices $j$ is implied and
+\begin{equation}
+\mathbf{F}_{i}^{P}:\text{ body force},\quad \mathbf{T}_{i}^{P}:\text{ body torque},\quad \mathbf{V}_{i}^{(l\sigma)}:\text{ expansion coefficients of active slip}.
+\end{equation}
+Thus, hydrodynamic interactions between particles with no-slip boundary conditions can be computed entirely in terms of mobility matrices [@kim2005]. There exists numerical libraries [@hinsen1995; @libstokes] to study such particles. The active contributions due to the slip boundary condition is given in terms of propulsion tensors [@singh2015many]. To the best of our knowledge, PyStokes is the only numerical implementation of propulsion matrices to model hydrodynamic interactions of active particles.   
+
+
+The PyStokes library can be used to compute the hydrodynamically interacting motion of squirming particles where the slip can be specified independently of a phoretic field, or the dynamics of passive suspensions where the slip vanishes and forces and torques are prescribed. PyStokes library can also compute Brownian motion, and thus, allows to study the interplay of passive, active and Brownian contributions. The PyStokes library has been used to model suspensions of microorganisms [@bolitho2020; @singh2016crystallization], 
+synthetic autophoretic particles [@singh2016crystallization; @singh2019competing] and 
+self-propelling droplets [@thutupalli2018FIPS].
+Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, 
+dynamically typed, interpreted language without sacrificing performance.
+
+
 
 Our method relies on the reduction of linear elliptic partial differential equations to systems of linear algebraic equations using following steps.  
 
@@ -80,6 +92,13 @@ Analytical solution can be obtained by Jacobi iteration, which is equivalent to 
 gradient method, at a cost quadratic in the number of unknowns. From this solution, we can reconstruct the field and the flux on the boundary, use these to determine the 
 fields in the bulk, and from there, compute derived quantities. These steps have been elaborated in several 
 papers [@singh2015many; @singh2016crystallization; @singh2017fluctuation; @singh2018generalized; @singh2019competing; @bolitho2020] and we do not repeat them in detail here. 
+
+The principal features that set this method apart are (a) the restriction of independent fluid and phoretic degrees of freedom to the particle boundaries 
+(b) the freedom from grids, both in the bulk of the fluid and on the particle boundaries and 
+(c) the ability to handle, within the same numerical framework, a wide variety of geometries and boundary conditions, 
+including unbounded volumes, volumes bounded by plane walls or interfaces, periodic volumes and, indeed, 
+any geometry-boundary condition combination for which the Green's functions of the governing equations are simply evaluated.
+
 
 
 PyStokes can be used to compute fluid flow on a given set of grid points 

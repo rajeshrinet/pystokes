@@ -38,7 +38,7 @@ The principal features that set this method apart are (a) the restriction of ind
 including unbounded volumes, volumes bounded by plane walls or interfaces, periodic volumes and, indeed, 
 any geometry-boundary condition combination for which the Green's functions of the governing equations are simply evaluated.
 
-The PyStokes library has been used to model suspensions of microorganisms [@bolitho2020; @singh2016crystallization], 
+Hydrodynamic interactions with no-slip boundary conditions can be computed in terms in mobility matrices @kim2005]. There exist libraries which computes these matrices [@hinsen1995; @libstokes]. As described above, we model active particles by a slip boundary conditions and the resulting hydrodynamic interactions are in terms of propulsion tensors [@singh2015many]. To the best of our knowledge PyStokes is the only numerical implementation of propulsion matrices to model hydrodynamic interactions of active particles. The PyStokes library has been used to model suspensions of microorganisms [@bolitho2020; @singh2016crystallization], 
 synthetic autophoretic particles [@singh2016crystallization; @singh2019competing] and 
 self-propelling droplets [@thutupalli2018FIPS].
 Our software implementation uses a polylgot programming approach that combines the readability of Python with the speed of Cython and retains the advantages of a high-level, 

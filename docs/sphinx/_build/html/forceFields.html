@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -25,15 +30,10 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Utils: Miscellaneous function" href="utils.html" />
@@ -51,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> PyStokes
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PyStokes
           
 
           
@@ -74,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -101,6 +102,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -139,7 +141,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Force fields in colloidal systems</li>
     
@@ -165,304 +167,9 @@
 <p>Force fields in colloidal systems</p>
 <div class="section" id="forces">
 <h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="pystokes.forceFields.Forces">
-<em class="property">class </em><code class="sig-prename descclassname">pystokes.forceFields.</code><code class="sig-name descname">Forces</code><a class="headerlink" href="#pystokes.forceFields.Forces" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes forces in a system of colloidal particles</p>
-<dl class="simple">
-<dt>Methods in the Forces class take input,</dt><dd><ul class="simple">
-<li><p>arrays of positions, forces</p></li>
-<li><p>parameters for a given potential</p></li>
-</ul>
-</dd>
-</dl>
-<p>The array of forces is then update by each method.</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>particles</strong> (<em>int</em>) – Number of particles (Np)</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.harmonicConfinement">
-<code class="sig-name descname">harmonicConfinement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.harmonicConfinement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forces on colloids in a harmonic trap</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.lennardJones">
-<code class="sig-name descname">lennardJones</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.lennardJones" title="Permalink to this definition">¶</a></dt>
-<dd><p>The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)</p>
-<blockquote>
-<div><p>We choose phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
-ljr: minimum of the LJ potential and rr=ljr/r.</p>
-</div></blockquote>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-<li><p><strong>lje</strong> (<em>float</em>) – Strength of the LJ</p></li>
-<li><p><strong>ljr</strong> (<em>float</em>) – Range of the LJ</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.lennardJonesWall">
-<code class="sig-name descname">lennardJonesWall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.lennardJonesWall" title="Permalink to this definition">¶</a></dt>
-<dd><p>The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)</p>
-<blockquote>
-<div><p>We choose phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
-ljr: minimum of the LJ potential and rr=ljr/r.</p>
-</div></blockquote>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-<li><p><strong>lje</strong> (<em>float</em>) – Strength of the LJ</p></li>
-<li><p><strong>ljr</strong> (<em>float</em>) – Range of the LJ</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.lennardJonesXWall">
-<code class="sig-name descname">lennardJonesXWall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.lennardJonesXWall" title="Permalink to this definition">¶</a></dt>
-<dd><p>The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)</p>
-<blockquote>
-<div><p>We choose phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
-ljr: minimum of the LJ potential and rr=ljr/r.
-This force is only in z-direction due to wall at x=0</p>
-</div></blockquote>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-<li><p><strong>lje</strong> (<em>float</em>) – Strength of the LJ</p></li>
-<li><p><strong>ljr</strong> (<em>float</em>) – Range of the LJ</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.membraneBound">
-<code class="sig-name descname">membraneBound</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.membraneBound" title="Permalink to this definition">¶</a></dt>
-<dd><p>Force on colloids in membraneSurface</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>r0</strong> (<em>np.array</em>) – An array of trap centers
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-<li><p><strong>cn</strong> (<em>float</em>) – Stiffness of the trap</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.membraneConfinement">
-<code class="sig-name descname">membraneConfinement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.membraneConfinement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Force on colloids in membraneSurface</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>r0</strong> (<em>np.array</em>) – An array of trap centers
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-<li><p><strong>cn</strong> (<em>float</em>) – Stiffness of the trap</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.membraneSurface">
-<code class="sig-name descname">membraneSurface</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.membraneSurface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Force on colloids connected as a membrane</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-<li><p><strong>bondLength</strong> (<em>float</em>) – The size of natural spring</p></li>
-<li><p><strong>springModulus</strong> (<em>float</em>) – Stiffness of the trap</p></li>
-<li><p><strong>bendModulus</strong> (<em>float</em>) – Bending cost</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.multiRingpolymers">
-<code class="sig-name descname">multiRingpolymers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.multiRingpolymers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Force on colloids connected by a spring in a ring polymer</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,
-An array of size 3*Np,</p></li>
-<li><p><strong>bondLength</strong> (<em>float</em>) – The size of natural spring</p></li>
-<li><p><strong>springModulus</strong> (<em>float</em>) – Stiffness of the trap</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.multipolymers">
-<code class="sig-name descname">multipolymers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.multipolymers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Force on colloids in many polymers connected by a spring</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,
-An array of size 3*Np,</p></li>
-<li><p><strong>bondLength</strong> (<em>float</em>) – The size of natural spring</p></li>
-<li><p><strong>springModulus</strong> (<em>float</em>) – Stiffness of the trap</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.opticalConfinement">
-<code class="sig-name descname">opticalConfinement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.opticalConfinement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Force on colloids in optical traps of varying stiffnesses</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>r0</strong> (<em>np.array</em>) – An array of trap centers
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-<li><p><strong>k</strong> (<em>float</em>) – Stiffness of the trap</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.sedimentation">
-<code class="sig-name descname">sedimentation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.sedimentation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Force on colloids in sedimentation</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-<li><p><strong>g</strong> (<em>float</em>) – Gravity</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.softSpringWall">
-<code class="sig-name descname">softSpringWall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.softSpringWall" title="Permalink to this definition">¶</a></dt>
-<dd><p>F = -k(r-rmin)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.forceFields.Forces.spring">
-<code class="sig-name descname">spring</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Forces.spring" title="Permalink to this definition">¶</a></dt>
-<dd><p>Force on colloids connected by a spring in a single polymer</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,
-An array of size 3*Np,</p></li>
-<li><p><strong>bondLength</strong> (<em>float</em>) – The size of natural spring</p></li>
-<li><p><strong>springModulus</strong> (<em>float</em>) – Stiffness of the trap</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="torques">
 <h2>Torques<a class="headerlink" href="#torques" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="pystokes.forceFields.Torques">
-<em class="property">class </em><code class="sig-prename descclassname">pystokes.forceFields.</code><code class="sig-name descname">Torques</code><a class="headerlink" href="#pystokes.forceFields.Torques" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes torques in a system of colloidal particles</p>
-<dl class="simple">
-<dt>Methods in the Torques class take input,</dt><dd><ul class="simple">
-<li><p>arrays of positions, Torques</p></li>
-<li><p>parameters for a given potential</p></li>
-</ul>
-</dd>
-</dl>
-<p>The array of torques is then update by each method.</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>particles</strong> (<em>int</em>) – Number of particles (Np)</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="pystokes.forceFields.Torques.bottomHeaviness">
-<code class="sig-name descname">bottomHeaviness</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.forceFields.Torques.bottomHeaviness" title="Permalink to this definition">¶</a></dt>
-<dd><p>Torque due to bottom-heaviness</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>p</strong> (<em>np.array</em>) – An array of Orientations
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of Torques
-An array of size 3*Np,</p></li>
-<li><p><strong>bh</strong> (<em>float</em>) – bottomHeaviness</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 </div>
 
@@ -486,11 +193,19 @@ An array of size 3*Np,</p></li>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Rajesh Singh and Ronojoy Adhikari
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -501,7 +216,6 @@ An array of size 3*Np,</p></li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

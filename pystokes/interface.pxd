@@ -35,7 +35,10 @@ cdef class Rbm:
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T, double ll=?)
 
 
-    cpdef calcNoiseMuTT(self, double [:] v, double [:] r)
+    cpdef noiseTT(self, double [:] v, double [:] r)
+
+
+    cpdef noiseRR(self, double [:] o, double [:] r)
 
 
 

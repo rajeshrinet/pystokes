@@ -82,31 +82,31 @@ any geometry-boundary condition combination for which the Green's functions of t
 
 The PyStokes library can be instantiated in the following way to 
 
-* obtain phoretic field at an arbitrary set of points due to active particles
+* obtain phoretic field created by active particles at a given set of points 
 ```python
 phoreticField = pystokes.phoreticUnbounded.Field(radius=1, particles=1, 
                 phoreticConstant=1, gridpoints=4096)
 ```
 
-* compute fluid flow at an arbitrary set of points due to active particles
+* evaluate fluid flow created by active particles at a given set of points
 ```python
 Flow = pystokes.unbounded.Flow(radius=1, particles=1, viscosity=1, 
         gridpoints=4096) 
 ```
 
-* phoretic field at surface of active particles
+* determine phoretic field at surface of active particles
 ```python
 phoresis = pystokes.phoreticUnbounded.Phoresis(radius=1, particles=1024, 
             phoreticConstant=1)
 ```
 
-* rigid body motion of hydrodynamically interacting particles
+* compute rigid body motion of hydrodynamically interacting particles
 ```python
 Rbm = pystokes.unbounded.Rbm(radius=1, particles=1024, viscosity=1) 
 ```
 
 
-The above instantiation can then be used to compute `Flow` and `Rbm` due to body forces, body torques, and each irreducible mode of the surface slip in various geometries of Stokes flow, by replacing `unbounded` with `wallBounded`, `interface`, `periodic`, etc. `pystokes.forceFields` contains the implementation of force fields commonly used in colloidal systems for completeness. The arXiv preprint [@singh2019Hydrodynamic] of this article contains more detailed documentation and examples.
+The above instantiation can then be used to compute `Flow` and `Rbm` due to body forces, body torques, and each irreducible mode of the surface slip in various geometries of Stokes flow, by replacing `unbounded` with `wallBounded`, `periodic`, etc. `pystokes.forceFields` contains an implementation of force fields commonly used in colloidal systems for completeness. The arXiv preprint [@singh2019Hydrodynamic] of this article contains more detailed documentation and examples.
   
 
 # Acknowledgements

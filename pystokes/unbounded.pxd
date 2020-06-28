@@ -53,8 +53,15 @@ cdef class Rbm:
     cpdef propulsionR3s(  self, double [:] o,  double [:] r, double [:] G)
 
 
-    cpdef propulsionR4a(  self, double [:] o,  double [:] r, double [:] M)
-    cpdef calcNoiseMuTT(self, double [:] v, double [:] r)
+    cpdef propulsionR4a(  self, double [:] o,  double [:] r, double [:] M) 
+
+
+    cpdef noiseTT(self, double [:] v, double [:] r)
+
+
+    cpdef noiseRR(self, double [:] o, double [:] r)
+
+
 
 @cython.wraparound(False)
 @cython.boundscheck(False)

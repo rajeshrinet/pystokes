@@ -612,7 +612,7 @@ cdef class Rbm:
 
 
     ## Noise
-    cpdef calcNoiseMuTT(self, double [:] v, double [:] r):
+    cpdef noiseTT(self, double [:] v, double [:] r):
         """
         Compute translation Brownian motion 
         ...
@@ -772,7 +772,7 @@ cdef class Rbm:
         return
 
 
-    cpdef calcNoiseMuRR(self, double [:] o, double [:] r):
+    cpdef noiseRR(self, double [:] o, double [:] r):
         """
         Compute rotational Brownian motion 
         ...

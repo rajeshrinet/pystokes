@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -25,18 +30,13 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Flow bounded by a no-shear plane" href="interface.html" />
+    <link rel="next" title="Stokes flow near interfaces" href="interface.html" />
     <link rel="prev" title="PyStokes API" href="index.html" /> 
 </head>
 
@@ -51,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> PyStokes
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PyStokes
           
 
           
@@ -74,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -87,13 +88,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#flow">Flow</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Flow bounded by a no-shear plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Flow bounded by a no-slip plane</a></li>
-<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Flow in Hele-Shaw cell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Stokes flow near interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wallBounded.html">Stokes flow bounded by a wall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twoWalls.html">Stokes flow in a Hele-Shaw cell</a></li>
 <li class="toctree-l1"><a class="reference internal" href="periodic.html">Stokes flow in a periodic domain</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mima.html">Mollified irreducible multipole approach</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phoreticUnbounded.html">Phoresis in an unbounded domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis in a space bounded by a plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phoreticWallBounded.html">Phoresis in a space bounded by a wall</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forceFields.html">Force fields in colloidal systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utils: Miscellaneous function</a></li>
 </ul>
@@ -101,6 +102,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -139,7 +141,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Stokes flow in an unbounded domain</li>
     
@@ -168,314 +170,7 @@
 <dl class="py class">
 <dt id="pystokes.unbounded.Rbm">
 <em class="property">class </em><code class="sig-prename descclassname">pystokes.unbounded.</code><code class="sig-name descname">Rbm</code><a class="headerlink" href="#pystokes.unbounded.Rbm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rigid body motion (RBM) - velocity and angular velocity</p>
-<p>Methods in this class update velocities or angular velocities
-using the inputs of -  arrays of positions, velocity or angular velocity,
-along with an array of forces or torques or a slip mode</p>
-<p>The array of velocity or angular velocities is then update by each method.</p>
-<p>…</p>
-<dl class="simple">
-<dt>radius: float</dt><dd><p>Radius of the particles (a).</p>
-</dd>
-<dt>particles: int</dt><dd><p>Number of particles (Np)</p>
-</dd>
-<dt>viscosity: float</dt><dd><p>Viscosity of the fluid (eta)</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.calcNoiseMuTT">
-<code class="sig-name descname">calcNoiseMuTT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.calcNoiseMuTT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute translation Brownian motion
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.mobilityRR">
-<code class="sig-name descname">mobilityRR</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityRR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to body torques using <span class="math notranslate nohighlight">\(o=\mu^{RR}\cdot T\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>T</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.mobilityRT">
-<code class="sig-name descname">mobilityRT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityRT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to body forces using <span class="math notranslate nohighlight">\(o=\mu^{RT}\cdot F\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.mobilityTR">
-<code class="sig-name descname">mobilityTR</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityTR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to body torque using <span class="math notranslate nohighlight">\(v=\mu^{TR}\cdot T\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>T</strong> (<em>np.array</em>) – An array of torques
-An array of size 3*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.mobilityTT">
-<code class="sig-name descname">mobilityTT</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.mobilityTT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to body forces using <span class="math notranslate nohighlight">\(v=\mu^{TT}\cdot F\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of forces
-An array of size 3*Np,</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<p>An example of the RBM</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pystokes</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># particle radius, self-propulsion speed, number and fluid viscosity</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="n">Np</span><span class="p">,</span> <span class="n">eta</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mf">0.1</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#initialise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">initialCondition</span><span class="p">(</span><span class="n">Np</span><span class="p">)</span>  <span class="c1"># initial random distribution of positions</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">);</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">Np</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>    <span class="c1"># initial orientation of the colloids</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rbm</span>   <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">unbounded</span><span class="o">.</span><span class="n">Rbm</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">particles</span><span class="o">=</span><span class="n">Np</span><span class="p">,</span> <span class="n">viscosity</span><span class="o">=</span><span class="n">eta</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">force</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">forceFields</span><span class="o">.</span><span class="n">Forces</span><span class="p">(</span><span class="n">particles</span><span class="o">=</span><span class="n">Np</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">rp</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># assign fresh values at each time step</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">r</span> <span class="o">=</span> <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">];</span>   <span class="n">p</span> <span class="o">=</span> <span class="n">rp</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">:</span><span class="mi">6</span><span class="o">*</span><span class="n">Np</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">F</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">o</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">Np</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">force</span><span class="o">.</span><span class="n">lennardJonesWall</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">lje</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">ljr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">wlje</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">wljr</span><span class="o">=</span><span class="mf">3.4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">rbm</span><span class="o">.</span><span class="n">mobilityTT</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">o</span><span class="p">)</span> <span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># simulate the resulting system</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Tf</span><span class="p">,</span> <span class="n">Npts</span> <span class="o">=</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">200</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">r</span><span class="p">,</span><span class="n">p</span><span class="p">)),</span>
-<span class="gp">&gt;&gt;&gt; </span>     <span class="n">Tf</span><span class="p">,</span><span class="n">Npts</span><span class="p">,</span><span class="n">rhs</span><span class="p">,</span><span class="n">integrator</span><span class="o">=</span><span class="s1">&#39;odeint&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;crystallization&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.propulsionR2s">
-<code class="sig-name descname">propulsionR2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR2s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to 2s mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{R,2s}\cdot S\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>S</strong> (<em>np.array</em>) – An array of 2s mode of the slip
-An array of size 5*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.propulsionR3a">
-<code class="sig-name descname">propulsionR3a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR3a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to 3a mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{R,3a}\cdot V\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>V</strong> (<em>np.array</em>) – An array of 3a mode of the slip
-An array of size 5*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.propulsionR3s">
-<code class="sig-name descname">propulsionR3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR3s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to 3s mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{R,3s}\cdot G\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>G</strong> (<em>np.array</em>) – An array of 3s mode of the slip
-An array of size 7*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.propulsionR4a">
-<code class="sig-name descname">propulsionR4a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionR4a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute angular velocity due to 4a mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{R,4a}\cdot M\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>o</strong> (<em>np.array</em>) – An array of angular velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>M</strong> (<em>np.array</em>) – An array of 4a mode of the slip
-An array of size 7*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.propulsionT2s">
-<code class="sig-name descname">propulsionT2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT2s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 2s mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,2s}\cdot S\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>S</strong> (<em>np.array</em>) – An array of 2s mode of the slip
-An array of size 5*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.propulsionT3a">
-<code class="sig-name descname">propulsionT3a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT3a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 3a mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,3a}\cdot V\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>V</strong> (<em>np.array</em>) – An array of 3a mode of the slip
-An array of size 5*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.propulsionT3s">
-<code class="sig-name descname">propulsionT3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT3s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 3s mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,3s}\cdot G\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>G</strong> (<em>np.array</em>) – An array of 3s mode of the slip
-An array of size 7*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.propulsionT3t">
-<code class="sig-name descname">propulsionT3t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT3t" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 3t mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,3t}\cdot D\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>D</strong> (<em>np.array</em>) – An array of 3t mode of the slip
-An array of size 3*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Rbm.propulsionT4a">
-<code class="sig-name descname">propulsionT4a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Rbm.propulsionT4a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute velocity due to 4a mode of the slip <span class="math notranslate nohighlight">\(v=\pi^{T,4a}\cdot M\)</span>
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>np.array</em>) – An array of velocities
-An array of size 3*Np,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>M</strong> (<em>np.array</em>) – An array of 4a mode of the slip
-An array of size 7*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="flow">
@@ -483,259 +178,7 @@ An array of size 7*Np,</p></li>
 <dl class="py class">
 <dt id="pystokes.unbounded.Flow">
 <em class="property">class </em><code class="sig-prename descclassname">pystokes.unbounded.</code><code class="sig-name descname">Flow</code><a class="headerlink" href="#pystokes.unbounded.Flow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Flow at given points</p>
-<p>…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>radius</strong> (<em>float</em>) – Radius of the particles.</p></li>
-<li><p><strong>particles</strong> (<em>int</em>) – Number of particles</p></li>
-<li><p><strong>viscosity</strong> (<em>viscosity of the fluid</em>) – </p></li>
-<li><p><strong>gridpoints</strong> (<em>int</em>) – Number of grid points</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<p>An example of the RBM</p>
-<dl class="py method">
-<dt id="pystokes.unbounded.Flow.flowField1s">
-<code class="sig-name descname">flowField1s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField1s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute flow field at field points due body forces
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>F</strong> (<em>np.array</em>) – An array of body force
-An array of size 3*Np,</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<p>An example of the Flow field due to $1s$ mode of force per unit area</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pystokes</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># particle radius, self-propulsion speed, number and fluid viscosity</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">Np</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">6.0</span><span class="p">,</span> <span class="mi">1</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">F1s</span>  <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">irreducibleTensors</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># space dimension , extent , discretization</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">;</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># instantiate the Flow class</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flow</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">unbounded</span><span class="o">.</span><span class="n">Flow</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">particles</span><span class="o">=</span><span class="n">Np</span><span class="p">,</span> <span class="n">viscosity</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span> <span class="n">gridpoints</span><span class="o">=</span><span class="n">Ng</span><span class="o">*</span><span class="n">Ng</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># create grid, evaluate flow and plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rr</span><span class="p">,</span> <span class="n">vv</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">gridXY</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flow</span><span class="o">.</span><span class="n">flowField1s</span><span class="p">(</span><span class="n">vv</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">F1s</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plotStreamlinesXY</span><span class="p">(</span><span class="n">vv</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">6</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;1s&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Flow.flowField2a">
-<code class="sig-name descname">flowField2a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField2a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute flow field at field points due body Torque
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>T</strong> (<em>np.array</em>) – An array of body torque
-An array of size 3*Np,</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<p>An example of the RBM</p>
-<p># Example 1: Flow field due to $2a$ mode of force per unit area
-&gt;&gt;&gt; import pystokes, numpy as np, matplotlib.pyplot as plt
-&gt;&gt;&gt;
-&gt;&gt;&gt; # particle radius, self-propulsion speed, number and fluid viscosity
-&gt;&gt;&gt; b, eta, Np = 1.0, 1.0/6.0, 1
-&gt;&gt;&gt;
-&gt;&gt;&gt; # initialize
-&gt;&gt;&gt; r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
-&gt;&gt;&gt; V2a  = pystokes.utils.irreducibleTensors(1, p)
-&gt;&gt;&gt;
-&gt;&gt;&gt; # space dimension , extent , discretization
-&gt;&gt;&gt; dim, L, Ng = 3, 10, 64;
-&gt;&gt;&gt;
-&gt;&gt;&gt; # instantiate the Flow class
-&gt;&gt;&gt; flow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
-&gt;&gt;&gt;
-&gt;&gt;&gt; # create grid, evaluate flow and plot
-&gt;&gt;&gt; rr, vv = pystokes.utils.gridXY(dim, L, Ng)
-&gt;&gt;&gt; flow.flowField2a(vv, rr, r, V2a)
-&gt;&gt;&gt; pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title=’2s’)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Flow.flowField2s">
-<code class="sig-name descname">flowField2s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField2s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute flow field at field points  due to 2s mode of the slip
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>S</strong> (<em>np.array</em>) – An array of 2s mode of the slip
-An array of size 5*Np,</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<p>An example of the Flow field due to $3t$ mode of active slip</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pystokes</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># particle radius, self-propulsion speed, number and fluid viscosity</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">Np</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">6.0</span><span class="p">,</span> <span class="mi">1</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">V3t</span>  <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">irreducibleTensors</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># space dimension , extent , discretization</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">;</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># instantiate the Flow class</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flow</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">wallBounded</span><span class="o">.</span><span class="n">Flow</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">particles</span><span class="o">=</span><span class="n">Np</span><span class="p">,</span> <span class="n">viscosity</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span> <span class="n">gridpoints</span><span class="o">=</span><span class="n">Ng</span><span class="o">*</span><span class="n">Ng</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># create grid, evaluate flow and plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rr</span><span class="p">,</span> <span class="n">vv</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">gridXY</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flow</span><span class="o">.</span><span class="n">flowField3t</span><span class="p">(</span><span class="n">vv</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">V3t</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plotStreamlinesXY</span><span class="p">(</span><span class="n">vv</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">6</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;1s&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Flow.flowField3a">
-<code class="sig-name descname">flowField3a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField3a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute flow field at field points  due to 3a mode of the slip
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>V</strong> (<em>np.array</em>) – An array of 3a mode of the slip
-An array of size 5*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Flow.flowField3s">
-<code class="sig-name descname">flowField3s</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField3s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute flow field at field points  due to 3s mode of the slip
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>G</strong> (<em>np.array</em>) – An array of 3s mode of the slip
-An array of size 7*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Flow.flowField3t">
-<code class="sig-name descname">flowField3t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField3t" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute flow field at field points due to 3t mode of the slip
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>D</strong> (<em>np.array</em>) – An array of 3t mode of the slip
-An array of size 3*Np,</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<p>An example of the Flow field due to $3t$ mode of active slip</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pystokes</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># particle radius, self-propulsion speed, number and fluid viscosity</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">Np</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">6.0</span><span class="p">,</span> <span class="mi">1</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># initialize</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">V3t</span>  <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">irreducibleTensors</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># space dimension , extent , discretization</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">;</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># instantiate the Flow class</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flow</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">wallBounded</span><span class="o">.</span><span class="n">Flow</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">particles</span><span class="o">=</span><span class="n">Np</span><span class="p">,</span> <span class="n">viscosity</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span> <span class="n">gridpoints</span><span class="o">=</span><span class="n">Ng</span><span class="o">*</span><span class="n">Ng</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># create grid, evaluate flow and plot</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rr</span><span class="p">,</span> <span class="n">vv</span> <span class="o">=</span> <span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">gridXY</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">Ng</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">flow</span><span class="o">.</span><span class="n">flowField3t</span><span class="p">(</span><span class="n">vv</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">V3t</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pystokes</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plotStreamlinesXY</span><span class="p">(</span><span class="n">vv</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">6</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;2s&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pystokes.unbounded.Flow.flowField4a">
-<code class="sig-name descname">flowField4a</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pystokes.unbounded.Flow.flowField4a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute flow field at field points  due to 4a mode of the slip
-…</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vv</strong> (<em>np.array</em>) – An array of flow at field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>rt</strong> (<em>np.array</em>) – An array of field points
-An array of size 3*Nt,</p></li>
-<li><p><strong>r</strong> (<em>np.array</em>) – An array of positions
-An array of size 3*Np,</p></li>
-<li><p><strong>M</strong> (<em>np.array</em>) – An array of 4a mode of the slip
-An array of size 7*Np,</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
+<dd></dd></dl>
 
 </div>
 </div>
@@ -748,7 +191,7 @@ An array of size 7*Np,</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="interface.html" class="btn btn-neutral float-right" title="Flow bounded by a no-shear plane" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="interface.html" class="btn btn-neutral float-right" title="Stokes flow near interfaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="PyStokes API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -760,11 +203,19 @@ An array of size 7*Np,</p></li>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Rajesh Singh and Ronojoy Adhikari
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -775,7 +226,6 @@ An array of size 7*Np,</p></li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

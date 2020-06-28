@@ -35,11 +35,10 @@ cdef class Rbm:
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T)
 
 
+    cpdef noiseTT(self, double [:] v, double [:] r)
 
-    cpdef calcNoiseMuTT(self, double [:] v, double [:] r)
 
-
-    cpdef calcNoiseMuRR(self, double [:] o, double [:] r)
+    cpdef noiseRR(self, double [:] o, double [:] r)
 
 
 ## Flow at given points

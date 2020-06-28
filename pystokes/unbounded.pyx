@@ -688,7 +688,7 @@ cdef class Rbm:
         return
 
 
-    cpdef calcNoiseMuTT(self, double [:] v, double [:] r):
+    cpdef noiseTT(self, double [:] v, double [:] r):
         """
         Compute translation Brownian motion 
         ...
@@ -766,6 +766,74 @@ cdef class Rbm:
 
         return
 
+
+    cpdef noiseRR(self, double [:] o, double [:] r):
+        """
+        Compute rotational Brownian motion 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        """
+
+        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
+        cdef double mur=1/(8*np.pi*self.eta), mu1=0.25*sqrt(2.0)*mur, mm=4/(self.a**3)
+        cdef double ox, oy, oz
+
+        cdef double [:, :] M = self.Mobility
+        cdef double [:]   Tr = np.random.normal(size=3*Np)
+
+
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                dx = r[i]    - r[j]
+                dy = r[i+Np] - r[j+Np]
+                h2=2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
+                if i!=j:
+                    dz = r[i+xx] - r[j+xx]
+                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                    idr2=idr*idr;  idr3=idr*idr*idr
+                    dx = dx*idr; dy=dy*idr; dz=dz*idr
+                    #
+                    M[i,    j   ] = (2 - 6*dx*dx)*idr3
+                    M[i+Np, j+Np] = (2 - 6*dy*dy)*idr3
+                    M[i+xx, j+xx] = (2 - 6*dz*dz)*idr3
+                    M[i,    j+Np] = (  - 6*dx*dy)*idr3
+                    M[i,    j+xx] = (  - 6*dx*dz)*idr3
+                    M[i+Np, j+xx] = (  - 6*dy*dz)*idr3
+
+
+        for i in prange(Np, nogil=True):
+            for j in range(Np):
+                M[i,    j   ] = mu1*M[i,    j   ]
+                M[i+Np, j+Np] = mu1*M[i+Np, j+Np]
+                M[i+xx, j+xx] = mu1*M[i+xx, j+xx]
+                M[i,    j+Np] = mu1*M[i,    j+Np]
+                M[i,    j+xx] = mu1*M[i,    j+xx]
+                M[i+Np, j+xx] = mu1*M[i+Np, j+xx]
+
+                M[i+Np, j   ] =     M[i,    j+Np]
+                M[i+xx, j   ] =     M[i,    j+xx]
+                M[i+xx, j+Np] =     M[i+Np, j+xx]
+
+        cdef double [:, :] L = mu1*np.linalg.cholesky(self.Mobility)
+        for i in prange(Np, nogil=True):
+            ox=0; oy=0; oz=0;
+            for j in range(Np):
+                ox += L[i   , j]*Tr[j] + L[i   , j+Np]*Tr[j+Np] + L[i   , j+xx]*Tr[j+xx]
+                oy += L[i+Np, j]*Tr[j] + L[i+Np, j+Np]*Tr[j+Np] + L[i+Np, j+xx]*Tr[j+xx]
+                oz += L[i+xx, j]*Tr[j] + L[i+xx, j+Np]*Tr[j+Np] + L[i+xx, j+xx]*Tr[j+xx]
+            o[i  ]  += ox
+            o[i+Np] += oy
+            o[i+xx] += oz
+        return
 
 
 

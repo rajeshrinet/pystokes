@@ -26,7 +26,6 @@ API Reference
    wallBounded
    twoWalls
    periodic
-   mima
    phoreticUnbounded
    phoreticWallBounded
    forceFields

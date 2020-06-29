@@ -55,7 +55,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pystokes',
-    version='2.1.10',
+    version='2.1.11',
     url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',
@@ -63,7 +63,7 @@ setup(
     description='Phoresis and Stokesian hydrodynamics in Python',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    platforms='tested on macOS and LINUX',
+    platforms='tested on macOS, windows, and LINUX',
     ext_modules=cythonize([ Extension('pystokes/*', ['pystokes/*.pyx'],
         include_dirs=[numpy.get_include()],
         extra_compile_args=ompArgs,
@@ -77,6 +77,7 @@ setup(
     include_package_data=True,
     classifiers=[
         'License :: OSI Approved :: MIT License',
+        "Operating System :: OS Independent",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',

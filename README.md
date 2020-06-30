@@ -1,12 +1,4 @@
-## PyStokes: Phoresis and Stokesian hydrodynamics in Python  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder) 
-![Installation](https://github.com/rajeshrinet/pystokes/workflows/build/badge.svg)
-![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg)
-[![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest)
-[![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes)
-[![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes)
-[![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)
-![License](https://img.shields.io/github/license/rajeshrinet/pystokes) 
----
+## PyStokes: Phoresis and Stokesian hydrodynamics in Python  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder) ![Installation](https://github.com/rajeshrinet/pystokes/workflows/build/badge.svg) ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg) [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest) [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes) [![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes) [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes) ![License](https://img.shields.io/github/license/rajeshrinet/pystokes) 
 
 [About](#about) 
 | [News](#news) 

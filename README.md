@@ -6,6 +6,7 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes)
 [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)
 ![License](https://img.shields.io/github/license/rajeshrinet/pystokes) 
+---
 
 [About](#about) 
 | [News](#news) 

@@ -1,4 +1,4 @@
-## PyStokes: Phoresis and Stokesian hydrodynamics in Python  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder) ![Installation](https://github.com/rajeshrinet/pystokes/workflows/build/badge.svg) ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg) [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest) [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes) [![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes) [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes) ![License](https://img.shields.io/github/license/rajeshrinet/pystokes) 
+## PyStokes: Phoresis and Stokesian hydrodynamics in Python  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder) ![Installation](https://github.com/rajeshrinet/pystokes/workflows/build/badge.svg) ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg) [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02318/status.svg)](https://doi.org/10.21105/joss.02318) [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes) [![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes) [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)  
 
 [About](#about) 
 | [News](#news) 
@@ -17,7 +17,7 @@
 
 [PyStokes](https://github.com/rajeshrinet/pystokes) is a numerical library for phoresis and Stokesian hydrodynamics in Python. It uses a grid-free method, combining the integral representation of Laplace and Stokes equations, spectral expansion, and Galerkin discretization, to compute phoretic and hydrodynamic interactions between spheres with slip boundary conditions on their surfaces. The library also computes suspension scale quantities, such as rheological response, energy dissipation and fluid flow. The computational cost is quadratic in the number of particles and upto 1e5 particles have been accommodated on multicore computers. The library has been used to model suspensions of **microorganisms**,  **synthetic autophoretic particles** and **self-propelling droplets**. 
 
-A detailed description of above keywords is available in the [Wiki](https://github.com/rajeshrinet/pystokes/wiki). Please read the PyStokes [paper](https://github.com/rajeshrinet/pystokes/tree/master/docs/paper) and [Wiki](https://github.com/rajeshrinet/pystokes/wiki) before you use PyStokes for your research. Included below are some examples from [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery)
+A detailed description of above keywords is available in the [Wiki](https://github.com/rajeshrinet/pystokes/wiki). Please read the PyStokes [paper](https://doi.org/10.21105/joss.02318) and [Wiki](https://github.com/rajeshrinet/pystokes/wiki) before you use PyStokes for your research. Included below are some examples from [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery)
 
 ![Image](https://raw.githubusercontent.com/rajeshrinet/pystokes-examples/master/gallery/2_volvox.gif) 
 ![Crystallization of active colloids](https://raw.githubusercontent.com/rajeshrinet/pystokes/master/examples/crystallite.gif) 
@@ -136,7 +136,7 @@ Other examples include
 
 ## Publications
 
-* [Hydrodynamic and phoretic interactions of active particles in Python](https://arxiv.org/abs/1910.00909), Rajesh Singh and R. Adhikari, arXiv:1910.00909, 2019. *(Please cite this paper if you use PyStokes in your research)*.
+* [PyStokes: phoresis and Stokesian hydrodynamics in Python](https://doi.org/10.21105/joss.02318), Rajesh Singh and R. Adhikari, **Journal of Open Source Software**, 5(50), 2318, (2020). *(Please cite this paper if you use PyStokes in your research)*.
 
 * [Competing phoretic and hydrodynamic interactions in autophoretic colloidal suspensions](https://aip.scitation.org/doi/full/10.1063/1.5090179), Rajesh Singh, R. Adhikari, and M. E. Cates, **The Journal of Chemical Physics** 151, 044901 (2019)
 

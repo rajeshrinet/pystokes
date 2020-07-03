@@ -7,3 +7,6 @@ import pystokes.wallBounded
 import pystokes.forceFields
 import pystokes.phoreticUnbounded
 import pystokes.phoreticWallBounded
+
+# current version of PyRoss
+__version__="2.2.0"

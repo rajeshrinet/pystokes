@@ -1,5 +1,5 @@
 import numpy, os, sys, os.path, tempfile, subprocess, shutil
-import os, sys
+import os, sys, re
 from setuptools import setup, Extension
 from Cython.Build import cythonize
 import Cython.Compiler.Options
@@ -53,9 +53,20 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
+cwd = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(cwd, 'pystokes', '__init__.py')) as fp:
+    for line in fp:
+        m = re.search(r'^\s*__version__\s*=\s*([\'"])([^\'"]+)\1\s*$', line)
+        if m:
+            version = m.group(2)
+            break
+    else:
+        raise RuntimeError('Unable to find own __version__ string')
+
+
 setup(
     name='pystokes',
-    version='2.1.11',
+    version=version,
     url='https://github.com/rajeshrinet/pystokes',
     author = 'The PyStokes team',
     author_email = 'PyStokes@googlegroups.com',

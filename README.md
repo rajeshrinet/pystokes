@@ -64,17 +64,16 @@ Install PyStokes and required dependencies using
 ```
 
 ### Testing
-Short test of installation and running
+Test of installation and running
 
 ```bash
->> cd tests
->> python shortTests.py
+>> python tests.py
 ```
 
-Long test of example notebooks 
+Test of example notebooks 
 
 ```bash
->> cd tests
+>> cd examples
 >> python notebookTests.py
 ```
 

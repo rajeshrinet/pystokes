@@ -23,12 +23,12 @@ env:
 
 test:
 	@echo testing pystokes...
-	cd tests && python shortTests.py
+	python tests.py
 
 nbtest:
 	@echo testing example notebooks...
 	@echo test $(path)
-	cd tests && python notebookTests.py --path $(path) --recursive $(recursive)
+	cd examples && python notebookTests.py --path $(path) --recursive $(recursive)
 
 pypitest:
 	@echo testing pystokes...
@@ -42,4 +42,4 @@ pypi:
 
 cycov:
 	python setup.py build_ext --force --inplace --define CYTHON_TRACE
-	pytest tests/shortTests.py  --cov=./ --cov-report=xml
+	pytest tests.py  --cov=./ --cov-report=xml

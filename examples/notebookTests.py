@@ -14,7 +14,6 @@ def run_notebook_tests(path, recursive=False):
     Ignore notebooks which take longer or have deliberate errors, 
     but check they still exists
     '''
-    os.chdir('../examples/')
 
     cwd =os.getcwd()
     ignore_list = [os.path.join(cwd, 'ex3-crystalNucleation.ipynb'),

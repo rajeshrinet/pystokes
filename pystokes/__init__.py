@@ -8,5 +8,7 @@ import pystokes.forceFields
 import pystokes.phoreticUnbounded
 import pystokes.phoreticWallBounded
 
-# current version of PyRoss
+
+
+## latest version of PyStokes
 __version__="2.2.1"

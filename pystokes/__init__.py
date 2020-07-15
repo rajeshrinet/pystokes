@@ -9,4 +9,4 @@ import pystokes.phoreticUnbounded
 import pystokes.phoreticWallBounded
 
 # current version of PyRoss
-__version__="2.2.0"
+__version__="2.2.1"

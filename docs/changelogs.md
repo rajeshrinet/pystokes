@@ -1,5 +1,13 @@
 # PyStokes changelogs
 
+## 2.2.1
+* Add more integrators and update simulate interface
+
+## 2.2.0
+* Update version after JOSS review
+
+## 2.1.9 
+* Remove MIMA from PyStokes
 
 ## 2.1.8 
 * Update tests and utils so that it contnues python 2 support 

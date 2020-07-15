@@ -128,7 +128,8 @@ cpdef irreducibleTensors(l, p, Y0=1):
 
 
 
-def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat'):
+def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat',
+            Ti=0, maxNumSteps=100000, **kwargs):
     """
     Simulates using choice of integrator
     
@@ -151,39 +152,51 @@ def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat'):
         Deafult is 'this.mat'
     """
 
-    from scipy.io import savemat; 
-    from scipy.integrate import odeint
-
-    time_points=np.linspace(0, Tf, Npts+1);
     def dxdtEval(rp, t): 
+        """
+        returns the right hand side
+        """
         return rhs(rp)
-    
+   
+
     if integrator=='odeint':
-        X = odeint(dxdtEval, rp0, time_points, mxstep=5000000)
+        from scipy.integrate import odeint
+        time_points=np.linspace(Ti, Tf, Npts+1);
+        X = odeint(dxdtEval, rp0, time_points, mxstep=maxNumSteps, **kwargs)
+
+    elif integrator=='solve_ivp':
+        from scipy.integrate import solve_ivp
+        time_points=np.linspace(Ti, Tf, Npts+1)                                                          
+        X = solve_ivp(lambda t, xt: dxdtEval(xt,t), [0,Tf], rp0, 
+                         t_eval=time_points, **kwargs).y.T
 
     elif integrator=='odespy-vode':
         import odespy
+        time_points=np.linspace(Ti, Tf, Npts+1);
         solver = odespy.Vode(dxdtEval, method = 'bdf', 
-        atol=1E-7, rtol=1E-6, order=5, nsteps=10**6)
+        atol=1E-7, rtol=1E-6, order=5, nsteps=maxNumSteps)
         solver.set_initial_condition(rp0)
-        X, t = solver.solve(time_points) 
+        X, t = solver.solve(time_points, **kwargs) 
 
     elif integrator=='odespy-rkf45':
         import odespy
+        time_points=np.linspace(Ti, Tf, Npts+1);
         solver = odespy.RKF45(dxdtEval)
         solver.set_initial_condition(rp0)
-        X, t = solver.solve(time_points) 
+        X, t = solver.solve(time_points, **kwargs) 
 
     elif integrator=='odespy-rk4':
         import odespy
+        time_points=np.linspace(Ti, Tf, Npts+1);
         solver = odespy.RK4(dxdtEval)
         solver.set_initial_condition(rp0)
-        X, t = solver.solve(time_points) 
+        X, t = solver.solve(time_points, **kwargs) 
 
     else:
         raise Exception("Error: Integration method not found! \n \
                         Please set integrator='odeint' to use \n \
                         the scipy.integrate's odeint (Default)\n \
+                        Use integrator='solve_ivp' to use ivp  \
                         Use integrator='odespy-vode' to use vode \
                         from odespy (github.com/rajeshrinet/odespy).\n \
                         Use integrator='odespy-rkf45' to use RKF45  \
@@ -193,6 +206,7 @@ def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat'):
                         Alternatively, write your own integrator to \
                         evolve the system in time and store the data.\n")
 
+    from scipy.io import savemat
     savemat(filename, {'X':X, 't':time_points})
     return
 

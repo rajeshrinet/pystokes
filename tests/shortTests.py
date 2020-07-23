@@ -46,6 +46,26 @@ class UnboundedTest(unittest.TestCase):
         diff = np.absolute(W1[2] - W2[2])
         self.assertTrue((np.asarray(diff) < 0.001).all(),
                        "Stokes law for rotation is not satisfied")
+    
+
+    def test_2sFlow_2body(self):
+        r = np.array([-5, 5, 0, 0, 0, 0.])
+        p = np.array([ 0, 0, 1, 1, 0, 0.])
+        v = np.array([ 0, 0, 0, 0, 0, 0.])
+        V2s = pystokes.utils.irreducibleTensors(2, p)
+
+
+        a, N, eta = 1, 2, 1 
+        mu = 1/(8*np.pi*a**3*eta)
+
+        uRbm = pystokes.unbounded.Rbm(a, N, eta)
+        uRbm.propulsionT2s(v, r, V2s)
+
+        
+        diff = v[2:] # check that flow is only in x direction
+        self.assertTrue((np.asarray(diff) < 0.001).all(),
+                       "two active particles, 2s, on x-axis, \
+                       can not move in direction other than x")
 
 
 

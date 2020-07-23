@@ -4,4 +4,6 @@ cython
 scipy 
 jupyter
 ipython
-nbconvert
+nbconvert 
+pytest 
+pytest-cov

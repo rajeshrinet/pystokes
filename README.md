@@ -33,7 +33,19 @@ A detailed description of above keywords is available in the [Wiki](https://gith
 ## Installation
 You can take PyStokes for a spin **without installation**: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder). Please be patient while [Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder) loads.
 
-### Via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
+### From a checkout of this repo
+
+Install PyStokes and required dependencies using
+ 
+```bash
+>> git clone https://github.com/rajeshrinet/pystokes.git
+>> cd pystokes
+>> pip install -r requirements.txt
+>> python setup.py install
+```
+
+
+#### Via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
 
 Install PyStokes and its dependencies in an [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml) named pystokes:
 
@@ -53,16 +65,6 @@ Install the latest [PyPI](https://pypi.org/project/pystokes) version
 >> pip install pystokes
 ```
 
-### From a checkout of this repo
-
-Install PyStokes and required dependencies using
- 
-```bash
->> git clone https://github.com/rajeshrinet/pystokes.git
->> cd pystokes
->> pip install -r requirements.txt
->> python setup.py install
-```
 
 ### Testing
 Test installation and running

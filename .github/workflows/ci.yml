@@ -29,6 +29,6 @@ jobs:
         run: python setup.py install 
 
       - name: Test pystokes
-        run: cd tests && python quick_test.py
+        run: cd tests && python shortTests.py
 
 

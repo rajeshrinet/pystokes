@@ -2,8 +2,3 @@ numpy
 matplotlib
 cython
 scipy 
-jupyter
-ipython
-nbconvert 
-pytest 
-pytest-cov

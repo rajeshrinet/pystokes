@@ -146,7 +146,18 @@ def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat',
     rhs : Python Function
         Right hand side to integrate 
     integrator: string 
-        Default is 'odeint' of scipy 
+        Default is 'odeint' of scipy. 
+        Please set integrator='odeint' to use 
+        the scipy.integrate's odeint (Default)
+        Use integrator='solve_ivp' to use ivp  
+        Use integrator='odespy-vode' to use vode
+        from odespy (github.com/rajeshrinet/odespy).
+        Use integrator='odespy-rkf45' to use RKF45  
+        from odespy (github.com/rajeshrinet/odespy).
+        Use integrator='odespy-rk4' to use RK4 from 
+        odespy (github.com/rajeshrinet/odespy).     
+        Alternatively, write your own integrator to 
+        evolve the system in time and store the data.
     filename: string 
         filename to write the data. 
         Deafult is 'this.mat'

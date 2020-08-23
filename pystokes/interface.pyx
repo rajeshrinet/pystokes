@@ -934,6 +934,49 @@ cdef class Flow:
 
     
     cpdef flowField2a(  self, double [:] vv, double [:] rt, double [:] r, double [:] T):
+        """
+        Compute flow field at field points due body torques
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        T: np.array
+            An array of body torques
+            An array of size 3*Np,
+    
+        Examples
+        --------
+        An example of the Flow field due to $2a$ mode of force per unit area
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, T = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.interface.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridYZ(dim, L, Ng)
+        >>> flow.flowField2a(vv, rr, r, T)
+        >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='1s')
+        """ 
+
         cdef int Np = self.Np, i, j, xx=2*Np, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2, 
         cdef double vx, vy, vz, mu1 = 1.0/(8*PI*self.eta)
@@ -986,6 +1029,50 @@ cdef class Flow:
     
    
     cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S):
+        """
+        Compute flow field at field points  due to 2s mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        S: np.array
+            An array of 2s mode of the slip
+            An array of size 5*Np,
+        
+        Examples
+        --------
+        An example of the Flow field due to $3t$ mode of active slip
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> V3t  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.interface.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
+        >>> flow.flowField3t(vv, rr, r, V3t)
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
+        """
+
         cdef int Np=self.Np,  Nt=self.Nt, xx=2*Np, xx1=3*Np, xx2=4*Np
         cdef int i, j  
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
@@ -1045,6 +1132,49 @@ cdef class Flow:
 
    
     cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D):
+        """
+        Compute flow field at field points due to 3t mode of the slip 
+        ...
+
+        Parameters
+        ----------
+        vv: np.array
+            An array of flow at field points
+            An array of size 3*Nt,
+        rt: np.array
+            An array of field points
+            An array of size 3*Nt,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*Np,
+ 
+        Examples
+        --------
+        An example of the Flow field due to $3t$ mode of active slip
+
+        >>> import pystokes, numpy as np, matplotlib.pyplot as plt
+        >>> 
+        >>> # particle radius, self-propulsion speed, number and fluid viscosity
+        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> 
+        >>> # initialize
+        >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
+        >>> V3t  = pystokes.utils.irreducibleTensors(1, p)
+        >>> 
+        >>> # space dimension , extent , discretization
+        >>> dim, L, Ng = 3, 10, 64;
+        >>> 
+        >>> # instantiate the Flow class
+        >>> flow = pystokes.interface.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+        >>> 
+        >>> # create grid, evaluate flow and plot
+        >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
+        >>> flow.flowField3t(vv, rr, r, V3t)
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='2s')
+        """
         cdef int i, j, Np=self.Np, Nt=self.Nt, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2, D3
         cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mu1 = -1.0*(self.a**5)/10

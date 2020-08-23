@@ -35,7 +35,7 @@ You can take PyStokes for a spin **without installation**: [![Binder](https://my
 
 ### From a checkout of this repo
 
-Install PyStokes and required dependencies using
+#### Install PyStokes and required dependencies using 
  
 ```bash
 >> git clone https://github.com/rajeshrinet/pystokes.git
@@ -45,9 +45,8 @@ Install PyStokes and required dependencies using
 ```
 
 
-#### Via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
+####  Install PyStokes and its dependencies in an [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml) named pystokes via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
 
-Install PyStokes and its dependencies in an [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml) named pystokes:
 
 ```bash
 >> git clone https://github.com/rajeshrinet/pystokes.git

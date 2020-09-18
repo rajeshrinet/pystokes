@@ -35,7 +35,7 @@ You can take PyStokes for a spin **without installation**: [![Binder](https://my
 
 ### From a checkout of this repo
 
-#### Install PyStokes and required dependencies using 
+#### Install PyStokes and an extended list of dependencies using 
  
 ```bash
 >> git clone https://github.com/rajeshrinet/pystokes.git
@@ -45,7 +45,7 @@ You can take PyStokes for a spin **without installation**: [![Binder](https://my
 ```
 
 
-####  Install PyStokes and its dependencies in an [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml) named pystokes via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
+####  Install PyStokes and its dependencies in an [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml) named "pystokes" via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
 
 
 ```bash
@@ -141,6 +141,8 @@ Other examples include
 ## Publications
 
 * [PyStokes: phoresis and Stokesian hydrodynamics in Python](https://doi.org/10.21105/joss.02318), Rajesh Singh and R. Adhikari, **Journal of Open Source Software**, 5(50), 2318, (2020). *(Please cite this paper if you use PyStokes in your research)*.
+
+* [Periodic Orbits of Active Particles Induced by Hydrodynamic Monopoles](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.124.088003), Austen Bolitho, Rajesh Singh, R Adhikari, **Physical Review Letters** 124 (8), 088003 (2020)
 
 * [Competing phoretic and hydrodynamic interactions in autophoretic colloidal suspensions](https://aip.scitation.org/doi/full/10.1063/1.5090179), Rajesh Singh, R. Adhikari, and M. E. Cates, **The Journal of Chemical Physics** 151, 044901 (2019)
 

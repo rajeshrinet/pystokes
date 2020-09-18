@@ -138,7 +138,7 @@ Other examples include
 * [Autophoretic arrest of flow-induced phase separation](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex6-arrestedCluster.ipynb)
 
 
-## Publications
+## Selected publications
 
 * [PyStokes: phoresis and Stokesian hydrodynamics in Python](https://doi.org/10.21105/joss.02318), R Singh and R Adhikari, **Journal of Open Source Software**, 5(50), 2318, (2020). *(Please cite this paper if you use PyStokes in your research)*.
 
@@ -155,6 +155,7 @@ Other examples include
 
 * [Universal hydrodynamic mechanisms for crystallization in active colloidal suspensions](https://doi.org/10.1103/PhysRevLett.117.228002), R Singh and R Adhikari,  **Physical Review Letters**, 117, 228002 (2016)
 
+See full publication list [here](https://github.com/rajeshrinet/pystokes/wiki/Publications).
 
 ## Support
 

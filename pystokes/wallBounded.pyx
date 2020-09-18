@@ -609,7 +609,252 @@ cdef class Rbm:
             o[i+Np] += mut*T[i+Np] - mu1*oy
             o[i+xx] += mut*T[i+xx] - mu1*oz
         return
+        
+        
+    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S):
+        cdef int Np=self.Np, i, j, xx=2*Np, xx1=3*Np , xx2=4*Np
+        cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7
+        cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
+        cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz, rlz, smr3, smkrk3
+        cdef double ox, oy, oz, mus = (28.0*self.a**3)/24, h
 
+        for i in prange(Np, nogil=True):
+            ox=0;   oy=0;   oz=0;
+            sxz = S[i+xx1];
+            syz = S[i+xx2];
+            for j in range(Np):
+                sxx = S[j    ]  ;
+                syy = S[j+Np ];
+                sxy = S[j+xx ];
+                sxz = S[j+xx1];
+                syz = S[j+xx2];
+                if i != j:
+                    #syx = sxy;
+                    # szx = sxz;
+                    # szy = syz;
+                    #szz = -sxx-syy;
+                    dx = r[i]   - r[j]
+                    dy = r[i+Np] - r[j+Np]
+                    h=r[j+xx]
+                    dz = r[i+xx] - r[j+xx]
+                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                    idr5 = idr*idr*idr*idr*idr
+                    srx = sxx*dx +  sxy*dy + sxz*dz
+                    sry = sxy*dx +  syy*dy + syz*dz
+                    srz = sxz*dx +  syz*dy - (sxx+syy)*dz
+
+                    ox += 3*(sry*dz - srz*dy )*idr5
+                    oy += 3*(srz*dx - srx*dz )*idr5
+                    oz += 3*(srx*dy - sry*dx )*idr5
+                    #
+                    ####contributions from the image
+                    dz = r[i+xx] + r[j+xx]
+                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                    idr5=idr*idr*idr*idr*idr
+                    srx = sxx*dx +  sxy*dy + sxz*dz
+                    sry = sxy*dx +  syy*dy + syz*dz
+                    srz = sxz*dx +  syz*dy - (sxx+syy)*dz
+
+                    ox += 3*(-sry*dz + srz*dy )*idr5
+                    oy += 3*(-srz*dx + srx*dz )*idr5
+                    oz += 3*(-srx*dy + sry*dx )*idr5
+
+                    #rlz = (dx*syz - dy*sxz)*idr*idr
+                    #ox += (2*syz  - 6*rlz*dx)*idr3
+                    #oy += (-2*sxz - 6*rlz*dy)*idr3
+                    #oz += (       - 6*rlz*dz)*idr3
+                    #
+                    ###reflecting the second index of stresslet, S_jl M_lm
+                    #sxz=-sxz; syz=-syz; szz=-szz;
+                    #
+                    #smr3 = sxz*dy-syz*dx
+                    #ox += 6*(dz*(sxx*dy-syx*dx) + smr3*dx)*idr5
+                    #ox += 6*(dz*(sxy*dy-syy*dx) + smr3*dy)*idr5
+                    #oz += 6*(dz*(sxz*dy-syz*dx) + smr3*dz)*idr5
+
+                    #Sljrjx = sxx*dx +  sxy*dy + sxz*dz ;
+                    #Sljrjy = syx*dx +  syy*dy + syz*dz ;
+                    #Sljrjz = szx*dx +  szy*dy + szz*dz ;
+                    #srr = (sxx*dx*dx + syy*dy*dy + szz*dz*dz +  2*sxy*dx*dy)*idr2 ;
+                    #
+                    #ox += 2*syz*idr3 - 3*(Sljrjy*dz - Sljrjz*dy)*idr5
+                    #oy += 2*szx*idr3 - 3*(Sljrjz*dx - Sljrjx*dz)*idr5
+                    #oz +=              3*(Sljrjx*dy - Sljrjy*dx)*idr5
+                    #
+                    #smkrk3 = 30*(dx*Sljrjy-dy*Sljrjx)*idr5*idr2
+                    #ox += (h+dz)*smkrk3*dx
+                    #ox += (h+dz)*smkrk3*dy
+                    #oz += (h+dz)*smkrk3*dz
+
+                    #ox += 2*syz*idr3  - 3*(Sljrjy*dz - Sljrjz*dy )*idr5
+                    #oy += -2*szy*idr3 - 3*(Sljrjz*dx - Sljrjx*dz )*idr5
+                    #oz +=             - 3*(Sljrjx*dy - Sljrjy*dx )*idr5
+                    #
+                    #ox += 6*h*(-Sljrjy + (sxx*dy-syx*dx))*idr5
+                    #oy += 6*h*(Sljrjx  + (sxy*dy-syy*dx))*idr5
+                    #ox +=                (sxz*dy-syz*dx)*idr5
+                else:
+                    ### self contributions from the image
+                    dz = r[i+xx] + r[j+xx]
+                    idr = 1.0/dz
+                    idr3 = idr*idr*idr
+                    # idr5 = idr3*idr*idr
+                    ox += 3*(-syz)*idr3
+                    oy += 3*(sxz )*idr3
+                    ##reflecting the second index of stresslet, S_jl M_lm
+                    #sxz=-sxz; syz=-syz; szz=-szz;
+                    #
+                    #Sljrjx = sxz*dz ;
+                    #Sljrjy = syz*dz ;
+                    #Sljrjz = szz*dz ;
+                    #srr = szz*dz*dz*idr2 ;
+                    #
+                    #ox += 2*syz*idr3 - 3*(Sljrjy*dz)*idr5
+                    #oy += 2*szx*idr3 - 3*(- Sljrjx*dz)*idr5
+                    #
+                    #smkrk3 = 30*(dx*Sljrjy-dy*Sljrjx)*idr5*idr2
+                    #oz += (h+dz)*smkrk3*dz
+
+                    #ox += 2*syz*idr3  - 3*(Sljrjy*dz )*idr5
+                    #oy += -2*szy*idr3 - 3*(- Sljrjx*dz )*idr5
+                    #
+                    #ox += 6*h*(-Sljrjy )*idr5
+                    #oy += 6*h*(Sljrjx  )*idr5
+
+            o[i]    += ox
+            o[i+Np] += oy
+            o[i+xx] += oz
+        return
+
+
+    cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V):
+        '''
+        approximation involved
+        '''
+        cdef int Np = self.Np, i, j, xx=2*Np
+        cdef double dx, dy, dz, idr, idr2, idr4, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz
+        cdef double ox, oy, oz
+
+        for i in prange(Np, nogil=True):
+            ox=0; oy=0; oz=0;
+            for j in range(Np):
+                vxx = V[j]
+                vyy = V[j+Np]
+                vxy = V[j+xx]
+                vxz = V[j+3*Np]
+                vyz = V[j+4*Np]
+                if i != j:
+                    pass
+                    #dx = r[i]      - r[j]
+                    #dy = r[i+Np]   - r[j+Np]
+                    #dz = r[i+xx] - r[j+xx]
+                    #idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                    #idr5 = idr*idr*idr*idr*idr
+                    #vrr = (vxx*(dx*dx-dz*dz) + vyy*(dy*dy-dz*dz) +  2*vxy*dx*dy + 2*vxz*dx*dz  +  2*vyz*dy*dz)*idr*idr
+                    #vrx = vxx*dx +  vxy*dy + vxz*dz
+                    #vry = vxy*dx +  vyy*dy + vyz*dz
+                    #vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz
+
+                    #ox +=  5*( 6*vrx- 15*vrr*dx )*idr5
+                    #oy +=  5*( 6*vry- 15*vrr*dy )*idr5
+                    #oz +=  5*( 6*vrz- 15*vrr*dz )*idr5
+                    #
+                    ###contribution from the image point
+                    #dz = r[i+xx] + r[j+xx]
+                    #idr = 1.0/dz
+                    #idr5 = idr*idr*idr*idr*idr
+                    #vrr = (vxx*(dx*dx-dz*dz) + vyy*(dy*dy-dz*dz) +  2*vxy*dx*dy + 2*vxz*dx*dz  +  2*vyz*dy*dz)*idr*idr
+                    #vrx = vxx*dx +  vxy*dy + vxz*dz
+                    #vry = vxy*dx +  vyy*dy + vyz*dz
+                    #vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz
+
+                    #ox +=  -5*( 6*vrx- 15*vrr*dx )*idr5
+                    #oy +=  -5*( 6*vry- 15*vrr*dy )*idr5
+                    #oz +=  -5*( 6*vrz- 15*vrr*dz )*idr5
+                else :
+                    dz = r[i+xx] + r[j+xx]
+                    idr = 1.0/dz
+                    idr4 = idr*idr*idr*idr
+                    #vrr = 45*(vxx+vyy)
+                    #ox += -5*(6*vxz*dz)*idr4
+                    #oy += -5*(6*vyz*dz)*idr4
+                    oz += -45*(vxx+vyy)*idr4
+            #o[i  ]  += ox
+            #o[i+Np] += oy
+            o[i+xx] += oz
+        return
+
+
+    cpdef propulsionR4a(self, double [:] o, double [:] r, double [:] M):
+        '''
+        approximation involved
+        '''
+        cdef int Np = self.Np, i, j, xx=2*Np
+        cdef double ox, oy, oz, dx, dy, dz, idr, idr5, idr7, idr9, mu1 = 1
+        cdef double mrrr, mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
+
+        for i in prange(Np, nogil=True):
+            ox=0; oy=0; oz=0;
+            for j in range(Np):
+                mxxx = M[j]
+                myyy = M[j+Np]
+                mxxy = M[j+2*Np]
+                mxxz = M[j+3*Np]
+                mxyy = M[j+4*Np]
+                mxyz = M[j+5*Np]
+                myyz = M[j+6*Np]
+                if i != j:
+                    pass
+                    #dx = r[i]      - r[j]
+                    #dy = r[i+Np]   - r[j+Np]
+                    #dz = r[i+2*Np] - r[j+2*Np]
+                    #idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                    #idr7 = idr*idr*idr*idr*idr*idr*idr
+                    #idr9 = idr7*idr*idr
+                    #
+                    #mrrr = mxxx*dx*(dx*dx-3*dz*dz) + 3*mxxy*dy*(dx*dx-dz*dz) + mxxz*dz*(3*dx*dx-dz*dz) +\
+                    #   3*mxyy*dx*(dy*dy-dz*dz) + 6*mxyz*dx*dy*dz + myyy*dy*(dy*dy-3*dz*dz) +  myyz*dz*(3*dy*dy-dz*dz)
+                    #mrrx = mxxx*(dx*dx-dz*dz) + mxyy*(dy*dy-dz*dz) +  2*mxxy*dx*dy + 2*mxxz*dx*dz  +  2*mxyz*dy*dz
+                    #mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
+                    #mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz  - 2*(mxxy+myyy)*dy*dz
+
+                    #ox += -21*mrrr*dx*idr9 + 9*mrrx*idr7
+                    #oy += -21*mrrr*dy*idr9 + 9*mrry*idr7
+                    #oz += -21*mrrr*dz*idr9 + 9*mrrz*idr7
+                    #''' self contribution from the image point'''
+                    #dz = r[i+xx] + r[j+xx]
+                    #idr = 1.0/dz
+                    #idr7 = idr*idr*idr*idr*idr*idr*idr
+                    #idr9 = idr7*idr*idr
+                    #
+                    #mrrr = mxxx*dx*(dx*dx-3*dz*dz) + 3*mxxy*dy*(dx*dx-dz*dz) + mxxz*dz*(3*dx*dx-dz*dz) +\
+                    #   3*mxyy*dx*(dy*dy-dz*dz) + 6*mxyz*dx*dy*dz + myyy*dy*(dy*dy-3*dz*dz) +  myyz*dz*(3*dy*dy-dz*dz)
+                    #mrrx = mxxx*(dx*dx-dz*dz) + mxyy*(dy*dy-dz*dz) +  2*mxxy*dx*dy + 2*mxxz*dx*dz  +  2*mxyz*dy*dz
+                    #mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
+                    #mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz  - 2*(mxxy+myyy)*dy*dz
+
+                    #ox += 21*mrrr*dx*idr9 - 9*mrrx*idr7
+                    #oy += 21*mrrr*dy*idr9 - 9*mrry*idr7
+                    #oz += 21*mrrr*dz*idr9 - 9*mrrz*idr7
+                else:
+                    ''' self contribution from the image point'''
+                    dz = r[i+xx] + r[j+xx]
+                    idr = 1.0/dz
+                    idr5 = idr*idr*idr*idr*idr
+
+                    #mrrr = mxxz +  myyz
+                    #mrrx = mxxx*(-dz*dz) + mxyy*(-dz*dz)
+                    #mrry = mxxy*(-dz*dz) + myyy*(-dz*dz)
+                    #mrrz = mxxz*(-dz*dz) + myyz*(-dz*dz)
+
+                    #ox #+= - 9*mrrx*idr7
+                    #oy #+= - 9*mrry*idr7
+                    oz +=  12*(mxxz+myyz)*idr5
+
+            #o[i  ]  += ox
+            #o[i+Np] += oy
+            o[i+xx] += oz
+        return
 
     ## Noise
     cpdef noiseTT(self, double [:] v, double [:] r):

@@ -135,26 +135,47 @@ cdef class Forces:
             F[i+xx] += fz
         return
 
-    cpdef softSpringWall(self, double [:] F, double [:] r, double pk=0.0100, double prmin=3,
-    double wk=0.01, double wrmin=3.0, double wlje= 0.001, double wljr = 1.5):
-        """ 
+    cpdef softSpringWall(self, double [:] F, double [:] r, double pk=0.0100, double prmin=3, double prmax=4,
+                         double wlje= 0.001, double wljr = 1.5):
+        '''
+        lj potential fron wall to particles and spring between particles
         F = -k(r-rmin)
-        """
+        
+        ...
+        
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        pk: float
+            Strength of harmonic potential between particles
+        prmin: float
+            Minimum of harmonic potential
+        prmax: float
+            Cutoff distance of harmonic potential
+        
+        wlje: float
+            Strength of the LJ from wall
+        wljr: float
+            Range of the LJ from wall
 
-
+        '''
         cdef int Np=self.Np, i, j, xx=2*Np
-        cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh, facss
+        cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh, facss,abshh,sgnhh
 
         for i in prange(Np, nogil=True):
             fx = 0.0; fy = 0.0; fz = 0.0;
             hh = r[i+xx]
-            if hh<wrmin:
-                facss   = wk*(wrmin-hh)
-                idr = 1/hh
-                fz+=facss
-                if hh< 1.5:
+            abshh=sqrt(hh*hh)
+            sgnhh=hh/abshh
+            idr = 1/hh
+            if abshh<wljr:
                   rminbyr = 1.5*idr
-                  fac   = 0.1*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr*idr
+                  fac   = 0.1*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr
                   fz+=fac
                 # rminbyr = wljr*idr
                 # fac   = wlje*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr
@@ -165,7 +186,7 @@ cdef class Forces:
                 dy = r[i+Np] - r[j+Np]
                 dz = r[i+xx] - r[j+xx]
                 dr = sqrt(dx*dx + dy*dy + dz*dz)
-                if i != j and dr < prmin:
+                if i != j and dr < prmax:
                     idr     = 1.0/dr
                     fac   = pk*(prmin-dr)
 
@@ -173,49 +194,6 @@ cdef class Forces:
                     fy += fac*dy*idr
                     fz += fac*dz*idr
 
-            F[i]    += fx
-            F[i+Np] += fy
-            F[i+xx] += fz
-        return
-        
-    cpdef staticStokeslets(self, double [:] F, double [:] r, double [:] FS, double [:] rS, 
-                           double pk=0.0100, double prmin=3, double prmax=4,double a=1):
-        '''
-        non-dynamical static stokeslets useful for simulating infinite crystal
-        '''
-        cdef int Np=self.Np, i, j, xx=2*Np, Ns = len(rS)/3
-        cdef double dx, dy, dz, dr, idr,idr3,idrmin, rminbyr, fac=3*a/4, spring, fx, fy, fz, hh, dzs, drs,idrs,idrs3,fdotidr3,fdotidrs3
-        for i in prange(Np, nogil=True):
-            fx=0; fy=0; fz=0;
-            for j in range(Ns):
-#                hh = 2*rS[j]
-                dx = r[i   ] - rS[j   ]
-                dy = r[i+Np] - rS[j+Np]
-                dz = r[i+xx] - rS[j+xx]
-                dzs = dz-hh
-                dr = sqrt(dx*dx + dy*dy + dz*dz)
-                drs = sqrt(dx*dx + dy*dy + dzs*dzs)
-                idr     = 1.0/dr
-                idr3 = idr*idr*idr
-                fdotidr3 = (FS[j]*dx+FS[j+Np]*dy+FS[j+xx]*dz)*idr3
-#                idrs = 1/drs
-#                idrs3=idrs*idrs*idrs
-#                fdotidrs3 = (FS[j]*dx+FS[j+Np]*dy+FS[j+xx]*dzs)*idrs3
-                fx += fac*FS[j]*idr+fac*dx*fdotidr3
-                fy += fac*FS[j+Np]*idr+fac*dy*fdotidr3
-                fz += fac*FS[j+xx]*idr+fac*dz*fdotidr3
-                    
-#                fx += fac*FS[j]*(idr-idrs)+fac*dx*(fdotidr3-fdotidrs3)
-#                fy += fac*FS[j+Np]*(idr-idrs)+fac*dy*(fdotidr3-fdotidrs3)
-#                fz += fac*FS[j+xx]*(idr-idrs)+fac*(dz*fdotidr3+dzs*fdotidrs3)
-                if dr < prmax:
-                    '''soft spring repulsion to keep particles away'''
-                    spring= pk*(prmin-dr)
-                    fx += spring*dx*idr
-                    fy += spring*dy*idr
-                    fz += spring*dz*idr
-                    
-                
             F[i]    += fx
             F[i+Np] += fy
             F[i+xx] += fz

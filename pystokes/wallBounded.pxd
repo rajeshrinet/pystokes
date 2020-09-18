@@ -33,6 +33,14 @@ cdef class Rbm:
 
 
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T)
+    
+    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S)
+
+
+    cpdef propulsionR3a(self, double [:] o, double [:] r, double [:] M)
+
+
+    cpdef propulsionR4a(self, double [:] o, double [:] r, double [:] M)
 
 
     cpdef noiseTT(self, double [:] v, double [:] r)

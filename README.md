@@ -140,18 +140,20 @@ Other examples include
 
 ## Publications
 
-* [PyStokes: phoresis and Stokesian hydrodynamics in Python](https://doi.org/10.21105/joss.02318), Rajesh Singh and R. Adhikari, **Journal of Open Source Software**, 5(50), 2318, (2020). *(Please cite this paper if you use PyStokes in your research)*.
+* [PyStokes: phoresis and Stokesian hydrodynamics in Python](https://doi.org/10.21105/joss.02318), R Singh and R Adhikari, **Journal of Open Source Software**, 5(50), 2318, (2020). *(Please cite this paper if you use PyStokes in your research)*.
 
-* [Periodic Orbits of Active Particles Induced by Hydrodynamic Monopoles](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.124.088003), Austen Bolitho, Rajesh Singh, R Adhikari, **Physical Review Letters** 124 (8), 088003 (2020)
+* [Controlled optofluidic crystallization of colloids tethered at interfaces](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.068001), A Caciagli, R Singh, D Joshi, R Adhikari, and E Eiser, **Physical Review Letters** 125 (6), 068001 (2020)
 
-* [Competing phoretic and hydrodynamic interactions in autophoretic colloidal suspensions](https://aip.scitation.org/doi/full/10.1063/1.5090179), Rajesh Singh, R. Adhikari, and M. E. Cates, **The Journal of Chemical Physics** 151, 044901 (2019)
+* [Periodic Orbits of Active Particles Induced by Hydrodynamic Monopoles](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.124.088003), A Bolitho, R Singh, R Adhikari, **Physical Review Letters** 124 (8), 088003 (2020)
 
-* [Generalized Stokes laws for active colloids and their applications](https://iopscience.iop.org/article/10.1088/2399-6528/aaab0d), Rajesh Singh and R. Adhikari, **Journal of Physics Communications**, 2, 025025 (2018)
+* [Competing phoretic and hydrodynamic interactions in autophoretic colloidal suspensions](https://aip.scitation.org/doi/full/10.1063/1.5090179), R Singh, R Adhikari, and ME Cates, **The Journal of Chemical Physics** 151, 044901 (2019)
+
+* [Generalized Stokes laws for active colloids and their applications](https://iopscience.iop.org/article/10.1088/2399-6528/aaab0d), R Singh and R Adhikari, **Journal of Physics Communications**, 2, 025025 (2018)
 
 
-* [Flow-induced phase separation of active particles is controlled by boundary conditions](https://www.pnas.org/content/115/21/5403), Shashi Thutupalli, Delphine Geyer, Rajesh Singh, R. Adhikari, and Howard A. Stone, **Proceedings of the National Academy of Sciences**, 115, 5403 (2018)  
+* [Flow-induced phase separation of active particles is controlled by boundary conditions](https://www.pnas.org/content/115/21/5403), S Thutupalli, D Geyer, R Singh, R Adhikari, and HA Stone, **Proceedings of the National Academy of Sciences**, 115, 5403 (2018)  
 
-* [Universal hydrodynamic mechanisms for crystallization in active colloidal suspensions](https://doi.org/10.1103/PhysRevLett.117.228002), Rajesh Singh and R. Adhikari,  **Physical Review Letters**, 117, 228002 (2016)
+* [Universal hydrodynamic mechanisms for crystallization in active colloidal suspensions](https://doi.org/10.1103/PhysRevLett.117.228002), R Singh and R Adhikari,  **Physical Review Letters**, 117, 228002 (2016)
 
 
 ## Support

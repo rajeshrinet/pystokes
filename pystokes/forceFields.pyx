@@ -177,6 +177,49 @@ cdef class Forces:
             F[i+Np] += fy
             F[i+xx] += fz
         return
+        
+    cpdef staticStokeslets(self, double [:] F, double [:] r, double [:] FS, double [:] rS, 
+                           double pk=0.0100, double prmin=3, double prmax=4,double a=1):
+        '''
+        non-dynamical static stokeslets useful for simulating infinite crystal
+        '''
+        cdef int Np=self.Np, i, j, xx=2*Np, Ns = len(rS)/3
+        cdef double dx, dy, dz, dr, idr,idr3,idrmin, rminbyr, fac=3*a/4, spring, fx, fy, fz, hh, dzs, drs,idrs,idrs3,fdotidr3,fdotidrs3
+        for i in prange(Np, nogil=True):
+            fx=0; fy=0; fz=0;
+            for j in range(Ns):
+#                hh = 2*rS[j]
+                dx = r[i   ] - rS[j   ]
+                dy = r[i+Np] - rS[j+Np]
+                dz = r[i+xx] - rS[j+xx]
+                dzs = dz-hh
+                dr = sqrt(dx*dx + dy*dy + dz*dz)
+                drs = sqrt(dx*dx + dy*dy + dzs*dzs)
+                idr     = 1.0/dr
+                idr3 = idr*idr*idr
+                fdotidr3 = (FS[j]*dx+FS[j+Np]*dy+FS[j+xx]*dz)*idr3
+#                idrs = 1/drs
+#                idrs3=idrs*idrs*idrs
+#                fdotidrs3 = (FS[j]*dx+FS[j+Np]*dy+FS[j+xx]*dzs)*idrs3
+                fx += fac*FS[j]*idr+fac*dx*fdotidr3
+                fy += fac*FS[j+Np]*idr+fac*dy*fdotidr3
+                fz += fac*FS[j+xx]*idr+fac*dz*fdotidr3
+                    
+#                fx += fac*FS[j]*(idr-idrs)+fac*dx*(fdotidr3-fdotidrs3)
+#                fy += fac*FS[j+Np]*(idr-idrs)+fac*dy*(fdotidr3-fdotidrs3)
+#                fz += fac*FS[j+xx]*(idr-idrs)+fac*(dz*fdotidr3+dzs*fdotidrs3)
+                if dr < prmax:
+                    '''soft spring repulsion to keep particles away'''
+                    spring= pk*(prmin-dr)
+                    fx += spring*dx*idr
+                    fy += spring*dy*idr
+                    fz += spring*dz*idr
+                    
+                
+            F[i]    += fx
+            F[i+Np] += fy
+            F[i+xx] += fz
+        return
 
 
     cpdef harmonicRepulsionPPPW(self, double [:] F, double [:] r, double partE=10, double partR=5, double wallE=2, double wallR=5.0):

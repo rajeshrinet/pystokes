@@ -268,6 +268,49 @@ cdef class Forces:
 
             F[i]    += fx
         return
+        
+    
+    cpdef staticHarmonic(self, double [:] F, double [:] r, double [:] rS, 
+                           double pk=0.0100, double prmin=3, double prmax=4,double a=1):
+        '''
+        non-dynamical static particles useful for simulating infinite crystal
+        
+           ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        rS: float
+            positions of non-dynamic particles
+    
+        '''
+        cdef int Np=self.Np, i, j, xx=2*Np, Ns = len(rS)/3
+        cdef double dx, dy, dz, dr, idr, fac=3*a/4, spring, fx, fy, fz
+        for i in prange(Np, nogil=True):
+            fx=0; fy=0; fz=0;
+            for j in range(Ns):
+                dx = r[i   ] - rS[j   ]
+                dy = r[i+Np] - rS[j+Ns]
+                dz = r[i+xx] - rS[j+Ns*2]
+                dr = sqrt(dx*dx + dy*dy + dz*dz)
+                if dr < prmax:
+                    '''soft spring repulsion to keep particles away'''
+                    idr=1/dr
+                    spring= pk*(prmin-dr)
+                    fx += spring*dx*idr
+                    fy += spring*dy*idr
+                    fz += spring*dz*idr
+                    
+                
+            F[i]    += fx
+            F[i+Np] += fy
+            F[i+xx] += fz
+        return
 
 
     cpdef harmonicConfinement(self, double [:] F, double [:] r, double cn):

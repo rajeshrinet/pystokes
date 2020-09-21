@@ -1343,7 +1343,7 @@ cdef class Flow:
             for j in range(Np):
                 dx = rt[i]   - r[j]   
                 dy = rt[i+Nt] - r[j+Np]   
-                h2 = 2*rt[i+xx]
+                h2 = 2*rt[i+Nt*2]
                 #contributions from the source 
                 dz = rt[i+2*Nt] - r[j+xx] 
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )

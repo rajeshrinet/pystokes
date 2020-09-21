@@ -1334,6 +1334,9 @@ cdef class Flow:
         cdef int Np = self.Np, i, j, xx=2*Np, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2, 
         cdef double vx, vy, vz, mu1 = 1.0/(8*PI*self.eta)
+#        cdef int i, j, Np=self.Np, Nt=self.Nt, xx=2*Np
+#        cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, tempF, hsq, h2
+#        cdef double vx, vy, vz, mu1=1.0/(8*PI*self.eta), a2=self.a*self.a/6.0
  
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
@@ -1351,7 +1354,7 @@ cdef class Flow:
                 vz += (T[j]   *dy - T[j+Np]*dx )*idr3
                     
                 #contributions from the image 
-                dz = r[i+xx] + r[j+xx]            
+                dz = rt[i+2*Nt] + r[j+xx]            
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                 
@@ -1364,7 +1367,7 @@ cdef class Flow:
                 vy += (h2*(-T[j]  -3*rlz*dy) + 6*dz*dy*rlz)*idr3
                 vz += (h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
 
-                dz = r[i+2*Nt] + r[j+xx]            
+                dz = rt[i+2*Nt] + r[j+xx]            
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                 

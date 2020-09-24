@@ -198,7 +198,81 @@ cdef class Forces:
             F[i+Np] += fy
             F[i+xx] += fz
         return
+        
+    cpdef softSpringLJWall(self, double [:] F, double [:] r, double pk=0.0100, double prmin=3, double prmax=4,
+                         double lje = 0.001, double ljr = 3, double wlje= 0.001, double wljr = 1.5):
+        '''
+        lj potential fron wall to particles and spring and lj between particles
+        F = -k(r-rmin)
+        lj stabilises numerical solver when particles get close
+        
+        ...
+        
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        pk: float
+            Strength of harmonic potential between particles
+        prmin: float
+            Minimum of harmonic potential
+        prmax: float
+            Cutoff distance of harmonic potential
+        lje: LJ strength between particles
+        ljr: LJ min between particles
+        
+        wlje: float
+            Strength of the LJ from wall
+        wljr: float
+            Range of the LJ from wall
+        '''
+        cdef int Np=self.Np, i, j, xx=2*Np
+        cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh, facss,abshh,sgnhh
 
+        for i in prange(Np, nogil=True):
+            fx = 0.0; fy = 0.0; fz = 0.0;
+            hh = r[i+xx]
+            abshh=sqrt(hh*hh)
+            sgnhh=hh/abshh
+            idr = 1/hh
+            if abshh<wljr:
+                  rminbyr = 1.5*idr
+                  fac   = 0.1*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr
+                  fz+=fac
+                # rminbyr = wljr*idr
+                # fac   = wlje*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr
+                # fz += fac      ##LJ from the wall
+
+            for j in range(Np):
+                dx = r[i   ] - r[j   ]
+                dy = r[i+Np] - r[j+Np]
+                dz = r[i+xx] - r[j+xx]
+                dr = sqrt(dx*dx + dy*dy + dz*dz)
+                if i != j and dr < prmax:
+                    idr     = 1.0/dr
+                    fac   = pk*(prmin-dr)
+                    fx += fac*dx*idr
+                    fy += fac*dy*idr
+                    fz += fac*dz*idr
+                    if dr<ljr:
+                        idr     = 1.0/dr
+                        rminbyr = ljr*idr
+                        fac   = lje*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr*idr
+                        fx += fac*dx
+                        fy += fac*dy
+                        fz += fac*dz
+
+                    
+
+            F[i]    += fx
+            F[i+Np] += fy
+            F[i+xx] += fz
+        return
+        
 
     cpdef harmonicRepulsionPPPW(self, double [:] F, double [:] r, double partE=10, double partR=5, double wallE=2, double wallR=5.0):
         cdef int Np = self.Np, i, j, xx = 2*Np
@@ -267,6 +341,49 @@ cdef class Forces:
                 fx += fac       ##LJ from the wall
 
             F[i]    += fx
+        return
+        
+    cpdef staticlennardJones(self, double [:] F, double [:] r, double [:] rS, 
+                           double lje=0.0100, double ljr=3, double a=1):
+        '''
+        non-dynamical static particles useful for simulating infinite crystal
+        
+           ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        F: np.array
+            An array of forces
+            An array of size 3*Np,
+        rS: float
+            positions of non-dynamic particles
+    
+        '''
+        cdef int Np=self.Np, i, j, xx=2*Np, Ns = len(rS)/3
+        cdef double dx, dy, dz, dr, idr, fac=3*a/4, spring, fx, fy, fz,rminbyr
+        for i in prange(Np, nogil=True):
+            fx=0; fy=0; fz=0;
+            for j in range(Ns):
+                dx = r[i   ] - rS[j   ]
+                dy = r[i+Np] - rS[j+Ns]
+                dz = r[i+xx] - rS[j+Ns*2]
+                dr = sqrt(dx*dx + dy*dy + dz*dz)
+                if dr < ljr:
+                    idr     = 1.0/dr
+                    rminbyr = ljr*idr
+                    fac   = lje*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr*idr
+
+                    fx += fac*dx
+                    fy += fac*dy
+                    fz += fac*dz
+                    
+                
+            F[i]    += fx
+            F[i+Np] += fy
+            F[i+xx] += fz
         return
         
     

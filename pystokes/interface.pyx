@@ -1009,7 +1009,7 @@ cdef class Flow:
                 vx += (h2*(T[j+Np]-3*rlz*dx) + 6*dz*dx*rlz)*idr3
                 vy += (h2*(-T[j]  -3*rlz*dy) + 6*dz*dy*rlz)*idr3
                 vz += (h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
-            else:
+
                 ''' the self contribution from the image point''' 
                 dz = rt[i+2*Nt] + r[j+xx]            
                 idr = 1.0/dz

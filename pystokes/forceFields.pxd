@@ -17,6 +17,11 @@ cdef class Forces:
     cpdef softSpringWall(self, double [:] F, double [:] r, double pk=?, double prmin=?, double prmax=?,double wlje=?,double wljr=?)
     
     cpdef staticHarmonic(self, double [:] F, double [:] r, double [:] rS, double pk=?, double prmin=?, double prmax=?,double a=?)
+    
+    cpdef staticlennardJones(self, double [:] F, double [:] r, double [:] rS, double lje=?, double ljr=?, double a=?)
+    
+    cpdef softSpringLJWall(self, double [:] F, double [:] r, double pk=?, double prmin=?, double prmax=?,
+                         double lje = ?, double ljr = ?, double wlje=?, double wljr=?)
 
 
     cpdef harmonicRepulsionPPPW(self, double [:] F, double [:] r, double partE=?, double partR=?, double wallE=?, double wallR=?)

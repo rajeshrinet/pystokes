@@ -20,9 +20,25 @@
 
 [PyStokes](https://github.com/rajeshrinet/pystokes) is a numerical library for phoresis and Stokesian hydrodynamics in Python. It uses a grid-free method, combining the integral representation of Laplace and Stokes equations, spectral expansion, and Galerkin discretization, to compute phoretic and hydrodynamic interactions between spheres with slip boundary conditions on their surfaces. The library also computes suspension scale quantities, such as rheological response, energy dissipation and fluid flow. The computational cost is quadratic in the number of particles and upto 1e5 particles have been accommodated on multicore computers. The library has been used to model suspensions of **microorganisms**,  **synthetic autophoretic particles** and **self-propelling droplets**. 
 
-A detailed description of above keywords is available in the [Wiki](https://github.com/rajeshrinet/pystokes/wiki). Please read the PyStokes [paper](https://doi.org/10.21105/joss.02318) and [Wiki](https://github.com/rajeshrinet/pystokes/wiki) before you use PyStokes for your research. Included below are some examples from [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery)
+Please read the PyStokes [paper](https://doi.org/10.21105/joss.02318) and [Wiki](https://github.com/rajeshrinet/pystokes/wiki) before you use PyStokes for your research. Included below are some examples from [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery): 
 
-![Image](https://raw.githubusercontent.com/rajeshrinet/pystokes-examples/master/gallery/2_volvox.gif) 
+### Periodic orbits of active particles
+
+![Image](https://raw.githubusercontent.com/rajeshrinet/pystokes-misc/master/gallery/2_volvox.gif)
+
+Our work shows that the oscillatory dynamics of a pair of active particles near
+a boundary, best exemplified by the fascinating dance of the green algae
+*Volvox*, can be understood in terms of Hamiltonian mechanics, even though the
+system does not conserve energy. Read more in the [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery).
+<br>
+
+### Crystallization at a plane no-slip surface
+It is well-known that crystallization of colloids approximating hard spheres
+is due, paradoxically, to the higher entropy of the ordered crystalline state
+compared to that of  the disordered liquid state. Out of equilibrium, no such general
+principle is available to rationalize crystallization. Here, we identify a new non-equilibrium mechanism, associated with entropy production rather than entropy gain, which drives crystallization of active colloids near plane walls. Read more in the [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery).
+
+
 ![Crystallization of active colloids](https://raw.githubusercontent.com/rajeshrinet/pystokes/master/examples/crystallite.gif) 
 
 

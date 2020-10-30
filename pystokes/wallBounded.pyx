@@ -291,18 +291,20 @@ cdef class Rbm:
                     idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr2 = idr*idr; idr3 = idr2*idr; idr5 = idr3*idr2;
 
+                    
                     #reflecting the first index of stresslet, S_jl M_lm
                     sxz=-sxz; syz=-syz; szz=-szz;     trS=sxx+syy+szz;
                     Sljrlx = sxx*dx +  sxy*dx + sxz*dx ;
                     Sljrly = syx*dy +  syy*dy + syz*dy ;
                     Sljrlz = szx*dz +  szy*dz + szz*dz ;
+                    
                     Sljrjx = sxx*dx +  sxy*dy + sxz*dz ;
                     Sljrjy = syx*dx +  syy*dy + syz*dz ;
                     Sljrjz = szx*dx +  szy*dy + szz*dz ;
-                    srr = (srx*dx + sry*dy + srz*dz)*idr2
                     srx = sxx*dx + sxy*dy + sxz*dz
                     sry = syx*dx + syy*dy + syz*dz
                     srz = sxz*dx + syz*dy + szz*dz
+                    srr = (srx*dx + sry*dy + srz*dz)*idr2
 
                     vx += (-Sljrlx + Sljrjx + trS*dx -3*srr*dx)*idr3
                     vy += (-Sljrly + Sljrjy + trS*dy -3*srr*dy)*idr3
@@ -317,7 +319,7 @@ cdef class Rbm:
                     vz += h2*( szz-3*srz*dz*idr2)*idr3;
 
                     #reflecting both the indices of stresslet, S_jl M_lm M_jk
-                    szx = -szx ; syz = -syz; szz = -szz;
+                    szx = -szx ; szy = -szy; szz = -szz;
                     srx = (sxx*dx +  sxy*dy + sxz*dz )
                     sry = (sxy*dx +  syy*dy + syz*dz )
                     srz = (sxz*dx +  syz*dy + szz*dz )

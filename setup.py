@@ -63,6 +63,19 @@ with open(os.path.join(cwd, 'pystokes', '__init__.py')) as fp:
     else:
         raise RuntimeError('Unable to find own __version__ string')
 
+###----------------------###
+extension1 = Extension('pystokes/*', ['pystokes/*.pyx'],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=ompArgs,
+        extra_link_args=ompArgs,
+        )
+extension2 = Extension('pystokes/phoretic/*', ['pystokes/phoretic/*.pyx'],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=ompArgs,
+        extra_link_args=ompArgs,
+        )
+###----------------------###
+
 
 setup(
     name='pystokes',
@@ -75,17 +88,13 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     platforms='tested on macOS, windows, and LINUX',
-    ext_modules=cythonize([ Extension('pystokes/*', ['pystokes/*.pyx'],
-        include_dirs=[numpy.get_include()],
-        extra_compile_args=ompArgs,
-        extra_link_args=ompArgs,
-        )],
+    ext_modules=cythonize([extension1, extension2 ],
         compiler_directives={'language_level': sys.version_info[0],
                             'linetrace': True},
         ),
     libraries=[],
-    packages=['pystokes'],
-    package_data={'pystokes': ['*.pxd']},
+    packages=['pystokes', 'pystokes/phoretic'],
+    package_data={'pystokes': ['*.pxd'], 'pystokes/phoretic': ['*.pxd']},
     include_package_data=True,
     classifiers=[
         'License :: OSI Approved :: MIT License',

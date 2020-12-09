@@ -16,24 +16,8 @@ The main files are:
 * forceFields.pyx has implementation of various body forces and torques acting in colloidal systems.
 
 
-## Phoretic fields
-Each file computed the phoretic motion and phoretic field given the colloidal configuration.
-The filenames, as described below, correspond to the boundary conditions in the flow. The boundary conditions are implemented using an appropriate Green's function of the Laplace equation. See details of theory at: [J. Chem. Phys. 151, 044901 (2019)](https://aip.scitation.org/doi/abs/10.1063/1.5090179)
+## Phoretic fields 
+The folder `phoretic` contains files to study phoresis of active particles. 
 
-
-* phoreticUnbounded.pyx - the phoretic flux vanishes at infinity. 
-* phoreticWallBounded.pyx - the phoretic flux vanishes at a plane wall, which is located at z=0, such that region of interest is the upper half space, z>0. 
-
-
-Corresponding to each .pyx file, there is a .pxd file. A .pxd file contains declaration of cdef classes, methods, etc. It is essential when calling PyStokes from another Cython file. Read more: https://cython.readthedocs.io/en/latest/src/tutorial/pxd_files.html
-
-
-## tests 
-The folder tests contain unit testing framework for PyStokes
-
-
-
-
-
-
-
+--
+Corresponding to each .pyx file, there is a .pxd file. [A .pxd file](https://cython.readthedocs.io/en/latest/src/tutorial/pxd_files.html) contains declaration of cdef classes, methods, etc.  

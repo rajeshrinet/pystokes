@@ -8,5 +8,5 @@ The filenames, as described below, correspond to the boundary conditions in the 
 * unbounded.pyx - the phoretic flux vanishes at infinity. 
 * wallBounded.pyx - the phoretic flux vanishes at a plane wall, which is located at z=0, such that region of interest is the upper half space, z>0. 
 
---
+---
 Corresponding to each .pyx file, there is a .pxd file. [A .pxd file](https://cython.readthedocs.io/en/latest/src/tutorial/pxd_files.html) contains declaration of cdef classes, methods, etc.  

@@ -1,7 +1,0 @@
-[run]
-plugins = Cython.Coverage
-omit = 
-    setup.py
-    pystokes/__init__.py
-    pystokes/utils.pyx
-

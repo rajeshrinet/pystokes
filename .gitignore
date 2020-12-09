@@ -9,6 +9,10 @@ pystokes/*.html
 pystokes/*.c
 pystokes/*.so
 pystokes/*.cpp
+pystokes/phoretic/*.html
+pystokes/phoretic/*.c
+pystokes/phoretic/*.so
+pystokes/phoretic/*.cpp
 *.c
 *egg-info*
 dist

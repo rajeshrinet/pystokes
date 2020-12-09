@@ -19,5 +19,5 @@ The main files are:
 ## Phoretic fields 
 The folder `phoretic` contains files to study phoresis of active particles. 
 
---
+---
 Corresponding to each .pyx file, there is a .pxd file. [A .pxd file](https://cython.readthedocs.io/en/latest/src/tutorial/pxd_files.html) contains declaration of cdef classes, methods, etc.  

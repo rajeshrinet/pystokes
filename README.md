@@ -137,7 +137,7 @@ J0 = np.ones(Np)  # strength of chemical monopolar flux
 dim, L, Ng = 3, 10, 64;
 
 # instantiate the Flow class
-phoreticField = pystokes.phoreticUnbounded.Field(radius=b, particles=Np, phoreticConstant=eta, gridpoints=Ng*Ng)
+phoreticField = pystokes.phoretic.unbounded.Field(radius=b, particles=Np, phoreticConstant=eta, gridpoints=Ng*Ng)
 
 # create grid, evaluate phoretic field and plot
 rr, vv = pystokes.utils.gridYZ(dim, L, Ng)

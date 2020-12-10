@@ -1,5 +1,8 @@
 # PyStokes changelogs
 
+## 2.2.3
+* Made a submodule pystokes.phoretic.unbounded etc to segregate code for phoresis
+
 ## 2.2.1
 * Add more integrators and update simulate interface
 

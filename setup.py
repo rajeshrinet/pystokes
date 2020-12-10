@@ -8,6 +8,7 @@ Cython.Compiler.Options.annotate=True
 
 def checkOpenmpSupport():
     ''' 
+    Function to check openMP support
     Adapted from https://stackoverflow.com/questions/16549893/ 
     ''' 
     ompTest = \
@@ -42,7 +43,7 @@ def checkOpenmpSupport():
         return False
 
 
-
+### Checking for openMP support
 if checkOpenmpSupport() == True:
     ompArgs = ['-fopenmp']
 else:
@@ -53,6 +54,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
+### Setting version names
 cwd = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(cwd, 'pystokes', '__init__.py')) as fp:
     for line in fp:
@@ -63,7 +65,8 @@ with open(os.path.join(cwd, 'pystokes', '__init__.py')) as fp:
     else:
         raise RuntimeError('Unable to find own __version__ string')
 
-###----------------------###
+
+### Extensions to be compiled 
 extension1 = Extension('pystokes/*', ['pystokes/*.pyx'],
         include_dirs=[numpy.get_include()],
         extra_compile_args=ompArgs,
@@ -74,7 +77,6 @@ extension2 = Extension('pystokes/phoretic/*', ['pystokes/phoretic/*.pyx'],
         extra_compile_args=ompArgs,
         extra_link_args=ompArgs,
         )
-###----------------------###
 
 
 setup(
@@ -96,6 +98,7 @@ setup(
     packages=['pystokes', 'pystokes/phoretic'],
     package_data={'pystokes': ['*.pxd'], 'pystokes/phoretic': ['*.pxd']},
     include_package_data=True,
+    setup_requires=['wheel'],
     classifiers=[
         'License :: OSI Approved :: MIT License',
         "Operating System :: OS Independent",

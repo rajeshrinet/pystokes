@@ -1,5 +1,7 @@
 include pystokes/*pyx
 include pystokes/*pxd
-include LICENSE
+include pystokes/phoretic/*pyx
+include pystokes/phoretic/*pxd
 include requirements.txt
 include README.md
+include LICENSE

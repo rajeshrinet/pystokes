@@ -53,7 +53,7 @@ cdef class Rbm:
         """
 
         cdef int i, j, Np=self.Np, xx=2*Np
-        cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
+        cdef double dx, dy, dz, idr, idr2, Fdotidr2, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H
         cdef double mu = 1.0/(6*PI*self.eta*self.a), mu1 = mu*self.a*0.75, a2=self.a*self.a/3.0
         cdef double fac0 = 3/(PI*self.eta*H*H*H), fac1, fac2
@@ -66,11 +66,12 @@ cdef class Rbm:
                 h2  =  2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
                 if i!=j:
                     idr = 1.0/sqrt( dx*dx + dy*dy )
-                    Fdotidr = (F[j] * dx + F[j+Np] * dy )*idr*idr
+                    idr2=idr*idr
+                    Fdotidr2 = (F[j] * dx + F[j+Np] * dy )*idr2
                     #
                     fac1 = fac0*(H-r[i+xx])*(H-r[j+xx])*r[i+xx]
-                    vx += fac1*(0.5*F[j]    + Fdotidr*dx)*idr 
-                    vy += fac1*(0.5*F[j+Np] + Fdotidr*dy)*idr 
+                    vx += fac1*(0.5*F[j]    + Fdotidr2*dx)*idr2 
+                    vy += fac1*(0.5*F[j+Np] + Fdotidr2*dy)*idr2 
                     
             v[i  ]  += mu*F[i]    + mu1*vx 
             v[i+Np] += mu*F[i+Np] + mu1*vy

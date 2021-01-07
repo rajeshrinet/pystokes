@@ -5,12 +5,12 @@ Phoretic motion in an infinite space
 
 Phoresis
 ----------------------------------------
-.. autoclass:: pystokes.phoreticUnbounded.Phoresis
+.. autoclass:: pystokes.phoretic.unbounded.Phoresis
     :members:
 
 
 Field
 --------------------------
-.. autoclass:: pystokes.phoreticUnbounded.Field
+.. autoclass:: pystokes.phoretic.unbounded.Field
     :members:
 

@@ -1,5 +1,8 @@
 # PyStokes changelogs
 
+## 2.2.4
+* minor fix to the two wall code
+
 ## 2.2.3
 * Made a submodule pystokes.phoretic.unbounded etc to segregate code for phoresis
 

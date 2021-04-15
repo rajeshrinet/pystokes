@@ -175,9 +175,9 @@ cdef class Rbm:
                                 xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
                                 D      = (-2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr))*idr3
                                 
-                                vx += D*(dy*T[j+xx] - dz*T[j+Np]  )
-                                vy += D*(dz*T[j]    - dx*T[j+xx])
-                                vz += D*(dx*T[j+Np] - dy*T[j   ])
+                                vx -= D*(dy*T[j+xx] - dz*T[j+Np]  )
+                                vy -= D*(dz*T[j]    - dx*T[j+xx])
+                                vz -= D*(dx*T[j+Np] - dy*T[j   ])
         # Fourier space sum
         for i in prange(Np, nogil=True):
             for j  in range(Np):
@@ -194,9 +194,9 @@ cdef class Rbm:
                                 k2 = kx*kx + ky*ky + kz*kz    
                                 cc = 8*PI*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L*k2)
 
-                                vx += cc*( T[j+Np]*kz - T[j+xx]*ky  ) 
-                                vy += cc*( T[j+xx]*kx - T[j]  *kz  ) 
-                                vz += cc*( T[j]  *ky - T[j+Np]*kx  ) 
+                                vx -= cc*( T[j+Np]*kz - T[j+xx]*ky  ) 
+                                vy -= cc*( T[j+xx]*kx - T[j]  *kz  ) 
+                                vz -= cc*( T[j]  *ky - T[j+Np]*kx  ) 
             v[i]    += vx 
             v[i+Np] += vy 
             v[i+xx] += vz 
@@ -715,9 +715,9 @@ cdef class Rbm:
                                 xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
                                 D      = -2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr)
                                 
-                                ox -= D*(dx*F[j]   - dx*F[j]  )*idr3
-                                oy -= D*(dx*F[j+Np] - dy*F[j+Np])*idr3
-                                oz -= D*(dx*F[j+xx] - dz*F[j+xx])*idr3
+                                ox -= D*(F[j+Np]*dz - F[j+xx]*dy )*idr3
+                                oy -= D*(F[j+xx]*dx - F[j]*dz    )*idr3
+                                oz -= D*(F[j]*dy    - F[j+Np]*dx )*idr3
         # Fourier space sum
         for i in prange(Np, nogil=True):
             i1 = i*3
@@ -736,9 +736,9 @@ cdef class Rbm:
                                 k2 = kx*kx + ky*ky + kz*kz    
                                 cc = 8*PI*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L*k2)
 
-                                ox -= cc*( F[j+Np]*dz - F[j+xx]*dy  ) 
-                                oy -= cc*( F[j+xx]*dx - F[j]*dz       ) 
-                                oz -= cc*( F[j]*dy   - F[j+Np]*dx    ) 
+                                ox += cc*( F[j+Np]*dz - F[j+xx]*dy  ) 
+                                oy += cc*( F[j+xx]*dx - F[j]*dz     ) 
+                                oz += cc*( F[j]*dy    - F[j+Np]*dx  ) 
             o[i]    += ox
             o[i+Np] += oy
             o[i+xx ]+= oz

@@ -467,7 +467,7 @@ cdef class Rbm:
         """
 
         cdef int Np = self.Np, i, j, xx=2*Np 
-        cdef double dx, dy, dz, idr, idr3, Tdotidr, ox, oy, oz, mur=self.muR, muv=self.muv 
+        cdef double dx, dy, dz, idr, idr3, Tdotidr, ox, oy, oz, mur=self.mur, muv=self.muv 
  
         for i in prange(Np, nogil=True):
             ox=0;   oy=0;   oz=0;

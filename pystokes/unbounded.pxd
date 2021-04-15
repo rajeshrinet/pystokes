@@ -10,7 +10,7 @@ cdef double PI = 3.14159265359
 @cython.cdivision(True)
 @cython.nonecheck(False)
 cdef class Rbm:
-    cdef double a, eta, mu, muv
+    cdef double a, eta, mu, muv, mur
     cdef int Np 
     cdef readonly np.ndarray Mobility
 

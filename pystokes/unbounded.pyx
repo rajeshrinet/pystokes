@@ -37,6 +37,8 @@ cdef class Rbm:
         self.Np  = particles
         self.eta = viscosity
         self.mu  = 1.0/(6*PI*self.eta*self.a)
+        self.muv = 1.0/(8*PI*self.eta)
+        self.mur = 1.0/(8*PI*self.eta*self.a**3)
 
         self.Mobility = np.zeros( (3*self.Np, 3*self.Np), dtype=np.float64)
 
@@ -91,7 +93,7 @@ cdef class Rbm:
 
         cdef int Np  = self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr2, vx, vy, vz, vv1, vv2, aa = (2.0*self.a*self.a)/3.0 
-        cdef double mu = 1.0/(6*PI*self.eta*self.a), mu1 = mu*self.a*0.75       
+        cdef double mu=self.mu, muv=self.muv        
         
         for i in prange(Np, nogil=True):
             vx=0; vy=0;   vz=0;
@@ -109,9 +111,9 @@ cdef class Rbm:
                     vy += vv1*F[j+Np] + vv2*dy 
                     vz += vv1*F[j+xx] + vv2*dz 
 
-            v[i]    += mu*F[i]    + mu1*vx
-            v[i+Np] += mu*F[i+Np] + mu1*vy
-            v[i+xx] += mu*F[i+xx] + mu1*vz
+            v[i]    += mu*F[i]    + muv*vx
+            v[i+Np] += mu*F[i+Np] + muv*vy
+            v[i+xx] += mu*F[i+xx] + muv*vz
         return 
                
    
@@ -136,7 +138,7 @@ cdef class Rbm:
 
         cdef int Np = self.Np, i, j, xx=2*Np 
         cdef double dx, dy, dz, idr, idr3, vx, vy, vz
-        cdef double mu1 = 1.0/(8*PI*self.eta)       
+        cdef double muv=self.muv       
         
         for i in prange(Np, nogil=True):
             vx=0; vy=0;   vz=0;
@@ -151,9 +153,9 @@ cdef class Rbm:
                     vy += (dz*T[j]    -T[j+xx]*dx )*idr3
                     vz += (dx*T[j+Np] -T[j]   *dy )*idr3
 
-            v[i]    += mu1*vx
-            v[i+Np] += mu1*vy
-            v[i+xx] += mu1*vz
+            v[i]    += muv*vx
+            v[i+Np] += muv*vy
+            v[i+xx] += muv*vz
         return 
     
     
@@ -425,7 +427,7 @@ cdef class Rbm:
         """
 
         cdef int Np = self.Np, i, j, xx=2*Np 
-        cdef double dx, dy, dz, idr, idr3, ox, oy, oz, mu1 = 1.0/(8*PI*self.eta)
+        cdef double dx, dy, dz, idr, idr3, ox, oy, oz, muv=self.muv
  
         for i in prange(Np, nogil=True):
             ox=0;   oy=0;   oz=0;
@@ -440,9 +442,9 @@ cdef class Rbm:
                     ox += (F[j+Np]*dz - F[j+xx]*dy )*idr3
                     oy += (F[j+xx]*dx - F[j]   *dz )*idr3
                     oz += (F[j]   *dy - F[j+Np]*dx )*idr3
-            o[i]    += mu1*ox
-            o[i+Np] += mu1*oy
-            o[i+xx] += mu1*oz
+            o[i]    += muv*ox
+            o[i+Np] += muv*oy
+            o[i+xx] += muv*oz
         return  
 
                
@@ -465,7 +467,7 @@ cdef class Rbm:
         """
 
         cdef int Np = self.Np, i, j, xx=2*Np 
-        cdef double dx, dy, dz, idr, idr3, Tdotidr, ox, oy, oz, mur = 1.0/(8*PI*self.eta*self.a**3),  mu1 = 1.0/(8*PI*self.eta) 
+        cdef double dx, dy, dz, idr, idr3, Tdotidr, ox, oy, oz, mur=self.muR, muv=self.muv 
  
         for i in prange(Np, nogil=True):
             ox=0;   oy=0;   oz=0;
@@ -482,9 +484,9 @@ cdef class Rbm:
                     oy += ( T[j+Np] - 3*Tdotidr*dy )*idr3
                     oz += ( T[j+xx] - 3*Tdotidr*dz )*idr3
             
-            o[i]    += mur*T[i]    - mu1*ox
-            o[i+Np] += mur*T[i+Np] - mu1*oy
-            o[i+xx] += mur*T[i+xx] - mu1*oz
+            o[i]    += mur*T[i]    - muv*ox
+            o[i+Np] += mur*T[i+Np] - muv*oy
+            o[i+xx] += mur*T[i+xx] - muv*oz
         return  
 
     
@@ -705,7 +707,7 @@ cdef class Rbm:
 
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
-        cdef double mu=self.mu, mu1=2*mu*self.a*0.75, a2=self.a*self.a/3.0
+        cdef double mu=self.mu, muv=2*mu*self.a*0.75, a2=self.a*self.a/3.0
         cdef double vx, vy, vz, mm=1/(.75*self.a)
 
         cdef double [:, :] M = self.Mobility
@@ -741,12 +743,12 @@ cdef class Rbm:
 
         for i in prange(Np, nogil=True):
             for j in range(Np):
-                M[i,    j   ] = mu1*M[i,    j   ]
-                M[i+Np, j+Np] = mu1*M[i+Np, j+Np]
-                M[i+xx, j+xx] = mu1*M[i+xx, j+xx]
-                M[i,    j+Np] = mu1*M[i,    j+Np]
-                M[i,    j+xx] = mu1*M[i,    j+xx]
-                M[i+Np, j+xx] = mu1*M[i+Np, j+xx]
+                M[i,    j   ] = muv*M[i,    j   ]
+                M[i+Np, j+Np] = muv*M[i+Np, j+Np]
+                M[i+xx, j+xx] = muv*M[i+xx, j+xx]
+                M[i,    j+Np] = muv*M[i,    j+Np]
+                M[i,    j+xx] = muv*M[i,    j+xx]
+                M[i+Np, j+xx] = muv*M[i+Np, j+xx]
 
                 M[i+Np, j   ] =     M[i,    j+Np]
                 M[i+xx, j   ] =     M[i,    j+xx]
@@ -784,7 +786,7 @@ cdef class Rbm:
 
         cdef int i, j, Np=self.Np, xx=2*Np
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
-        cdef double mur=1/(8*np.pi*self.eta), mu1=0.25*sqrt(2.0)*mur, mm=4/(self.a**3)
+        cdef double mur=1/(8*np.pi*self.eta), muv=0.25*sqrt(2.0)*mur, mm=4/(self.a**3)
         cdef double ox, oy, oz
 
         cdef double [:, :] M = self.Mobility
@@ -812,18 +814,18 @@ cdef class Rbm:
 
         for i in prange(Np, nogil=True):
             for j in range(Np):
-                M[i,    j   ] = mu1*M[i,    j   ]
-                M[i+Np, j+Np] = mu1*M[i+Np, j+Np]
-                M[i+xx, j+xx] = mu1*M[i+xx, j+xx]
-                M[i,    j+Np] = mu1*M[i,    j+Np]
-                M[i,    j+xx] = mu1*M[i,    j+xx]
-                M[i+Np, j+xx] = mu1*M[i+Np, j+xx]
+                M[i,    j   ] = muv*M[i,    j   ]
+                M[i+Np, j+Np] = muv*M[i+Np, j+Np]
+                M[i+xx, j+xx] = muv*M[i+xx, j+xx]
+                M[i,    j+Np] = muv*M[i,    j+Np]
+                M[i,    j+xx] = muv*M[i,    j+xx]
+                M[i+Np, j+xx] = muv*M[i+Np, j+xx]
 
                 M[i+Np, j   ] =     M[i,    j+Np]
                 M[i+xx, j   ] =     M[i,    j+xx]
                 M[i+xx, j+Np] =     M[i+Np, j+xx]
 
-        cdef double [:, :] L = mu1*np.linalg.cholesky(self.Mobility)
+        cdef double [:, :] L = muv*np.linalg.cholesky(self.Mobility)
         for i in prange(Np, nogil=True):
             ox=0; oy=0; oz=0;
             for j in range(Np):
@@ -917,7 +919,7 @@ cdef class Flow:
 
         cdef int Np = self.Np,  Nt = self.Nt
         cdef int i, ii, xx = 2*Np
-        cdef double dx, dy, dz, idr, idr2, vv1, vv2, vx, vy, vz, mu1 = 1/(8*PI*self.eta), aa = self.a*self.a/3.0
+        cdef double dx, dy, dz, idr, idr2, vv1, vv2, vx, vy, vz, muv = 1/(8*PI*self.eta), aa = self.a*self.a/3.0
         for i in prange(Nt, nogil=True):
             vx = 0.0; vy = 0.0; vz = 0.0;
             for ii in range(Np):
@@ -934,9 +936,9 @@ cdef class Flow:
                 vy += vv1*F[ii+ Np] + vv2*dy
                 vz += vv1*F[ii+ xx] + vv2*dz
             
-            vv[i]         += vx*mu1
-            vv[i +   Nt]  += vy*mu1
-            vv[i +  2*Nt] += vz*mu1
+            vv[i]         += vx*muv
+            vv[i +   Nt]  += vy*muv
+            vv[i +  2*Nt] += vz*muv
         return 
 
 

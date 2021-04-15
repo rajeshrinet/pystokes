@@ -31,11 +31,18 @@ cdef class Rbm:
         Length of the box which is reperated periodicly in 3D
 
    """
-    def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10):
+    def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10, xi=1):
         self.a   = radius
         self.Np  = particles
         self.eta = viscosity
-        self.L   = boxSize
+        self.L   = boxSize 
+        if xi==1:
+            self.xi = sqrt(PI)/boxSize 
+        else:
+            self.xi = xi 
+
+        self.mu  = 1.0/(6*PI*self.eta*self.a)
+        self.muv = 1.0/(8*PI*self.eta)
 
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, int Nb=6, int Nm=6):
@@ -63,11 +70,12 @@ cdef class Rbm:
         """
 
         cdef int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
-        cdef double L=self.L,  xi=1.5*sqrt(PI)/L, ixi2 = 1/(xi*xi), mu=1.0/(6*PI*self.eta*self.a), mu1=mu*self.a*0.75, siz=Nb*L
-        cdef double a2=self.a*self.a/3, aidr2, k0=2*PI/L, ivol=1/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
+        cdef double L=self.L,  xi=self.xi, ixi2 = 1/(xi*xi), siz=Nb*L, mu=self.mu, muv=self.muv
+        cdef double a2=self.a*self.a/3, aidr2, k0=2*PI/L, fac=8*PI/(L*L*L), 
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
-        cdef double phi = (4.0*PI*self.a*self.a*self.a*Np/3.0)/(L*L*L)#renomalization effects
+        cdef double mt=IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
+        #cdef double phi = (4.0*PI*self.a*self.a*self.a*Np/3.0)/(L*L*L)#renomalization effects 
         #mpp -= mu*0.2*phi*phi  ##quadrupolar correction
         
         for i in prange(Np, nogil=True):
@@ -114,15 +122,15 @@ cdef class Rbm:
                             if kx != 0 or ky != 0 or kz != 0:
                                 k2 = (kx*kx + ky*ky + kz*kz); ik2=1/k2
                                 fdotik = (fx*kx + fy*ky + fz*kz )*ik2
-                                cc = 8*PI*(1-a2*k2)*cos( kx*xd+ky*yd+kz*zd )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ivol*ik2
+                                cc = fac*(1-a2*k2)*cos( kx*xd+ky*yd+kz*zd )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ik2
 
                                 vx += cc*(fx - fdotik*kx) 
                                 vy += cc*(fy - fdotik*ky) 
                                 vz += cc*(fz - fdotik*kz) 
         
-            v[i]    += mpp*F[i]    + mu1*vx 
-            v[i+Np] += mpp*F[i+Np] + mu1*vy 
-            v[i+xx] += mpp*F[i+xx] + mu1*vz 
+            v[i]    += mpp*F[i]    + muv*vx 
+            v[i+Np] += mpp*F[i+Np] + muv*vy 
+            v[i+xx] += mpp*F[i+xx] + muv*vz 
         return 
     
     
@@ -151,10 +159,9 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L)
-            double ixi2 = 1/(xi*xi), vx, vy, vz
+            double L = self.L,  xi=self.xi, ixi2 = 1/(xi*xi), vx, vy, vz, muv=self.muv
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
-            double xdr, xdr2, xdr3, e1, erxdr 
+            double xdr, xdr2, xdr3, e1, erxdr, fac=8*PI/(L*L*L),
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
 
         for i in prange(Np, nogil=True):
@@ -192,14 +199,14 @@ cdef class Rbm:
                             kz = (2*PI/L)*kk;
                             if kx != 0 or ky != 0 or kz != 0:
                                 k2 = kx*kx + ky*ky + kz*kz    
-                                cc = 8*PI*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L*k2)
+                                cc = fac*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2)
 
                                 vx -= cc*( T[j+Np]*kz - T[j+xx]*ky  ) 
                                 vy -= cc*( T[j+xx]*kx - T[j]  *kz  ) 
                                 vz -= cc*( T[j]  *ky - T[j+Np]*kx  ) 
-            v[i]    += vx 
-            v[i+Np] += vy 
-            v[i+xx] += vz 
+            v[i]    += muv*vx 
+            v[i+Np] += muv*vy 
+            v[i+xx] += muv*vz 
         return 
     
     
@@ -232,7 +239,7 @@ cdef class Rbm:
             double L = self.L,  xi = 0.5*sqrt(PI)/(L), siz=Nb*L
             double ixi2 = 1/(xi*xi), 
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
-            double dx, dy, dz, idr, idr3, kx, ky, kz, k2, ik2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, ivol=1/(L*L*L)
+            double dx, dy, dz, idr, idr3, kx, ky, kz, k2, ik2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
             double a2 = self.a*self.a*4.0/15, aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.a**3)/24 
         
         for i in prange(Np, nogil=True):
@@ -286,7 +293,7 @@ cdef class Rbm:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz); ik2=1.0/k2    
                                 ixk2 = 0.25*k2*ixi2
-                                cc = -8*PI*(1-a2*k2)*sin(kx*xd+ky*yd+kz*zd)*(1+ixk2+2*ixk2*ixk2)*exp(-ixk2)*ivol*ik2
+                                cc = -fac*(1-a2*k2)*sin(kx*xd+ky*yd+kz*zd)*(1+ixk2+2*ixk2*ixk2)*exp(-ixk2)*ik2
 
                                 srx = sxx*kx + sxy*ky + sxz*kz  
                                 sry = sxy*kx + syy*ky + syz*kz  
@@ -327,7 +334,7 @@ cdef class Rbm:
             Default is 6
         """
 
-        cdef double L = self.L,  xi = sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), ivol=1.0/(L*L*L)
+        cdef double L = self.L,  xi = sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), fac=8.0*PI/(L*L*L)
         cdef double ixi2 = 1/(xi*xi), vx, vy, vz
         cdef int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
         cdef double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
@@ -373,7 +380,7 @@ cdef class Rbm:
                             kz = k0*kk;
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
-                                cc = -8*PI*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ivol
+                                cc = -fac*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
                                 Ddotik2  = (D[j]*kx + D[j+Np]*ky + D[j+xx]*kz)/k2
                                 
                                 vx += cc*( D[j]    - Ddotik2*kx ) 
@@ -414,7 +421,7 @@ cdef class Rbm:
             double ixi2 = 1/(xi*xi), vx, vy, vz
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, j,  ii, jj, kk, xx=2*Np
             double xdr, xdr2, xdr3, xdr5, xdr7, e1, erxdr, D1, D2, D11, D22
-            double dx, dy, dz, idr, idr5, idr7, kx, ky, kz, k2, cc, 
+            double dx, dy, dz, idr, idr5, idr7, kx, ky, kz, k2, cc, fac=8*PI/(L*L*L)
             double aidr2, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
             double a2 = self.a*self.a*5/21
         
@@ -473,7 +480,7 @@ cdef class Rbm:
                                 pass
                             else:    
                                 k2 = (kx*kx + ky*ky + kz*kz)    
-                                cc = -8*(1-a2*k2)*PI*cos( kx*dx+ky*dy+kz*dz )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L)
+                                cc = -fac*(1-a2*k2)*cos( kx*dx+ky*dy+kz*dz )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
                 
                                 grrr = (gxxx*kx*(kx*kx-3*kz*kz) + 3*gxxy*ky*(kx*kx-kz*kz) + gxxz*kz*(3*kx*kx-kz*kz) +\
                                    3*gxyy*kx*(ky*ky-kz*kz) + 6*gxyz*kx*ky*kz + gyyy*ky*(ky*ky-3*kz*kz) +  gyyz*kz*(3*ky*ky-kz*kz) )/k2
@@ -519,7 +526,7 @@ cdef class Rbm:
             double L = self.L,  xi = sqrt(PI)/(L)
             double ixi2 = 1/(xi*xi)
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
-            double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz, vkx, vky, vkz
+            double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz, vkx, vky, vkz, fac=8*PI/(L*L*L)
             double s1, kx, ky, kz, k2, xdr, xdr2, cc 
  
         for i in prange(Np, nogil=True):
@@ -599,7 +606,7 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L)
+            double L = self.L,  xi = sqrt(PI)/(L), fac=8*PI/(L*L*L)
             double ixi2 = 1/(xi*xi), vx, vy, vz
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr7, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
@@ -692,7 +699,7 @@ cdef class Rbm:
 
         cdef: 
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
-            double L = self.L,  xi = sqrt(PI)/(L),
+            double L = self.L,  xi = sqrt(PI)/(L), fac=8*PI/(L*L*L), muv=self.muv
             double  ixi2 = 1/(xi*xi), ox, oy, oz
             double xdr, xdr2, xdr3, e1, erxdr 
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
@@ -734,14 +741,14 @@ cdef class Rbm:
                             kz = (2*PI/L)*kk;
                             if kx != 0 or ky != 0 or kz != 0:
                                 k2 = kx*kx + ky*ky + kz*kz    
-                                cc = 8*PI*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L*k2)
+                                cc = fac*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2)
 
                                 ox += cc*( F[j+Np]*dz - F[j+xx]*dy  ) 
                                 oy += cc*( F[j+xx]*dx - F[j]*dz     ) 
                                 oz += cc*( F[j]*dy    - F[j+Np]*dx  ) 
-            o[i]    += ox
-            o[i+Np] += oy
-            o[i+xx ]+= oz
+            o[i]    += muv*ox
+            o[i+Np] += muv*oy
+            o[i+xx ]+= muv*oz
         return 
 
 
@@ -770,7 +777,7 @@ cdef class Rbm:
         """
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L) 
-            double ixi2 = 1/(xi*xi), ox, oy, oz
+            double ixi2 = 1/(xi*xi), ox, oy, oz, fac=8*PI/(L*L*L), muv=self.muv
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk,  xx=2*Np
             double xdr, xdr2, A1, B1, Tdotik2, Tdotidr2, e1, erxdr, dx, dy, dz, idr,  kx, ky, kz, k2, cc
         
@@ -809,15 +816,15 @@ cdef class Rbm:
                             kz = (2*PI/L)*kk;
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
-                                cc = -8*PI*cos(kx*dx+ky*dy+kz*dz)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(L*L*L)
+                                cc = -fac*cos(kx*dx+ky*dy+kz*dz)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
                                 Tdotik2  = (T[j]*kx + T[j+Np]*ky + T[j+xx]*kz)/k2
                                 
                                 ox += cc*( T[j]   - Tdotik2*kx ) 
                                 oy += cc*( T[j+Np] - Tdotik2*ky ) 
                                 oz += cc*( T[j+xx] - Tdotik2*kz ) 
-            o[i]    += ox
-            o[i+Np] += oy
-            o[i+xx ]+= oz
+            o[i]    += muv*ox
+            o[i+Np] += muv*oy
+            o[i+xx ]+= muv*oz
         return
 
     
@@ -847,10 +854,10 @@ cdef class Rbm:
 
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L) 
-            double ixi2 = 1/(xi*xi), ox, oy, oz
+            double ixi2 = 1/(xi*xi), ox, oy, oz, fac=8*PI/(L*L*L)
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr5, sxx, syy, sxy, sxz, syz, srx, sry, srz, skx, sky, skz, s1
-            double kx, ky, kz, k2, xdr, xdr2, cc, 
+            double kx, ky, kz, k2, xdr, xdr2, cc, mus = (28.0*self.a**3)/24
  
         for i in prange(Np, nogil=True):
             ox=0; oy=0; oz=0
@@ -894,7 +901,7 @@ cdef class Rbm:
                             kz = (2*PI/L)*kk;
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
-                                cc = 8*PI*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2*L*L*L)
+                                cc = fac*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2)
                                 skx = sxx*kx +  sxy*ky + sxz*kz  
                                 sky = sxy*kx +  syy*ky + syz*kz  
                                 skz = sxz*kx +  syz*ky - (sxx+syy)*kz 
@@ -902,9 +909,9 @@ cdef class Rbm:
                                 ox += cc*( ky*skz - kz*sky) 
                                 oy += cc*( kz*skx - kx*skz) 
                                 oz += cc*( kx*sky - ky*skx) 
-            o[i]    += ox
-            o[i+Np] += oy
-            o[i+xx ]+= oz
+            o[i]    += mus*ox
+            o[i+Np] += mus*oy
+            o[i+xx ]+= mus*oz
         pass
 
 
@@ -934,7 +941,7 @@ cdef class Rbm:
 
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L), 
-            double ixi2 = 1/(xi*xi)
+            double ixi2 = 1/(xi*xi), fac=8*PI/(L*L*L)
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr7, grrx, grry, grrz, gkkx, gkky, gkkz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz, 
             double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc,
@@ -1019,7 +1026,7 @@ cdef class Rbm:
 
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)   
-            double ixi2 = 1/(xi*xi)
+            double ixi2 = 1/(xi*xi), fac=8*PI/(L*L*L)
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr2, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz, vkx, vky, vkz, vkk
             double kx, ky, kz, k2,  xdr, e1, xdr2, cc,  s1, s3
@@ -1104,7 +1111,7 @@ cdef class Rbm:
 
         cdef: 
             double L = self.L,  xi = sqrt(PI)/(L)
-            double ixi2 = 1/(xi*xi), ox, oy, oz
+            double ixi2 = 1/(xi*xi), ox, oy, oz, fac=8*PI/(L*L*L)
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr2, idr7
             double mrrr, mkkk, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
@@ -1258,8 +1265,8 @@ cdef class Flow:
         >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
         cdef int Np=self.Np, Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
-        cdef double L=self.L,  xi=1*sqrt(PI)/L, ixi2 = 1/(xi*xi), mu=1.0/(6*PI*self.eta*self.a), mu1=mu*self.a*0.75, siz=Nb*L
-        cdef double a2=0*self.a*self.a/6, k0=2*PI/L, ivol=1/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
+        cdef double L=self.L,  xi=1*sqrt(PI)/L, ixi2 = 1/(xi*xi), mu=1.0/(6*PI*self.eta*self.a), muv=mu*self.a*0.75, siz=Nb*L
+        cdef double a2=0*self.a*self.a/6, k0=2*PI/L, fac=8*PI/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
         
@@ -1298,15 +1305,15 @@ cdef class Flow:
                             if kx != 0 or ky != 0 or kz != 0:
                                 k2 = (kx*kx + ky*ky + kz*kz); ik2=1/k2
                                 fdotik = (fx*kx + fy*ky + fz*kz )*ik2
-                                cc = 8*PI*(1-a2*k2)*cos( kx*xd+ky*yd+kz*zd )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ivol*ik2
+                                cc = fac*(1-a2*k2)*cos( kx*xd+ky*yd+kz*zd )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ik2
 
                                 vx += cc*(fx - fdotik*kx) 
                                 vy += cc*(fy - fdotik*ky) 
                                 vz += cc*(fz - fdotik*kz) 
         
-            vv[i]      += mu1*vx 
-            vv[i+Nt]   += mu1*vy 
-            vv[i+2*Nt] += mu1*vz 
+            vv[i]      += muv*vx 
+            vv[i+Nt]   += muv*vy 
+            vv[i+2*Nt] += muv*vz 
         return 
    
 
@@ -1342,7 +1349,7 @@ cdef class Flow:
             double L = self.L,  xi = 0.5*sqrt(PI)/(L), siz=Nb*L
             double ixi2 = 1/(xi*xi)
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
-            double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, ivol=1/(L*L*L)
+            double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
             double a2 = self.a*self.a*4.0/15,aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.a**3)/24, ik2
         
         for i in prange(Nt, nogil=True):
@@ -1393,7 +1400,7 @@ cdef class Flow:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz); ik2=1.0/k2    
                                 ixk2 = 0.25*k2*ixi2
-                                cc = -8*PI*(1-a2*k2)*sin(kx*xd+ky*yd+kz*zd)*(1+ixk2+2*ixk2*ixk2)*exp(-ixk2)*ivol*k2
+                                cc = -fac*(1-a2*k2)*sin(kx*xd+ky*yd+kz*zd)*(1+ixk2+2*ixk2*ixk2)*exp(-ixk2)*k2
 
                                 srx = sxx*kx + sxy*ky + sxz*kz  
                                 sry = sxy*kx + syy*ky + syz*kz  
@@ -1437,7 +1444,7 @@ cdef class Flow:
         """
  
         cdef: 
-            double L = self.L,  xi = 1.5*sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), ivol=1.0/(L*L*L)
+            double L = self.L,  xi = 1.5*sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), fac=8*PI/(L*L*L)
             double ixi2 = 1/(xi*xi), vx, vy, vz
             int Nt=self.Nt,Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
             double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
@@ -1478,7 +1485,7 @@ cdef class Flow:
                             kz = k0*kk;
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
-                                cc = -8*PI*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ivol
+                                cc = -fac*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
                                 Ddotik2  = (D[j]*kx + D[j+Np]*ky + D[j+xx]*kz)/k2
                                 
                                 vx += cc*( D[j]   - Ddotik2*kx ) 

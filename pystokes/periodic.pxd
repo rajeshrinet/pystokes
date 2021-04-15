@@ -8,7 +8,7 @@ from cython.parallel import prange
 @cython.nonecheck(False)
 cdef class Rbm:
     cdef int Np
-    cdef double a, eta, L
+    cdef double a, eta, L, mu, xi, muv, mur
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, int Nb=?, int Nm=?)
     

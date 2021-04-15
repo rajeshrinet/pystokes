@@ -31,13 +31,14 @@ cdef class Rbm:
         Length of the box which is reperated periodicly in 3D
 
    """
-    def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10, xi=1):
+    def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10, xi=123456789):
         self.a   = radius
         self.Np  = particles
         self.eta = viscosity
         self.L   = boxSize 
-        if xi==1:
+        if xi==123456789:
             self.xi = sqrt(PI)/boxSize 
+            #Nijboer and De Wette have shown that \pi^{1/2}/V^{1/3} is a good choice for cubic lattices 
         else:
             self.xi = xi 
 
@@ -45,7 +46,7 @@ cdef class Rbm:
         self.muv = 1.0/(8*PI*self.eta)
 
 
-    cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, int Nb=6, int Nm=6):
+    cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute velocity due to body forces using :math:`v=\mu^{TT}\cdot F` 
         ...
@@ -70,14 +71,16 @@ cdef class Rbm:
         """
 
         cdef int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
-        cdef double L=self.L,  xi=self.xi, ixi2 = 1/(xi*xi), siz=Nb*L, mu=self.mu, muv=self.muv
+        cdef double L=self.L,  xi=self.xi, ixi2, siz=Nb*L, mu=self.mu, muv=self.muv
         cdef double a2=self.a*self.a/3, aidr2, k0=2*PI/L, fac=8*PI/(L*L*L), 
-        cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
+        cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1, mt, mpp
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
-        cdef double mt=IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
-        #cdef double phi = (4.0*PI*self.a*self.a*self.a*Np/3.0)/(L*L*L)#renomalization effects 
-        #mpp -= mu*0.2*phi*phi  ##quadrupolar correction
         
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2=1/(xi*xi)
+        mt=IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0); mpp=mu*(1+mt)    # include M^2(r=0)
+
         for i in prange(Np, nogil=True):
             vx=0;  vy=0;  vz=0;
             for j in range(Np):
@@ -134,7 +137,7 @@ cdef class Rbm:
         return 
     
     
-    cpdef mobilityTR(   self, double [:] v, double [:] r, double [:] T, int Nb=6, int Nm=6):
+    cpdef mobilityTR(   self, double [:] v, double [:] r, double [:] T, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute velocity due to body torque using :math:`v=\mu^{TR}\cdot T` 
         ...
@@ -159,10 +162,14 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi=self.xi, ixi2 = 1/(xi*xi), vx, vy, vz, muv=self.muv
+            double L = self.L,  xi=self.xi, ixi2, vx, vy, vz, muv=self.muv
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
             double xdr, xdr2, xdr3, e1, erxdr, fac=8*PI/(L*L*L),
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2=1/(xi*xi)
+
 
         for i in prange(Np, nogil=True):
             vx=0; vy=0; vz=0
@@ -210,7 +217,7 @@ cdef class Rbm:
         return 
     
     
-    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, int Nb=6, int Nm=6):
+    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot S` 
         ...
@@ -236,11 +243,13 @@ cdef class Rbm:
 
         cdef: 
             int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1, xx1=3*Np, xx2=4*Np
-            double L = self.L,  xi = 0.5*sqrt(PI)/(L), siz=Nb*L
-            double ixi2 = 1/(xi*xi), 
+            double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, ik2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
             double a2 = self.a*self.a*4.0/15, aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.a**3)/24 
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi),
         
         for i in prange(Np, nogil=True):
             vx=0; vy=0; vz=0;
@@ -310,7 +319,7 @@ cdef class Rbm:
         return 
       
 
-    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, int Nb=6, int Nm=6):
+    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot D` 
         ...
@@ -334,15 +343,17 @@ cdef class Rbm:
             Default is 6
         """
 
-        cdef double L = self.L,  xi = sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), fac=8.0*PI/(L*L*L)
-        cdef double ixi2 = 1/(xi*xi), vx, vy, vz
+        cdef double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8.0*PI/(L*L*L)
+        cdef double ixi2, vx, vy, vz
         cdef int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
         cdef double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
         cdef double mud =3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
         cdef double xd, yd, zd, xd1, yd1, zd1
-        cdef double phi = (4.0*PI*self.a*self.a*self.a*Np/3.0)/(L*L*L)#renomalization effects
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi),
         mud = mud + mud1*IPI*xi*(80*xi*xi*self.a*self.a/3.0) ## adding the M^2(r=0) contribution
-        mud  = mud* (1-mud*0.2*phi*phi)                              ## quadrupolar correction
+
         
         for i in prange(Np, nogil=True):
             vx=0;  vy=0; vz=0;
@@ -393,7 +404,7 @@ cdef class Rbm:
         return
 
 
-    cpdef propulsionT3s(  self, double [:] v, double [:] r, double [:] G, int Nb=6, int Nm=6):
+    cpdef propulsionT3s(  self, double [:] v, double [:] r, double [:] G, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute velocity due to 3s mode of the slip :math:`v=\pi^{T,3s}\cdot G` 
         ...
@@ -417,13 +428,16 @@ cdef class Rbm:
             Default is 6
         """
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L)  
-            double ixi2 = 1/(xi*xi), vx, vy, vz
+            double L = self.L,  xi=self.xi  
+            double ixi2, vx, vy, vz
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, j,  ii, jj, kk, xx=2*Np
             double xdr, xdr2, xdr3, xdr5, xdr7, e1, erxdr, D1, D2, D11, D22
             double dx, dy, dz, idr, idr5, idr7, kx, ky, kz, k2, cc, fac=8*PI/(L*L*L)
             double aidr2, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
             double a2 = self.a*self.a*5/21
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
         
         for i in prange(Np, nogil=True):
             vx=0; vy=0; vz=0
@@ -498,7 +512,7 @@ cdef class Rbm:
         return
 
     
-    cpdef propulsionT3a(  self, double [:] v, double [:] r, double [:] V, int Nb=6, int Nm=6):
+    cpdef propulsionT3a(  self, double [:] v, double [:] r, double [:] V, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute velocity due to 3a mode of the slip :math:`v=\pi^{T,3a}\cdot V` 
         ...
@@ -523,11 +537,14 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L)
-            double ixi2 = 1/(xi*xi)
+            double L = self.L,  xi=self.xi, ixi2
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz, vkx, vky, vkz, fac=8*PI/(L*L*L)
             double s1, kx, ky, kz, k2, xdr, xdr2, cc 
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
  
         for i in prange(Np, nogil=True):
             for j in range(Np):
@@ -581,7 +598,7 @@ cdef class Rbm:
         return
 
 
-    cpdef propulsionT4a(  self, double [:] v, double [:] r, double [:] M, int Nb=6, int Nm=6):
+    cpdef propulsionT4a(  self, double [:] v, double [:] r, double [:] M, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute velocity due to 4a mode of the slip :math:`v=\pi^{T,4a}\cdot M` 
         ...
@@ -606,11 +623,15 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L), fac=8*PI/(L*L*L)
-            double ixi2 = 1/(xi*xi), vx, vy, vz
+            double L = self.L,  xi=self.xi, fac=8*PI/(L*L*L)
+            double ixi2, vx, vy, vz
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr7, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
             double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc, 
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
 
         for i in prange(Np, nogil=True):
             vx=0; vy=0; vz=0;
@@ -673,7 +694,7 @@ cdef class Rbm:
 
     ## Angular velocities
 
-    cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F, int Nb=6, int Nm=6):
+    cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute angular velocity due to body forces using :math:`o=\mu^{RT}\cdot F` 
         ...
@@ -699,10 +720,14 @@ cdef class Rbm:
 
         cdef: 
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
-            double L = self.L,  xi = sqrt(PI)/(L), fac=8*PI/(L*L*L), muv=self.muv
-            double  ixi2 = 1/(xi*xi), ox, oy, oz
+            double L = self.L,  xi=self.xi, fac=8*PI/(L*L*L), muv=self.muv
+            double  ixi2, ox, oy, oz
             double xdr, xdr2, xdr3, e1, erxdr 
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
 
         for i in prange(Np, nogil=True):
             ox=0; oy=0; oz=0
@@ -752,7 +777,7 @@ cdef class Rbm:
         return 
 
 
-    cpdef mobilityRR(   self, double [:] o, double [:] r, double [:] T, int Nb=6, int Nm=6):
+    cpdef mobilityRR(   self, double [:] o, double [:] r, double [:] T, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute angular velocity due to body torques using :math:`o=\mu^{RR}\cdot T` 
         ...
@@ -776,10 +801,14 @@ cdef class Rbm:
             Default is 6
         """
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L) 
-            double ixi2 = 1/(xi*xi), ox, oy, oz, fac=8*PI/(L*L*L), muv=self.muv
+            double L = self.L,  xi=self.xi 
+            double ixi2, ox, oy, oz, fac=8*PI/(L*L*L), muv=self.muv
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk,  xx=2*Np
             double xdr, xdr2, A1, B1, Tdotik2, Tdotidr2, e1, erxdr, dx, dy, dz, idr,  kx, ky, kz, k2, cc
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
         
         for i in prange(Np, nogil=True):
             ox=0; oy=0; oz=0
@@ -828,7 +857,7 @@ cdef class Rbm:
         return
 
     
-    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S, int Nb=6, int Nm=6):
+    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute angular velocity due to 2s mode of the slip :math:`v=\pi^{R,2s}\cdot S` 
         ...
@@ -853,11 +882,15 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L) 
-            double ixi2 = 1/(xi*xi), ox, oy, oz, fac=8*PI/(L*L*L)
+            double L = self.L,  xi=self.xi 
+            double ixi2, ox, oy, oz, fac=8*PI/(L*L*L)
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr5, sxx, syy, sxy, sxz, syz, srx, sry, srz, skx, sky, skz, s1
             double kx, ky, kz, k2, xdr, xdr2, cc, mus = (28.0*self.a**3)/24
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
  
         for i in prange(Np, nogil=True):
             ox=0; oy=0; oz=0
@@ -915,7 +948,7 @@ cdef class Rbm:
         pass
 
 
-    cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] G, int Nb=6, int Nm=6):
+    cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] G, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute angular velocity due to 3s mode of the slip :math:`v=\pi^{R,3s}\cdot G` 
         ...
@@ -940,11 +973,15 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L), 
-            double ixi2 = 1/(xi*xi), fac=8*PI/(L*L*L)
+            double L = self.L,  xi=self.xi, 
+            double ixi2, fac=8*PI/(L*L*L)
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr7, grrx, grry, grrz, gkkx, gkky, gkkz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz, 
             double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc,
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
 
         for i in prange(Np, nogil=True):
             for j in range(Np):
@@ -1000,7 +1037,7 @@ cdef class Rbm:
         return
 
 
-    cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V, int Nb=6, int Nm=6):
+    cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute angular velocity due to 3a mode of the slip :math:`v=\pi^{R,3a}\cdot V` 
         ...
@@ -1025,11 +1062,15 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L)   
-            double ixi2 = 1/(xi*xi), fac=8*PI/(L*L*L)
+            double L = self.L,  xi=self.xi   
+            double ixi2, fac=8*PI/(L*L*L)
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr2, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz, vkx, vky, vkz, vkk
             double kx, ky, kz, k2,  xdr, e1, xdr2, cc,  s1, s3
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
  
         for i in prange(Np, nogil=True):
             for j in range(Np):
@@ -1085,7 +1126,7 @@ cdef class Rbm:
         return
 
 
-    cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] M, int Nb=6, int Nm=6):
+    cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] M, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute angular velocity due to 4a mode of the slip :math:`v=\pi^{R,4a}\cdot M` 
         ...
@@ -1110,12 +1151,16 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi = sqrt(PI)/(L)
-            double ixi2 = 1/(xi*xi), ox, oy, oz, fac=8*PI/(L*L*L)
+            double L = self.L,  xi=self.xi
+            double ixi2, ox, oy, oz, fac=8*PI/(L*L*L)
             int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
             double dx, dy, dz, idr, idr2, idr7
             double mrrr, mkkk, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
             double kx, ky, kz, k2, xdr, e1, xdr2, xdr4, cc, s2, s4
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
  
         for i in prange(Np, nogil=True):
             ox=0; oy=0; oz=0;
@@ -1213,7 +1258,7 @@ cdef class Flow:
         self.L  = boxsize
 
 
-    cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, int Nb=6, int Nm=6):
+    cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute flow field at field points due body forces
         ...
@@ -1265,10 +1310,14 @@ cdef class Flow:
         >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
         cdef int Np=self.Np, Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
-        cdef double L=self.L,  xi=1*sqrt(PI)/L, ixi2 = 1/(xi*xi), mu=1.0/(6*PI*self.eta*self.a), muv=mu*self.a*0.75, siz=Nb*L
+        cdef double L=self.L,  xi=self.xi, ixi2, mu=1.0/(6*PI*self.eta*self.a), muv=mu*self.a*0.75, siz=Nb*L
         cdef double a2=0*self.a*self.a/6, k0=2*PI/L, fac=8*PI/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
         
         for i in prange(Nt, nogil=True):
             vx=0;  vy=0;  vz=0;
@@ -1317,7 +1366,7 @@ cdef class Flow:
         return 
    
 
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, int Nb=6, int Nm=6):
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute flow field at field points  due to 2s mode of the slip 
         ...
@@ -1346,11 +1395,14 @@ cdef class Flow:
 
         cdef: 
             int Np=self.Np,Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
-            double L = self.L,  xi = 0.5*sqrt(PI)/(L), siz=Nb*L
-            double ixi2 = 1/(xi*xi)
+            double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
             double a2 = self.a*self.a*4.0/15,aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.a**3)/24, ik2
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
         
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
@@ -1416,7 +1468,7 @@ cdef class Flow:
         return 
     
     
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, int Nb=16, int Nm=16):
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, int Nb=16, int Nm=16, double xi0=123456789):
         """
         Compute flow field at field points due to 3t mode of the slip 
         ...
@@ -1444,13 +1496,17 @@ cdef class Flow:
         """
  
         cdef: 
-            double L = self.L,  xi = 1.5*sqrt(PI)/(L), siz=Nb*L, k0=(2*PI/L), fac=8*PI/(L*L*L)
-            double ixi2 = 1/(xi*xi), vx, vy, vz
+            double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8*PI/(L*L*L)
+            double ixi2, vx, vy, vz
             int Nt=self.Nt,Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
             double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
             double mud =3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
             double xd, yd, zd, xd1, yd1, zd1
         mud = mud + mud1*IPI*xi*(80*xi*xi*self.a*self.a/3.0) ## adding the M^2(r=0) contribution
+        if xi0 != 123456789:
+            xi = xi0 
+        ixi2 = 1/(xi*xi)
+
         
         for i in prange(Nt, nogil=True):
             vx=0;  vy=0; vz=0;

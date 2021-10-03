@@ -1,5 +1,8 @@
 # PyStokes changelogs
 
+## 2.2.5
+* add a function for MSD in 2D in utils 
+
 ## 2.2.4
 * minor fix to the two wall code
 

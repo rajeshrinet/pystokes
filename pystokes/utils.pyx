@@ -780,3 +780,31 @@ def plotPhoreticField(l, c0=1):
         print('Not yet implemented...')
 
 
+
+cpdef MSD2(x1, y1, int tdev):
+    """
+    Mean square displacement in two dimensions 
+    x1  : time series of x-coordinate
+    y1  : time series of y-coordinate
+    tdev: time difference
+
+    returns: dispV: a vector of square of displacement
+    """
+    cdef int i, j, Nt
+    cdef double dr2, dx, dy
+    dispV = np.zeros(tdev)
+    
+    cdef double [:] xt = x1
+    cdef double [:] yt = y1
+    cdef double [:] d2 = dispV
+
+    Nt = x1.size 
+
+    for i in range(tdev): 
+        dr2=0
+        for j in range(Nt-i-1):
+            dx = xt[i+j+1] - xt[j]
+            dy = yt[i+j+1] - yt[j]
+            dr2 += dx*dx + dy*dy 
+        d2[i] = dr2/(Nt-i-1)
+    return dispV

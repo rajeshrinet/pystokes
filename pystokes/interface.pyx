@@ -92,6 +92,15 @@ cdef class Rbm:
         cdef double vx, vy, vz, F1, F2, F3
         cdef double mu=self.mu, muv=self.muv, a2=self.a*self.a/3.0
         cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
+        
+        cdef double llp = 1.0/(1+ll);
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv3, hbar_inv5
+        cdef double muTTpara1 = 3*(2-3*ll)*llp/16.0, muTTpara2 = (1+2*ll)*llp/16.0
+        cdef double muTTpara3 = - ll*llp/16.0
+        cdef double muTTperp1 = - 3*(2+3*ll)*llp/8.0, muTTperp2 = (1+4*ll)*llp/8.0
+        cdef double muTTperp3 = - ll*llp/8.0
+        cdef double mux, muy, muz
 
         for i in prange(Np, nogil=True):
             vx=0; vy=0; vz=0;
@@ -140,38 +149,19 @@ cdef class Rbm:
                     vz += ll2*(-h2*6*a2*(dz*tempF  -5*Fdotidr*dz*dz + tempF*dz)*idr5 -6*a2*h2*Fdotidr*idr3)
                 else:
                     ''' self contribution from the image point'''
-                    F1 = ll1*F[j];   F2 = ll1*F[j+Np];   F3 = -F[j+xx];
-                    dz = r[i+xx] + r[j+xx]; dx=0; dy=0
-                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                    idr3 = idr*idr*idr
-                    idr5 = idr3*idr*idr
-                    Fdotidr = ( F1*dx + F2*dy + F3*dz )*idr*idr
-                    vx += (F1+Fdotidr*dx)*idr + a2*(2*F1-6*Fdotidr*dx)*idr3
-                    vy += (F2+Fdotidr*dy)*idr + a2*(2*F2-6*Fdotidr*dy)*idr3
-                    vz += (F3+Fdotidr*dz)*idr + a2*(2*F3-6*Fdotidr*dz)*idr3
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
+                    hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
+                    
+                    mux += mu*(1 + muTTpara1*hbar_inv + muTTpara2*hbar_inv3 
+                              + muTTpara3*hbar_inv5)
+                    muy += mux
+                    muz += mu*(1 + muTTperp1*hbar_inv + muTTperp2*hbar_inv3 
+                              + muTTperp3*hbar_inv5)
 
-                    tempF  = -F[j+xx]     # F_i = M_ij F_j, reflection of the strength
-                    Fdotidr = ( F[j]*dx + F[j+Np]*dy + tempF*dz )*idr*idr
-
-                    vx += ll2*(-h2*(dz*(F[j]   - 3*Fdotidr*dx) + tempF*dx)*idr3)
-                    vy += ll2*(-h2*(dz*(F[j+Np]- 3*Fdotidr*dy) + tempF*dy)*idr3)
-                    vz += ll2*(-h2*(dz*(tempF  - 3*Fdotidr*dz) + tempF*dz)*idr3 + h2*Fdotidr*idr)
-
-                    vx += ll2*(hsq*( 2*F[j]   - 6*Fdotidr*dx )*idr3)
-                    vy += ll2*(hsq*( 2*F[j+Np]- 6*Fdotidr*dy )*idr3)
-                    vz += ll2*(hsq*( 2*tempF  - 6*Fdotidr*dz )*idr3)
-
-                    vx += ll2*(12*a2*dz*( dz*F[j]   - 5*dz*Fdotidr*dx + 2*tempF*dx )*idr5)
-                    vy += ll2*(12*a2*dz*( dz*F[j+Np]- 5*dz*Fdotidr*dy + 2*tempF*dy )*idr5)
-                    vz += ll2*(12*a2*dz*( dz*tempF  - 5*dz*Fdotidr*dz + 2*tempF*dz )*idr5)
-
-                    vx += ll2*(-h2*6*a2*(dz*F[j]   -5*Fdotidr*dx*dz + tempF*dx)*idr5)
-                    vy += ll2*(-h2*6*a2*(dz*F[j+Np]-5*Fdotidr*dy*dz+ tempF*dy)*idr5)
-                    vz += ll2*(-h2*6*a2*(dz*tempF  -5*Fdotidr*dz*dz + tempF*dz)*idr5 -6*a2*h2*Fdotidr*idr3)
-
-            v[i  ]  += mu*F[i]    + muv*vx
-            v[i+Np] += mu*F[i+Np] + muv*vy
-            v[i+xx] += mu*F[i+xx] + muv*vz
+            v[i  ]  += mux*F[i]    + muv*vx
+            v[i+Np] += muy*F[i+Np] + muv*vy
+            v[i+xx] += muz*F[i+xx] + muv*vz
         return
 
 

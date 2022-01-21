@@ -153,10 +153,10 @@ cdef class Rbm:
                     hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
                     hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
                     
-                    mux += mu*(1 + muTTpara1*hbar_inv + muTTpara2*hbar_inv3 
+                    mux = mu*(1 + muTTpara1*hbar_inv + muTTpara2*hbar_inv3 
                               + muTTpara3*hbar_inv5)
-                    muy += mux
-                    muz += mu*(1 + muTTperp1*hbar_inv + muTTperp2*hbar_inv3 
+                    muy = mux
+                    muz = mu*(1 + muTTperp1*hbar_inv + muTTperp2*hbar_inv3 
                               + muTTperp3*hbar_inv5)
 
             v[i  ]  += mux*F[i]    + muv*vx

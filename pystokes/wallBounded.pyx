@@ -87,6 +87,14 @@ cdef class Rbm:
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz
         cdef double mu=self.mu, muv=self.muv, a2=self.a*self.a/3.0
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv3, hbar_inv5
+        cdef double muTTpara1 = -9./16., muTTpara2 = 1./8.
+        cdef double muTTpara3 = -1./16.
+        cdef double muTTperp1 = -9./8., muTTperp2 = 1./2.
+        cdef double muTTperp3 = -1./8.
+        cdef double mux, muy, muz
 
         for i in prange(Np, nogil=True):
             vx=0; vy=0; vz=0;
@@ -135,38 +143,19 @@ cdef class Rbm:
                     vz += -h2*6*a2*(dz*tempF  -5*Fdotidr*dz*dz + tempF*dz)*idr5 -6*a2*h2*Fdotidr*idr3
                 else:
                     ''' self contribution from the image point'''
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/dz
-                    idr3 = idr*idr*idr
-                    idr5 = idr3*idr*idr
-                    Fdotidr = F[j+xx]*dz*idr*idr
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
+                    hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
+                    
+                    mux = mu*(1 + muTTpara1*hbar_inv + muTTpara2*hbar_inv3 
+                              + muTTpara3*hbar_inv5)
+                    muy = mux
+                    muz = mu*(1 + muTTperp1*hbar_inv + muTTperp2*hbar_inv3 
+                              + muTTperp3*hbar_inv5)
 
-                    vx += -(F[j]               )*idr - a2*(2*F[j]    )*idr3
-                    vy += -(F[j+Np]            )*idr - a2*(2*F[j+Np] )*idr3
-                    vz += -(F[j+xx]+Fdotidr*dz )*idr - a2*(2*F[j+xx] - 6*Fdotidr*dz )*idr3
-
-                    tempF  = -F[j+xx]     # F_i = M_ij F_j, reflection of the strength
-                    Fdotidr = tempF*dz*idr*idr
-
-                    vx += -h2*(dz*(F[j]  ) + tempF*dx)*idr3
-                    vy += -h2*(dz*(F[j+Np]) + tempF*dy)*idr3
-                    vz += -h2*(dz*(tempF -3*Fdotidr*dz) + tempF*dz)*idr3 + h2*Fdotidr*idr
-
-                    vx += hsq*( 2*F[j]   )*idr3
-                    vy += hsq*( 2*F[j+Np])*idr3
-                    vz += hsq*( 2*tempF  - 6*Fdotidr*dz )*idr3
-
-                    vx += 12*a2*dz*( dz*F[j]   )*idr5
-                    vy += 12*a2*dz*( dz*F[j+Np])*idr5
-                    vz += 12*a2*dz*( dz*tempF  - 5*dz*Fdotidr*dz + 2*tempF*dz )*idr5
-
-                    vx += -h2*6*a2*(dz*F[j]   )*idr5
-                    vy += -h2*6*a2*(dz*F[j+Np])*idr5
-                    vz += -h2*6*a2*(dz*tempF  -5*Fdotidr*dz*dz+tempF*dz)*idr5 -6*a2*h2*Fdotidr*idr3
-
-            v[i  ]  += mu*F[i]    + muv*vx
-            v[i+Np] += mu*F[i+Np] + muv*vy
-            v[i+xx] += mu*F[i+xx] + muv*vz
+            v[i  ]  += mux*F[i]    + muv*vx
+            v[i+Np] += muy*F[i+Np] + muv*vy
+            v[i+xx] += muz*F[i+xx] + muv*vz
         return
 
 
@@ -190,8 +179,14 @@ cdef class Rbm:
 
         cdef int Np = self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2,
-        cdef double vx, vy, vz,
+        cdef double vx, vy, vz, T1, T2, T3
         cdef double muv=self.muv
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv2, hbar_inv4
+        cdef double muTR0 = 4.0/(3*self.a*self.a)
+        cdef double muTR2 = 3./32.0
+        cdef double muTR
 
         for i in prange(Np, nogil=True):
             vx=0; vy=0; vz=0;
@@ -224,15 +219,17 @@ cdef class Rbm:
                     vz += (h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
                 else:
                     ''' the self contribution from the image point'''
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/dz
-                    idr3 = idr*idr*idr
-
-                    vx += -(T[j+Np]*dz )*idr3
-                    vy += -(- T[j] *dz )*idr3
-
-                    vx += h2*T[j+Np]*idr3
-                    vy += -h2*T[j]*idr3
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv
+                    hbar_inv4 = hbar_inv2*hbar_inv*hbar_inv
+                    
+                    muTR = muTR0*muTR2*hbar_inv4
+                    
+                    T1 = T[j];
+                    T2 = T[j+Np]
+                    
+                    vx += -muTR*T2   #change sign here to make up for '-=' below...
+                    vy += muTR*T1  #same here
 
             v[i]    -= muv*vx
             v[i+Np] -= muv*vy
@@ -263,6 +260,15 @@ cdef class Rbm:
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz
         cdef double vx, vy, vz, mus=(28.0*self.a**3)/24
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv2, hbar_inv4, hbar_inv6
+        cdef double piT2s11 = 5./16.0, piT2s12 = -1./4.
+        cdef double piT2s13 = 5./48.0
+        cdef double piT2s21 = -15./48.0, piT2s22 = 15./48.0
+        cdef double piT2s23 = -5./48.0
+        cdef double piT2s1, piT2s2
+        cdef double mus_inv = 1.0/mus
 
         for i in prange(Np, nogil=True):
             vx=0; vy=0;   vz=0;
@@ -337,40 +343,18 @@ cdef class Rbm:
 
                 else:
                     ''' the self contribution from the image point'''
-                    dz = r[i+xx]+r[j+xx]
-                    idr  = 1.0/dz
-                    idr2 = idr*idr; idr3 = idr2*idr; idr4 = idr3*idr
-
-                    #reflecting the first index of stresslet, S_jl M_lm
-                    sxz=-sxz; syz=-syz; szz=-szz;     trS=sxx+syy+szz;
-
-                    Sljrlz = szx*dz +  szy*dz + szz*dz ;
-                    Sljrjx = sxz*dz
-                    Sljrjy = syz*dz
-                    Sljrjz = szz*dz
-
-                    vx += Sljrjx*idr3 ;
-                    vy += Sljrjy*idr3 ;
-                    vz += (-Sljrlz + Sljrjz + trS*dz -3*szz*dz)*idr3 ;
-
-                    vx += -2*dz*sxz*idr3;
-                    vy += -2*dz*syz*idr3;
-                    vz += -2*dz*(-2*szz)*idr3;
-
-                    vx +=      h2*sxz*idr3;
-                    vy +=      h2*syz*idr3;
-                    vz += h2*(-2*szz)*idr3;
-
-                    #reflecting both the indices of stresslet, S_jl M_lm M_jk
-                    szx = -szx ; syz = -syz; szz = -szz;
-
-                    vx += h2*dz*(-5*sxz)*idr4
-                    vy += h2*dz*(-5*syz)*idr4
-                    vz += h2*dz*(10*szz)*idr4
-
-                    vx += hsq*12*sxz*idr4
-                    vy += hsq*12*syz*idr4
-                    vz += hsq*(-18*szz)*idr4
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv
+                    hbar_inv4 = hbar_inv2*hbar_inv*hbar_inv
+                    hbar_inv6 = hbar_inv4*hbar_inv2
+                    
+                    #implement superposition approximation only
+                    piT2s1 = piT2s11*hbar_inv2 + piT2s12*hbar_inv4 + piT2s13*hbar_inv6
+                    piT2s2 = piT2s21*hbar_inv2 + piT2s22*hbar_inv4 + piT2s23*hbar_inv6
+                    
+                    vx += mus_inv * 2*piT2s1*sxz
+                    vy += mus_inv * 2*piT2s1*syz
+                    vz += mus_inv * 3*(piT2s2*sxx + piT2s2*syy)
 
             v[i]    += vx*mus
             v[i+Np] += vy*mus
@@ -399,6 +383,14 @@ cdef class Rbm:
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2
         cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, muv = -1.0*(self.a**5)/10
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv3, hbar_inv5
+        cdef double piT3tpara1 = -1./40.
+        cdef double piT3tpara2 = 1./40.
+        cdef double piT3tperp1 = -1./10.
+        cdef double piT3tperp2 = 1./20.
+        cdef double pix, piy, piz
 
         for i in prange(Np, nogil=True):
             vx=0; vy=0; vz=0;
@@ -440,30 +432,17 @@ cdef class Rbm:
 
                 else:
                     ''' self contribution from the image point'''
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/dz
-                    idr3 = idr*idr*idr
-                    idr5 = idr3*idr*idr
-                    Ddotidr = D[j+xx]*dz*idr*idr
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
+                    hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
+                    
+                    pix = piT3tpara1*hbar_inv3 + piT3tpara2*hbar_inv5
+                    piy = pix
+                    piz = piT3tperp1*hbar_inv3 + piT3tperp2*hbar_inv5
 
-                    vx += -(2*D[j]    )*idr3
-                    vy += -(2*D[j+Np] )*idr3
-                    vz += -(2*D[j+xx] - 6*Ddotidr*dz )*idr3
-
-                    tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
-                    Ddotidr = tempD*dz*idr*idr
-
-                    vx += 12*dz*( dz*D[j]   )*idr5
-                    vy += 12*dz*( dz*D[j+Np])*idr5
-                    vz += 12*dz*( dz*tempD  - 5*dz*Ddotidr*dz + 2*tempD*dz )*idr5
-
-                    vx += -6*h2*(dz*D[j]   )*idr5
-                    vy += -6*h2*(dz*D[j+Np])*idr5
-                    vz += -6*h2*(dz*tempD  -5*Ddotidr*dz*dz + tempD*dz)*idr5 -6*h2*Ddotidr*idr3
-
-            v[i  ]  += muv*vx
-            v[i+Np] += muv*vy
-            v[i+xx] += muv*vz
+            v[i  ]  += pix*D[j]    + muv*vx
+            v[i+Np] += piy*D[j+Np] + muv*vy
+            v[i+xx] += piz*D[j+xx] + muv*vz
         return
    
 
@@ -491,6 +470,12 @@ cdef class Rbm:
         cdef int Np = self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, rlz, Fdotidr, h2
         cdef double ox, oy, oz, muv=self.muv
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv2, hbar_inv4
+        cdef double muRT0 = 4.0/(3*self.a*self.a)
+        cdef double muRT2 = -3./32.0
+        cdef double muRT, F1, F2
 
         for i in prange(Np, nogil=True):
             ox=0; oy=0; oz=0;
@@ -524,13 +509,17 @@ cdef class Rbm:
 
                 else:
                     ''' the self contribution from the image point'''
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/dz
-                    idr3 = idr*idr*idr
-
-
-                    ox += (h2*F[j+Np])*idr3
-                    oy += (h2*-F[j]  )*idr3
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv
+                    hbar_inv4 = hbar_inv2*hbar_inv*hbar_inv
+                    
+                    muRT = muRT0*muRT2*hbar_inv4
+                    
+                    F1 = F[j];
+                    F2 = F[j+Np]
+                    
+                    ox += muRT*F2
+                    oy += -muRT*F1 
 
             o[i  ]  += muv*ox
             o[i+Np] += muv*oy
@@ -559,6 +548,12 @@ cdef class Rbm:
         cdef int Np=self.Np, i, j, xx=2*Np
         cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
         cdef double ox, oy, oz, mur=self.mur, muv=self.muv
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv3
+        cdef double muRRpara = -5./16.0
+        cdef double muRRperp = -1./8.0
+        cdef double mux, muy, muz
 
         for i in prange(Np, nogil=True):
             ox=0; oy=0; oz=0;
@@ -601,17 +596,16 @@ cdef class Rbm:
                 else:
 
                     ''' self contribution from the image point'''
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/dz
-                    idr3 = idr*idr*idr
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
+                    
+                    mux = mur*(1 + muRRpara*hbar_inv3)
+                    muy = mux
+                    muz = mur*(1 + muRRperp*hbar_inv3)
 
-                    ox += 4*T[j]*idr3
-                    oy += 4*T[j+Np]*idr3
-                    oz += 16*T[j+xx]*idr3
-
-            o[i  ]  += mur*T[i  ]  - muv*ox
-            o[i+Np] += mur*T[i+Np] - muv*oy
-            o[i+xx] += mur*T[i+xx] - muv*oz
+            o[i  ]  += mux*T[i  ]  - muv*ox
+            o[i+Np] += muy*T[i+Np] - muv*oy
+            o[i+xx] += muz*T[i+xx] - muv*oz
         return
         
         
@@ -620,7 +614,12 @@ cdef class Rbm:
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz, rlz, smr3, smkrk3
-        cdef double ox, oy, oz, mus = (28.0*self.a**3)/24, h
+        cdef double ox, oy, oz, mus = (28.0*self.a**3)/24
+        
+        cdef double a = self.a, a_inv = 1.0/a
+        cdef double h, hbar_inv, hbar_inv3, hbar_inv5
+        cdef double piR2s1 = 5.0/32.0, piR2s2 = -1./8.0
+        cdef double piR2s
 
         for i in prange(Np, nogil=True):
             ox=0;   oy=0;   oz=0;
@@ -699,33 +698,77 @@ cdef class Rbm:
                     #ox +=                (sxz*dy-syz*dx)*idr5
                 else:
                     ### self contributions from the image
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/dz
-                    idr3 = idr*idr*idr
-                    # idr5 = idr3*idr*idr
-                    ox += 3*(-syz)*idr3
-                    oy += 3*(sxz )*idr3
-                    ##reflecting the second index of stresslet, S_jl M_lm
-                    #sxz=-sxz; syz=-syz; szz=-szz;
-                    #
-                    #Sljrjx = sxz*dz ;
-                    #Sljrjy = syz*dz ;
-                    #Sljrjz = szz*dz ;
-                    #srr = szz*dz*dz*idr2 ;
-                    #
-                    #ox += 2*syz*idr3 - 3*(Sljrjy*dz)*idr5
-                    #oy += 2*szx*idr3 - 3*(- Sljrjx*dz)*idr5
-                    #
-                    #smkrk3 = 30*(dx*Sljrjy-dy*Sljrjx)*idr5*idr2
-                    #oz += (h+dz)*smkrk3*dz
-
-                    #ox += 2*syz*idr3  - 3*(Sljrjy*dz )*idr5
-                    #oy += -2*szy*idr3 - 3*(- Sljrjx*dz )*idr5
-                    #
-                    #ox += 6*h*(-Sljrjy )*idr5
-                    #oy += 6*h*(Sljrjx  )*idr5
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
+                    hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
+                    
+                    piR2s = a_inv*(piR2s1*hbar_inv3 + piR2s2*hbar_inv5)
+                    
+                    ox += -2*piR2s*syz 
+                    oy +=  2*piR2s*sxz
 
             o[i]    += ox
+            o[i+Np] += oy
+            o[i+xx] += oz
+        return
+    
+    
+    cpdef propulsionR3t(self, double [:] o, double [:] r, double [:] D):
+        """
+        Compute angular velocity due to 3t mode of the slip :math:`o=\pi^{R,3t}\cdot D` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*Np,
+        r: np.array
+            An array of positions
+            An array of size 3*Np,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*Np,
+        """
+
+        cdef int Np=self.Np, i, j, xx=2*Np
+        cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
+        cdef double ox, oy, oz, mur=self.mur, muv=self.muv
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv4
+        cdef double piR3t0 = 3./(80.0*a)
+        cdef double piR3t, V1, V2
+
+        for i in prange(Np, nogil=True):
+            ox=0; oy=0; oz=0;
+            for j in range(Np):
+                dx = r[i]    - r[j]
+                dy = r[i+Np]  - r[j+Np]
+                h2  =  2*r[j+xx]
+                
+                if i!=j:
+                    pass
+                    ##
+                    ##
+                    ## to be determined 
+                    ##
+                    ##
+                    
+                else:
+                    ''' self contribution from the image point'''
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv4 = hbar_inv*hbar_inv*hbar_inv*hbar_inv
+                    
+                    piR3t = piR3t0*hbar_inv4
+                    
+                    V1 = D[j];
+                    V2 = D[j+Np]
+                    
+                    ox += piR3t*V2
+                    oy += -piR3t*V1 
+                   
+            o[i  ]  += ox
             o[i+Np] += oy
             o[i+xx] += oz
         return

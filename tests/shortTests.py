@@ -78,7 +78,7 @@ class WallBoundedTest(unittest.TestCase):
 
         a, N, eta = 1, 1, 1 
         mu = 1/(6*np.pi*a*eta)
-        mu = mu*(1- 9./16 + 1/8)  # add the standard wall-correction
+        mu = mu*(1- 9./16 + 1./8 - 1./16.)  # add the standard wall-correction
 
         V1 = mu*F
         V2 = 0*mu*F
@@ -97,7 +97,7 @@ class WallBoundedTest(unittest.TestCase):
 
         a, N, eta = 1, 1, 1 
         mu = 1/(6*np.pi*a*eta)
-        mu = mu*(1 - 9/8. + 1./2)  # add the standard wall-correction
+        mu = mu*(1 - 9/8. + 1./2 -1./8.)  # add the standard wall-correction
 
         V1 = mu*F
         V2 = 0*mu*F

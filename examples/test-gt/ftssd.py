@@ -105,6 +105,9 @@ class FTS:
         return -0.5*b*g1s2s
               
     def G2a2s(self, xij,yij,zij, alpha,kappa1,beta):
+        ## used in the matrix elements that eg G2a2s = 1/2 * curl G1s2s
+        ## which follows from Omega = 1/2 * curl V
+        ## the finite size operators will vanish because of the curl
         b = self.b
         g2a2s=0
         for nu in range(3):
@@ -260,9 +263,12 @@ class FTS:
                           + 1./b * np.dot(self.tensorG1s2a(xij,yij,zij), torque)
                           - np.einsum('ijk,jk',self.tensorG1s2s(xij,yij,zij),F2s))
                 
-                    o_ += 0.5/b*(np.dot(self.tensorG2a1s(xij,yij,zij), force)
+                    o_ += (np.dot(self.tensorG2a1s(xij,yij,zij), force)
                                  + 1./b * np.dot(self.tensorG2a2a(xij,yij,zij), torque)
                                  - np.einsum('ijk,jk',self.tensorG2a2s(xij,yij,zij),F2s))
+                    ## no factor 1/(2b) necessary for angular velocity, because we have
+                    ## used in the matrix elements that eg G2a1s = 1/2 * curl G1s1s
+                    ## which follows from Omega = 1/2 * curl V
                        
                 else:
                     force  = np.array([F[j],F[j+Np], F[j+2*Np]])

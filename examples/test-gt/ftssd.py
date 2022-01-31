@@ -85,11 +85,14 @@ class FTS:
         for mu in range(3):
             for kappa in range(3):
                 g2a2a += self.epsilon(alpha,mu,kappa)*self.delG1s2a(xij,yij,zij, kappa,beta,mu)
-        return -0.25*b*g2a2a
+        return 0.5*g2a2a
 
     ## auxiliary functions 
     def delG1s2a(self, xij,yij,zij, kappa,beta,mu):
-            return grad(self.G1s2a, mu)(xij,yij,zij, kappa,beta)
+        return grad(self.G1s2a, mu)(xij,yij,zij, kappa,beta)
+        
+    #def delG1s1s(self, xij,yij,zij, alpha,beta,gamma):
+    #    return grad(self.G1s1s, gamma)(xij,yij,zij, alpha,beta) 
         
         
         

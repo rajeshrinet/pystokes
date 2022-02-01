@@ -8,7 +8,11 @@ class FTS:
     """
     Rigid body motion (RBM) - velocity and angular velocity
     
-    FTS - Stokesian Dynamics for an unbounded fluid
+    FTS - Stokesian Dynamics for an unbounded fluid: F^H=F2s, V^H=0 (rigid particle)
+    
+    Here, we solve the linear system arising from the boundary integral equation of Stokes
+    flow directly, by inverting G^HH. Here, the matrix elements are computed by automatic
+    differentiation.
     """
     
     def __init__(self, radius=1., particles=1, viscosity=1.0):

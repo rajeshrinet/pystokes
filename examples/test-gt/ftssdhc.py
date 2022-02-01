@@ -26,7 +26,10 @@ class FTShc:
         self.G02s = 3./(20*PI*self.eta*self.b)
         
         
-    ##direct solver for FTS Stokesian dynamics    
+    ## direct solver for FTS Stokesian dynamics
+    ## not entirely sure yet whether there should be symmetry factors of 2 
+    ## whenever there is a dot product G2s2s F2s etc, since we are effectively 
+    ## throwing away half of the terms due to symmetry
     def directSolve(self, v, o, r, F, T):
         b = self.b
         Np = self.Np

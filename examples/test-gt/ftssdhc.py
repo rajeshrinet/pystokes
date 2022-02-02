@@ -44,9 +44,22 @@ class FTShc:
                 if i!=j:
                     force  = np.array([F[j],F[j+Np], F[j+2*Np]])
                     torque = np.array([T[j],T[j+Np], T[j+2*Np]])
+                    
+                    rhs = np.zeros(5)
+                    ## F2s_j is induced by traction on all other particles
+                    for k in range(Np):
+                        xjk = r[j]    - r[k]
+                        yjk = r[j+Np]  - r[k+Np]
+                        zjk = r[j+2*Np]  - r[k+2*Np]
+                        if k!=j:
+                            force_k  = np.array([F[k],F[k+Np], F[k+2*Np]])
+                            torque_k = np.array([T[k],T[k+Np], T[k+2*Np]])
+                            
+                            rhs += (np.dot(me.G2s1s(xjk,yjk,zjk, b,eta), force_k) 
+                                   + 1./b * np.dot(me.G2s2a(xjk,yjk,zjk, b,eta), torque_k))
+                        else:
+                            pass #otherwise have diagonal elements here
                                     
-                    rhs = (np.dot(me.G2s1s(xij,yij,zij, b,eta), force) 
-                           + 1./b * np.dot(me.G2s2a(xij,yij,zij, b,eta), torque))
                     F2s = np.linalg.solve(me.G2s2s(xij,yij,zij, b,eta), rhs)
                     
                     v_ += (np.dot(me.G1s1s(xij,yij,zij, b,eta), force)

@@ -262,8 +262,20 @@ class FTS:
                     lhs_mat = np.reshape(lhs, (9,9))
                     lhs_mat_inv = np.linalg.pinv(lhs_mat)
                     lhs_inv = np.reshape(lhs_mat_inv, (3,3,3,3))
-                    rhs = (np.dot(self.tensorG2s1s(xij,yij,zij), force) 
-                           + 1./b * np.dot(self.tensorG2s2a(xij,yij,zij), torque))
+                    rhs=np.zeros([3,3])
+                    ## F2s is induced by traction on all other particles
+                    for k in range(Np):
+                        xjk = r[j]    - r[k]
+                        yjk = r[j+Np]  - r[k+Np]
+                        zjk = r[j+2*Np]  - r[k+2*Np]
+                        if k!=j:
+                            force_k  = np.array([F[k],F[k+Np], F[k+2*Np]])
+                            torque_k = np.array([T[k],T[k+Np], T[k+2*Np]])
+                            
+                            rhs += (np.dot(self.tensorG2s1s(xjk,yjk,zjk), force_k) 
+                                   + 1./b * np.dot(self.tensorG2s2a(xjk,yjk,zjk), torque_k))
+                        else:
+                            pass #otherwise have diagonal elements here
                     F2s = np.einsum('ijkl, kl', lhs_inv, rhs)
                     
                     v_ += (np.dot(self.tensorG1s1s(xij,yij,zij), force)

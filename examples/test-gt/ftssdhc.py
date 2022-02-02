@@ -41,7 +41,7 @@ class FTShc:
                 xij = r[i]    - r[j]
                 yij = r[i+Np]  - r[j+Np]
                 zij = r[i+2*Np]  - r[j+2*Np]
-                if i!=j:
+                if j!=i:
                     force  = np.array([F[j],F[j+Np], F[j+2*Np]])
                     torque = np.array([T[j],T[j+Np], T[j+2*Np]])
                     

@@ -66,7 +66,7 @@ class FTShc:
                           + 1./b * np.dot(me.G1s2a(xij,yij,zij, b,eta), torque)
                           - np.dot(me.G1s2s(xij,yij,zij, b,eta),F2s))
                     
-                    o_ += (np.dot(me.G2a1s(xij,yij,zij, b,eta), force)
+                    o_ += 0.5/b*(np.dot(me.G2a1s(xij,yij,zij, b,eta), force)
                                  + 1./b * np.dot(me.G2a2a(xij,yij,zij, b,eta), torque)
                                  - np.dot(me.G2a2s(xij,yij,zij, b,eta),F2s))
                            

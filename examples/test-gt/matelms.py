@@ -165,143 +165,143 @@ def G2s2s(xij,yij,zij, b,eta):
 ##
 
 def G1s3t(xij,yij,zij, b,eta):
-    return np.array([[(b**2*(2*xij**2 - yij**2 - zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-     (3*b**2*xij*yij)/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),(3*b**2*xij*zij)/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5)],
-     [(3*b**2*xij*yij)/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-     -0.05*(b**2*(xij**2 - 2*yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-     (3*b**2*yij*zij)/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5)],
-     [(3*b**2*xij*zij)/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),(3*b**2*yij*zij)/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-     -0.05*(b**2*(xij**2 + yij**2 - 2*zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**2.5)]])
+    return np.array([[(b**2*(2*xij**2 - yij**2 - zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+     (3*b**2*xij*yij)/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),(3*b**2*xij*zij)/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5)],
+     [(3*b**2*xij*yij)/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+     -0.05*(b**2*(xij**2 - 2*yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+     (3*b**2*yij*zij)/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5)],
+     [(3*b**2*xij*zij)/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),(3*b**2*yij*zij)/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+     -0.05*(b**2*(xij**2 + yij**2 - 2*zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**2.5)]])
 
 
 def G1s3a(xij,yij,zij, b,eta):
-    return np.array([[0,(b**2*xij*zij)/(3.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-      -0.3333333333333333*(b**2*xij*yij)/(eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),(b**2*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-      (b**2*(xij**2 - 5*yij**2 + 4*zij**2))/(18.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5)],
-     [-0.5*(b**2*xij*zij)/(eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-      -0.16666666666666666*(b**2*yij*zij)/(eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-      (b**2*(5*xij**2 - yij**2 - 4*zij**2))/(18.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),0,
-      (b**2*xij*yij)/(3.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5)],
-     [(b**2*xij*yij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-      -0.05555555555555555*(b**2*(5*xij**2 - 4*yij**2 - zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-      (b**2*yij*zij)/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),-0.5*(b**2*xij*yij)/(eta*Pi*(xij**2 + yij**2 + zij**2)**2.5),
-      -0.16666666666666666*(b**2*xij*zij)/(eta*Pi*(xij**2 + yij**2 + zij**2)**2.5)]])
+    return np.array([[0,(b**2*xij*zij)/(3.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+      -0.3333333333333333*(b**2*xij*yij)/(eta*PI*(xij**2 + yij**2 + zij**2)**2.5),(b**2*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+      (b**2*(xij**2 - 5*yij**2 + 4*zij**2))/(18.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5)],
+     [-0.5*(b**2*xij*zij)/(eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+      -0.16666666666666666*(b**2*yij*zij)/(eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+      (b**2*(5*xij**2 - yij**2 - 4*zij**2))/(18.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),0,
+      (b**2*xij*yij)/(3.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5)],
+     [(b**2*xij*yij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+      -0.05555555555555555*(b**2*(5*xij**2 - 4*yij**2 - zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+      (b**2*yij*zij)/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),-0.5*(b**2*xij*yij)/(eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
+      -0.16666666666666666*(b**2*xij*zij)/(eta*PI*(xij**2 + yij**2 + zij**2)**2.5)]])
 
 
 def G1s3s(xij,yij,zij, b,eta):
     return np.array([[(-30*b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2) + 
          7*b**2*(16*xij**6 - 12*xij**4*(yij**2 + zij**2) - 27*xij**2*(yij**2 + zij**2)**2 + (yij**2 + zij**2)**3))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
          (-150*b**2*(4*xij**2 - 3*(yij**2 + zij**2)) + 7*(32*xij**4 + 19*xij**2*(yij**2 + zij**2) - 13*(yij**2 + zij**2)**2)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
          (-150*b**2*(4*xij**2 - 3*(yij**2 + zij**2)) + 7*(32*xij**4 + 19*xij**2*(yij**2 + zij**2) - 13*(yij**2 + zij**2)**2)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
           (4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)) - 
          7*b**2*(20*xij**6 + (8*yij**2 - zij**2)*(yij**2 + zij**2)**2 + xij**4*(-87*yij**2 + 39*zij**2) - 
-            9*xij**2*(11*yij**4 + 9*yij**2*zij**2 - 2*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            9*xij**2*(11*yij**4 + 9*yij**2*zij**2 - 2*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*yij*zij*(98*xij**4 - 50*b**2*(6*xij**2 - yij**2 - zij**2) + 91*xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*(4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)) - 
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*(4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)) - 
          7*b**2*(20*xij**6 + xij**4*(39*yij**2 - 87*zij**2) - (yij**2 - 8*zij**2)*(yij**2 + zij**2)**2 + 
-            9*xij**2*(2*yij**4 - 9*yij**2*zij**2 - 11*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            9*xij**2*(2*yij**4 - 9*yij**2*zij**2 - 11*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*xij*yij*(50*b**2*(3*xij**2 - 4*yij**2 + 3*zij**2) + 
-           7*(-7*xij**4 + 8*yij**4 + yij**2*zij**2 - 7*zij**4 + xij**2*(yij**2 - 14*zij**2))))/(56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+           7*(-7*xij**4 + 8*yij**4 + yij**2*zij**2 - 7*zij**4 + xij**2*(yij**2 - 14*zij**2))))/(56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*xij*zij*(150*b**2*(xij**2 - 6*yij**2 + zij**2) - 
            7*(7*xij**4 - 38*yij**4 - 31*yij**2*zij**2 + 7*zij**4 + xij**2*(-31*yij**2 + 14*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
          (150*b**2*(xij**2 + yij**2 - 6*zij**2) - 7*(7*xij**4 + 7*yij**4 - 31*yij**2*zij**2 - 38*zij**4 + xij**2*(14*yij**2 - 31*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*xij*yij*
          (-50*b**2*(4*xij**2 - 3*(yij**2 + zij**2)) + 7*(8*xij**4 + xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2)))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
           (4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)) - 
          7*b**2*(8*xij**6 + (20*yij**2 - zij**2)*(yij**2 + zij**2)**2 + xij**4*(-99*yij**2 + 15*zij**2) + 
-            xij**2*(-87*yij**4 - 81*yij**2*zij**2 + 6*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            xij**2*(-87*yij**4 - 81*yij**2*zij**2 + 6*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*yij*zij*(-150*b**2*(6*xij**2 - yij**2 - zij**2) + 7*(38*xij**4 + 31*xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
          (150*b**2*(3*xij**2 - 4*yij**2 + 3*zij**2) - 7*
             (13*xij**4 - 32*yij**4 - 19*yij**2*zij**2 + 13*zij**4 + xij**2*(-19*yij**2 + 26*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
          (50*b**2*(xij**2 - 6*yij**2 + zij**2) - 7*(xij**4 - 14*yij**4 - 13*yij**2*zij**2 + zij**4 + xij**2*(-13*yij**2 + 2*zij**2))))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
          (150*b**2*(xij**2 + yij**2 - 6*zij**2) - 7*(7*xij**4 + 7*yij**4 - 31*yij**2*zij**2 - 38*zij**4 + xij**2*(14*yij**2 - 31*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-30*b**4*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-30*b**4*
           (3*xij**4 + 8*yij**4 - 24*yij**2*zij**2 + 3*zij**4 + 6*xij**2*(-4*yij**2 + zij**2)) + 
          7*b**2*(xij**6 + 16*yij**6 - 12*yij**4*zij**2 - 27*yij**2*zij**4 + zij**6 + 3*xij**4*(-9*yij**2 + zij**2) - 
-            3*xij**2*(4*yij**4 + 18*yij**2*zij**2 - zij**4)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            3*xij**2*(4*yij**4 + 18*yij**2*zij**2 - zij**4)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*yij*zij*(150*b**2*(3*xij**2 - 4*yij**2 + 3*zij**2) - 
            7*(13*xij**4 - 32*yij**4 - 19*yij**2*zij**2 + 13*zij**4 + xij**2*(-19*yij**2 + 26*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-90*b**4*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-90*b**4*
           (xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)) + 
          7*b**2*(xij**6 - 20*yij**6 + 87*yij**4*zij**2 + 99*yij**2*zij**4 - 8*zij**6 - 6*xij**4*(3*yij**2 + zij**2) - 
-            3*xij**2*(13*yij**4 - 27*yij**2*zij**2 + 5*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
+            3*xij**2*(13*yij**4 - 27*yij**2*zij**2 + 5*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
      [(b**2*xij*zij*(-50*b**2*(4*xij**2 - 3*(yij**2 + zij**2)) + 7*(8*xij**4 + xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2)))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*yij*zij*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*yij*zij*
          (-150*b**2*(6*xij**2 - yij**2 - zij**2) + 7*(38*xij**4 + 31*xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
           (4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)) - 
          7*b**2*(8*xij**6 + 3*xij**4*(5*yij**2 - 33*zij**2) - (yij**2 - 20*zij**2)*(yij**2 + zij**2)**2 + 
-            xij**2*(6*yij**4 - 81*yij**2*zij**2 - 87*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            xij**2*(6*yij**4 - 81*yij**2*zij**2 - 87*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*xij*zij*(150*b**2*(xij**2 - 6*yij**2 + zij**2) - 
            7*(7*xij**4 - 38*yij**4 - 31*yij**2*zij**2 + 7*zij**4 + xij**2*(-31*yij**2 + 14*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
          (50*b**2*(xij**2 + yij**2 - 6*zij**2) - 7*(xij**4 + yij**4 - 13*yij**2*zij**2 - 14*zij**4 + xij**2*(2*yij**2 - 13*zij**2))))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
          (150*b**2*(3*xij**2 + 3*yij**2 - 4*zij**2) - 7*
             (13*xij**4 + 13*yij**4 - 19*yij**2*zij**2 - 32*zij**4 + xij**2*(26*yij**2 - 19*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*yij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*yij*zij*
          (50*b**2*(3*xij**2 - 4*yij**2 + 3*zij**2) + 7*(-7*xij**4 + 8*yij**4 + yij**2*zij**2 - 7*zij**4 + xij**2*(yij**2 - 14*zij**2))))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-90*b**4*(xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)) + 
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-90*b**4*(xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)) + 
          7*b**2*(xij**6 - 8*yij**6 + 99*yij**4*zij**2 + 87*yij**2*zij**4 - 20*zij**6 - 6*xij**4*(yij**2 + 3*zij**2) - 
-            3*xij**2*(5*yij**4 - 27*yij**2*zij**2 + 13*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            3*xij**2*(5*yij**4 - 27*yij**2*zij**2 + 13*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*yij*zij*(150*b**2*(3*xij**2 + 3*yij**2 - 4*zij**2) - 
            7*(13*xij**4 + 13*yij**4 - 19*yij**2*zij**2 - 32*zij**4 + xij**2*(26*yij**2 - 19*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)]])
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)]])
 
 
 
 def G2a3a(xij,yij,zij, b,eta):
-    return np.array([[(b**3*(2*xij**3 - 3*xij*(yij**2 + zij**2)))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.5*(b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.5*(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.5*(b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [-0.5*(b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.5*(b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*yij*(-3*xij**2 + 2*yij**2 - 3*zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.5*(b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [-0.5*(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.5*(b**3*xij*(xij**2 + yij**2 - 4*zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.5*(b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.5*(b**3*yij*(xij**2 + yij**2 - 4*zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)]])
+    return np.array([[(b**3*(2*xij**3 - 3*xij*(yij**2 + zij**2)))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.5*(b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.5*(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.5*(b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [-0.5*(b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.5*(b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*yij*(-3*xij**2 + 2*yij**2 - 3*zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.5*(b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [-0.5*(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.5*(b**3*xij*(xij**2 + yij**2 - 4*zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.5*(b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.5*(b**3*yij*(xij**2 + yij**2 - 4*zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5)]])
 
 
 def G2a3s(xij,yij,zij, b,eta):
-    return np.array([[0,-0.25*(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-5*b**3*xij*(yij**2 - zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-3*b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*yij*(xij**2 - 4*yij**2 + 11*zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.25*(b**3*zij*(xij**2 + 11*yij**2 - 4*zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [(3*b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*xij*(4*xij**2 - yij**2 - 11*zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*yij*(xij**2 - zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*zij*(11*xij**2 + yij**2 - 4*zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),0,
-      -0.25*(b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [(-3*b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.25*(b**3*xij*(4*xij**2 - 11*yij**2 - zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.25*(b**3*yij*(11*xij**2 - 4*yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-5*b**3*(xij**2 - yij**2)*zij)/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.25*(b**3*yij*(xij**2 + yij**2 - 4*zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (3*b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*xij*(xij**2 + yij**2 - 4*zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)]])
+    return np.array([[0,-0.25*(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-5*b**3*xij*(yij**2 - zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-3*b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*yij*(xij**2 - 4*yij**2 + 11*zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.25*(b**3*zij*(xij**2 + 11*yij**2 - 4*zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [(3*b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*xij*(4*xij**2 - yij**2 - 11*zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*yij*(xij**2 - zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*zij*(11*xij**2 + yij**2 - 4*zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),0,
+      -0.25*(b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [(-3*b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.25*(b**3*xij*(4*xij**2 - 11*yij**2 - zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.25*(b**3*yij*(11*xij**2 - 4*yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-5*b**3*(xij**2 - yij**2)*zij)/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.25*(b**3*yij*(xij**2 + yij**2 - 4*zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (3*b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*xij*(xij**2 + yij**2 - 4*zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)]])
 
 
 ##
@@ -345,73 +345,73 @@ def G3a2a(xij,yij,zij, b,eta):
 def G3s1s(xij,yij,zij, b,eta):
     return np.array([[(-30*b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2) + 
          7*b**2*(16*xij**6 - 12*xij**4*(yij**2 + zij**2) - 27*xij**2*(yij**2 + zij**2)**2 + (yij**2 + zij**2)**3))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
          (-50*b**2*(4*xij**2 - 3*(yij**2 + zij**2)) + 7*(8*xij**4 + xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2)))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
          (-50*b**2*(4*xij**2 - 3*(yij**2 + zij**2)) + 7*(8*xij**4 + xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2)))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*xij*yij*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*xij*yij*
          (-150*b**2*(4*xij**2 - 3*(yij**2 + zij**2)) + 7*(32*xij**4 + 19*xij**2*(yij**2 + zij**2) - 13*(yij**2 + zij**2)**2)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
           (4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)) - 
          7*b**2*(8*xij**6 + (20*yij**2 - zij**2)*(yij**2 + zij**2)**2 + xij**4*(-99*yij**2 + 15*zij**2) + 
-            xij**2*(-87*yij**4 - 81*yij**2*zij**2 + 6*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            xij**2*(-87*yij**4 - 81*yij**2*zij**2 + 6*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*yij*zij*(-150*b**2*(6*xij**2 - yij**2 - zij**2) + 7*(38*xij**4 + 31*xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*xij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*xij*zij*
          (-150*b**2*(4*xij**2 - 3*(yij**2 + zij**2)) + 7*(32*xij**4 + 19*xij**2*(yij**2 + zij**2) - 13*(yij**2 + zij**2)**2)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*yij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*yij*zij*
          (-150*b**2*(6*xij**2 - yij**2 - zij**2) + 7*(38*xij**4 + 31*xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(90*b**4*
           (4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)) - 
          7*b**2*(8*xij**6 + 3*xij**4*(5*yij**2 - 33*zij**2) - (yij**2 - 20*zij**2)*(yij**2 + zij**2)**2 + 
-            xij**2*(6*yij**4 - 81*yij**2*zij**2 - 87*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
+            xij**2*(6*yij**4 - 81*yij**2*zij**2 - 87*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
      [(90*b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)) - 
          7*b**2*(20*xij**6 + (8*yij**2 - zij**2)*(yij**2 + zij**2)**2 + xij**4*(-87*yij**2 + 39*zij**2) - 
-            9*xij**2*(11*yij**4 + 9*yij**2*zij**2 - 2*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            9*xij**2*(11*yij**4 + 9*yij**2*zij**2 - 2*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*xij*yij*(150*b**2*(3*xij**2 - 4*yij**2 + 3*zij**2) - 
            7*(13*xij**4 - 32*yij**4 - 19*yij**2*zij**2 + 13*zij**4 + xij**2*(-19*yij**2 + 26*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
          (150*b**2*(xij**2 - 6*yij**2 + zij**2) - 7*(7*xij**4 - 38*yij**4 - 31*yij**2*zij**2 + 7*zij**4 + xij**2*(-31*yij**2 + 14*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*yij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*yij*zij*
          (98*xij**4 - 50*b**2*(6*xij**2 - yij**2 - zij**2) + 91*xij**2*(yij**2 + zij**2) - 7*(yij**2 + zij**2)**2))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
          (50*b**2*(xij**2 - 6*yij**2 + zij**2) - 7*(xij**4 - 14*yij**4 - 13*yij**2*zij**2 + zij**4 + xij**2*(-13*yij**2 + 2*zij**2))))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*yij*
          (50*b**2*(xij**2 + yij**2 - 6*zij**2) - 7*(xij**4 + yij**4 - 13*yij**2*zij**2 - 14*zij**4 + xij**2*(2*yij**2 - 13*zij**2))))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(90*b**4*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(90*b**4*
           (4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)) - 
          7*b**2*(20*xij**6 + xij**4*(39*yij**2 - 87*zij**2) - (yij**2 - 8*zij**2)*(yij**2 + zij**2)**2 + 
-            9*xij**2*(2*yij**4 - 9*yij**2*zij**2 - 11*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            9*xij**2*(2*yij**4 - 9*yij**2*zij**2 - 11*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*xij*yij*(150*b**2*(xij**2 + yij**2 - 6*zij**2) - 
            7*(7*xij**4 + 7*yij**4 - 31*yij**2*zij**2 - 38*zij**4 + xij**2*(14*yij**2 - 31*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*xij*zij*
          (150*b**2*(3*xij**2 + 3*yij**2 - 4*zij**2) - 7*
             (13*xij**4 + 13*yij**4 - 19*yij**2*zij**2 - 32*zij**4 + xij**2*(26*yij**2 - 19*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(b**2*xij*yij*
          (50*b**2*(3*xij**2 - 4*yij**2 + 3*zij**2) + 7*(-7*xij**4 + 8*yij**4 + yij**2*zij**2 - 7*zij**4 + xij**2*(yij**2 - 14*zij**2))))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-30*b**4*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-30*b**4*
           (3*xij**4 + 8*yij**4 - 24*yij**2*zij**2 + 3*zij**4 + 6*xij**2*(-4*yij**2 + zij**2)) + 
          7*b**2*(xij**6 + 16*yij**6 - 12*yij**4*zij**2 - 27*yij**2*zij**4 + zij**6 + 3*xij**4*(-9*yij**2 + zij**2) - 
-            3*xij**2*(4*yij**4 + 18*yij**2*zij**2 - zij**4)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            3*xij**2*(4*yij**4 + 18*yij**2*zij**2 - zij**4)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*yij*zij*(50*b**2*(3*xij**2 - 4*yij**2 + 3*zij**2) + 
-           7*(-7*xij**4 + 8*yij**4 + yij**2*zij**2 - 7*zij**4 + xij**2*(yij**2 - 14*zij**2))))/(56.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
+           7*(-7*xij**4 + 8*yij**4 + yij**2*zij**2 - 7*zij**4 + xij**2*(yij**2 - 14*zij**2))))/(56.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
      [(b**2*xij*zij*(150*b**2*(xij**2 - 6*yij**2 + zij**2) - 
            7*(7*xij**4 - 38*yij**4 - 31*yij**2*zij**2 + 7*zij**4 + xij**2*(-31*yij**2 + 14*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(b**2*yij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(b**2*yij*zij*
          (150*b**2*(3*xij**2 - 4*yij**2 + 3*zij**2) - 7*
             (13*xij**4 - 32*yij**4 - 19*yij**2*zij**2 + 13*zij**4 + xij**2*(-19*yij**2 + 26*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-90*b**4*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-90*b**4*
           (xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)) + 
          7*b**2*(xij**6 - 8*yij**6 + 99*yij**4*zij**2 + 87*yij**2*zij**4 - 20*zij**6 - 6*xij**4*(yij**2 + 3*zij**2) - 
-            3*xij**2*(5*yij**4 - 27*yij**2*zij**2 + 13*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
+            3*xij**2*(5*yij**4 - 27*yij**2*zij**2 + 13*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
      [(b**2*xij*yij*(150*b**2*(xij**2 + yij**2 - 6*zij**2) - 
            7*(7*xij**4 + 7*yij**4 - 31*yij**2*zij**2 - 38*zij**4 + xij**2*(14*yij**2 - 31*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-90*b**4*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-90*b**4*
           (xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)) + 
          7*b**2*(xij**6 - 20*yij**6 + 87*yij**4*zij**2 + 99*yij**2*zij**4 - 8*zij**6 - 6*xij**4*(3*yij**2 + zij**2) - 
-            3*xij**2*(13*yij**4 - 27*yij**2*zij**2 + 5*zij**4)))/(504.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+            3*xij**2*(13*yij**4 - 27*yij**2*zij**2 + 5*zij**4)))/(504.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (b**2*yij*zij*(150*b**2*(3*xij**2 + 3*yij**2 - 4*zij**2) - 
            7*(13*xij**4 + 13*yij**4 - 19*yij**2*zij**2 - 32*zij**4 + xij**2*(26*yij**2 - 19*zij**2))))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)]])
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)]])
 
 
 def G3s2a(xij,yij,zij, b,eta):
@@ -449,48 +449,48 @@ def G3s2a(xij,yij,zij, b,eta):
 ##
 
 def G2s3t(xij,yij,zij, b,eta):
-    return np.array([[(-3*b**3*(2*xij**3 - 3*xij*(yij**2 + zij**2)))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (3*b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (3*b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [(3*b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (3*b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-3*b**3*xij*yij*zij)/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [(3*b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-3*b**3*xij*yij*zij)/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (3*b**3*xij*(xij**2 + yij**2 - 4*zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [(3*b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (3*b**3*yij*(3*xij**2 - 2*yij**2 + 3*zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (3*b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [(-3*b**3*xij*yij*zij)/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (3*b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (3*b**3*yij*(xij**2 + yij**2 - 4*zij**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)]])
+    return np.array([[(-3*b**3*(2*xij**3 - 3*xij*(yij**2 + zij**2)))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (3*b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (3*b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [(3*b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (3*b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-3*b**3*xij*yij*zij)/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [(3*b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-3*b**3*xij*yij*zij)/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (3*b**3*xij*(xij**2 + yij**2 - 4*zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [(3*b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (3*b**3*yij*(3*xij**2 - 2*yij**2 + 3*zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (3*b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [(-3*b**3*xij*yij*zij)/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (3*b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (3*b**3*yij*(xij**2 + yij**2 - 4*zij**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)]])
 
 
 
 def G2s3a(xij,yij,zij, b,eta):
-    return np.array([[0,(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.16666666666666666*(b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*xij*(xij**2 + 6*yij**2 - 9*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [-0.25*(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*xij*yij*zij)/(12.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-5*b**3*xij*(xij**2 - yij**2 - 2*zij**2))/(12.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*yij*(-xij**2 + yij**2 - 2*zij**2))/(12.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [(b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*xij*(xij**2 - 2*yij**2 - zij**2))/(12.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (-5*b**3*xij*yij*zij)/(12.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*yij*(xij**2 - zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*zij*(13*xij**2 + 8*yij**2 - 7*zij**2))/(12.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [(5*b**3*xij*yij*zij)/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.3333333333333333*(b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.16666666666666666*(b**3*yij*(6*xij**2 + yij**2 - 9*zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),0,
-      (b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)],
-     [(-5*b**3*xij*(yij**2 - zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*yij*(8*xij**2 - 7*yij**2 + 13*zij**2))/(12.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (b**3*zij*(-8*xij**2 - 13*yij**2 + 7*zij**2))/(12.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      -0.25*(b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**3.5),
-      (5*b**3*xij*yij*zij)/(12.*eta*Pi*(xij**2 + yij**2 + zij**2)**3.5)]])
+    return np.array([[0,(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.16666666666666666*(b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*xij*(xij**2 + 6*yij**2 - 9*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [-0.25*(b**3*zij*(-4*xij**2 + yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*xij*yij*zij)/(12.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-5*b**3*xij*(xij**2 - yij**2 - 2*zij**2))/(12.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*yij*(-xij**2 + yij**2 - 2*zij**2))/(12.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [(b**3*yij*(-4*xij**2 + yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*xij*(xij**2 - 2*yij**2 - zij**2))/(12.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (-5*b**3*xij*yij*zij)/(12.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*yij*(xij**2 - zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*zij*(13*xij**2 + 8*yij**2 - 7*zij**2))/(12.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [(5*b**3*xij*yij*zij)/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.3333333333333333*(b**3*zij*(xij**2 - 4*yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.16666666666666666*(b**3*yij*(6*xij**2 + yij**2 - 9*zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),0,
+      (b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)],
+     [(-5*b**3*xij*(yij**2 - zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*yij*(8*xij**2 - 7*yij**2 + 13*zij**2))/(12.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (b**3*zij*(-8*xij**2 - 13*yij**2 + 7*zij**2))/(12.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      -0.25*(b**3*xij*(xij**2 - 4*yij**2 + zij**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**3.5),
+      (5*b**3*xij*yij*zij)/(12.*eta*PI*(xij**2 + yij**2 + zij**2)**3.5)]])
 
 
 
@@ -519,31 +519,31 @@ def G3a2s(xij,yij,zij, b,eta):
 
 
 def G3a3a(xij,yij,zij, b,eta):
-    return np.array([[-0.5*(b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-5*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-5*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(-5*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(-5*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (b**4*(4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      -0.5*(b**4*(3*xij**4 + 8*yij**4 - 24*yij**2*zij**2 + 3*zij**4 + 6*xij**2*(-4*yij**2 + zij**2)))/(eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*yij*zij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*yij*zij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      -0.5*(b**4*(xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)))/(eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)]])
+    return np.array([[-0.5*(b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-5*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-5*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(-5*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(-5*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (b**4*(4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      -0.5*(b**4*(3*xij**4 + 8*yij**4 - 24*yij**2*zij**2 + 3*zij**4 + 6*xij**2*(-4*yij**2 + zij**2)))/(eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*yij*zij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*yij*zij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      -0.5*(b**4*(xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)))/(eta*PI*(xij**2 + yij**2 + zij**2)**4.5)]])
 
 
 
@@ -815,403 +815,403 @@ def G3s2s(xij,yij,zij, b,eta):
 
 
 def G3s3a(xij,yij,zij, b,eta):
-    return np.array([[0,(5*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-5*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+    return np.array([[0,(5*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-5*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       -0.16666666666666666*(b**4*(4*xij**4 - 6*yij**4 + 3*yij**2*zij**2 + 9*zij**4 + xij**2*(33*yij**2 - 57*zij**2)))/
-        (eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(-5*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/
-       (6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),0,(b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2))/
-       (6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(3.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*yij*(2*xij**2 - 5*yij**2 + 9*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(5*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      -0.16666666666666666*(b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2))/(eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),0,
-      (-5*b**4*xij*yij*(6*xij**2 - yij**2 - 15*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-5*b**4*xij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/(3.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(3.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*yij*(5*xij**2 - 2*yij**2 - 9*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*yij*zij*(-3*xij**2 + 4*yij**2 - 3*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+        (eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(-5*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/
+       (6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),0,(b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2))/
+       (6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(3.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*yij*(2*xij**2 - 5*yij**2 + 9*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(5*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      -0.16666666666666666*(b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2))/(eta*PI*(xij**2 + yij**2 + zij**2)**4.5),0,
+      (-5*b**4*xij*yij*(6*xij**2 - yij**2 - 15*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-5*b**4*xij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/(3.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(3.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*yij*(5*xij**2 - 2*yij**2 - 9*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*yij*zij*(-3*xij**2 + 4*yij**2 - 3*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       -0.16666666666666666*(b**4*(3*xij**4 + 8*yij**4 - 24*yij**2*zij**2 + 3*zij**4 + 6*xij**2*(-4*yij**2 + zij**2)))/
-        (eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(5*b**4*(-yij**4 + zij**4 + 6*xij**2*(yij**2 - zij**2)))/
-       (6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/
-       (6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(5*b**4*xij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/
-       (6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(5*b**4*(xij**2 - zij**2)*(xij**2 - 6*yij**2 + zij**2))/
-       (6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*yij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/
-       (6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(-5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/
-       (3.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*xij*zij*(5*xij**2 - 9*yij**2 - 2*zij**2))/
-       (6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-5*b**4*yij*zij*(15*xij**2 + yij**2 - 6*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (b**4*(7*xij**4 + 2*yij**4 - 21*yij**2*zij**2 + 12*zij**4 + xij**2*(9*yij**2 - 51*zij**2)))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*yij*zij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(3.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (b**4*(-6*xij**4 + 4*yij**4 - 57*yij**2*zij**2 + 9*zij**4 + 3*xij**2*(11*yij**2 + zij**2)))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      0,(-5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(-5*b**4*xij*yij*(xij**2 - 6*yij**2 + 15*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (b**4*(2*xij**4 + 12*yij**4 - 51*yij**2*zij**2 + 7*zij**4 + xij**2*(-21*yij**2 + 9*zij**2)))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*yij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/(3.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),0],
-     [(5*b**4*xij*zij*(xij**2 + 15*yij**2 - 6*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*yij*zij*(-3*xij**2 + 4*yij**2 - 3*zij**2))/(3.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+        (eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(5*b**4*(-yij**4 + zij**4 + 6*xij**2*(yij**2 - zij**2)))/
+       (6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/
+       (6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(5*b**4*xij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/
+       (6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(5*b**4*(xij**2 - zij**2)*(xij**2 - 6*yij**2 + zij**2))/
+       (6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*yij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/
+       (6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(-5*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/
+       (3.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*xij*zij*(5*xij**2 - 9*yij**2 - 2*zij**2))/
+       (6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-5*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-5*b**4*yij*zij*(15*xij**2 + yij**2 - 6*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (b**4*(7*xij**4 + 2*yij**4 - 21*yij**2*zij**2 + 12*zij**4 + xij**2*(9*yij**2 - 51*zij**2)))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(2.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*yij*zij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(3.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (b**4*(-6*xij**4 + 4*yij**4 - 57*yij**2*zij**2 + 9*zij**4 + 3*xij**2*(11*yij**2 + zij**2)))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      0,(-5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(-5*b**4*xij*yij*(xij**2 - 6*yij**2 + 15*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (b**4*(2*xij**4 + 12*yij**4 - 51*yij**2*zij**2 + 7*zij**4 + xij**2*(-21*yij**2 + 9*zij**2)))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*yij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/(3.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),0],
+     [(5*b**4*xij*zij*(xij**2 + 15*yij**2 - 6*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*yij*zij*(-3*xij**2 + 4*yij**2 - 3*zij**2))/(3.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       -0.16666666666666666*(b**4*(2*xij**4 + 7*yij**4 - 51*yij**2*zij**2 + 12*zij**4 + 3*xij**2*(3*yij**2 - 7*zij**2)))/
-        (eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(3.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (5*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(6.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)]])
+        (eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(5*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(3.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (5*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(6.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)]])
 
 
 
 def G3s3t(xij,yij,zij, b,eta):
-    return np.array([[(3*b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (3*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (3*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(3*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-3*b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-3*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(3*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-3*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-3*b**4*(4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)))/(20.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
+    return np.array([[(3*b**4*(8*xij**4 - 24*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (3*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (3*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(3*b**4*xij*yij*(4*xij**2 - 3*(yij**2 + zij**2)))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-3*b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-3*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(3*b**4*xij*zij*(4*xij**2 - 3*(yij**2 + zij**2)))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-3*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-3*b**4*(4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)))/(20.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
      [(-3*b**4*(4*xij**4 + 4*yij**4 + 3*yij**2*zij**2 - zij**4 + 3*xij**2*(-9*yij**2 + zij**2)))/
-       (20.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-3*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/
-       (4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-3*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(-3*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-3*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-3*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
+       (20.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-3*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/
+       (4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-3*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(-3*b**4*yij*zij*(-6*xij**2 + yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-3*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-3*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
      [(-3*b**4*(4*xij**4 - yij**4 + 3*yij**2*zij**2 + 4*zij**4 + 3*xij**2*(yij**2 - 9*zij**2)))/
-       (20.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-3*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
-      (-3*b**4*xij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],
-     [(-3*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),
+       (20.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-3*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
+      (-3*b**4*xij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],
+     [(-3*b**4*xij*yij*(3*xij**2 - 4*yij**2 + 3*zij**2))/(4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),
       (3*b**4*(3*xij**4 + 8*yij**4 - 24*yij**2*zij**2 + 3*zij**4 + 6*xij**2*(-4*yij**2 + zij**2)))/
-       (20.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(3*b**4*yij*zij*(-3*xij**2 + 4*yij**2 - 3*zij**2))/
-       (4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(-3*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/
-       (4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(3*b**4*yij*zij*(-3*xij**2 + 4*yij**2 - 3*zij**2))/
-       (4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(3*b**4*(xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)))/
-       (20.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)],[(-3*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/
-       (4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(3*b**4*(xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)))/
-       (20.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5),(-3*b**4*yij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/
-       (4.*eta*Pi*(xij**2 + yij**2 + zij**2)**4.5)]])
+       (20.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(3*b**4*yij*zij*(-3*xij**2 + 4*yij**2 - 3*zij**2))/
+       (4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(-3*b**4*xij*zij*(xij**2 - 6*yij**2 + zij**2))/
+       (4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(3*b**4*yij*zij*(-3*xij**2 + 4*yij**2 - 3*zij**2))/
+       (4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(3*b**4*(xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)))/
+       (20.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)],[(-3*b**4*xij*yij*(xij**2 + yij**2 - 6*zij**2))/
+       (4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(3*b**4*(xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)))/
+       (20.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5),(-3*b**4*yij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/
+       (4.*eta*PI*(xij**2 + yij**2 + zij**2)**4.5)]])
 
 
 
 def G3s3s(xij,yij,zij, b,eta):
     return np.array([[(-90*b**6*(16*xij**6 - 120*xij**4*(yij**2 + zij**2) + 90*xij**2*(yij**2 + zij**2)**2 - 5*(yij**2 + zij**2)**3) + 
          35*b**4*(16*xij**8 - 88*xij**6*(yij**2 + zij**2) - 38*xij**4*(yij**2 + zij**2)**2 + 63*xij**2*(yij**2 + zij**2)**3 - 
-            3*(yij**2 + zij**2)**4))/(56.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+            3*(yij**2 + zij**2)**4))/(56.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (-5*b**4*xij*yij*(-152*xij**6 + 188*xij**4*(yij**2 + zij**2) + 265*xij**2*(yij**2 + zij**2)**2 - 75*(yij**2 + zij**2)**3 + 
-           54*b**2*(8*xij**4 - 20*xij**2*(yij**2 + zij**2) + 5*(yij**2 + zij**2)**2)))/(24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(8*xij**4 - 20*xij**2*(yij**2 + zij**2) + 5*(yij**2 + zij**2)**2)))/(24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (-5*b**4*xij*zij*(-152*xij**6 + 188*xij**4*(yij**2 + zij**2) + 265*xij**2*(yij**2 + zij**2)**2 - 75*(yij**2 + zij**2)**3 + 
-           54*b**2*(8*xij**4 - 20*xij**2*(yij**2 + zij**2) + 5*(yij**2 + zij**2)**2)))/(24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(8*xij**4 - 20*xij**2*(yij**2 + zij**2) + 5*(yij**2 + zij**2)**2)))/(24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (270*b**6*(8*xij**6 - (6*yij**2 - zij**2)*(yij**2 + zij**2)**2 - 4*xij**4*(29*yij**2 + zij**2) + 
             xij**2*(101*yij**4 + 90*yij**2*zij**2 - 11*zij**4)) - 
          7*b**4*(104*xij**8 + 3*xij**2*(377*yij**2 - 38*zij**2)*(yij**2 + zij**2)**2 - 3*(22*yij**2 - 3*zij**2)*(yij**2 + zij**2)**3 + 
             xij**6*(-1364*yij**2 + 76*zij**2) - xij**4*(271*yij**4 + 422*yij**2*zij**2 + 151*zij**4)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
          (96*xij**6 + 8*xij**4*(yij**2 + zij**2) - 83*xij**2*(yij**2 + zij**2)**2 + 5*(yij**2 + zij**2)**3 - 
-           18*b**2*(16*xij**4 - 16*xij**2*(yij**2 + zij**2) + (yij**2 + zij**2)**2)))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           18*b**2*(16*xij**4 - 16*xij**2*(yij**2 + zij**2) + (yij**2 + zij**2)**2)))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (270*b**6*(8*xij**6 + (yij**2 - 6*zij**2)*(yij**2 + zij**2)**2 - 4*xij**4*(yij**2 + 29*zij**2) + 
             xij**2*(-11*yij**4 + 90*yij**2*zij**2 + 101*zij**4)) - 
          7*b**4*(104*xij**8 + 4*xij**6*(19*yij**2 - 341*zij**2) - 3*xij**2*(38*yij**2 - 377*zij**2)*(yij**2 + zij**2)**2 + 
             3*(3*yij**2 - 22*zij**2)*(yij**2 + zij**2)**3 - xij**4*(151*yij**4 + 422*yij**2*zij**2 + 271*zij**4)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (-34*xij**6 + xij**4*(87*yij**2 - 53*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(87*yij**4 + 83*yij**2*zij**2 - 4*zij**4) + 
-           54*b**2*(2*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-7*yij**2 + zij**2))))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(2*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-7*yij**2 + zij**2))))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*xij*zij*(-34*xij**6 + xij**4*(367*yij**2 - 53*zij**2) - 3*(44*yij**2 - 5*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(269*yij**4 + 265*yij**2*zij**2 - 4*zij**4) + 
            54*b**2*(2*xij**4 + 8*yij**4 + 7*yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (-34*xij**6 + 3*(5*yij**2 - 44*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-53*yij**2 + 367*zij**2) + 
            xij**2*(-4*yij**4 + 265*yij**2*zij**2 + 269*zij**4) + 
            54*b**2*(2*xij**4 - yij**4 + 7*yij**2*zij**2 + 8*zij**4 + xij**2*(yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5)],[(-5*b**4*xij*yij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5)],[(-5*b**4*xij*yij*
          (-152*xij**6 + 188*xij**4*(yij**2 + zij**2) + 265*xij**2*(yij**2 + zij**2)**2 - 75*(yij**2 + zij**2)**3 + 
-           54*b**2*(8*xij**4 - 20*xij**2*(yij**2 + zij**2) + 5*(yij**2 + zij**2)**2)))/(24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(8*xij**4 - 20*xij**2*(yij**2 + zij**2) + 5*(yij**2 + zij**2)**2)))/(24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (270*b**6*(8*xij**6 - (6*yij**2 - zij**2)*(yij**2 + zij**2)**2 - 4*xij**4*(29*yij**2 + zij**2) + 
             xij**2*(101*yij**4 + 90*yij**2*zij**2 - 11*zij**4)) - 
          7*b**4*(104*xij**8 + 3*xij**2*(377*yij**2 - 38*zij**2)*(yij**2 + zij**2)**2 - 3*(22*yij**2 - 3*zij**2)*(yij**2 + zij**2)**3 + 
             xij**6*(-1364*yij**2 + 76*zij**2) - xij**4*(271*yij**4 + 422*yij**2*zij**2 + 151*zij**4)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
          (96*xij**6 + 8*xij**4*(yij**2 + zij**2) - 83*xij**2*(yij**2 + zij**2)**2 + 5*(yij**2 + zij**2)**3 - 
-           18*b**2*(16*xij**4 - 16*xij**2*(yij**2 + zij**2) + (yij**2 + zij**2)**2)))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           18*b**2*(16*xij**4 - 16*xij**2*(yij**2 + zij**2) + (yij**2 + zij**2)**2)))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*xij*yij*(-34*xij**6 + xij**4*(87*yij**2 - 53*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(87*yij**4 + 83*yij**2*zij**2 - 4*zij**4) + 
-           54*b**2*(2*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-7*yij**2 + zij**2))))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(2*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-7*yij**2 + zij**2))))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*xij*zij*(-34*xij**6 + xij**4*(367*yij**2 - 53*zij**2) - 3*(44*yij**2 - 5*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(269*yij**4 + 265*yij**2*zij**2 - 4*zij**4) + 
            54*b**2*(2*xij**4 + 8*yij**4 + 7*yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (-34*xij**6 + 3*(5*yij**2 - 44*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-53*yij**2 + 367*zij**2) + 
            xij**2*(-4*yij**4 + 265*yij**2*zij**2 + 269*zij**4) + 
            54*b**2*(2*xij**4 - yij**4 + 7*yij**2*zij**2 + 8*zij**4 + xij**2*(yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
           (6*xij**6 - 8*yij**6 + 4*yij**4*zij**2 + 11*yij**2*zij**4 - zij**6 + xij**4*(-101*yij**2 + 11*zij**2) + 
             2*xij**2*(58*yij**4 - 45*yij**2*zij**2 + 2*zij**4)) + 
          7*b**4*(66*xij**8 - 3*xij**6*(377*yij**2 - 63*zij**2) - (yij**2 + zij**2)**2*(104*yij**4 - 132*yij**2*zij**2 + 9*zij**4) + 
             xij**4*(271*yij**4 - 2148*yij**2*zij**2 + 171*zij**4) + xij**2*(1364*yij**6 + 422*yij**4*zij**2 - 903*yij**2*zij**4 + 39*zij**6)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
          (-132*xij**6 + xij**4*(269*yij**2 - 249*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(367*yij**4 + 265*yij**2*zij**2 - 102*zij**4) + 
            54*b**2*(8*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
           (2*xij**6 + 2*yij**6 - 15*yij**4*zij**2 - 15*yij**2*zij**4 + 2*zij**6 - 15*xij**4*(yij**2 + zij**2) - 
             15*xij**2*(yij**4 - 12*yij**2*zij**2 + zij**4)) + 
          7*b**4*(22*xij**8 - 157*xij**6*(yij**2 + zij**2) + (yij**2 + zij**2)**2*(22*yij**4 - 201*yij**2*zij**2 + 22*zij**4) - 
             2*xij**4*(179*yij**4 - 937*yij**2*zij**2 + 179*zij**4) + 
-            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5)],
+            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5)],
      [(-5*b**4*xij*zij*(-152*xij**6 + 188*xij**4*(yij**2 + zij**2) + 265*xij**2*(yij**2 + zij**2)**2 - 75*(yij**2 + zij**2)**3 + 
-           54*b**2*(8*xij**4 - 20*xij**2*(yij**2 + zij**2) + 5*(yij**2 + zij**2)**2)))/(24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(8*xij**4 - 20*xij**2*(yij**2 + zij**2) + 5*(yij**2 + zij**2)**2)))/(24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*yij*zij*(96*xij**6 + 8*xij**4*(yij**2 + zij**2) - 83*xij**2*(yij**2 + zij**2)**2 + 5*(yij**2 + zij**2)**3 - 
-           18*b**2*(16*xij**4 - 16*xij**2*(yij**2 + zij**2) + (yij**2 + zij**2)**2)))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           18*b**2*(16*xij**4 - 16*xij**2*(yij**2 + zij**2) + (yij**2 + zij**2)**2)))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (270*b**6*(8*xij**6 + (yij**2 - 6*zij**2)*(yij**2 + zij**2)**2 - 4*xij**4*(yij**2 + 29*zij**2) + 
             xij**2*(-11*yij**4 + 90*yij**2*zij**2 + 101*zij**4)) - 
          7*b**4*(104*xij**8 + 4*xij**6*(19*yij**2 - 341*zij**2) - 3*xij**2*(38*yij**2 - 377*zij**2)*(yij**2 + zij**2)**2 + 
             3*(3*yij**2 - 22*zij**2)*(yij**2 + zij**2)**3 - xij**4*(151*yij**4 + 422*yij**2*zij**2 + 271*zij**4)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (-34*xij**6 + xij**4*(367*yij**2 - 53*zij**2) - 3*(44*yij**2 - 5*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(269*yij**4 + 265*yij**2*zij**2 - 4*zij**4) + 
            54*b**2*(2*xij**4 + 8*yij**4 + 7*yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (-34*xij**6 + 3*(5*yij**2 - 44*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-53*yij**2 + 367*zij**2) + 
            xij**2*(-4*yij**4 + 265*yij**2*zij**2 + 269*zij**4) + 
            54*b**2*(2*xij**4 - yij**4 + 7*yij**2*zij**2 + 8*zij**4 + xij**2*(yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (-34*xij**6 + (15*yij**2 - 34*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-53*yij**2 + 87*zij**2) + 
            xij**2*(-4*yij**4 + 83*yij**2*zij**2 + 87*zij**4) + 
-           54*b**2*(2*xij**4 - yij**4 + yij**2*zij**2 + 2*zij**4 + xij**2*(yij**2 - 7*zij**2))))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(2*xij**4 - yij**4 + yij**2*zij**2 + 2*zij**4 + xij**2*(yij**2 - 7*zij**2))))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*yij*zij*(-132*xij**6 + xij**4*(269*yij**2 - 249*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(367*yij**4 + 265*yij**2*zij**2 - 102*zij**4) + 
            54*b**2*(8*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
           (2*xij**6 + 2*yij**6 - 15*yij**4*zij**2 - 15*yij**2*zij**4 + 2*zij**6 - 15*xij**4*(yij**2 + zij**2) - 
             15*xij**2*(yij**4 - 12*yij**2*zij**2 + zij**4)) + 
          7*b**4*(22*xij**8 - 157*xij**6*(yij**2 + zij**2) + (yij**2 + zij**2)**2*(22*yij**4 - 201*yij**2*zij**2 + 22*zij**4) - 
             2*xij**4*(179*yij**4 - 937*yij**2*zij**2 + 179*zij**4) + 
-            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*yij*zij*(-132*xij**6 + (15*yij**2 - 34*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-249*yij**2 + 269*zij**2) + 
            xij**2*(-102*yij**4 + 265*yij**2*zij**2 + 367*zij**4) + 
            54*b**2*(8*xij**4 - yij**4 + yij**2*zij**2 + 2*zij**4 + xij**2*(7*yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5)],[(270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5)],[(270*b**6*
           (8*xij**6 - (6*yij**2 - zij**2)*(yij**2 + zij**2)**2 - 4*xij**4*(29*yij**2 + zij**2) + 
             xij**2*(101*yij**4 + 90*yij**2*zij**2 - 11*zij**4)) - 
          7*b**4*(104*xij**8 + 3*xij**2*(377*yij**2 - 38*zij**2)*(yij**2 + zij**2)**2 - 3*(22*yij**2 - 3*zij**2)*(yij**2 + zij**2)**3 + 
             xij**6*(-1364*yij**2 + 76*zij**2) - xij**4*(271*yij**4 + 422*yij**2*zij**2 + 151*zij**4)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (-34*xij**6 + xij**4*(87*yij**2 - 53*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(87*yij**4 + 83*yij**2*zij**2 - 4*zij**4) + 
-           54*b**2*(2*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-7*yij**2 + zij**2))))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(2*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-7*yij**2 + zij**2))))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*xij*zij*(-34*xij**6 + xij**4*(367*yij**2 - 53*zij**2) - 3*(44*yij**2 - 5*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(269*yij**4 + 265*yij**2*zij**2 - 4*zij**4) + 
            54*b**2*(2*xij**4 + 8*yij**4 + 7*yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
           (6*xij**6 - 8*yij**6 + 4*yij**4*zij**2 + 11*yij**2*zij**4 - zij**6 + xij**4*(-101*yij**2 + 11*zij**2) + 
             2*xij**2*(58*yij**4 - 45*yij**2*zij**2 + 2*zij**4)) + 
          7*b**4*(66*xij**8 - 3*xij**6*(377*yij**2 - 63*zij**2) - (yij**2 + zij**2)**2*(104*yij**4 - 132*yij**2*zij**2 + 9*zij**4) + 
             xij**4*(271*yij**4 - 2148*yij**2*zij**2 + 171*zij**4) + xij**2*(1364*yij**6 + 422*yij**4*zij**2 - 903*yij**2*zij**4 + 39*zij**6)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
          (-132*xij**6 + xij**4*(269*yij**2 - 249*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(367*yij**4 + 265*yij**2*zij**2 - 102*zij**4) + 
            54*b**2*(8*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
           (2*xij**6 + 2*yij**6 - 15*yij**4*zij**2 - 15*yij**2*zij**4 + 2*zij**6 - 15*xij**4*(yij**2 + zij**2) - 
             15*xij**2*(yij**4 - 12*yij**2*zij**2 + zij**4)) + 
          7*b**4*(22*xij**8 - 157*xij**6*(yij**2 + zij**2) + (yij**2 + zij**2)**2*(22*yij**4 - 201*yij**2*zij**2 + 22*zij**4) - 
             2*xij**4*(179*yij**4 - 937*yij**2*zij**2 + 179*zij**4) + 
-            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (-5*b**4*xij*yij*(-75*xij**6 - 152*yij**6 + 188*yij**4*zij**2 + 265*yij**2*zij**4 - 75*zij**6 + 5*xij**4*(53*yij**2 - 45*zij**2) + 
            xij**2*(188*yij**4 + 530*yij**2*zij**2 - 225*zij**4) + 
            54*b**2*(5*xij**4 + 8*yij**4 - 20*yij**2*zij**2 + 5*zij**4 + 10*xij**2*(-2*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (5*xij**6 + 96*yij**6 + 8*yij**4*zij**2 - 83*yij**2*zij**4 + 5*zij**6 + xij**4*(-83*yij**2 + 15*zij**2) + 
            xij**2*(8*yij**4 - 166*yij**2*zij**2 + 15*zij**4) - 
            18*b**2*(xij**4 + 16*yij**4 - 16*yij**2*zij**2 + zij**4 + 2*xij**2*(-8*yij**2 + zij**2))))/
-       (8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (15*xij**6 - 34*yij**6 + 367*yij**4*zij**2 + 269*yij**2*zij**4 - 132*zij**6 - 2*xij**4*(2*yij**2 + 51*zij**2) + 
            xij**2*(-53*yij**4 + 265*yij**2*zij**2 - 249*zij**4) - 
            54*b**2*(xij**4 - 2*yij**4 + 23*yij**2*zij**2 - 8*zij**4 - xij**2*(yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5)],[(5*b**4*yij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5)],[(5*b**4*yij*zij*
          (96*xij**6 + 8*xij**4*(yij**2 + zij**2) - 83*xij**2*(yij**2 + zij**2)**2 + 5*(yij**2 + zij**2)**3 - 
-           18*b**2*(16*xij**4 - 16*xij**2*(yij**2 + zij**2) + (yij**2 + zij**2)**2)))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           18*b**2*(16*xij**4 - 16*xij**2*(yij**2 + zij**2) + (yij**2 + zij**2)**2)))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*xij*zij*(-34*xij**6 + xij**4*(367*yij**2 - 53*zij**2) - 3*(44*yij**2 - 5*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(269*yij**4 + 265*yij**2*zij**2 - 4*zij**4) + 
            54*b**2*(2*xij**4 + 8*yij**4 + 7*yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (-34*xij**6 + 3*(5*yij**2 - 44*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-53*yij**2 + 367*zij**2) + 
            xij**2*(-4*yij**4 + 265*yij**2*zij**2 + 269*zij**4) + 
            54*b**2*(2*xij**4 - yij**4 + 7*yij**2*zij**2 + 8*zij**4 + xij**2*(yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
          (-132*xij**6 + xij**4*(269*yij**2 - 249*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(367*yij**4 + 265*yij**2*zij**2 - 102*zij**4) + 
            54*b**2*(8*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
           (2*xij**6 + 2*yij**6 - 15*yij**4*zij**2 - 15*yij**2*zij**4 + 2*zij**6 - 15*xij**4*(yij**2 + zij**2) - 
             15*xij**2*(yij**4 - 12*yij**2*zij**2 + zij**4)) + 
          7*b**4*(22*xij**8 - 157*xij**6*(yij**2 + zij**2) + (yij**2 + zij**2)**2*(22*yij**4 - 201*yij**2*zij**2 + 22*zij**4) - 
             2*xij**4*(179*yij**4 - 937*yij**2*zij**2 + 179*zij**4) + 
-            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*yij*zij*(-132*xij**6 + (15*yij**2 - 34*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-249*yij**2 + 269*zij**2) + 
            xij**2*(-102*yij**4 + 265*yij**2*zij**2 + 367*zij**4) + 
            54*b**2*(8*xij**4 - yij**4 + yij**2*zij**2 + 2*zij**4 + xij**2*(7*yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (5*xij**6 + 96*yij**6 + 8*yij**4*zij**2 - 83*yij**2*zij**4 + 5*zij**6 + xij**4*(-83*yij**2 + 15*zij**2) + 
            xij**2*(8*yij**4 - 166*yij**2*zij**2 + 15*zij**4) - 
            18*b**2*(xij**4 + 16*yij**4 - 16*yij**2*zij**2 + zij**4 + 2*xij**2*(-8*yij**2 + zij**2))))/
-       (8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (15*xij**6 - 34*yij**6 + 367*yij**4*zij**2 + 269*yij**2*zij**4 - 132*zij**6 - 2*xij**4*(2*yij**2 + 51*zij**2) + 
            xij**2*(-53*yij**4 + 265*yij**2*zij**2 - 249*zij**4) - 
            54*b**2*(xij**4 - 2*yij**4 + 23*yij**2*zij**2 - 8*zij**4 - xij**2*(yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (15*xij**6 - 132*yij**6 + 269*yij**4*zij**2 + 367*yij**2*zij**4 - 34*zij**6 - 2*xij**4*(51*yij**2 + 2*zij**2) + 
            xij**2*(-249*yij**4 + 265*yij**2*zij**2 - 53*zij**4) - 
            54*b**2*(xij**4 - 8*yij**4 + 23*yij**2*zij**2 - 2*zij**4 - xij**2*(7*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5)],[(270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5)],[(270*b**6*
           (8*xij**6 + (yij**2 - 6*zij**2)*(yij**2 + zij**2)**2 - 4*xij**4*(yij**2 + 29*zij**2) + 
             xij**2*(-11*yij**4 + 90*yij**2*zij**2 + 101*zij**4)) - 
          7*b**4*(104*xij**8 + 4*xij**6*(19*yij**2 - 341*zij**2) - 3*xij**2*(38*yij**2 - 377*zij**2)*(yij**2 + zij**2)**2 + 
             3*(3*yij**2 - 22*zij**2)*(yij**2 + zij**2)**3 - xij**4*(151*yij**4 + 422*yij**2*zij**2 + 271*zij**4)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (-34*xij**6 + 3*(5*yij**2 - 44*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-53*yij**2 + 367*zij**2) + 
            xij**2*(-4*yij**4 + 265*yij**2*zij**2 + 269*zij**4) + 
            54*b**2*(2*xij**4 - yij**4 + 7*yij**2*zij**2 + 8*zij**4 + xij**2*(yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (-34*xij**6 + (15*yij**2 - 34*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-53*yij**2 + 87*zij**2) + 
            xij**2*(-4*yij**4 + 83*yij**2*zij**2 + 87*zij**4) + 
-           54*b**2*(2*xij**4 - yij**4 + yij**2*zij**2 + 2*zij**4 + xij**2*(yij**2 - 7*zij**2))))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(2*xij**4 - yij**4 + yij**2*zij**2 + 2*zij**4 + xij**2*(yij**2 - 7*zij**2))))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (-270*b**6*(2*xij**6 + 2*yij**6 - 15*yij**4*zij**2 - 15*yij**2*zij**4 + 2*zij**6 - 15*xij**4*(yij**2 + zij**2) - 
             15*xij**2*(yij**4 - 12*yij**2*zij**2 + zij**4)) + 
          7*b**4*(22*xij**8 - 157*xij**6*(yij**2 + zij**2) + (yij**2 + zij**2)**2*(22*yij**4 - 201*yij**2*zij**2 + 22*zij**4) - 
             2*xij**4*(179*yij**4 - 937*yij**2*zij**2 + 179*zij**4) + 
-            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*yij*zij*(-132*xij**6 + (15*yij**2 - 34*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-249*yij**2 + 269*zij**2) + 
            xij**2*(-102*yij**4 + 265*yij**2*zij**2 + 367*zij**4) + 
            54*b**2*(8*xij**4 - yij**4 + yij**2*zij**2 + 2*zij**4 + xij**2*(7*yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
           (6*xij**6 - yij**6 + 11*yij**4*zij**2 + 4*yij**2*zij**4 - 8*zij**6 + xij**4*(11*yij**2 - 101*zij**2) + 
             2*xij**2*(2*yij**4 - 45*yij**2*zij**2 + 58*zij**4)) + 
          7*b**4*(66*xij**8 + 3*xij**6*(63*yij**2 - 377*zij**2) - (yij**2 + zij**2)**2*(9*yij**4 - 132*yij**2*zij**2 + 104*zij**4) + 
             xij**4*(171*yij**4 - 2148*yij**2*zij**2 + 271*zij**4) + xij**2*(39*yij**6 - 903*yij**4*zij**2 + 422*yij**2*zij**4 + 1364*zij**6)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (15*xij**6 - 34*yij**6 + 367*yij**4*zij**2 + 269*yij**2*zij**4 - 132*zij**6 - 2*xij**4*(2*yij**2 + 51*zij**2) + 
            xij**2*(-53*yij**4 + 265*yij**2*zij**2 - 249*zij**4) - 
            54*b**2*(xij**4 - 2*yij**4 + 23*yij**2*zij**2 - 8*zij**4 - xij**2*(yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (15*xij**6 - 132*yij**6 + 269*yij**4*zij**2 + 367*yij**2*zij**4 - 34*zij**6 - 2*xij**4*(51*yij**2 + 2*zij**2) + 
            xij**2*(-249*yij**4 + 265*yij**2*zij**2 - 53*zij**4) - 
            54*b**2*(xij**4 - 8*yij**4 + 23*yij**2*zij**2 - 2*zij**4 - xij**2*(7*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (5*xij**6 + 5*yij**6 - 83*yij**4*zij**2 + 8*yij**2*zij**4 + 96*zij**6 + xij**4*(15*yij**2 - 83*zij**2) + 
            xij**2*(15*yij**4 - 166*yij**2*zij**2 + 8*zij**4) - 
            18*b**2*(xij**4 + yij**4 - 16*yij**2*zij**2 + 16*zij**4 + 2*xij**2*(yij**2 - 8*zij**2))))/
-       (8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5)],[(5*b**4*xij*yij*
+       (8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5)],[(5*b**4*xij*yij*
          (-34*xij**6 + xij**4*(87*yij**2 - 53*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(87*yij**4 + 83*yij**2*zij**2 - 4*zij**4) + 
-           54*b**2*(2*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-7*yij**2 + zij**2))))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(2*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-7*yij**2 + zij**2))))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (-270*b**6*(6*xij**6 - 8*yij**6 + 4*yij**4*zij**2 + 11*yij**2*zij**4 - zij**6 + xij**4*(-101*yij**2 + 11*zij**2) + 
             2*xij**2*(58*yij**4 - 45*yij**2*zij**2 + 2*zij**4)) + 
          7*b**4*(66*xij**8 - 3*xij**6*(377*yij**2 - 63*zij**2) - (yij**2 + zij**2)**2*(104*yij**4 - 132*yij**2*zij**2 + 9*zij**4) + 
             xij**4*(271*yij**4 - 2148*yij**2*zij**2 + 171*zij**4) + xij**2*(1364*yij**6 + 422*yij**4*zij**2 - 903*yij**2*zij**4 + 39*zij**6)))/
-       (168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
+       (168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
          (-132*xij**6 + xij**4*(269*yij**2 - 249*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(367*yij**4 + 265*yij**2*zij**2 - 102*zij**4) + 
            54*b**2*(8*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-5*b**4*xij*yij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-5*b**4*xij*yij*
          (-75*xij**6 - 152*yij**6 + 188*yij**4*zij**2 + 265*yij**2*zij**4 - 75*zij**6 + 5*xij**4*(53*yij**2 - 45*zij**2) + 
            xij**2*(188*yij**4 + 530*yij**2*zij**2 - 225*zij**4) + 
            54*b**2*(5*xij**4 + 8*yij**4 - 20*yij**2*zij**2 + 5*zij**4 + 10*xij**2*(-2*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (5*xij**6 + 96*yij**6 + 8*yij**4*zij**2 - 83*yij**2*zij**4 + 5*zij**6 + xij**4*(-83*yij**2 + 15*zij**2) + 
            xij**2*(8*yij**4 - 166*yij**2*zij**2 + 15*zij**4) - 
            18*b**2*(xij**4 + 16*yij**4 - 16*yij**2*zij**2 + zij**4 + 2*xij**2*(-8*yij**2 + zij**2))))/
-       (8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (15*xij**6 - 34*yij**6 + 367*yij**4*zij**2 + 269*yij**2*zij**4 - 132*zij**6 - 2*xij**4*(2*yij**2 + 51*zij**2) + 
            xij**2*(-53*yij**4 + 265*yij**2*zij**2 - 249*zij**4) - 
            54*b**2*(xij**4 - 2*yij**4 + 23*yij**2*zij**2 - 8*zij**4 - xij**2*(yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(90*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(90*b**6*
           (5*xij**6 - 16*yij**6 + 120*yij**4*zij**2 - 90*yij**2*zij**4 + 5*zij**6 + 15*xij**4*(-6*yij**2 + zij**2) + 
             15*xij**2*(8*yij**4 - 12*yij**2*zij**2 + zij**4)) - 
          35*b**4*(3*xij**8 - 16*yij**8 + 88*yij**6*zij**2 + 38*yij**4*zij**4 - 63*yij**2*zij**6 + 3*zij**8 + xij**6*(-63*yij**2 + 12*zij**2) + 
             xij**4*(38*yij**4 - 189*yij**2*zij**2 + 18*zij**4) + xij**2*(88*yij**6 + 76*yij**4*zij**2 - 189*yij**2*zij**4 + 12*zij**6)))/
-       (56.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-5*b**4*yij*zij*
+       (56.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-5*b**4*yij*zij*
          (-75*xij**6 - 152*yij**6 + 188*yij**4*zij**2 + 265*yij**2*zij**4 - 75*zij**6 + 5*xij**4*(53*yij**2 - 45*zij**2) + 
            xij**2*(188*yij**4 + 530*yij**2*zij**2 - 225*zij**4) + 
            54*b**2*(5*xij**4 + 8*yij**4 - 20*yij**2*zij**2 + 5*zij**4 + 10*xij**2*(-2*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(270*b**6*
           (xij**6 + 8*yij**6 - 116*yij**4*zij**2 + 101*yij**2*zij**4 - 6*zij**6 - xij**4*(11*yij**2 + 4*zij**2) + 
             xij**2*(-4*yij**4 + 90*yij**2*zij**2 - 11*zij**4)) - 
          7*b**4*(9*xij**8 + 104*yij**8 - 1364*yij**6*zij**2 - 271*yij**4*zij**4 + 1131*yij**2*zij**6 - 66*zij**8 - 
             3*xij**6*(38*yij**2 + 13*zij**2) + xij**4*(-151*yij**4 + 903*yij**2*zij**2 - 171*zij**4) + 
-            xij**2*(76*yij**6 - 422*yij**4*zij**2 + 2148*yij**2*zij**4 - 189*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5)],
+            xij**2*(76*yij**6 - 422*yij**4*zij**2 + 2148*yij**2*zij**4 - 189*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5)],
      [(5*b**4*xij*zij*(-34*xij**6 + xij**4*(367*yij**2 - 53*zij**2) - 3*(44*yij**2 - 5*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(269*yij**4 + 265*yij**2*zij**2 - 4*zij**4) + 
            54*b**2*(2*xij**4 + 8*yij**4 + 7*yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*yij*zij*
          (-132*xij**6 + xij**4*(269*yij**2 - 249*zij**2) - (34*yij**2 - 15*zij**2)*(yij**2 + zij**2)**2 + 
            xij**2*(367*yij**4 + 265*yij**2*zij**2 - 102*zij**4) + 
            54*b**2*(8*xij**4 + 2*yij**4 + yij**2*zij**2 - zij**4 + xij**2*(-23*yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
           (2*xij**6 + 2*yij**6 - 15*yij**4*zij**2 - 15*yij**2*zij**4 + 2*zij**6 - 15*xij**4*(yij**2 + zij**2) - 
             15*xij**2*(yij**4 - 12*yij**2*zij**2 + zij**4)) + 
          7*b**4*(22*xij**8 - 157*xij**6*(yij**2 + zij**2) + (yij**2 + zij**2)**2*(22*yij**4 - 201*yij**2*zij**2 + 22*zij**4) - 
             2*xij**4*(179*yij**4 - 937*yij**2*zij**2 + 179*zij**4) + 
-            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*xij*zij*(5*xij**6 + 96*yij**6 + 8*yij**4*zij**2 - 83*yij**2*zij**4 + 5*zij**6 + xij**4*(-83*yij**2 + 15*zij**2) + 
            xij**2*(8*yij**4 - 166*yij**2*zij**2 + 15*zij**4) - 
            18*b**2*(xij**4 + 16*yij**4 - 16*yij**2*zij**2 + zij**4 + 2*xij**2*(-8*yij**2 + zij**2))))/
-       (8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (15*xij**6 - 34*yij**6 + 367*yij**4*zij**2 + 269*yij**2*zij**4 - 132*zij**6 - 2*xij**4*(2*yij**2 + 51*zij**2) + 
            xij**2*(-53*yij**4 + 265*yij**2*zij**2 - 249*zij**4) - 
            54*b**2*(xij**4 - 2*yij**4 + 23*yij**2*zij**2 - 8*zij**4 - xij**2*(yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (15*xij**6 - 132*yij**6 + 269*yij**4*zij**2 + 367*yij**2*zij**4 - 34*zij**6 - 2*xij**4*(51*yij**2 + 2*zij**2) + 
            xij**2*(-249*yij**4 + 265*yij**2*zij**2 - 53*zij**4) - 
            54*b**2*(xij**4 - 8*yij**4 + 23*yij**2*zij**2 - 2*zij**4 - xij**2*(7*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-5*b**4*yij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-5*b**4*yij*zij*
          (-75*xij**6 - 152*yij**6 + 188*yij**4*zij**2 + 265*yij**2*zij**4 - 75*zij**6 + 5*xij**4*(53*yij**2 - 45*zij**2) + 
            xij**2*(188*yij**4 + 530*yij**2*zij**2 - 225*zij**4) + 
            54*b**2*(5*xij**4 + 8*yij**4 - 20*yij**2*zij**2 + 5*zij**4 + 10*xij**2*(-2*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(270*b**6*
           (xij**6 + 8*yij**6 - 116*yij**4*zij**2 + 101*yij**2*zij**4 - 6*zij**6 - xij**4*(11*yij**2 + 4*zij**2) + 
             xij**2*(-4*yij**4 + 90*yij**2*zij**2 - 11*zij**4)) - 
          7*b**4*(9*xij**8 + 104*yij**8 - 1364*yij**6*zij**2 - 271*yij**4*zij**4 + 1131*yij**2*zij**6 - 66*zij**8 - 
             3*xij**6*(38*yij**2 + 13*zij**2) + xij**4*(-151*yij**4 + 903*yij**2*zij**2 - 171*zij**4) + 
-            xij**2*(76*yij**6 - 422*yij**4*zij**2 + 2148*yij**2*zij**4 - 189*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+            xij**2*(76*yij**6 - 422*yij**4*zij**2 + 2148*yij**2*zij**4 - 189*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*yij*zij*(15*xij**6 - 34*yij**6 + 87*yij**4*zij**2 + 87*yij**2*zij**4 - 34*zij**6 - 4*xij**4*(yij**2 + zij**2) + 
            xij**2*(-53*yij**4 + 83*yij**2*zij**2 - 53*zij**4) - 
-           54*b**2*(xij**4 - 2*yij**4 + 7*yij**2*zij**2 - 2*zij**4 - xij**2*(yij**2 + zij**2))))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5)],
+           54*b**2*(xij**4 - 2*yij**4 + 7*yij**2*zij**2 - 2*zij**4 - xij**2*(yij**2 + zij**2))))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5)],
      [(5*b**4*xij*yij*(-34*xij**6 + 3*(5*yij**2 - 44*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-53*yij**2 + 367*zij**2) + 
            xij**2*(-4*yij**4 + 265*yij**2*zij**2 + 269*zij**4) + 
            54*b**2*(2*xij**4 - yij**4 + 7*yij**2*zij**2 + 8*zij**4 + xij**2*(yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(-270*b**6*
           (2*xij**6 + 2*yij**6 - 15*yij**4*zij**2 - 15*yij**2*zij**4 + 2*zij**6 - 15*xij**4*(yij**2 + zij**2) - 
             15*xij**2*(yij**4 - 12*yij**2*zij**2 + zij**4)) + 
          7*b**4*(22*xij**8 - 157*xij**6*(yij**2 + zij**2) + (yij**2 + zij**2)**2*(22*yij**4 - 201*yij**2*zij**2 + 22*zij**4) - 
             2*xij**4*(179*yij**4 - 937*yij**2*zij**2 + 179*zij**4) + 
-            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+            xij**2*(-157*yij**6 + 1874*yij**4*zij**2 + 1874*yij**2*zij**4 - 157*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*yij*zij*(-132*xij**6 + (15*yij**2 - 34*zij**2)*(yij**2 + zij**2)**2 + xij**4*(-249*yij**2 + 269*zij**2) + 
            xij**2*(-102*yij**4 + 265*yij**2*zij**2 + 367*zij**4) + 
            54*b**2*(8*xij**4 - yij**4 + yij**2*zij**2 + 2*zij**4 + xij**2*(7*yij**2 - 23*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (15*xij**6 - 34*yij**6 + 367*yij**4*zij**2 + 269*yij**2*zij**4 - 132*zij**6 - 2*xij**4*(2*yij**2 + 51*zij**2) + 
            xij**2*(-53*yij**4 + 265*yij**2*zij**2 - 249*zij**4) - 
            54*b**2*(xij**4 - 2*yij**4 + 23*yij**2*zij**2 - 8*zij**4 - xij**2*(yij**2 + 7*zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*zij*
          (15*xij**6 - 132*yij**6 + 269*yij**4*zij**2 + 367*yij**2*zij**4 - 34*zij**6 - 2*xij**4*(51*yij**2 + 2*zij**2) + 
            xij**2*(-249*yij**4 + 265*yij**2*zij**2 - 53*zij**4) - 
            54*b**2*(xij**4 - 8*yij**4 + 23*yij**2*zij**2 - 2*zij**4 - xij**2*(7*yij**2 + zij**2))))/
-       (24.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
+       (24.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(5*b**4*xij*yij*
          (5*xij**6 + 5*yij**6 - 83*yij**4*zij**2 + 8*yij**2*zij**4 + 96*zij**6 + xij**4*(15*yij**2 - 83*zij**2) + 
            xij**2*(15*yij**4 - 166*yij**2*zij**2 + 8*zij**4) - 
            18*b**2*(xij**4 + yij**4 - 16*yij**2*zij**2 + 16*zij**4 + 2*xij**2*(yij**2 - 8*zij**2))))/
-       (8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),(270*b**6*
+       (8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),(270*b**6*
           (xij**6 + 8*yij**6 - 116*yij**4*zij**2 + 101*yij**2*zij**4 - 6*zij**6 - xij**4*(11*yij**2 + 4*zij**2) + 
             xij**2*(-4*yij**4 + 90*yij**2*zij**2 - 11*zij**4)) - 
          7*b**4*(9*xij**8 + 104*yij**8 - 1364*yij**6*zij**2 - 271*yij**4*zij**4 + 1131*yij**2*zij**6 - 66*zij**8 - 
             3*xij**6*(38*yij**2 + 13*zij**2) + xij**4*(-151*yij**4 + 903*yij**2*zij**2 - 171*zij**4) + 
-            xij**2*(76*yij**6 - 422*yij**4*zij**2 + 2148*yij**2*zij**4 - 189*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+            xij**2*(76*yij**6 - 422*yij**4*zij**2 + 2148*yij**2*zij**4 - 189*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (5*b**4*yij*zij*(15*xij**6 - 34*yij**6 + 87*yij**4*zij**2 + 87*yij**2*zij**4 - 34*zij**6 - 4*xij**4*(yij**2 + zij**2) + 
            xij**2*(-53*yij**4 + 83*yij**2*zij**2 - 53*zij**4) - 
-           54*b**2*(xij**4 - 2*yij**4 + 7*yij**2*zij**2 - 2*zij**4 - xij**2*(yij**2 + zij**2))))/(8.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5),
+           54*b**2*(xij**4 - 2*yij**4 + 7*yij**2*zij**2 - 2*zij**4 - xij**2*(yij**2 + zij**2))))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5),
       (270*b**6*(xij**6 - 6*yij**6 + 101*yij**4*zij**2 - 116*yij**2*zij**4 + 8*zij**6 - xij**4*(4*yij**2 + 11*zij**2) + 
             xij**2*(-11*yij**4 + 90*yij**2*zij**2 - 4*zij**4)) - 
          7*b**4*(9*xij**8 - 66*yij**8 + 1131*yij**6*zij**2 - 271*yij**4*zij**4 - 1364*yij**2*zij**6 + 104*zij**8 - 
             3*xij**6*(13*yij**2 + 38*zij**2) + xij**4*(-171*yij**4 + 903*yij**2*zij**2 - 151*zij**4) + 
-            xij**2*(-189*yij**6 + 2148*yij**4*zij**2 - 422*yij**2*zij**4 + 76*zij**6)))/(168.*eta*Pi*(xij**2 + yij**2 + zij**2)**6.5)]])
+            xij**2*(-189*yij**6 + 2148*yij**4*zij**2 - 422*yij**2*zij**4 + 76*zij**6)))/(168.*eta*PI*(xij**2 + yij**2 + zij**2)**6.5)]])
 
 
 
@@ -1506,5 +1506,103 @@ def K3s3t(xij,yij,zij, b,eta):
      [(-9*b**5*xij*yij*(xij**2 + yij**2 - 6*zij**2))/(10.*(xij**2 + yij**2 + zij**2)**4.5),
       (9*b**5*(xij**4 - 4*yij**4 + 27*yij**2*zij**2 - 4*zij**4 - 3*xij**2*(yij**2 + zij**2)))/(50.*(xij**2 + yij**2 + zij**2)**4.5),
       (-9*b**5*yij*zij*(3*xij**2 + 3*yij**2 - 4*zij**2))/(10.*(xij**2 + yij**2 + zij**2)**4.5)]])
+
+
+
+##
+## matrix elements that are zero in free space: G^(3t,lsigma), K^(3t, lsigma), G^(la,3t), K^(la,3t)
+##
+
+def G3t1s(xij,yij,zij, b,eta):
+    return np.zeros([3,3])
+
+def G3t2a(xij,yij,zij, b,eta):
+    return np.zeros([3,3])
+
+def G3t2s(xij,yij,zij, b,eta):
+    return np.zeros([3,5])
+
+def G3t3t(xij,yij,zij, b,eta):
+    return np.zeros([3,3])
+
+def G3t3a(xij,yij,zij, b,eta):
+    return np.zeros([3,5])
+
+def G3t3s(xij,yij,zij, b,eta):
+    return np.zeros([3,9])
+
+
+def K3t2s(xij,yij,zij, b,eta):
+    return np.zeros([3,5])
+
+def K3t3t(xij,yij,zij, b,eta):
+    return np.zeros([3,3])
+
+def K3t3a(xij,yij,zij, b,eta):
+    return np.zeros([3,5])
+
+def K3t3s(xij,yij,zij, b,eta):
+    return np.zeros([3,9])
+
+
+def G2a3t(xij,yij,zij, b,eta):
+    return np.zeros([3,3])
+
+def G3a3t(xij,yij,zij, b,eta):
+    return np.zeros([5,3])
+
+
+def K2a3t(xij,yij,zij, b,eta):
+    return np.zeros([3,3])
+
+def K3a3t(xij,yij,zij, b,eta):
+    return np.zeros([5,3])
+
+
+
+##
+## define matrices eventually used in the direct-solver
+##
+
+
+def G1sH(xij,yij,zij, b,eta):
+    return np.block([G1s2s(xij,yij,zij, b,eta), G1s3t(xij,yij,zij, b,eta), G1s3a(xij,yij,zij, b,eta), G1s3s(xij,yij,zij, b,eta)])
+
+def G2aH(xij,yij,zij, b,eta):
+    return np.block([G2a2s(xij,yij,zij, b,eta), G2a3t(xij,yij,zij, b,eta), G2a3a(xij,yij,zij, b,eta), G2a3s(xij,yij,zij, b,eta)])
+
+def K1sH(xij,yij,zij, b,eta):
+    return np.block([K1s2s(xij,yij,zij, b,eta), K1s3t(xij,yij,zij, b,eta), np.zeros([3,14])])
+
+def K2aH(xij,yij,zij, b,eta):
+    return np.block([K2a2s(xij,yij,zij, b,eta), K2a3t(xij,yij,zij, b,eta), np.zeros([3,14])])
+
+def GH1s(xij,yij,zij, b,eta):
+    return np.block([[G2s1s(xij,yij,zij, b,eta)],[G3t1s(xij,yij,zij, b,eta)],[G3a1s(xij,yij,zij, b,eta)],[G3s1s(xij,yij,zij, b,eta)]])
+
+def GH2a(xij,yij,zij, b,eta):
+    return np.block([[G2s2a(xij,yij,zij, b,eta)],
+                     [G3t2a(xij,yij,zij, b,eta)],
+                     [G3a2a(xij,yij,zij, b,eta)],
+                     [G3s2a(xij,yij,zij, b,eta)]])
+
+
+def GHH(xij,yij,zij, b,eta):
+    return np.block([[G2s2s(xij,yij,zij, b,eta), G2s3t(xij,yij,zij, b,eta), G2s3a(xij,yij,zij, b,eta), G2s3s(xij,yij,zij, b,eta)],
+                     [G3t2s(xij,yij,zij, b,eta), G3t3t(xij,yij,zij, b,eta), G3t3a(xij,yij,zij, b,eta), G3t3s(xij,yij,zij, b,eta)],
+                     [G3a2s(xij,yij,zij, b,eta), G3a3t(xij,yij,zij, b,eta), G3a3a(xij,yij,zij, b,eta), G3a3s(xij,yij,zij, b,eta)],
+                     [G3s2s(xij,yij,zij, b,eta), G3s3t(xij,yij,zij, b,eta), G3s3a(xij,yij,zij, b,eta), G3s3s(xij,yij,zij, b,eta)]])
+
+
+def KHH(xij,yij,zij, b,eta):
+    nonzero = np.block([[K2s2s(xij,yij,zij, b,eta), K2s3t(xij,yij,zij, b,eta)],
+                        [K3t2s(xij,yij,zij, b,eta), K3t3t(xij,yij,zij, b,eta)]])
+    return np.block([[nonzero, np.zeros([8,14])],
+                     [np.zeros([14,8]), np.zeros([14,14])]])
+
+
+
+
+                     
 
 

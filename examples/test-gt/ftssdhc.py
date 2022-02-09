@@ -23,7 +23,10 @@ class FTShc:
         ## matrix elements for i=j
         self.G01s = 1./(6*PI*self.eta*self.b)
         self.G02a = 1./(4*PI*self.eta*self.b)
-        self.G02s = 3./(20*PI*self.eta*self.b)
+        
+        ## friction coefficients for i=j
+        self.g2s = 4*PI*self.eta*self.b
+        self.g3t = 0.8*PI*self.eta*self.b
         
         
     ## direct solver for FTS Stokesian dynamics

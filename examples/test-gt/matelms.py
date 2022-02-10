@@ -1600,6 +1600,9 @@ def KHH(xij,yij,zij, b,eta):
     return np.block([[nonzero, np.zeros([8,14])],
                      [np.zeros([14,8]), np.zeros([14,14])]])
 
+def halfMinusKHH(xij,yij,zij, b,eta):
+    return 0.5*np.identity(22) - KHH(xij,yij,zij, b,eta)
+
 
 
 

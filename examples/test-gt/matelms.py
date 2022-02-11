@@ -3,7 +3,62 @@
 import numpy as np
 PI = 3.14159265359
 
-## FTS Stokesian dynamics matrix elements 
+##
+## define matrices eventually used in the direct-solver
+##
+
+
+def G1sH(xij,yij,zij, b,eta):
+    return np.block([G1s2s(xij,yij,zij, b,eta), G1s3t(xij,yij,zij, b,eta), G1s3a(xij,yij,zij, b,eta), G1s3s(xij,yij,zij, b,eta)])
+
+def G2aH(xij,yij,zij, b,eta):
+    return np.block([G2a2s(xij,yij,zij, b,eta), G2a3t(xij,yij,zij, b,eta), G2a3a(xij,yij,zij, b,eta), G2a3s(xij,yij,zij, b,eta)])
+
+def K1sH(xij,yij,zij, b,eta):
+    return np.block([K1s2s(xij,yij,zij, b,eta), K1s3t(xij,yij,zij, b,eta), np.zeros([3,14])])
+
+def K2aH(xij,yij,zij, b,eta):
+    return np.block([K2a2s(xij,yij,zij, b,eta), K2a3t(xij,yij,zij, b,eta), np.zeros([3,14])])
+
+def GH1s(xij,yij,zij, b,eta):
+    return np.block([[G2s1s(xij,yij,zij, b,eta)],[G3t1s(xij,yij,zij, b,eta)],[G3a1s(xij,yij,zij, b,eta)],[G3s1s(xij,yij,zij, b,eta)]])
+
+def GH2a(xij,yij,zij, b,eta):
+    return np.block([[G2s2a(xij,yij,zij, b,eta)],
+                     [G3t2a(xij,yij,zij, b,eta)],
+                     [G3a2a(xij,yij,zij, b,eta)],
+                     [G3s2a(xij,yij,zij, b,eta)]])
+
+
+def GHH(xij,yij,zij, b,eta):
+    return np.block([[G2s2s(xij,yij,zij, b,eta), G2s3t(xij,yij,zij, b,eta), G2s3a(xij,yij,zij, b,eta), G2s3s(xij,yij,zij, b,eta)],
+                     [G3t2s(xij,yij,zij, b,eta), G3t3t(xij,yij,zij, b,eta), G3t3a(xij,yij,zij, b,eta), G3t3s(xij,yij,zij, b,eta)],
+                     [G3a2s(xij,yij,zij, b,eta), G3a3t(xij,yij,zij, b,eta), G3a3a(xij,yij,zij, b,eta), G3a3s(xij,yij,zij, b,eta)],
+                     [G3s2s(xij,yij,zij, b,eta), G3s3t(xij,yij,zij, b,eta), G3s3a(xij,yij,zij, b,eta), G3s3s(xij,yij,zij, b,eta)]])
+
+
+def KHH(xij,yij,zij, b,eta):
+    nonzero = np.block([[K2s2s(xij,yij,zij, b,eta), K2s3t(xij,yij,zij, b,eta)],
+                        [K3t2s(xij,yij,zij, b,eta), K3t3t(xij,yij,zij, b,eta)]])
+    return np.block([[nonzero, np.zeros([8,14])],
+                     [np.zeros([14,8]), np.zeros([14,14])]])
+
+def halfMinusKHH(xij,yij,zij, b,eta):
+    return 0.5*np.identity(22) - KHH(xij,yij,zij, b,eta)
+
+
+##
+## Matrix elements
+##
+
+
+
+##
+## FTS Stokesian dynamics matrix elements
+##
+
+
+
 def G1s1s(xij,yij,zij, b,eta):
     return np.array([[(6*xij**4 + 9*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2 + 2*b**2*(-2*xij**2 + yij**2 + zij**2))/(24.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),
      (xij*yij*(-2*b**2 + xij**2 + yij**2 + zij**2))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),(xij*zij*(-2*b**2 + xij**2 + yij**2 + zij**2))/(8.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5)],
@@ -1557,55 +1612,3 @@ def K2a3t(xij,yij,zij, b,eta):
 
 def K3a3t(xij,yij,zij, b,eta):
     return np.zeros([5,3])
-
-
-
-##
-## define matrices eventually used in the direct-solver
-##
-
-
-def G1sH(xij,yij,zij, b,eta):
-    return np.block([G1s2s(xij,yij,zij, b,eta), G1s3t(xij,yij,zij, b,eta), G1s3a(xij,yij,zij, b,eta), G1s3s(xij,yij,zij, b,eta)])
-
-def G2aH(xij,yij,zij, b,eta):
-    return np.block([G2a2s(xij,yij,zij, b,eta), G2a3t(xij,yij,zij, b,eta), G2a3a(xij,yij,zij, b,eta), G2a3s(xij,yij,zij, b,eta)])
-
-def K1sH(xij,yij,zij, b,eta):
-    return np.block([K1s2s(xij,yij,zij, b,eta), K1s3t(xij,yij,zij, b,eta), np.zeros([3,14])])
-
-def K2aH(xij,yij,zij, b,eta):
-    return np.block([K2a2s(xij,yij,zij, b,eta), K2a3t(xij,yij,zij, b,eta), np.zeros([3,14])])
-
-def GH1s(xij,yij,zij, b,eta):
-    return np.block([[G2s1s(xij,yij,zij, b,eta)],[G3t1s(xij,yij,zij, b,eta)],[G3a1s(xij,yij,zij, b,eta)],[G3s1s(xij,yij,zij, b,eta)]])
-
-def GH2a(xij,yij,zij, b,eta):
-    return np.block([[G2s2a(xij,yij,zij, b,eta)],
-                     [G3t2a(xij,yij,zij, b,eta)],
-                     [G3a2a(xij,yij,zij, b,eta)],
-                     [G3s2a(xij,yij,zij, b,eta)]])
-
-
-def GHH(xij,yij,zij, b,eta):
-    return np.block([[G2s2s(xij,yij,zij, b,eta), G2s3t(xij,yij,zij, b,eta), G2s3a(xij,yij,zij, b,eta), G2s3s(xij,yij,zij, b,eta)],
-                     [G3t2s(xij,yij,zij, b,eta), G3t3t(xij,yij,zij, b,eta), G3t3a(xij,yij,zij, b,eta), G3t3s(xij,yij,zij, b,eta)],
-                     [G3a2s(xij,yij,zij, b,eta), G3a3t(xij,yij,zij, b,eta), G3a3a(xij,yij,zij, b,eta), G3a3s(xij,yij,zij, b,eta)],
-                     [G3s2s(xij,yij,zij, b,eta), G3s3t(xij,yij,zij, b,eta), G3s3a(xij,yij,zij, b,eta), G3s3s(xij,yij,zij, b,eta)]])
-
-
-def KHH(xij,yij,zij, b,eta):
-    nonzero = np.block([[K2s2s(xij,yij,zij, b,eta), K2s3t(xij,yij,zij, b,eta)],
-                        [K3t2s(xij,yij,zij, b,eta), K3t3t(xij,yij,zij, b,eta)]])
-    return np.block([[nonzero, np.zeros([8,14])],
-                     [np.zeros([14,8]), np.zeros([14,14])]])
-
-def halfMinusKHH(xij,yij,zij, b,eta):
-    return 0.5*np.identity(22) - KHH(xij,yij,zij, b,eta)
-
-
-
-
-                     
-
-

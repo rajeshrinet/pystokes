@@ -26,14 +26,17 @@ class DS:
         eta = self.eta
         for i in range(Np):
             ## This velocity and angular velocity is actually V-V^A, so have to add
-            ## self-propulsion speed manually?
+            ## self-propulsion speed manually
             v_ = np.zeros([3])
             o_ = np.zeros([3])
             for j in range(Np):
-                xij = r[i]    - r[j]
-                yij = r[i+Np]  - r[j+Np]
-                zij = r[i+2*Np]  - r[j+2*Np]
+                #xij = r[i]    - r[j]
+                #yij = r[i+Np]  - r[j+Np]
+                #zij = r[i+2*Np]  - r[j+2*Np]
                 if j!=i:
+                    xij = r[i]    - r[j] ##move them here, more consistent
+                    yij = r[i+Np]  - r[j+Np]
+                    zij = r[i+2*Np]  - r[j+2*Np]
                     force  = np.array([F[j],F[j+Np], F[j+2*Np]])
                     torque = np.array([T[j],T[j+Np], T[j+2*Np]])
                     S_j  = np.array([S[j],S[j+Np],S[j+2*Np],S[j+3*Np],S[j+4*Np]])
@@ -43,11 +46,14 @@ class DS:
                     rhs = np.zeros(22)
                     FH = np.zeros(22)
                     for k in range(Np):
-                        xjk = r[j]    - r[k]
-                        yjk = r[j+Np]  - r[k+Np]
-                        zjk = r[j+2*Np]  - r[k+2*Np]
+                        #xjk = r[j]    - r[k]
+                        #yjk = r[j+Np]  - r[k+Np]
+                        #zjk = r[j+2*Np]  - r[k+2*Np]
                         if k!=j:
-                            ## FH induced via FL and VH on other particles 
+                            ## FH induced via FL and VH on other particles
+                            xjk = r[j]    - r[k] ##move them here, more consistent
+                            yjk = r[j+Np]  - r[k+Np]
+                            zjk = r[j+2*Np]  - r[k+2*Np]
                             
                             force_k  = np.array([F[k],F[k+Np], F[k+2*Np]])
                             torque_k = np.array([T[k],T[k+Np], T[k+2*Np]])

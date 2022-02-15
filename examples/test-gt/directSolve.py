@@ -63,7 +63,8 @@ class DS:
 
                             rhs += (np.dot(me.GH1s(xjk,yjk,zjk, b,eta), force_k) 
                                    + 1./b * np.dot(me.GH2a(xjk,yjk,zjk, b,eta), torque_k)
-                                   - np.dot(me.halfMinusKHH(xjk,yjk,zjk, b,eta), VH_k))
+                                   - np.dot(me.halfMinusKHH(xjk,yjk,zjk, b,eta), VH_k)) ## this cannot be quite right? All other 3t terms are zero
+                                                                                        ## so equ would read 0 = V^(3t)
                         else:
                             ## FH induced via VH on same particle
                             F2s = -self.g2s*S_j

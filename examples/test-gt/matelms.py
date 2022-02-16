@@ -3,8 +3,38 @@
 import numpy as np
 PI = 3.14159265359
 
+
 ##
 ## define matrices eventually used in the direct-solver
+##
+
+def hatGH1s(xij,yij,zij, b,eta):
+    return np.block([[G2s1s(xij,yij,zij, b,eta)],
+                     [G3a1s(xij,yij,zij, b,eta)],
+                     [G3s1s(xij,yij,zij, b,eta)]])
+
+def hatGH2a(xij,yij,zij, b,eta):
+    return np.block([[G2s2a(xij,yij,zij, b,eta)],
+                     [G3a2a(xij,yij,zij, b,eta)],
+                     [G3s2a(xij,yij,zij, b,eta)]])
+
+def hatGHH(xij,yij,zij, b,eta):
+    return np.block([[G2s2s(xij,yij,zij, b,eta), G2s3a(xij,yij,zij, b,eta), G2s3s(xij,yij,zij, b,eta)],
+                     [G3a2s(xij,yij,zij, b,eta), G3a3a(xij,yij,zij, b,eta), G3a3s(xij,yij,zij, b,eta)],
+                     [G3s2s(xij,yij,zij, b,eta), G3s3a(xij,yij,zij, b,eta), G3s3s(xij,yij,zij, b,eta)]])
+
+def hatKHH(xij,yij,zij, b,eta):
+    return np.block([[K2s2s(xij,yij,zij, b,eta), np.zeros([5,14])],
+                     [np.zeros([14,5]), np.zeros([14,14])]])
+
+def hatGH3t(xij,yij,zij, b,eta):
+    return np.block([[G2s3t(xij,yij,zij, b,eta)],
+                     [G3a3t(xij,yij,zij, b,eta)],
+                     [G3s3t(xij,yij,zij, b,eta)]])
+
+
+##
+## and the more general ones containing (3t)
 ##
 
 

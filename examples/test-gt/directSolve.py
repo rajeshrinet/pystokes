@@ -37,10 +37,10 @@ class DS:
                     torque_j = np.array([T[j],T[j+Np], T[j+2*Np]])
                     S_j  = np.array([S[j],S[j+Np],S[j+2*Np],S[j+3*Np],S[j+4*Np]])
                     D_j  = np.array([D[j],D[j+Np],D[j+2*Np]])
-                    VH_j = np.concatenate([S_j,D_j,np.zeros(14)]) 
+                    VH_j = np.concatenate([S_j,D_j,np.zeros(12)]) 
                     
-                    hatFH_j = np.zeros(19)
-                    rhs = np.zeros(19)
+                    hatFH_j = np.zeros(17)
+                    rhs = np.zeros(17)
                     for k in range(Np):
                         if k!=i:
                             xik = r[i]       - r[k] ##move them here, more consistent
@@ -52,7 +52,7 @@ class DS:
                             S_k = np.array([S[k],S[k+Np],S[k+2*Np],S[k+3*Np],S[k+4*Np]])
                             D_k = np.array([D[k],D[k+Np],D[k+2*Np]])
                             
-                            hatVH_k = np.concatenate([S_k,np.zeros(14)])
+                            hatVH_k = np.concatenate([S_k,np.zeros(12)])
                             
                             rhs += (np.dot(me.hatGH1s(xik,yik,zik, b,eta), force_k)
                                     + 1./b * np.dot(me.hatGH2a(xik,yik,zik, b,eta), torque_k)
@@ -60,7 +60,7 @@ class DS:
                                     + self.g3t * np.dot(me.hatGH3t(xik,yik,zik, b,eta), D_k))
                         else: #k=i
                             S_i = np.array([S[i],S[i+Np],S[i+2*Np],S[i+3*Np],S[i+4*Np]])
-                            hatVH_i = np.concatenate([self.halfMinusKoHH * S_i, np.zeros(14)])
+                            hatVH_i = np.concatenate([self.halfMinusKoHH * S_i, np.zeros(12)])
                             
                             rhs += - hatVH_i
                     
@@ -125,10 +125,10 @@ class DS:
                     torque = np.array([T[j],T[j+Np], T[j+2*Np]])
                     S_j  = np.array([S[j],S[j+Np],S[j+2*Np],S[j+3*Np],S[j+4*Np]])
                     D_j  = np.array([D[j],D[j+Np],D[j+2*Np]])
-                    VH_j = np.concatenate([S_j,D_j,np.zeros(14)]) 
+                    VH_j = np.concatenate([S_j,D_j,np.zeros(12)]) 
                     
-                    rhs = np.zeros(22)
-                    FH = np.zeros(22)
+                    rhs = np.zeros(20)
+                    FH = np.zeros(20)
                     for k in range(Np):
                         #xjk = r[j]    - r[k]
                         #yjk = r[j+Np]  - r[k+Np]
@@ -143,7 +143,7 @@ class DS:
                             torque_k = np.array([T[k],T[k+Np], T[k+2*Np]])
                             S_k = np.array([S[k],S[k+Np],S[k+2*Np],S[k+3*Np],S[k+4*Np]])
                             D_k = np.array([D[k],D[k+Np],D[k+2*Np]])
-                            VH_k = np.concatenate([S_k,D_k,np.zeros(14)])
+                            VH_k = np.concatenate([S_k,D_k,np.zeros(12)])
 
                             rhs += (np.dot(me.GH1s(xjk,yjk,zjk, b,eta), force_k) 
                                    + 1./b * np.dot(me.GH2a(xjk,yjk,zjk, b,eta), torque_k)
@@ -153,7 +153,7 @@ class DS:
                             ## FH induced via VH on same particle
                             F2s = -self.g2s*S_j
                             F3t = -self.g3t*D_j
-                            FH += np.concatenate([F2s,F3t,np.zeros(14)])
+                            FH += np.concatenate([F2s,F3t,np.zeros(12)])
                                     
                     ## If this is singular, use pseudo-inverse instead 
                     ## otherwise can try to cancel 3t rows (more elegant

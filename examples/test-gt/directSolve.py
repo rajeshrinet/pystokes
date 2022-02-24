@@ -12,12 +12,12 @@ class DS:
         self.eta = viscosity
         
         ## matrix elements for i=j
-        self.G01s = 1./(6*PI*self.eta*self.b)
-        self.G02a = 1./(4*PI*self.eta*self.b)
+        self.g1s = 1./(6*PI*self.eta*self.b)
+        self.g2a = 1./(4*PI*self.eta*self.b)
         
         ## friction coefficients for i=j
-        self.g2s = 4*PI*self.eta*self.b
-        self.g3t = 0.8*PI*self.eta*self.b
+        self.gamma2s = 4*PI*self.eta*self.b
+        self.gamma3t = 0.8*PI*self.eta*self.b
         self.halfMinusKoHH = 0.6
         
     def directSolve_new(self, v, o, r, F, T, S, D, rcond=1e-5):
@@ -57,7 +57,7 @@ class DS:
                             rhs += (np.dot(me.hatGH1s(xik,yik,zik, b,eta), force_k)
                                     + 1./b * np.dot(me.hatGH2a(xik,yik,zik, b,eta), torque_k)
                                     + np.dot(me.hatKHH(xik,yik,zik, b,eta),hatVH_k)
-                                    + self.g3t * np.dot(me.hatGH3t(xik,yik,zik, b,eta), D_k))
+                                    + self.gamma3t * np.dot(me.hatGH3t(xik,yik,zik, b,eta), D_k))
                         else: #k=i
                             S_i = np.array([S[i],S[i+Np],S[i+2*Np],S[i+3*Np],S[i+4*Np]])
                             hatVH_i = np.concatenate([self.halfMinusKoHH * S_i, np.zeros(12)])
@@ -66,7 +66,7 @@ class DS:
                     
                     lhs_inv = np.linalg.pinv(me.hatGHH(xij,yij,zij, b,eta), rcond=rcond)
                     hatFH_j = np.dot(lhs_inv, rhs)
-                    F3t_j = -self.g3t*D_j
+                    F3t_j = -self.gamma3t*D_j
                     FH_j = np.concatenate([hatFH_j[0:5], F3t_j, hatFH_j[5:]])
                     
                     v_ += (np.dot(me.G1s1s(xij,yij,zij, b,eta), force_j)
@@ -87,8 +87,8 @@ class DS:
                     
                     ## This is a solution for V = V^A + muTT*force
                     ## We know that V^A = 1/5*V^(3t) for squirmer model
-                    v_ += self.G01s*force_i + 0.2*D_i
-                    o_ += 0.5/(b*b) * self.G02a*torque_i
+                    v_ += self.g1s*force_i + 0.2*D_i
+                    o_ += 0.5/(b*b) * self.g2a*torque_i
                     
                     
             v[i]      += v_[0]
@@ -151,8 +151,8 @@ class DS:
                                                                                         ## so equ would read 0 = V^(3t)
                         else:
                             ## FH induced via VH on same particle
-                            F2s = -self.g2s*S_j
-                            F3t = -self.g3t*D_j
+                            F2s = -self.gamma2s*S_j
+                            F3t = -self.gamma3t*D_j
                             FH += np.concatenate([F2s,F3t,np.zeros(12)])
                                     
                     ## If this is singular, use pseudo-inverse instead 
@@ -179,8 +179,8 @@ class DS:
                     
                     ## This is a solution for V = V^A + muTT*force
                     ## We know that V^A = 1/5*V^(3t) for squirmer model
-                    v_ += self.G01s*force + 0.2*D_j
-                    o_ += 0.5/(b*b) * self.G02a*torque
+                    v_ += self.g1s*force + 0.2*D_j
+                    o_ += 0.5/(b*b) * self.g2a*torque
                     
                     
             v[i]      += v_[0]

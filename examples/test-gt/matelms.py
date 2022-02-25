@@ -5,7 +5,7 @@ PI = 3.14159265359
 
 
 ##
-## define matrices eventually used in the direct-solver
+## define matrices eventually used in the direct-solver: hat indicates that (3t) is excluded
 ##
 
 def hatGH1s(xij,yij,zij, b,eta):

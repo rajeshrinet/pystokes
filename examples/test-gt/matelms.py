@@ -82,6 +82,12 @@ def halfMinusKHH(xij,yij,zij, b,eta):
     return 0.5*np.identity(20) - KHH(xij,yij,zij, b,eta)
 
 
+
+
+
+################################
+################################
+
 ##
 ## Matrix elements
 ##
@@ -89,10 +95,8 @@ def halfMinusKHH(xij,yij,zij, b,eta):
 
 
 ##
-## FTS Stokesian dynamics matrix elements
+## lowest order matrix elements (FTS)
 ##
-
-
 
 def G1s1s(xij,yij,zij, b,eta):
     return np.array([[(6*xij**4 + 9*xij**2*(yij**2 + zij**2) + 3*(yij**2 + zij**2)**2 + 2*b**2*(-2*xij**2 + yij**2 + zij**2))/(24.*eta*PI*(xij**2 + yij**2 + zij**2)**2.5),

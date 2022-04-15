@@ -31,56 +31,6 @@ class linearSolve_direct:
         self.KoHH = np.diag(np.block([np.full(5, self.halfMinusk2s), np.full(3, self.halfMinusk3t), np.full(5, self.halfMinusk3a), np.full(7, self.halfMinusk3s)]))
         
         
-        
-    def get_FH(self, r, F, T, S, D):
-        b = self.b
-        Np = self.Np
-        eta = self.eta
-        
-        force  = np.zeros(3*Np)
-        torque = np.zeros(3*Np)
-        
-        ## 20 is dimension of 2s + 3t + 3a + 3s
-        VH = np.zeros(20*Np)
-        
-        GHH = np.zeros([20*Np,20*Np])
-        KHH = np.zeros([20*Np,20*Np])
-        GH1s = np.zeros([20*Np,3*Np])
-        GH2a = np.zeros([20*Np,3*Np])
-        
-        for i in range(Np):
-            S_i  = np.array([S[i],S[i+Np],S[i+2*Np],S[i+3*Np],S[i+4*Np]])
-            D_i  = np.array([D[i],D[i+Np],D[i+2*Np]])
-            
-            VH[20*i:20*i+5]   = S_i
-            VH[20*i+5:20*i+8] = D_i
-            
-            ## have to reorder F and T from F1x, F2x, F1y, F2y,... to F1x, F1y, F1z, F2x,...
-            force[3*i:3*i+3]  = np.array([F[i],F[i+Np], F[i+2*Np]])
-            torque[3*i:3*i+3] = np.array([T[i],T[i+Np], T[i+2*Np]])
-            
-            for j in range(Np):
-                if j!=i: ## off diagonals
-                    xij = r[i]    - r[j] 
-                    yij = r[i+Np]  - r[j+Np]
-                    zij = r[i+2*Np]  - r[j+2*Np]
-                    
-                    GHH[20*i:20*(i+1), 20*j:20*(j+1)] = me.GHH(xij,yij,zij, b,eta)
-                    KHH[20*i:20*(i+1), 20*j:20*(j+1)] = me.KHH(xij,yij,zij, b,eta)
-                    GH1s[20*i:20*(i+1), 3*j:3*(j+1)] = me.GH1s(xij,yij,zij, b,eta)
-                    GH2a[20*i:20*(i+1), 3*j:3*(j+1)] = me.GH2a(xij,yij,zij, b,eta)
-                    
-                    
-                else: ## fill diagonal elements of GHH etc, j==i
-                    GHH[20*j:20*(j+1), 20*j:20*(j+1)] = self.GoHH
-                    KHH[20*j:20*(j+1), 20*j:20*(j+1)] = - self.KoHH
-            
-        rhs = np.dot(KHH, VH) + np.dot(GH1s, force) + 1./b * np.dot(GH2a, torque)
-            
-        return np.linalg.solve(GHH, rhs)
-                    
-        
-    
     def RBM(self, v, o, r, F, T, S, D):
         b = self.b
         Np = self.Np
@@ -134,4 +84,52 @@ class linearSolve_direct:
             o[i+Np]   += o_[1]
             o[i+2*Np] += o_[2]
         return
+        
+        
+        
+    def get_FH(self, r, F, T, S, D):
+        b = self.b
+        Np = self.Np
+        eta = self.eta
+        
+        force  = np.zeros(3*Np)
+        torque = np.zeros(3*Np)
+        
+        ## 20 is dimension of 2s + 3t + 3a + 3s
+        VH = np.zeros(20*Np)
+        
+        GHH = np.zeros([20*Np,20*Np])
+        KHH = np.zeros([20*Np,20*Np])
+        GH1s = np.zeros([20*Np,3*Np])
+        GH2a = np.zeros([20*Np,3*Np])
+        
+        for i in range(Np):
+            S_i  = np.array([S[i],S[i+Np],S[i+2*Np],S[i+3*Np],S[i+4*Np]])
+            D_i  = np.array([D[i],D[i+Np],D[i+2*Np]])
+            
+            VH[20*i:20*i+5]   = S_i
+            VH[20*i+5:20*i+8] = D_i
+            
+            ## have to reorder F and T from F1x, F2x, F1y, F2y,... to F1x, F1y, F1z, F2x,...
+            force[3*i:3*i+3]  = np.array([F[i],F[i+Np], F[i+2*Np]])
+            torque[3*i:3*i+3] = np.array([T[i],T[i+Np], T[i+2*Np]])
+            
+            for j in range(Np):
+                if j!=i: ## off diagonals
+                    xij = r[i]    - r[j] 
+                    yij = r[i+Np]  - r[j+Np]
+                    zij = r[i+2*Np]  - r[j+2*Np]
+                    
+                    GHH[20*i:20*(i+1), 20*j:20*(j+1)] = me.GHH(xij,yij,zij, b,eta)
+                    KHH[20*i:20*(i+1), 20*j:20*(j+1)] = me.KHH(xij,yij,zij, b,eta)
+                    GH1s[20*i:20*(i+1), 3*j:3*(j+1)] = me.GH1s(xij,yij,zij, b,eta)
+                    GH2a[20*i:20*(i+1), 3*j:3*(j+1)] = me.GH2a(xij,yij,zij, b,eta)
+                      
+                else: ## fill diagonal elements of GHH etc, j==i
+                    GHH[20*j:20*(j+1), 20*j:20*(j+1)] = self.GoHH
+                    KHH[20*j:20*(j+1), 20*j:20*(j+1)] = - self.KoHH
+            
+        rhs = np.dot(KHH, VH) + np.dot(GH1s, force) + 1./b * np.dot(GH2a, torque)
+        
+        return np.linalg.solve(GHH, rhs)
                     

@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.sparse.linalg import bicgstab, LinearOperator
-import test
+import freeSpaceME as me
 
 PI = 3.14159265359
 
@@ -42,15 +42,15 @@ class linearSolve_krylov:
                     
                     FH_j = FH[20*j:20*(j+1)]
                     
-                    v_ += (test.G1s1sF(xij,yij,zij, b,eta, force_j)
-                           + 1./b * test.G1s2aT(xij,yij,zij, b,eta, torque_j)
-                           - test.G1sHFH(xij,yij,zij, b,eta, FH_j)
-                           + test.K1sHVH(xij,yij,zij, b,eta, VH_j))
+                    v_ += (me.G1s1sF(xij,yij,zij, b,eta, force_j)
+                           + 1./b * me.G1s2aT(xij,yij,zij, b,eta, torque_j)
+                           - me.G1sHFH(xij,yij,zij, b,eta, FH_j)
+                           + me.K1sHVH(xij,yij,zij, b,eta, VH_j))
                     
-                    o_ += 0.5/b*(test.G2a1sF(xij,yij,zij, b,eta, force_j)
-                                 + 1./b * test.G2a2aT(xij,yij,zij, b,eta, torque_j)
-                                 - test.G2aHFH(xij,yij,zij, b,eta, FH_j)
-                                 + test.K2aHVH(xij,yij,zij, b,eta, VH_j))
+                    o_ += 0.5/b*(me.G2a1sF(xij,yij,zij, b,eta, force_j)
+                                 + 1./b * me.G2a2aT(xij,yij,zij, b,eta, torque_j)
+                                 - me.G2aHFH(xij,yij,zij, b,eta, FH_j)
+                                 + me.K2aHVH(xij,yij,zij, b,eta, VH_j))
 
                     
                 else: ## j==i
@@ -91,7 +91,7 @@ class linearSolve_krylov:
         GH1sF = np.zeros([20*Np])
         GH2aT = np.zeros([20*Np])
         
-        GoHH = np.tile(test.GoHHFH(b,eta, np.ones(20)), Np) ##for krylov starting point x0
+        GoHH = np.tile(me.GoHHFH(b,eta, np.ones(20)), Np) ##for krylov starting point x0
         
         for i in range(Np):
             for j in range(Np):
@@ -106,16 +106,16 @@ class linearSolve_krylov:
                     VH_j[0:5]  = np.array([S[j],S[j+Np],S[j+2*Np],S[j+3*Np],S[j+4*Np]])
                     VH_j[5:8]  = np.array([D[j],D[j+Np],D[j+2*Np]])
                     
-                    KHHVH[20*i:20*(i+1)] += test.KHHVH(xij,yij,zij, b,eta, VH_j)
-                    GH1sF[20*i:20*(i+1)] += test.GH1sF(xij,yij,zij, b,eta, force_j)
-                    GH2aT[20*i:20*(i+1)] += test.GH2aT(xij,yij,zij, b,eta, torque_j)
+                    KHHVH[20*i:20*(i+1)] += me.KHHVH(xij,yij,zij, b,eta, VH_j)
+                    GH1sF[20*i:20*(i+1)] += me.GH1sF(xij,yij,zij, b,eta, force_j)
+                    GH2aT[20*i:20*(i+1)] += me.GH2aT(xij,yij,zij, b,eta, torque_j)
                     
                     
                 else: ## add diagonal elements to KHH etc, j==i
                     VH_j[0:5]  = np.array([S[j],S[j+Np],S[j+2*Np],S[j+3*Np],S[j+4*Np]])
                     VH_j[5:8]  = np.array([D[j],D[j+Np],D[j+2*Np]])
                     
-                    KHHVH[20*i:20*(i+1)] += - test.KoHHVH(b, eta, VH_j)
+                    KHHVH[20*i:20*(i+1)] += - me.KoHHVH(b, eta, VH_j)
                     
         rhs = KHHVH + GH1sF + 1./b * GH2aT 
         x0 = rhs/GoHH
@@ -141,11 +141,11 @@ class linearSolve_krylov:
                     yij = r[i+Np]  - r[j+Np]
                     zij = r[i+2*Np]  - r[j+2*Np]
                     
-                    vecGHHFH[20*i:20*(i+1)] += test.GHHFH(xij,yij,zij, b,eta, FH[20*j:20*(j+1)])
+                    vecGHHFH[20*i:20*(i+1)] += me.GHHFH(xij,yij,zij, b,eta, FH[20*j:20*(j+1)])
                     
                     
                 else: ## add diagonal elements to KHH etc, j==i
-                    vecGHHFH[20*i:20*(i+1)] += test.GoHHFH(b, eta, FH[20*j:20*(j+1)])
+                    vecGHHFH[20*i:20*(i+1)] += me.GoHHFH(b, eta, FH[20*j:20*(j+1)])
                     
         return vecGHHFH
                     

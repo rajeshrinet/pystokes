@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse.linalg import bicgstab, LinearOperator
 #import freeSpaceME as me  ##changed dimensions below to only use symmetry (not tracelessness) of irreducible tensors
-import freeSpaceMEsymFactors as me   ##including symmetry factors  
+import _3aME as me   ##including symmetry factors  
 
 PI = 3.14159265359
 
@@ -24,7 +24,7 @@ class linearSolve_krylov:
         
         FH, exitCode = self.get_FH(r, F, T, S, D)
         
-        VH_j = np.zeros(25)
+        VH_j = np.zeros(15)
         
         for i in range(Np):
             v_ = np.zeros([3])
@@ -41,7 +41,7 @@ class linearSolve_krylov:
                     VH_j[0:6]  = np.array([S[j],S[j+Np],S[j+2*Np],S[j+3*Np],S[j+4*Np],S[j+5*Np]]) ##would have to parse S differently, dimension 6
                     VH_j[6:9]  = np.array([D[j],D[j+Np],D[j+2*Np]]) 
                     
-                    FH_j = FH[25*j:25*(j+1)]
+                    FH_j = FH[15*j:15*(j+1)]
                     
                     v_ += (me.G1s1sF(xij,yij,zij, b,eta, force_j)
                            + 1./b * me.G1s2aT(xij,yij,zij, b,eta, torque_j)
@@ -86,13 +86,13 @@ class linearSolve_krylov:
         torque_j = np.zeros(3)
         
         ## 20 is dimension of 2s + 3t + 3a + 3s
-        VH_j = np.zeros(25)
+        VH_j = np.zeros(15)
         
-        KHHVH = np.zeros([25*Np])
-        GH1sF = np.zeros([25*Np])
-        GH2aT = np.zeros([25*Np])
+        KHHVH = np.zeros([15*Np])
+        GH1sF = np.zeros([15*Np])
+        GH2aT = np.zeros([15*Np])
         
-        GoHH = np.tile(me.GoHHFH(b,eta, np.ones(25)), Np) ##for krylov starting point x0
+        GoHH = np.tile(me.GoHHFH(b,eta, np.ones(15)), Np) ##for krylov starting point x0
         
         for i in range(Np):
             for j in range(Np):
@@ -107,21 +107,21 @@ class linearSolve_krylov:
                     VH_j[0:6]  = np.array([S[j],S[j+Np],S[j+2*Np],S[j+3*Np],S[j+4*Np],S[j+5*Np]])  ##would have to parse S differently, dimension 6
                     VH_j[6:9]  = np.array([D[j],D[j+Np],D[j+2*Np]])
                     
-                    KHHVH[25*i:25*(i+1)] += me.KHHVH(xij,yij,zij, b,eta, VH_j)
-                    GH1sF[25*i:25*(i+1)] += me.GH1sF(xij,yij,zij, b,eta, force_j)
-                    GH2aT[25*i:25*(i+1)] += me.GH2aT(xij,yij,zij, b,eta, torque_j)
+                    KHHVH[15*i:15*(i+1)] += me.KHHVH(xij,yij,zij, b,eta, VH_j)
+                    GH1sF[15*i:15*(i+1)] += me.GH1sF(xij,yij,zij, b,eta, force_j)
+                    GH2aT[15*i:15*(i+1)] += me.GH2aT(xij,yij,zij, b,eta, torque_j)
                     
                     
                 else: ## add diagonal elements to KHH etc, j==i
                     VH_j[0:6]  = np.array([S[j],S[j+Np],S[j+2*Np],S[j+3*Np],S[j+4*Np],S[j+5*Np]])  ##would have to parse S differently, dimension 6
                     VH_j[6:9]  = np.array([D[j],D[j+Np],D[j+2*Np]])
                     
-                    KHHVH[25*i:25*(i+1)] += - me.KoHHVH(b, eta, VH_j)
+                    KHHVH[15*i:15*(i+1)] += - me.KoHHVH(b, eta, VH_j)
                     
         rhs = KHHVH + GH1sF + 1./b * GH2aT 
         x0 = rhs/GoHH
         
-        Ax = LinearOperator((25*Np, 25*Np), matvec = self.GHHFH)
+        Ax = LinearOperator((15*Np, 15*Np), matvec = self.GHHFH)
             
         return bicgstab(Ax, rhs, x0)
     
@@ -133,7 +133,7 @@ class linearSolve_krylov:
         
         r = self.r
         
-        vecGHHFH = np.zeros([25*Np])
+        vecGHHFH = np.zeros([15*Np])
         
         for i in range(Np):
             for j in range(Np):
@@ -142,11 +142,11 @@ class linearSolve_krylov:
                     yij = r[i+Np]  - r[j+Np]
                     zij = r[i+2*Np]  - r[j+2*Np]
                     
-                    vecGHHFH[25*i:25*(i+1)] += me.GHHFH(xij,yij,zij, b,eta, FH[25*j:25*(j+1)])
+                    vecGHHFH[15*i:15*(i+1)] += me.GHHFH(xij,yij,zij, b,eta, FH[15*j:15*(j+1)])
                     
                     
                 else: ## add diagonal elements to KHH etc, j==i
-                    vecGHHFH[25*i:25*(i+1)] += me.GoHHFH(b, eta, FH[25*j:25*(j+1)])
+                    vecGHHFH[15*i:15*(i+1)] += me.GoHHFH(b, eta, FH[15*j:15*(j+1)])
                     
         return vecGHHFH
                     

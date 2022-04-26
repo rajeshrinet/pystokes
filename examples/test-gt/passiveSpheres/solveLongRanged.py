@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse.linalg import bicgstab, LinearOperator
 #import freeSpaceME as me  ##changed dimensions below to only use symmetry (not tracelessness) of irreducible tensors
-import freeSpaceMEsymFactors as me   ##including symmetry factors  
+import longRangedME as me   ##including symmetry factors  
 
 PI = 3.14159265359
 

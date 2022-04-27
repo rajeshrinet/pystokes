@@ -7,10 +7,11 @@ PI = 3.14159265359
 
 class linearSolve_krylov:
     
-    def __init__(self, radius=1., particles=1, viscosity=1.0):
+    def __init__(self, radius=1., particles=1, viscosity=1.0, tolerance=1e-05):
         self.b  = radius
         self.Np = particles
         self.eta = viscosity
+        self.tol = tolerance
         
         ## single-layer matrix elements for i=j
         self.g1s = 1./(6*PI*self.eta*self.b)
@@ -123,7 +124,7 @@ class linearSolve_krylov:
         
         Ax = LinearOperator((25*Np, 25*Np), matvec = self.GHHFH)
             
-        return bicgstab(Ax, rhs, x0)
+        return bicgstab(Ax, rhs, x0, self.tol)
     
     
     def GHHFH(self, FH):  ##FH is array of dimension 20*Np

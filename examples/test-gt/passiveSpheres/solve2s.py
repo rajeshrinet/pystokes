@@ -140,7 +140,6 @@ class linearSolve_krylov:
                     
                     vecGHHFH[6*i:6*(i+1)] += me.GHHFH(xij,yij,zij, b,eta, FH[6*j:6*(j+1)])
                     
-                    
                 else: ## add diagonal elements to KHH etc, j==i
                     vecGHHFH[6*i:6*(i+1)] += me.GoHHFH(b, eta, FH[6*j:6*(j+1)])
                     

@@ -1,5 +1,5 @@
 import numpy as np
-import matelms as me
+import freeSpaceMatrixME as me  ## instead of matelms by Mathematica 
 
 PI = 3.14159265359
 
@@ -14,21 +14,21 @@ class linearSolve_direct:
         self.g1s = 1./(6*PI*self.eta*self.b)
         self.g2a = 1./(4*PI*self.eta*self.b)
         
-        self.g2s = 3./(20*PI*self.eta*self.b)
-        self.g3t = 1./(2*PI*self.eta*self.b)
-        self.g3a = 3./(2*PI*self.eta*self.b)
-        self.g3s = 6./(7*PI*self.eta*self.b)
+#         self.g2s = 3./(20*PI*self.eta*self.b)
+#         self.g3t = 1./(2*PI*self.eta*self.b)
+#         self.g3a = 3./(2*PI*self.eta*self.b)
+#         self.g3s = 6./(7*PI*self.eta*self.b)
         
-        self.GoHH = np.diag(np.block([np.full(5, self.g2s), np.full(3, self.g3t), np.full(5, self.g3a), np.full(7, self.g3s)]))
+#         self.GoHH = np.diag(np.block([np.full(5, self.g2s), np.full(3, self.g3t), np.full(5, self.g3a), np.full(7, self.g3s)]))
         
         
-        ## double-layer matrix elements for i=j
-        self.halfMinusk2s = 0.6
-        self.halfMinusk3t = 0.4
-        self.halfMinusk3a = 0.8
-        self.halfMinusk3s = 19./35.
+#         ## double-layer matrix elements for i=j
+#         self.halfMinusk2s = 0.6
+#         self.halfMinusk3t = 0.4
+#         self.halfMinusk3a = 0.8
+#         self.halfMinusk3s = 19./35.
         
-        self.KoHH = np.diag(np.block([np.full(5, self.halfMinusk2s), np.full(3, self.halfMinusk3t), np.full(5, self.halfMinusk3a), np.full(7, self.halfMinusk3s)]))
+#         self.KoHH = np.diag(np.block([np.full(5, self.halfMinusk2s), np.full(3, self.halfMinusk3t), np.full(5, self.halfMinusk3a), np.full(7, self.halfMinusk3s)]))
         
         
     def RBM(self, v, o, r, F, T, S, D):
@@ -126,8 +126,8 @@ class linearSolve_direct:
                     GH2a[20*i:20*(i+1), 3*j:3*(j+1)] = me.GH2a(xij,yij,zij, b,eta)
                       
                 else: ## fill diagonal elements of GHH etc, j==i
-                    GHH[20*j:20*(j+1), 20*j:20*(j+1)] = self.GoHH
-                    KHH[20*j:20*(j+1), 20*j:20*(j+1)] = - self.KoHH
+                    GHH[20*j:20*(j+1), 20*j:20*(j+1)] = me.GoHH(b, eta)
+                    KHH[20*j:20*(j+1), 20*j:20*(j+1)] = - me.KoHH(b, eta)
             
         rhs = np.dot(KHH, VH) + np.dot(GH1s, force) + 1./b * np.dot(GH2a, torque)
         

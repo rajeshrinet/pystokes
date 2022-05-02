@@ -45,7 +45,7 @@ class linearSolve_krylov:
         
         VH_j = np.zeros(self.dimH)
         
-        force_i = np.zeros(3)
+        force_i = np.zeros(3) #forcex, forcey, forcez = 0,0,0 instead of array
         force_j = np.zeros(3)
         
         torque_i = np.zeros(3)

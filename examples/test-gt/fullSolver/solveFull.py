@@ -121,14 +121,12 @@ class linearSolve_krylov:
         force_j  = np.zeros(3)
         torque_j = np.zeros(3)
         
-        ## 20 is dimension of 2s + 3t + 3a + 3s
+        ## dimH is dimension of 2s + 3t + 3a + 3s
         VH_j = np.zeros(self.dimH)
         
         KHHVH = np.zeros([self.dimH*Np])
         GH1sF = np.zeros([self.dimH*Np])
         GH2aT = np.zeros([self.dimH*Np])
-        
-        #GoHH = np.tile(me.GoHHFH(b,eta, np.ones(self.dimH)), Np) ##for krylov starting point x0## redefine
         
         for i in range(Np):
             for j in range(Np):
@@ -156,10 +154,6 @@ class linearSolve_krylov:
                     me.GH1sF(GH1sF, self.dimH, i, xij,yij,zij, b,eta, force_j)
                     me.GH2aT(GH2aT, self.dimH, i, xij,yij,zij, b,eta, torque_j)
                     
-                    #KHHVH[self.dimH*i:self.dimH*(i+1)] += me.KHHVH(xij,yij,zij, b,eta, VH_j)
-                    #GH1sF[self.dimH*i:self.dimH*(i+1)] += me.GH1sF(xij,yij,zij, b,eta, force_j)
-                    #GH2aT[self.dimH*i:self.dimH*(i+1)] += me.GH2aT(xij,yij,zij, b,eta, torque_j)
-                    
                     
                 else: ## add diagonal elements to KHH etc, j==i
                     VH_j[0:self.dim2s]  = (S[j],
@@ -176,14 +170,13 @@ class linearSolve_krylov:
                     
                     
                     me.KoHHVH(KHHVH, self.dimH, i, b,eta, VH_j)  # don't foregt the minus sign!
-                    #KHHVH[self.dimH*i:self.dimH*(i+1)] += - me.KoHHVH(b, eta, VH_j)
                     
         rhs = KHHVH + GH1sF + 1./b * GH2aT 
         x0 = rhs/self.GoHH_diag
         
-        Ax = LinearOperator((self.dimH*Np, self.dimH*Np), matvec = self.GHHFH)
+        GHHFH = LinearOperator((self.dimH*Np, self.dimH*Np), matvec = self.GHHFH)
             
-        return bicgstab(Ax, rhs, x0, self.tol)
+        return bicgstab(GHHFH, rhs, x0, self.tol)
     
     
     def GHHFH(self, FH):  ##FH is array of dimension 20*Np
@@ -203,13 +196,11 @@ class linearSolve_krylov:
                     zij = r[i+2*Np]  - r[j+2*Np]
                     
                     me.GHHFH(GHHFH, self.dimH, i, xij,yij,zij, b,eta, FH[self.dimH*j:self.dimH*(j+1)])
-                    #GHHFH[self.dimH*i:self.dimH*(i+1)] += me.GHHFH(xij,yij,zij, b,eta, FH[self.dimH*j:self.dimH*(j+1)])
                     
                     
                 else: ## add diagonal elements to KHH etc, j==i
                     
                     me.GoHHFH(GHHFH, self.dimH, i, b,eta, FH[self.dimH*j:self.dimH*(j+1)])
-                    #GHHFH[self.dimH*i:self.dimH*(i+1)] += me.GoHHFH(b, eta, FH[self.dimH*j:self.dimH*(j+1)])
                     
         return GHHFH
                     

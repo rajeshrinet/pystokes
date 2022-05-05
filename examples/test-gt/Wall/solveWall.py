@@ -24,17 +24,22 @@ class Rbm: ##in pystokes style
         self.dim2s = 9
         
         ## for starting point of Krylov solver: free space solution
-        self.g2s = 3./(20*PI*self.eta*self.b)
-        self.g3t = 1./(2*PI*self.eta*self.b)
-        self.g3a = 3./(2*PI*self.eta*self.b)
-        self.g3s = 6./(7*PI*self.eta*self.b)
-
-        self.GoHH_diag = np.concatenate([np.full(9, self.g2s), np.full(3, self.g3t), np.full(9, self.g3a), np.full(27, self.g3s)]) ## define in me file?
+        self.gamma2s = 4*PI*self.eta*self.b
+        self.gamma3t = 4*PI*self.eta*self.b/5.
+        self.gamma3a = 8*PI*self.eta*self.b/15.
+        self.gamma3s = 19*PI*self.eta*self.b/30.
+        
+        self.gammaH = np.concatenate([np.full(9, self.gamma2s),
+                                      np.full(3, self.gamma3t),
+                                      np.full(9, self.gamma3a),
+                                      np.full(27, self.gamma3s)])
         
         
     def krylovSolve(self, v, o, r, F, T, S, D):
         b = self.b
         eta = self.eta
+        
+        self.r = r ##for construction of GHHFH
         
         VH = np.zeros(self.dimH)
         FH, exitCode = self.get_FH(r, F, T, S, D)
@@ -56,7 +61,7 @@ class Rbm: ##in pystokes style
         me.K2aHVH(o, h, b,eta, VH)
         
         ## self-interaction
-        v += self.g1s*F# + 0.2*D
+        v += self.g1s*F #+ 0.2*D
         o += 0.5/(b*b) * self.g2a*T
         
         return    
@@ -66,10 +71,7 @@ class Rbm: ##in pystokes style
     def get_FH(self, r, F, T, S, D):
         b = self.b
         eta = self.eta
-        
-        self.r = r ##for construction of GHHFH
-        
-        
+
         ## dimH is dimension of 2s + 3t + 3a + 3s
         VH = np.zeros(self.dimH)
         
@@ -91,11 +93,11 @@ class Rbm: ##in pystokes style
         me.KoHHVH(KHHVH, b,eta, VH)
             
         rhs = KHHVH + GH1sF + 1./b * GH2aT 
-        x0 = rhs/self.GoHH_diag  #start at the free-space solution
+        FH0 = -self.gammaH*VH  #start at the free-space solution
         
         GHHFH = LinearOperator((self.dimH, self.dimH), matvec = self.GHHFH)
             
-        return bicgstab(GHHFH, rhs, x0, self.tol)
+        return bicgstab(GHHFH, rhs, x0=FH0, tol=self.tol)
     
     
     def GHHFH(self, FH):

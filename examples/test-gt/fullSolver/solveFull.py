@@ -25,15 +25,16 @@ class linearSolve_krylov:
         ## used dimensions of 2s
         self.dim2s = 9
         
-        ## diagonal solution for starting point of Krylov solver
-        self.g2s = 3./(20*PI*self.eta*self.b)
-        self.g3t = 1./(2*PI*self.eta*self.b)
-        self.g3a = 3./(2*PI*self.eta*self.b)
-        self.g3s = 6./(7*PI*self.eta*self.b)
+        ## for starting point of Krylov solver: free space solution
+        self.gamma2s = 4*PI*self.eta*self.b
+        self.gamma3t = 4*PI*self.eta*self.b/5.
+        self.gamma3a = 8*PI*self.eta*self.b/15.
+        self.gamma3s = 19*PI*self.eta*self.b/30.
         
-        GoHH_diag_oneParticle = np.concatenate([np.full(9, self.g2s), np.full(3, self.g3t), np.full(9, self.g3a), np.full(27, self.g3s)])
-        
-        self.GoHH_diag = np.tile(GoHH_diag_oneParticle, self.Np) ##for krylov starting point x0## redefine
+        self.gammaH = np.tile(np.concatenate([np.full(9, self.gamma2s),
+                                              np.full(3, self.gamma3t),
+                                              np.full(9, self.gamma3a),
+                                              np.full(27, self.gamma3s)]),self.Np)
         
         
     def RBM(self, v, o, r, F, T, S, D):
@@ -124,12 +125,26 @@ class linearSolve_krylov:
         ## dimH is dimension of 2s + 3t + 3a + 3s
         VH_j = np.zeros(self.dimH)
         
+        VH = np.zeros([self.dimH*Np])
         KHHVH = np.zeros([self.dimH*Np])
         GH1sF = np.zeros([self.dimH*Np])
         GH2aT = np.zeros([self.dimH*Np])
         
         for i in range(Np):
             for j in range(Np):
+                VH_j[0:self.dim2s]  = (S[j],
+                                       S[j+Np],
+                                       S[j+2*Np],
+                                       S[j+3*Np],
+                                       S[j+4*Np],
+                                       S[j+5*Np],
+                                       S[j+6*Np],
+                                       S[j+7*Np],
+                                       S[j+8*Np])
+
+                VH_j[self.dim2s:self.dim2s+3]  = (D[j],D[j+Np],D[j+2*Np])
+                VH[self.dimH*j:self.dimH*(j+1)] = VH_j
+                
                 if j!=i: ## off diagonals
                     xij = r[i]    - r[j] 
                     yij = r[i+Np]  - r[j+Np]
@@ -138,45 +153,20 @@ class linearSolve_krylov:
                     force_j[:]  = (F[j],F[j+Np], F[j+2*Np])
                     torque_j[:] = (T[j],T[j+Np], T[j+2*Np])
                     
-                    VH_j[0:self.dim2s]  = (S[j],
-                                           S[j+Np],
-                                           S[j+2*Np],
-                                           S[j+3*Np],
-                                           S[j+4*Np],
-                                           S[j+5*Np],
-                                           S[j+6*Np],
-                                           S[j+7*Np],
-                                           S[j+8*Np])
-                    
-                    VH_j[self.dim2s:self.dim2s+3]  = (D[j],D[j+Np],D[j+2*Np])
-                    
                     me.KHHVH(KHHVH, self.dimH, i, xij,yij,zij, b,eta, VH_j)
                     me.GH1sF(GH1sF, self.dimH, i, xij,yij,zij, b,eta, force_j)
                     me.GH2aT(GH2aT, self.dimH, i, xij,yij,zij, b,eta, torque_j)
                     
                     
                 else: ## add diagonal elements to KHH etc, j==i
-                    VH_j[0:self.dim2s]  = (S[j],
-                                           S[j+Np],
-                                           S[j+2*Np],
-                                           S[j+3*Np],
-                                           S[j+4*Np],
-                                           S[j+5*Np],
-                                           S[j+6*Np],
-                                           S[j+7*Np],
-                                           S[j+8*Np])
-                    
-                    VH_j[self.dim2s:self.dim2s+3]  = (D[j],D[j+Np],D[j+2*Np])
-                    
-                    
                     me.KoHHVH(KHHVH, self.dimH, i, b,eta, VH_j)  # don't foregt the minus sign!
                     
         rhs = KHHVH + GH1sF + 1./b * GH2aT 
-        x0 = rhs/self.GoHH_diag
+        FH0 = -self.gammaH*VH  #start at the one-particle solution
         
         GHHFH = LinearOperator((self.dimH*Np, self.dimH*Np), matvec = self.GHHFH)
             
-        return bicgstab(GHHFH, rhs, x0, self.tol)
+        return bicgstab(GHHFH, rhs, x0=FH0, tol=self.tol)
     
     
     def GHHFH(self, FH):  ##FH is array of dimension 20*Np

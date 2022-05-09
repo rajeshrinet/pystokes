@@ -50,10 +50,10 @@ class Rbm: ##in pystokes style
         VH[self.dim2s:self.dim2s+3]  = D 
         
         ## interactions with image
-        me.G1s1sF(v, h, b,eta, F) ##update v and o directly? 
+        me.G1s1sF(v, h, b,eta, F)
         me.G1s2aT(v, h, b,eta, T)
         me.G1sHFH(v, h, b,eta, FH)
-        me.K1sHVH(v, h, b,eta, VH)
+        me.K1sHVH(v, h, b,eta, VH) 
         
         me.G2a1sF(o, h, b,eta, F)
         me.G2a2aT(o, h, b,eta, T)

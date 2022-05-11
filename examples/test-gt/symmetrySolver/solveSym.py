@@ -82,8 +82,8 @@ class linearSolve_krylov:
                            - me.G1sHFH(xij,yij,zij, b,eta, FH_j)
                            + me.K1sHVH(xij,yij,zij, b,eta, VH_j))
                     
-                    #print(me.G1sHFH(xij,yij,zij, b,eta, FH_j))
-                    #print(me.K1sHVH(xij,yij,zij, b,eta, VH_j))
+                    # print(me.G1sHFH(xij,yij,zij, b,eta, FH_j))
+                    # print(me.K1sHVH(xij,yij,zij, b,eta, VH_j))
                     
                     o_ += 0.5/b*(me.G2a1sF(xij,yij,zij, b,eta, force_j)
                                  + 1./b * me.G2a2aT(xij,yij,zij, b,eta, torque_j)

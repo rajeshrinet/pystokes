@@ -62,8 +62,10 @@ class Rbm:
         
         ## interactions with periodic lattice
         me.G1s1sF(v, L,xi, b,eta, F)
+        print('\nv after G1s1sF: ', v)   ##actually, also has minor x and y contributions
         me.G1s2aT(v, L,xi, b,eta, T)
         me.G1sHFH(v, L,xi, b,eta, FH)
+        print('v after G1sHFH: ', v)   #has contributions in x and y direction - should not be the case in this symmetry
         me.K1sHVH(v, L,xi, b,eta, VH) 
         
         me.G2a1sF(o, L,xi, b,eta, F)
@@ -72,9 +74,8 @@ class Rbm:
         me.K2aHVH(o, L,xi, b,eta, VH)
         
         ## self-interaction, subtract M2(r=0)
-        v += self.g1s*F + 0.2*D + M20*F
+        v += self.g1s*F + 0.2*D + M20*F 
         o += 0.5/(b*b) * self.g2a*T
-        print(M20)
         
         return
     

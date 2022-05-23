@@ -43,39 +43,42 @@ class Rbm:
                                       np.full(self.dimH-2*self.dim2s-3, self.gamma3s)])
         
         ## subtract M2(r=0), see Beenakker
-        self.M20 = self.g1s*(1-6*1/sqrt(PI)*self.xi*self.b + 40/3*1/sqrt(PI)*self.xi**3*self.b**3)
+        self.M20 = self.g1s*(1 - 6/sqrt(PI)*self.xi*self.b + 40/(3*sqrt(PI))*self.xi**3*self.b**3)
         
         
         
-    def krylovSolve(self, v, o, F, T, S, D):
+    def krylovSolve(self, v, o, F, T, S, D, xi0=123456789):
         b = self.b
         eta = self.eta
         xi = self.xi
         L = self.L
         M20 = self.M20
         
+        if xi0 != 123456789:
+            xi = xi0 
+        
         VH = np.zeros(self.dimH)
-        FH, exitCode = self.get_FH(F, T, S, D)
+        #FH, exitCode = self.get_FH(F, T, S, D)
                     
         VH[0:self.dim2s]  = S
         VH[self.dim2s:self.dim2s+3]  = D 
         
         ## interactions with periodic lattice
         me.G1s1sF(v, L,xi, b,eta, F)
-        print('\nv after G1s1sF: ', v)   ##actually, also has minor x and y contributions
-        me.G1s2aT(v, L,xi, b,eta, T)
-        me.G1sHFH(v, L,xi, b,eta, FH)
-        print('v after G1sHFH: ', v)   #has contributions in x and y direction - should not be the case in this symmetry
-        me.K1sHVH(v, L,xi, b,eta, VH) 
+#         print('\nv after G1s1sF: ', v)   ##actually, also has minor x and y contributions
+#         me.G1s2aT(v, L,xi, b,eta, T)
+#         me.G1sHFH(v, L,xi, b,eta, FH)
+#         print('v after G1sHFH: ', v)   #has contributions in x and y direction - should not be the case in this symmetry
+#         me.K1sHVH(v, L,xi, b,eta, VH) 
         
-        me.G2a1sF(o, L,xi, b,eta, F)
-        me.G2a2aT(o, L,xi, b,eta, T)
-        me.G2aHFH(o, L,xi, b,eta, FH)
-        me.K2aHVH(o, L,xi, b,eta, VH)
+#         me.G2a1sF(o, L,xi, b,eta, F)
+#         me.G2a2aT(o, L,xi, b,eta, T)
+#         me.G2aHFH(o, L,xi, b,eta, FH)
+#         me.K2aHVH(o, L,xi, b,eta, VH)
         
-        ## self-interaction, subtract M2(r=0)
-        v += self.g1s*F + 0.2*D + M20*F 
-        o += 0.5/(b*b) * self.g2a*T
+        ## self-interaction, subtract M2(r=0), g1sF is included in first term
+        v += M20*F + 0.2*D 
+        #o += 0.5/(b*b) * self.g2a*T ##M2(r=0) for rotation?
         
         return
     

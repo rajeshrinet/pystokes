@@ -106,8 +106,8 @@ cdef class Rbm:
                                 
                                 A = erxdr + e1*(2*xdr3-3*xdr)
                                 B = erxdr + e1*(xdr - 2*xdr3)
-                                # A += (2*erxdr  + e1*( 2*xdr + 28*xdr3 - 40*xdr3*xdr2 + 8*xdr3*xdr3*xdr ))*aidr2 # finite size correction
-                                # B += (-6*erxdr + e1*(-6*xdr - 4*xdr3  + 32*xdr3*xdr2 - 8*xdr3*xdr3*xdr ))*aidr2  #finite size 
+                                A += (2*erxdr  + e1*( 2*xdr + 28*xdr3 - 40*xdr3*xdr2 + 8*xdr3*xdr3*xdr ))*aidr2 # finite size correction
+                                B += (-6*erxdr + e1*(-6*xdr - 4*xdr3  + 32*xdr3*xdr2 - 8*xdr3*xdr3*xdr ))*aidr2  #finite size 
                                 A = A*idr
                                 B = B*fdotir*idr
 
@@ -115,21 +115,21 @@ cdef class Rbm:
                                 vy += A*fy + B*dy
                                 vz += A*fz + B*dz
 
-#                 # Fourier space sum
-#                 for ii in range(N1, N2):
-#                     kx = k0*ii;
-#                     for jj in range(N1, N2):               
-#                         ky = k0*jj;
-#                         for kk in range(N1, N2):                 
-#                             kz = k0*kk;
-#                             if kx != 0 or ky != 0 or kz != 0:
-#                                 k2 = (kx*kx + ky*ky + kz*kz); ik2=1/k2
-#                                 fdotik = (fx*kx + fy*ky + fz*kz )*ik2
-#                                 cc = fac*(1-a2*k2)*cos( kx*xd+ky*yd+kz*zd )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ik2
+                # Fourier space sum
+                for ii in range(N1, N2):
+                    kx = k0*ii;
+                    for jj in range(N1, N2):               
+                        ky = k0*jj;
+                        for kk in range(N1, N2):                 
+                            kz = k0*kk;
+                            if kx != 0 or ky != 0 or kz != 0:
+                                k2 = (kx*kx + ky*ky + kz*kz); ik2=1/k2
+                                fdotik = (fx*kx + fy*ky + fz*kz )*ik2
+                                cc = fac*(1-a2*k2)*cos( kx*xd+ky*yd+kz*zd )*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)*ik2
 
-#                                 vx += cc*(fx - fdotik*kx) 
-#                                 vy += cc*(fy - fdotik*ky) 
-#                                 vz += cc*(fz - fdotik*kz) 
+                                vx += cc*(fx - fdotik*kx) 
+                                vy += cc*(fy - fdotik*ky) 
+                                vz += cc*(fz - fdotik*kz) 
         
             v[i]    += mpp*F[i]    + muv*vx 
             v[i+Np] += mpp*F[i+Np] + muv*vy 

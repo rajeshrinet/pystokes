@@ -2,7 +2,8 @@ import numpy as np
 from math import *
 from scipy.sparse.linalg import bicgstab, LinearOperator
 # import Realperiodic_1_4 as me
-import Fourierperiodic_1_4 as me
+import periodic_1_4_old as me
+import M2r0 as m2
 
 PI = 3.14159265359
 
@@ -44,7 +45,7 @@ class Rbm:
                                       np.full(self.dimH-2*self.dim2s-3, self.gamma3s)])
         
         ## subtract M2(r=0), see Beenakker
-        self.M20 = self.g1s*(1 - 6/sqrt(PI)*self.xi*self.b + 40/(3*sqrt(PI))*self.xi**3*self.b**3)
+        # self.M20 = self.g1s*(1 - 6/sqrt(PI)*self.xi*self.b + 40/(3*sqrt(PI))*self.xi**3*self.b**3)
         
         
         
@@ -53,33 +54,41 @@ class Rbm:
         eta = self.eta
         xi = self.xi
         L = self.L
-        M20 = self.M20
         
         if xi0 != 123456789:
             xi = xi0 
         
         VH = np.zeros(self.dimH)
         FH, exitCode = self.get_FH(F, T, S, D)
-        print(np.sum(FH))
                     
         VH[0:self.dim2s]  = S
         VH[self.dim2s:self.dim2s+3]  = D 
         
         ## interactions with periodic lattice
-        #me.G1s1sF(v, L,xi, b,eta, F)
-        
-        #me.G1s2aT(v, L,xi, b,eta, T)
+        me.G1s1sF(v, L,xi, b,eta, F)
+        me.G1s2aT(v, L,xi, b,eta, T)
         me.G1sHFH(v, L,xi, b,eta, FH)
-        #print(FH[15])
-#         me.K1sHVH(v, L,xi, b,eta, VH) 
+        me.K1sHVH(v, L,xi, b,eta, VH) 
         
-#         me.G2a1sF(o, L,xi, b,eta, F)
-#         me.G2a2aT(o, L,xi, b,eta, T)
-#         me.G2aHFH(o, L,xi, b,eta, FH)
-#         me.K2aHVH(o, L,xi, b,eta, VH)
+        me.G2a1sF(o, L,xi, b,eta, F)
+        me.G2a2aT(o, L,xi, b,eta, T)
+        me.G2aHFH(o, L,xi, b,eta, FH)
+        me.K2aHVH(o, L,xi, b,eta, VH)
+        
+        ## subtract M2(r=0)
+        m2.GM2_1s1sF(v, xi, b,eta, F)
+        m2.GM2_1s2aT(v, xi, b,eta, T)
+        m2.GM2_1sHFH(v, xi, b,eta, FH)
+        # m2.KM2_1sHVH(v, xi, b,eta, VH) 
+        
+        m2.GM2_2a1sF(o, xi, b,eta, F)
+        m2.GM2_2a2aT(o, xi, b,eta, T)
+        m2.GM2_2aHFH(o, xi, b,eta, FH)
+        # m2.KM2_2aHVH(o, xi, b,eta, VH)
+        
         
         ## self-interaction, subtract M2(r=0), g1sF is included in first term
-        # v += M20*F + 0.2*D 
+        v += self.g1s*F + 0.2*D 
         o += 0.5/(b*b) * self.g2a*T ##M2(r=0) for rotation?
         
         return
@@ -106,16 +115,19 @@ class Rbm:
         me.GH1sF(GH1sF, L,xi, b,eta, F)
         me.GH2aT(GH2aT, L,xi, b,eta, T)
         
+        ## subtract M2(r=0)
+        # m2.KM2_HHVH(KHHVH, xi, b,eta, VH)
+        m2.GM2_H1sF(GH1sF, xi, b,eta, F)
+        m2.GM2_H2aT(GH2aT, xi, b,eta, T)
+        
 
         ## self-interaction
         me.KoHHVH(KHHVH, b,eta, VH)
             
         rhs = KHHVH + GH1sF + 1./b * GH2aT 
-        #print(np.linalg.norm(rhs))  ##rhs seems to give something sensible
         FH0 = -self.gammaH*VH  #start at the one-body solution
         
         GHHFH = LinearOperator((self.dimH, self.dimH), matvec = self.GHHFH)
-        #print(np.linalg.norm(self.GHHFH(np.ones(20))))
             
         return bicgstab(GHHFH, rhs, x0=FH0, tol=self.tol)
     
@@ -130,6 +142,9 @@ class Rbm:
         
         ## interactions with periodic lattice
         me.GHHFH(GHHFH, L,xi, b,eta, FH)
+        
+        ## subtract M2(r=0)
+        m2.GM2_HHFH(GHHFH, xi, b,eta, FH)
         
         ## self-interaction
         me.GoHHFH(GHHFH, b,eta, FH)

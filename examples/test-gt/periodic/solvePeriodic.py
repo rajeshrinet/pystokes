@@ -2,7 +2,7 @@ import numpy as np
 from math import *
 from scipy.sparse.linalg import bicgstab, LinearOperator
 # import Realperiodic_1_4 as me
-import periodic_1_4_old as me
+import periodic_1_4 as me
 import M2r0 as m2
 
 PI = 3.14159265359
@@ -79,12 +79,12 @@ class Rbm:
         m2.GM2_1s1sF(v, xi, b,eta, F)
         m2.GM2_1s2aT(v, xi, b,eta, T)
         m2.GM2_1sHFH(v, xi, b,eta, FH)
-        # m2.KM2_1sHVH(v, xi, b,eta, VH) 
+        m2.KM2_1sHVH(v, xi, b,eta, VH) 
         
         m2.GM2_2a1sF(o, xi, b,eta, F)
         m2.GM2_2a2aT(o, xi, b,eta, T)
         m2.GM2_2aHFH(o, xi, b,eta, FH)
-        # m2.KM2_2aHVH(o, xi, b,eta, VH)
+        m2.KM2_2aHVH(o, xi, b,eta, VH)
         
         
         ## self-interaction, subtract M2(r=0), g1sF is included in first term
@@ -116,7 +116,7 @@ class Rbm:
         me.GH2aT(GH2aT, L,xi, b,eta, T)
         
         ## subtract M2(r=0)
-        # m2.KM2_HHVH(KHHVH, xi, b,eta, VH)
+        m2.KM2_HHVH(KHHVH, xi, b,eta, VH)
         m2.GM2_H1sF(GH1sF, xi, b,eta, F)
         m2.GM2_H2aT(GH2aT, xi, b,eta, T)
         

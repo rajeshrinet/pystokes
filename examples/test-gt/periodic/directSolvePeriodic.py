@@ -1,6 +1,7 @@
 import numpy as np
 from math import *
 import matrixPeriodic_1_4 as me
+import matrixM2r0 as m2
 
 PI = 3.14159265359
 
@@ -27,10 +28,10 @@ class Rbm:
         self.dimH = 20
         
         ## used dimensions of 2s
-        self.dim2s = 5
+        self.dim2s = 3
         
         ## subtract M2(r=0), see Beenakker
-        self.M20 = self.g1s*(1 - 6/np.sqrt(PI)*self.xi*self.b + 40/(3*np.sqrt(PI))*self.xi**3*self.b**3)
+        # self.M20 = self.g1s*(1 - 6/np.sqrt(PI)*self.xi*self.b + 40/(3*np.sqrt(PI))*self.xi**3*self.b**3)
         
         
     def directSolve(self, v, o, F, T, S, D, xi0=123456789):
@@ -38,7 +39,7 @@ class Rbm:
         eta = self.eta
         xi = self.xi
         L = self.L
-        M20 = self.M20
+        # M20 = self.M20
         
         if xi0 != 123456789:
             xi = xi0 
@@ -46,9 +47,10 @@ class Rbm:
         VH = np.zeros(self.dimH)
         FH = self.get_FH(F, T, S, D)
         #FH = np.zeros(self.dimH)
+        # print(FH)
                     
-        VH[0:self.dim2s]  = S
-        VH[self.dim2s:self.dim2s+3]  = D 
+        # VH[0:self.dim2s]  = S
+        # VH[self.dim2s:self.dim2s+3]  = D 
         
         ## interactions with periodic lattice
         v += (np.dot(me.G1s1s(L,xi, b,eta), F)
@@ -61,8 +63,19 @@ class Rbm:
                      - np.dot(me.G2aH(L,xi, b,eta), FH)
                      + np.dot(me.K2aH(L,xi, b,eta), VH))
         
+        ## subtract M2(r=0)
+        v -= (np.dot(m2.GM2_1s1s(xi, b,eta), F)
+              + 1./b * np.dot(m2.GM2_1s2a(xi, b,eta), T)
+              - np.dot(m2.GM2_1sH(xi, b,eta), FH)
+              + np.dot(m2.KM2_1sH(xi, b,eta), VH))
+
+        o -= 0.5/b*(np.dot(m2.GM2_2a1s(xi, b,eta), F)
+                     + 1./b * np.dot(m2.GM2_2a2a(xi, b,eta), T)
+                     - np.dot(m2.GM2_2aH(xi, b,eta), FH)
+                     + np.dot(m2.KM2_2aH(xi, b,eta), VH))
+        
         ## self-interaction, subtract M2(r=0), g1sF is included in first term
-        v += M20*F + 0.2*D 
+        v += self.g1s*F + 0.2*D 
         o += 0.5/(b*b) * self.g2a*T ##M2(r=0) for rotation?
         
         return
@@ -78,15 +91,20 @@ class Rbm:
         ## dimH is dimension of 2s + 3t + 3a + 3s
         VH = np.zeros(self.dimH)
         
-        VH[0:self.dim2s]  = S
-        VH[self.dim2s:self.dim2s+3]  = D
+        # VH[0:self.dim2s]  = S
+        # VH[self.dim2s:self.dim2s+3]  = D
         
         rhs = (np.dot(me.KHH(L,xi, b,eta), VH) 
                + np.dot(me.GH1s(L,xi, b,eta), F) 
                + 1./b * np.dot(me.GH2a(L,xi, b,eta), T))
         
+        #subtract M2(r=0)
+        rhs -= (np.dot(m2.KM2_HH(xi, b,eta), VH) 
+               + np.dot(m2.GM2_H1s(xi, b,eta), F) 
+               + 1./b * np.dot(m2.GM2_H2a(xi, b,eta), T))
+        
         rhs += - np.dot(me.KoHH(b, eta), VH)
         
-        GHH = me.GHH(L,xi, b,eta) + me.GoHH(b, eta)
+        GHH = me.GHH(L,xi, b,eta) + me.GoHH(b, eta) - m2.GM2_HH(xi,b,eta) ##there is a singular matrix somewhere in there
         
-        return np.linalg.solve(GHH,rhs)
+        return np.linalg.solve(GHH,rhs) ##no symmetry factors in direct method?

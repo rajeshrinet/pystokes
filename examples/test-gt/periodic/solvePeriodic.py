@@ -2,7 +2,7 @@ import numpy as np
 from math import *
 from scipy.sparse.linalg import bicgstab, LinearOperator
 # import Realperiodic_1_4 as me
-import periodic_1_4 as me
+import periodic_1_12 as me
 import M2r0 as m2
 
 PI = 3.14159265359
@@ -60,6 +60,7 @@ class Rbm:
         
         VH = np.zeros(self.dimH)
         FH, exitCode = self.get_FH(F, T, S, D)
+        # print(FH[:5])
                     
         VH[0:self.dim2s]  = S
         VH[self.dim2s:self.dim2s+3]  = D 
@@ -90,6 +91,12 @@ class Rbm:
         ## self-interaction, subtract M2(r=0), g1sF is included in first term
         v += self.g1s*F + 0.2*D 
         o += 0.5/(b*b) * self.g2a*T ##M2(r=0) for rotation?
+        
+        phi = 4*PI*b**3/(3*L**3)   ## Brady's average terms
+        # v += self.g1s*phi*(1 - 1/5*phi)*F
+        #v /= (1+phi)
+        v -= 1/5*self.g1s*phi**2*F ## why does this work??
+        # print(FH[5:8]) is zero
         
         return
     

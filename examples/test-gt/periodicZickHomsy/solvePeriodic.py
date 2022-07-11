@@ -1,24 +1,16 @@
 import numpy as np
 from math import *
 from scipy.sparse.linalg import bicgstab, LinearOperator
-# import Realperiodic_1_4 as me
-import periodic_1_5 as me
-import M2r0 as m2
+import periodic_9 as me
 
 PI = 3.14159265359
 
 class Rbm:
     
-    def __init__(self, radius=1., viscosity=1.0, boxSize=10, xi = 123456789, tolerance=1e-05):
+    def __init__(self, radius=1., viscosity=1.0, boxSize=10, tolerance=1e-05):
         self.b  = radius
         self.eta = viscosity
-        self.L = boxSize
-        
-        if xi==123456789:
-            self.xi = sqrt(PI)/boxSize 
-            #Nijboer and De Wette have shown that \pi^{1/2}/V^{1/3} is a good choice for cubic lattices 
-        else:
-            self.xi = xi 
+        self.L = boxSize 
         
         ## tolerance for Krylov iterative solver
         self.tol = tolerance
@@ -44,58 +36,40 @@ class Rbm:
                                       np.full(self.dim2s, self.gamma3a),
                                       np.full(self.dimH-2*self.dim2s-3, self.gamma3s)])
         
-        ## subtract M2(r=0), see Beenakker
-        # self.M20 = self.g1s*(1 - 6/sqrt(PI)*self.xi*self.b + 40/(3*sqrt(PI))*self.xi**3*self.b**3)
         
         
-        
-    def krylovSolve(self, v, o, F, T, S, D, xi0=123456789):
+    def krylovSolve(self, v, o, F, T, S, D):
         b = self.b
         eta = self.eta
-        xi = self.xi
         L = self.L
-        
-        if xi0 != 123456789:
-            xi = xi0 
         
         VH = np.zeros(self.dimH)
         FH, exitCode = self.get_FH(F, T, S, D)
-        # print(FH[:5])
+        # FH = np.zeros(self.dimH)
                     
         VH[0:self.dim2s]  = S
         VH[self.dim2s:self.dim2s+3]  = D 
         
         ## interactions with periodic lattice
-        me.G1s1sF(v, L,xi, b,eta, F)
-        me.G1s2aT(v, L,xi, b,eta, T)
-        me.G1sHFH(v, L,xi, b,eta, FH)
-        me.K1sHVH(v, L,xi, b,eta, VH) 
+        me.G1s1sF(v, L,b,eta, F)
+        me.G1s2aT(v, L,b,eta, T)
+        me.G1sHFH(v, L,b,eta, FH)
+        me.K1sHVH(v, L,b,eta, VH) 
         
-        me.G2a1sF(o, L,xi, b,eta, F)
-        me.G2a2aT(o, L,xi, b,eta, T)
-        me.G2aHFH(o, L,xi, b,eta, FH)
-        me.K2aHVH(o, L,xi, b,eta, VH)
-        
-        ## subtract M2(r=0)
-#         m2.GM2_1s1sF(v, xi, b,eta, F)
-#         m2.GM2_1s2aT(v, xi, b,eta, T)
-#         m2.GM2_1sHFH(v, xi, b,eta, FH)
-#         m2.KM2_1sHVH(v, xi, b,eta, VH) 
-        
-#         m2.GM2_2a1sF(o, xi, b,eta, F)
-#         m2.GM2_2a2aT(o, xi, b,eta, T)
-#         m2.GM2_2aHFH(o, xi, b,eta, FH)
-#         m2.KM2_2aHVH(o, xi, b,eta, VH)
+        me.G2a1sF(o, L,b,eta, F)
+        me.G2a2aT(o, L,b,eta, T)
+        me.G2aHFH(o, L,b,eta, FH)
+        me.K2aHVH(o, L,b,eta, VH)
         
         
         ## self-interaction, subtract M2(r=0), g1sF is included in first term
         v += self.g1s*F + 0.2*D 
-        o += 0.5/(b*b) * self.g2a*T ##M2(r=0) for rotation?
+        o += 0.5/(b*b) * self.g2a*T
         
-        # phi = 4*PI*b**3/(3*L**3)   ## Brady's average terms
+        #phi = 4*PI*b**3/(3*L**3)   ## Brady's average terms
         # v += self.g1s*phi*(1 - 1/5*phi)*F
         #v /= (1+phi)
-        # v -= 1/5*self.g1s*phi**2*F ## why does this work??
+        #v -= 1/5*self.g1s*phi**2*F ## why does this work??
         # print(FH[5:8]) is zero
         
         return
@@ -104,7 +78,6 @@ class Rbm:
     def get_FH(self, F, T, S, D):
         b = self.b
         eta = self.eta
-        xi = self.xi
         L = self.L
 
         ## dimH is dimension of 2s + 3t + 3a + 3s
@@ -118,15 +91,9 @@ class Rbm:
         VH[self.dim2s:self.dim2s+3]  = D
         
         ## interactions with periodic lattice
-        me.KHHVH(KHHVH, L,xi, b,eta, VH)
-        me.GH1sF(GH1sF, L,xi, b,eta, F)
-        me.GH2aT(GH2aT, L,xi, b,eta, T)
-        
-        ## subtract M2(r=0)
-        # m2.KM2_HHVH(KHHVH, xi, b,eta, VH)
-        # m2.GM2_H1sF(GH1sF, xi, b,eta, F)
-        # m2.GM2_H2aT(GH2aT, xi, b,eta, T)
-        
+        me.KHHVH(KHHVH, L,b,eta, VH)
+        me.GH1sF(GH1sF, L,b,eta, F)
+        me.GH2aT(GH2aT, L,b,eta, T)
 
         ## self-interaction
         me.KoHHVH(KHHVH, b,eta, VH)
@@ -142,16 +109,12 @@ class Rbm:
     def GHHFH(self, FH):
         b = self.b
         eta = self.eta
-        xi = self.xi
         L = self.L
         
         GHHFH = np.zeros(self.dimH)
         
         ## interactions with periodic lattice
-        me.GHHFH(GHHFH, L,xi, b,eta, FH)
-        
-        ## subtract M2(r=0)
-        # m2.GM2_HHFH(GHHFH, xi, b,eta, FH)
+        me.GHHFH(GHHFH, L,b,eta, FH)
         
         ## self-interaction
         me.GoHHFH(GHHFH, b,eta, FH)

@@ -24,6 +24,7 @@ class linearSolve_krylov:
         eta = self.eta
         
         FH, exitCode = self.get_FH(r, F, T, S, D)
+        print(FH[::Np])
         
         VH_j = np.zeros(25)
         

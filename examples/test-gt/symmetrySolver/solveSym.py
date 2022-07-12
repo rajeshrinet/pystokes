@@ -43,6 +43,7 @@ class linearSolve_krylov:
         eta = self.eta
         
         FH, exitCode = self.get_FH(r, F, T, S, D)
+        # print(FH[::Np])
         #print(FH[0:self.dim2s])
         
         VH_j = np.zeros(self.dimH)

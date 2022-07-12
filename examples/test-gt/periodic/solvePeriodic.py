@@ -60,7 +60,9 @@ class Rbm:
         
         VH = np.zeros(self.dimH)
         FH, exitCode = self.get_FH(F, T, S, D)
+        # print(FH)
         # print(FH[:5])
+        # FH = np.zeros(self.dimH)
                     
         VH[0:self.dim2s]  = S
         VH[self.dim2s:self.dim2s+3]  = D 
@@ -77,15 +79,15 @@ class Rbm:
         me.K2aHVH(o, L,xi, b,eta, VH)
         
         ## subtract M2(r=0)
-#         m2.GM2_1s1sF(v, xi, b,eta, F)
-#         m2.GM2_1s2aT(v, xi, b,eta, T)
-#         m2.GM2_1sHFH(v, xi, b,eta, FH)
-#         m2.KM2_1sHVH(v, xi, b,eta, VH) 
+        m2.GM2_1s1sF(v, xi, b,eta, F)
+        m2.GM2_1s2aT(v, xi, b,eta, T)
+        m2.GM2_1sHFH(v, xi, b,eta, FH)
+        m2.KM2_1sHVH(v, xi, b,eta, VH) 
         
-#         m2.GM2_2a1sF(o, xi, b,eta, F)
-#         m2.GM2_2a2aT(o, xi, b,eta, T)
-#         m2.GM2_2aHFH(o, xi, b,eta, FH)
-#         m2.KM2_2aHVH(o, xi, b,eta, VH)
+        m2.GM2_2a1sF(o, xi, b,eta, F)
+        m2.GM2_2a2aT(o, xi, b,eta, T)
+        m2.GM2_2aHFH(o, xi, b,eta, FH)
+        m2.KM2_2aHVH(o, xi, b,eta, VH)
         
         
         ## self-interaction, subtract M2(r=0), g1sF is included in first term
@@ -123,16 +125,16 @@ class Rbm:
         me.GH2aT(GH2aT, L,xi, b,eta, T)
         
         ## subtract M2(r=0)
-        # m2.KM2_HHVH(KHHVH, xi, b,eta, VH)
-        # m2.GM2_H1sF(GH1sF, xi, b,eta, F)
-        # m2.GM2_H2aT(GH2aT, xi, b,eta, T)
+        m2.KM2_HHVH(KHHVH, xi, b,eta, VH)
+        m2.GM2_H1sF(GH1sF, xi, b,eta, F)
+        m2.GM2_H2aT(GH2aT, xi, b,eta, T)
         
 
         ## self-interaction
         me.KoHHVH(KHHVH, b,eta, VH)
             
         rhs = KHHVH + GH1sF + 1./b * GH2aT 
-        FH0 = -self.gammaH*VH  #start at the one-body solution
+        FH0 = -self.gammaH*VH  #start at the one-body solution 
         
         GHHFH = LinearOperator((self.dimH, self.dimH), matvec = self.GHHFH)
             
@@ -151,7 +153,7 @@ class Rbm:
         me.GHHFH(GHHFH, L,xi, b,eta, FH)
         
         ## subtract M2(r=0)
-        # m2.GM2_HHFH(GHHFH, xi, b,eta, FH)
+        m2.GM2_HHFH(GHHFH, xi, b,eta, FH)
         
         ## self-interaction
         me.GoHHFH(GHHFH, b,eta, FH)

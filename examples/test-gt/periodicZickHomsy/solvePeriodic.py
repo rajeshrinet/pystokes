@@ -1,7 +1,7 @@
 import numpy as np
 from math import *
 from scipy.sparse.linalg import bicgstab, LinearOperator
-import periodic_5 as me
+import periodic_4 as me
 
 PI = 3.14159265359
 

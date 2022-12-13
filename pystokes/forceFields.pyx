@@ -28,6 +28,20 @@ cdef class Forces:
     """
     def __init__(self, particles=1):
         self.Np = particles
+        
+    cpdef VdW(self, double [:] F, double [:] r, double A=0, double a0=0):
+        """
+        generic van der Waals attraction to a wall at z=0 with Hamaker constant a
+        """
+        cdef int Np = self.Np, i, j, xx = 2*Np
+        cdef double fz, iz, iz2
+        
+        for i in prange(Np, nogil=True):
+            iz  = 1./r[i+xx]
+            iz2 = iz*iz
+            fz = -1./6*a0*A*iz2
+            F[i+xx] += fz
+        return
 
 
     cpdef lennardJones(self, double [:] F, double [:] r, double lje=0.01, double ljr=3):

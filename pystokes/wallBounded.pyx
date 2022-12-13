@@ -2,6 +2,8 @@ cimport cython
 from libc.math cimport sqrt
 from cython.parallel import prange
 cdef double PI = 3.14159265359
+cdef double sqrt8 = 2.82842712475
+cdef double sqrt2 = 1.41421356237
 import numpy as np
 cimport numpy as np
 
@@ -904,7 +906,7 @@ cdef class Rbm:
         return
 
     ## Noise
-    cpdef noiseTT(self, double [:] v, double [:] r):
+    cpdef noiseTT_old(self, double [:] v, double [:] r):
         """
         Compute translation Brownian motion 
         ...
@@ -1064,7 +1066,7 @@ cdef class Rbm:
         return
 
 
-    cpdef noiseRR(self, double [:] o, double [:] r):
+    cpdef noiseRR_old(self, double [:] o, double [:] r):
         """
         Compute rotational Brownian motion 
         ...
@@ -1192,6 +1194,269 @@ cdef class Rbm:
             o[i+Np] += oy
             o[i+xx] += oz
         return
+    
+    
+    
+    cpdef noiseTT(self, double [:] v, double [:] r):
+        """
+        Brownian noise for 1 particle only so far
+        """
+        
+        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef double vx, vy, vz
+        cdef double mu=self.mu, muv=self.muv, mur=self.mur
+        
+        cdef double [:]    Fr = np.random.normal(size=3*Np)
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
+        cdef double muTTparaCoeff1 = -9./16., muTTparaCoeff2 = 1./8.
+        cdef double muTTparaCoeff3 = -1./16.
+        cdef double muTTperpCoeff1 = -9./8., muTTperpCoeff2 = 1./2.
+        cdef double muTTperpCoeff3 = -1./8.
+        
+        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
+        cdef double muTRCoeff1 = 3./32.0
+        
+        cdef double muRRparaCoeff = -5./16.0
+        cdef double muRRperpCoeff = -1./8.0
+        
+        cdef double muTTpara, sqrtMuTTperp, muRRpara, sqrtMuRRperp, muTR
+        cdef double sqrtMuPara2, sqrtMuParaPlus, sqrtMuParaMinus
+        cdef double sqrtMuXX, sqrtMuZZ, sqrtMuXE, sqrtMuExEx, sqrtMuEzEz
+        
+        for i in prange(Np, nogil=True):
+            vx=0; vy=0; vz=0;
+            for j in range(Np):
+                if i==j:
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv; hbar_inv3 = hbar_inv2*hbar_inv
+                    hbar_inv4 = hbar_inv2*hbar_inv2; hbar_inv5 = hbar_inv3*hbar_inv2
+                    
+                    muTTpara = mu*(1 + muTTparaCoeff1*hbar_inv + muTTparaCoeff2*hbar_inv3 
+                                   + muTTparaCoeff3*hbar_inv5)
+                    
+                    sqrtMuTTperp = sqrt( mu*(1 + muTTperpCoeff1*hbar_inv + muTTperpCoeff2*hbar_inv3 
+                                         + muTTperpCoeff3*hbar_inv5) )
+                    
+                    muTR = muv*muTRCoeff*muTRCoeff1*hbar_inv4
+                    
+                    muRRpara = mur*(1 + muRRparaCoeff*hbar_inv3)
+                    
+                    sqrtMuPara2 = sqrt( muRRpara*muRRpara + muTTpara*muTTpara - 2*muRRpara*muTTpara + 4*muTR*muTR )
+                    
+                    sqrtMuParaPlus = sqrt( muRRpara + muTTpara + sqrtMuPara2 )
+                    
+                    sqrtMuParaMinus = sqrt( muRRpara + muTTpara - sqrtMuPara2 )
+                    
+                    sqrtMuXX = (sqrtMuParaMinus * (muRRpara - muTTpara + sqrtMuPara2) +
+                                sqrtMuParaPlus  * (muTTpara - muRRpara + sqrtMuPara2)   )/( sqrt8 * sqrtMuPara2 )
+                    
+                    vx += sqrt2*sqrtMuXX * Fr[j]
+                    vy += sqrt2*sqrtMuXX * Fr[j+Np]
+                    vz += sqrt2*sqrtMuTTperp * Fr[j+xx]
+            
+            v[i  ]  += vx
+            v[i+Np] += vy
+            v[i+xx] += vz
+            
+        return 
+    
+    
+    cpdef noiseTR(self, double [:] v, double [:] r):
+        """
+        Brownian noise for 1 particle only so far
+        """
+        
+        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef double vx, vy, vz
+        cdef double mu=self.mu, muv=self.muv, mur=self.mur
+        
+        cdef double [:]    Tr = np.random.normal(size=3*Np)
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
+        cdef double muTTparaCoeff1 = -9./16., muTTparaCoeff2 = 1./8.
+        cdef double muTTparaCoeff3 = -1./16.
+        cdef double muTTperpCoeff1 = -9./8., muTTperpCoeff2 = 1./2.
+        cdef double muTTperpCoeff3 = -1./8.
+        
+        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
+        cdef double muTRCoeff1 = 3./32.0
+        
+        cdef double muRRparaCoeff = -5./16.0
+        cdef double muRRperpCoeff = -1./8.0
+        
+        cdef double muTTpara, sqrtMuTTperp, muRRpara, sqrtMuRRperp, muTR
+        cdef double sqrtMuPara2, sqrtMuParaPlus, sqrtMuParaMinus
+        cdef double sqrtMuXX, sqrtMuZZ, sqrtMuXE, sqrtMuExEx, sqrtMuEzEz
+        
+        for i in prange(Np, nogil=True):
+            vx=0; vy=0; vz=0;
+            for j in range(Np):
+                if i==j:
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv; hbar_inv3 = hbar_inv2*hbar_inv
+                    hbar_inv4 = hbar_inv2*hbar_inv2; hbar_inv5 = hbar_inv3*hbar_inv2
+                    
+                    muTTpara = mu*(1 + muTTparaCoeff1*hbar_inv + muTTparaCoeff2*hbar_inv3 
+                                   + muTTparaCoeff3*hbar_inv5)
+                    
+                    muTR = muv*muTRCoeff*muTRCoeff1*hbar_inv4
+                    
+                    muRRpara = mur*(1 + muRRparaCoeff*hbar_inv3)
+                    
+                    sqrtMuPara2 = sqrt( muRRpara*muRRpara + muTTpara*muTTpara - 2*muRRpara*muTTpara + 4*muTR*muTR )
+                    
+                    sqrtMuParaPlus = sqrt( muRRpara + muTTpara + sqrtMuPara2 )
+                    
+                    sqrtMuParaMinus = sqrt( muRRpara + muTTpara - sqrtMuPara2 )
+                    
+                    sqrtMuXE = muTR * (sqrtMuParaPlus - sqrtMuParaMinus)/( sqrt2 * sqrtMuPara2 )
+                    
+                    vx += sqrt2*sqrtMuXE * Tr[j+Np]
+                    vy += -sqrt2*sqrtMuXE * Tr[j]
+            
+            v[i  ]  += vx
+            v[i+Np] += vy
+            v[i+xx] += vz
+            
+        return 
+    
+    
+    
+    cpdef noiseRT(self, double [:] o, double [:] r):
+        """
+        Brownian noise for 1 particle only so far
+        """
+        
+        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef double ox, oy, oz
+        cdef double mu=self.mu, muv=self.muv, mur=self.mur
+        
+        cdef double [:]    Fr = np.random.normal(size=3*Np)
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
+        cdef double muTTparaCoeff1 = -9./16., muTTparaCoeff2 = 1./8.
+        cdef double muTTparaCoeff3 = -1./16.
+        cdef double muTTperpCoeff1 = -9./8., muTTperpCoeff2 = 1./2.
+        cdef double muTTperpCoeff3 = -1./8.
+        
+        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
+        cdef double muTRCoeff1 = 3./32.0
+        
+        cdef double muRRparaCoeff = -5./16.0
+        cdef double muRRperpCoeff = -1./8.0
+        
+        cdef double muTTpara, sqrtMuTTperp, muRRpara, sqrtMuRRperp, muTR
+        cdef double sqrtMuPara2, sqrtMuParaPlus, sqrtMuParaMinus
+        cdef double sqrtMuXX, sqrtMuZZ, sqrtMuXE, sqrtMuExEx, sqrtMuEzEz
+        
+        for i in prange(Np, nogil=True):
+            ox=0; oy=0; oz=0;
+            for j in range(Np):
+                if i==j:
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv; hbar_inv3 = hbar_inv2*hbar_inv
+                    hbar_inv4 = hbar_inv2*hbar_inv2; hbar_inv5 = hbar_inv3*hbar_inv2
+                    
+                    muTTpara = mu*(1 + muTTparaCoeff1*hbar_inv + muTTparaCoeff2*hbar_inv3 
+                                   + muTTparaCoeff3*hbar_inv5)
+                    
+                    muTR = muv*muTRCoeff*muTRCoeff1*hbar_inv4
+                    
+                    muRRpara = mur*(1 + muRRparaCoeff*hbar_inv3)
+                    
+                    sqrtMuPara2 = sqrt( muRRpara*muRRpara + muTTpara*muTTpara - 2*muRRpara*muTTpara + 4*muTR*muTR )
+                    
+                    sqrtMuParaPlus = sqrt( muRRpara + muTTpara + sqrtMuPara2 )
+                    
+                    sqrtMuParaMinus = sqrt( muRRpara + muTTpara - sqrtMuPara2 )
+                    
+                    sqrtMuXE = muTR * (sqrtMuParaPlus - sqrtMuParaMinus)/( sqrt2 * sqrtMuPara2 )
+                    
+                    ox += -sqrt2*sqrtMuXE * Fr[j+Np]
+                    oy += sqrt2*sqrtMuXE * Fr[j]
+            
+            o[i  ]  += ox
+            o[i+Np] += oy
+            o[i+xx] += oz
+            
+        return 
+    
+    
+    
+    cpdef noiseRR(self, double [:] o, double [:] r):
+        """
+        Brownian noise for 1 particle only so far
+        """
+        
+        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef double ox, oy, oz
+        cdef double mu=self.mu, muv=self.muv, mur=self.mur
+        
+        cdef double [:]    Tr = np.random.normal(size=3*Np)
+        
+        cdef double a = self.a
+        cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
+        cdef double muTTparaCoeff1 = -9./16., muTTparaCoeff2 = 1./8.
+        cdef double muTTparaCoeff3 = -1./16.
+        cdef double muTTperpCoeff1 = -9./8., muTTperpCoeff2 = 1./2.
+        cdef double muTTperpCoeff3 = -1./8.
+        
+        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
+        cdef double muTRCoeff1 = 3./32.0
+        
+        cdef double muRRparaCoeff = -5./16.0
+        cdef double muRRperpCoeff = -1./8.0
+        
+        cdef double muTTpara, sqrtMuTTperp, muRRpara, sqrtMuRRperp, muTR
+        cdef double sqrtMuPara2, sqrtMuParaPlus, sqrtMuParaMinus
+        cdef double sqrtMuXX, sqrtMuZZ, sqrtMuXE, sqrtMuExEx, sqrtMuEzEz
+        
+        for i in prange(Np, nogil=True):
+            ox=0; oy=0; oz=0;
+            for j in range(Np):
+                if i==j:
+                    h = r[j+xx]
+                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv; hbar_inv3 = hbar_inv2*hbar_inv
+                    hbar_inv4 = hbar_inv2*hbar_inv2; hbar_inv5 = hbar_inv3*hbar_inv2
+                    
+                    muTTpara = mu*(1 + muTTparaCoeff1*hbar_inv + muTTparaCoeff2*hbar_inv3 
+                                   + muTTparaCoeff3*hbar_inv5)
+                    
+                    muTR = muv*muTRCoeff*muTRCoeff1*hbar_inv4
+                    
+                    muRRpara = mur*(1 + muRRparaCoeff*hbar_inv3)
+                    
+                    sqrtMuRRperp = sqrt( mur*(1 + muRRperpCoeff*hbar_inv3) )
+                    
+                    sqrtMuPara2 = sqrt( muRRpara*muRRpara + muTTpara*muTTpara - 2*muRRpara*muTTpara + 4*muTR*muTR )
+                    
+                    sqrtMuParaPlus = sqrt( muRRpara + muTTpara + sqrtMuPara2 )
+                    
+                    sqrtMuParaMinus = sqrt( muRRpara + muTTpara - sqrtMuPara2 )
+                    
+                    sqrtMuExEx = (muTTpara * (sqrtMuParaMinus - sqrtMuParaPlus) + muRRpara * (sqrtMuParaPlus - sqrtMuParaMinus) + 
+                                 sqrtMuPara2 * (sqrtMuParaPlus + sqrtMuParaMinus) )/( sqrt8 * sqrtMuPara2 )
+                    
+                    ox += sqrt2*sqrtMuExEx * Tr[j]
+                    oy += sqrt2*sqrtMuExEx * Tr[j+Np]
+                    oz += sqrt2*sqrtMuRRperp * Tr[j+xx]
+            
+            o[i  ]  += ox
+            o[i+Np] += oy
+            o[i+xx] += oz
+            
+        return 
+                    
+                    
+                    
+                    
+                    
+                    
+            
 
 
 

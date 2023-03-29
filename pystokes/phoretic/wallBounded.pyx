@@ -100,46 +100,46 @@ cdef class Phoresis:
         return 
 
 
-    cpdef elastance11(self, double [:] C1, double [:] r, double [:] J1):
-        cdef int i, j, Np=self.Np, xx=2*Np
-        cdef double dx, dy, dz, idr, h2, hsq, idr2, A1, B1
-        cdef double vx, vy, vz, ii , cc=1 ## cc is the concentration constant
-        cdef double mud = 5/(PI*PI**self.a)
- 
-        for i in prange(Np, nogil=True):
-            vx=0; vy=0; vz=0;
-            for j in range(Np):
-                if i!=j:
-                    dx = r[i]    - r[j]
-                    dy = r[i+Np] - r[j+Np]
-                    dz = r[i+xx] - r[j+xx] 
-                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
-                    A1 = idr*idr*idr
-                    B1  = 3*(J1[j]*dx + J1[j+Np]*dy + J1[j+xx]*dz)*idr*idr
-                    vx += A1*(J1[j]    - B1*dx)
-                    vy += A1*(J1[j+Np] - B1*dy)
-                    vz += A1*(J1[j+xx] - B1*dz)
+	cpdef elastance11(self, double [:] C1, double [:] r, double [:] J1):
+		cdef int i, j, Np=self.Np, xx=2*Np
+		cdef double dx, dy, dz, idr, A1, B1
+		cdef double vx, vy, vz, cc=1
+		cdef double mud = 5/(PI*PI**self.a)
 
-                    ###contributions from the image 
-                    dz = r[i+xx]  + r[j+xx]
-                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
-                    A1 = idr*idr*idr
-                    B1  = 3*(J1[j]*dx + J1[j+Np]*dy + J1[j+xx]*dz)*idr*idr
-                    vx += A1*(J1[j]    - B1*dx)
-                    vy += A1*(J1[j+Np] - B1*dy)
-                    vz += A1*(J1[j+xx] - B1*dz)
+		for i in prange(Np, nogil=True):
+			vx = 0; vy = 0; vz = 0
+			for j in range(Np):
+				if i != j:
+					dx = r[i] - r[j]
+					dy = r[i+Np] - r[j+Np]
+					dz = r[i+xx] - r[j+xx] 
+					idr = 1.0/sqrt(dx*dx + dy*dy + dz*dz)
+					A1 = idr*idr*idr
+					B1 = 3*(J1[j]*dx + J1[j+Np]*dy + J1[j+xx]*dz)*idr*idr
+					vx += A1*(J1[j] - B1*dx)
+					vy += A1*(J1[j+Np] - B1*dy)
+					vz += A1*(J1[j+xx] - B1*dz)
 
-                else:
-                   ''' self contribution from the image point'''
-                   dz = 2*r[i+xx] ; A1=1/(dz*dz*dz)
-                   vx += A1*(   J1[j]    )
-                   vy += A1*(   J1[j+Np] )
-                   vy += A1*(-2*J1[j+xx] )
+					# contributions from the image 
+					dz = r[i+xx] + r[j+xx]
+					idr = 1.0/sqrt(dx*dx + dy*dy + dz*dz)
+					A1 = idr*idr*idr
+					B1 = 3*(J1[j]*dx + J1[j+Np]*dy + J1[j+xx]*dz)*idr*idr
+					vx += A1*(J1[j] - B1*dx)
+					vy += A1*(J1[j+Np] - B1*dy)
+					vz += A1*(J1[j+xx] - B1*dz)
+				else:
+					# self contribution from the image point
+					dz = 2*r[i+xx]
+					A1 = 1/(dz*dz*dz)
+					vx += A1*J1[j]
+					vy += A1*J1[j+Np]
+					vz += A1*(-2*J1[j+xx])
 
-            C1[i  ]  += mud*J1[i  ]  + mud*vx
-            C1[i+Np] += mud*J1[i+Np] + mud*vy
-            C1[i+xx] += mud*J1[i+xx] + mud*vz
-        return
+			C1[i] += mud*J1[i] + mud*vx
+			C1[i+Np] += mud*J1[i+Np] + mud*vy
+			C1[i+xx] += mud*J1[i+xx] + mud*vz
+		return
 
 
 

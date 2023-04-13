@@ -10,7 +10,7 @@ from libc.math cimport sqrt, pow, log
 from cython.parallel import prange
 cdef double PI = 3.1415926535
 
-DTYPE	= np.float32
+DTYPE	= np.float64
 DTYP1	= np.int32
 ctypedef np.float_t DTYPE_t 
 
@@ -301,10 +301,10 @@ def plotLogo():
 	plt.ylim(-ww, np.max(zz))
 	plt.axhspan(-ww, ww, facecolor='gray');
 	plt.axis('off')
-	plt.text(r[Np]-.5, r[2*Np]-.5, 'Py', fontsize=100);
-	plt.text(r[Np+1]-.46, r[2*Np+1]-.54, 'St', fontsize=111);
-	plt.text(r[Np+2]-.58, r[2*Np+2]-.54, 'ok', fontsize=111);
-	plt.text(r[Np+3]-.46, r[2*Np+3]-.54, 'es', fontsize=111);
+	plt.text(r[Np]-.6, r[2*Np]-.5, 'Py', fontsize=100);
+	plt.text(r[Np+1]-.66, r[2*Np+1]-.64, 'St', fontsize=111);
+	plt.text(r[Np+2]-.78, r[2*Np+2]-.64, 'ok', fontsize=111);
+	plt.text(r[Np+3]-.66, r[2*Np+3]-.64, 'es', fontsize=111);
 
 
 
@@ -320,13 +320,10 @@ def plotStreamlinesXY(vv, rr, r, density=0.82, arrowSize=1.2, mask=0.6, ms=36, o
 	xx, yy = rr[0:Nt].reshape(Ng, Ng), rr[Nt:2*Nt].reshape(Ng, Ng)
 	vx, vy = vv[0:Nt].reshape(Ng, Ng), vv[Nt:2*Nt].reshape(Ng, Ng)
 
-	for i in range(Np):
-		plt.plot(r[i], r[i+Np], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )   
-
 	spd = np.hypot(vx, vy)
 	rr	= np.hypot(xx-r[0], yy-r[1])
 	spd[rr<mask]=0;  spd+=offset
-	plt.pcolormesh(xx, yy, np.log(spd), cmap=plt.cm.gray_r, shading='interp')
+	plt.pcolormesh(xx, yy, np.log(spd), cmap=plt.cm.gray_r, shading='auto')
 
 	st=11;	sn=st*st;  a0=2;  ss=np.zeros((2, st*st))
 	for i in range(st):
@@ -336,6 +333,9 @@ def plotStreamlinesXY(vv, rr, r, density=0.82, arrowSize=1.2, mask=0.6, ms=36, o
 			ss[1, ii]	   = a0*(-5 + j)
 
 	plt.streamplot(xx, yy, vx, vy, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density)
+	for i in range(Np):
+		plt.plot(r[i], r[i+Np], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )   
+	
 	plt.xlim(np.min(xx), np.max(xx))
 	plt.ylim(np.min(yy), np.max(yy))
 	plt.axis('off')
@@ -365,13 +365,10 @@ def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, 
 	yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
 	vy, vz = vv[Nt:2*Nt].reshape(Ng, Ng), vv[2*Nt:3*Nt].reshape(Ng, Ng)
 
-	for i in range(Np):
-		plt.plot(r[i+Np], r[i+2*Np], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )	
-
 	spd = np.hypot(vy, vz)
 	rr	= np.hypot(yy-r[1], zz-r[2])
 	spd[rr<mask]=0;  spd+=offset
-	plt.pcolormesh(yy, zz, np.log(spd), cmap=plt.cm.gray_r, shading='interp')
+	plt.pcolormesh(yy, zz, np.log(spd), cmap=plt.cm.gray_r, shading='auto')
 
 	st=11;	sn=st*st;  a0=2;  ss=np.zeros((2, st*st))
 	for i in range(st):
@@ -380,6 +377,9 @@ def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, 
 			ss[0, ii]	   = a0*(-5 + i)
 			ss[1, ii]	   = 1*(0 + j)
 	plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density)
+	for i in range(Np):
+		plt.plot(r[i+Np], r[i+2*Np], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )	
+
 	plt.xlim(np.min(yy), np.max(yy))
 	plt.ylim(np.min(zz), np.max(zz))
 	plt.axis('off')
@@ -387,11 +387,11 @@ def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, 
 	if title==str('None'):
 		pass
 	elif title==str('1s'):
-		plt.title('$l\sigma=1s$', fontsize=26);
+		plt.title(r'$l\sigma=1s$', fontsize=26);
 	elif title==str('2s'):
-		plt.title('$l\sigma=2s$', fontsize=26);
+		plt.title(r'$l\sigma=2s$', fontsize=26);
 	elif title==str('3t'):
-		plt.title('$l\sigma=3t$', fontsize=26);
+		plt.title(r'$l\sigma=3t$', fontsize=26);
 	else:
 		plt.title(title, fontsize=26);
 
@@ -409,13 +409,10 @@ def plotStreamlinesYZsurf(vv, rr, r, density=0.8, arrowSize=1.2, mask=0.6, ms=36
 	yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
 	vy, vz = vv[Nt:2*Nt].reshape(Ng, Ng), vv[2*Nt:3*Nt].reshape(Ng, Ng)
 
-	for i in range(Np):
-		plt.plot(r[i+Np], r[i+2*Np], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )	
-	
 	spd = np.hypot(vy, vz)
 	rr	= np.hypot(yy-r[1], zz-r[2])
 	spd[rr<mask]=0;  spd+=offset
-	plt.pcolormesh(yy, zz, np.log(spd), cmap=plt.cm.gray_r, shading='interp')
+	plt.pcolormesh(yy, zz, np.log(spd), cmap=plt.cm.gray_r, shading='auto')
 	
 	st=11;	sn=st*st;  a0=2;  ss=np.zeros((2, st*st))
 	for i in range(st):
@@ -424,6 +421,9 @@ def plotStreamlinesYZsurf(vv, rr, r, density=0.8, arrowSize=1.2, mask=0.6, ms=36
 			ss[0, ii]	   = a0*(-5 + i)
 			ss[1, ii]	   = 1*(0 + j)
 	plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density)
+	for i in range(Np):
+		plt.plot(r[i+Np], r[i+2*Np], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )	
+
 	plt.xlim(np.min(yy), np.max(yy))
 	ww=0.3
 	plt.ylim(-ww, np.max(zz))

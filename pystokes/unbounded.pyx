@@ -149,9 +149,9 @@ cdef class Rbm:
                     dz = r[i+xx] - r[j+xx] 
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
-                    vx += (dy*T[j+xx] -T[j+Np]*dz )*idr3
-                    vy += (dz*T[j]    -T[j+xx]*dx )*idr3
-                    vz += (dx*T[j+Np] -T[j]   *dy )*idr3
+                    vx += -(dy*T[j+xx] -T[j+Np]*dz )*idr3
+                    vy += -(dz*T[j]    -T[j+xx]*dx )*idr3
+                    vz += -(dx*T[j+Np] -T[j]   *dy )*idr3
 
             v[i]    += muv*vx
             v[i+Np] += muv*vy
@@ -484,9 +484,9 @@ cdef class Rbm:
                     oy += ( T[j+Np] - 3*Tdotidr*dy )*idr3
                     oz += ( T[j+xx] - 3*Tdotidr*dz )*idr3
             
-            o[i]    += mur*T[i]    - muv*ox
-            o[i+Np] += mur*T[i+Np] - muv*oy
-            o[i+xx] += mur*T[i+xx] - muv*oz
+            o[i]    += mur*T[i]    - 0.5*muv*ox ##changed factor 0.5 here
+            o[i+Np] += mur*T[i+Np] - 0.5*muv*oy
+            o[i+xx] += mur*T[i+xx] - 0.5*muv*oz
         return  
 
     

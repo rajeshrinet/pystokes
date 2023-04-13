@@ -70,7 +70,7 @@ cdef class Rbm:
             Default is 1
         """
 
-        cdef int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
+        cdef int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1 ##used to be N1=-(Nm/2)+1
         cdef double L=self.L,  xi=self.xi, ixi2, siz=Nb*L, mu=self.mu, muv=self.muv
         cdef double a2=self.a*self.a/3, aidr2, k0=2*PI/L, fac=8*PI/(L*L*L), 
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1, mt, mpp
@@ -133,7 +133,7 @@ cdef class Rbm:
         
             v[i]    += mpp*F[i]    + muv*vx 
             v[i+Np] += mpp*F[i+Np] + muv*vy 
-            v[i+xx] += mpp*F[i+xx] + muv*vz 
+            v[i+xx] += mpp*F[i+xx] + muv*vz
         return 
     
     

@@ -78,7 +78,7 @@ class WallBoundedTest(unittest.TestCase):
 
         a, N, eta = 1, 1, 1 
         mu = 1/(6*np.pi*a*eta)
-        mu = mu*(1- 9./16 + 1/8)  # add the standard wall-correction
+        mu = mu*(1- 9./16 + 1./8 - 1./16.)  # add the standard wall-correction
 
         V1 = mu*F
         V2 = 0*mu*F
@@ -97,7 +97,7 @@ class WallBoundedTest(unittest.TestCase):
 
         a, N, eta = 1, 1, 1 
         mu = 1/(6*np.pi*a*eta)
-        mu = mu*(1 - 9/8. + 1./2)  # add the standard wall-correction
+        mu = mu*(1 - 9/8. + 1./2 -1./8.)  # add the standard wall-correction
 
         V1 = mu*F
         V2 = 0*mu*F
@@ -121,7 +121,7 @@ class InterfaceTest(unittest.TestCase):
 
         a, N, eta = 1, 1, 1 
         mu = 1/(6*np.pi*a*eta)
-        mu = mu*(1 + 3./8 + 1/16)  # add the standard wall-correction
+        mu = mu*(1 + 3./8 + 1/16)  # add the standard free-boundary-correction (air)
 
         V1 = mu*F
         V2 = 0*mu*F
@@ -131,7 +131,7 @@ class InterfaceTest(unittest.TestCase):
         
         diff = np.absolute(V1[1] - V2[1])
         self.assertTrue((np.asarray(diff) < 0.001).all(),
-                       "Stokes law for translation || to wall is not satisfied")
+                       "Stokes law for translation || to boundary is not satisfied")
 
 
     def test_perpTranslation(self):
@@ -140,7 +140,7 @@ class InterfaceTest(unittest.TestCase):
 
         a, N, eta = 1, 1, 1 
         mu = 1/(6*np.pi*a*eta)
-        mu = mu*(1 - 3/4. + 1./8)  # add the standard wall-correction
+        mu = mu*(1 - 3/4. + 1./8)  # add the standard free-boundary-correction (air)
 
         V1 = mu*F
         V2 = 0*mu*F
@@ -150,7 +150,7 @@ class InterfaceTest(unittest.TestCase):
         
         diff = np.absolute(V1[1] - V2[1])
         self.assertTrue((np.asarray(diff) < 0.001).all(),
-                       "Stokes law for translation perp to wall is not satisfied")
+                       "Stokes law for translation perp to boundary is not satisfied")
    
 
 

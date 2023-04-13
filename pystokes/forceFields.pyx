@@ -1,5 +1,5 @@
 cimport cython
-from libc.math cimport sqrt, pow
+from libc.math cimport sqrt, pow, exp
 from cython.parallel import prange
 
 
@@ -28,6 +28,52 @@ cdef class Forces:
     """
     def __init__(self, particles=1):
         self.Np = particles
+        
+    cpdef VdW(self, double [:] F, double [:] r, double A=0, double a0=0):
+        """
+        generic van der Waals attraction to a wall at z=0 with Hamaker constant a
+        """
+        cdef int Np = self.Np, i, j, xx = 2*Np
+        cdef double fz, iz, iz2
+        
+        for i in prange(Np, nogil=True):
+            iz  = 1./r[i+xx]
+            iz2 = iz*iz
+            fz = -1./6*a0*A*iz2
+            F[i+xx] += fz
+        return
+    
+    cpdef dlvo(self, double [:] F, double [:] r, double B=1., double kap=0.1, double A=1.):
+        """
+        generic DLVO interaction used for example in thesis
+        """
+        cdef int Np = self.Np, i, j, xx = 2*Np
+        cdef double dx, dy, dz, dr, idr, idr3, fx, fy, fz, fac, facinv, dlvo_fac
+
+        for i in prange(Np,nogil=True):
+            fx = 0.0; fy = 0.0; fz = 0.0;
+            for j in range(Np):
+                dx = r[i   ] - r[j   ]
+                dy = r[i+Np] - r[j+Np]
+                dz = r[i+xx] - r[j+xx]
+                dr = sqrt(dx*dx + dy*dy + dz*dz)
+                if i != j:
+                    idr  = 1.0/dr
+                    idr3 = idr*idr*idr
+                    fac = 1.0 + exp(kap*dr)
+                    facinv = 1.0/fac
+                    
+                    dlvo_fac = kap*B*idr*facinv - A*idr3
+
+                    fx += dlvo_fac*dx
+                    fy += dlvo_fac*dy
+                    fz += dlvo_fac*dz
+            F[i]    += fx
+            F[i+Np] += fy
+            F[i+xx] += fz
+        return
+        
+        
 
 
     cpdef lennardJones(self, double [:] F, double [:] r, double lje=0.01, double ljr=3):

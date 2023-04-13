@@ -35,6 +35,8 @@ cdef class Rbm:
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T)
     
     cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S)
+    
+    cpdef propulsionR3t(self, double [:] o, double [:] r, double [:] D)
 
 
     cpdef propulsionR3a(self, double [:] o, double [:] r, double [:] M)
@@ -43,9 +45,17 @@ cdef class Rbm:
     cpdef propulsionR4a(self, double [:] o, double [:] r, double [:] M)
 
 
+    cpdef noiseTT_old(self, double [:] v, double [:] r)
+
+
+    cpdef noiseRR_old(self, double [:] o, double [:] r)
+    
     cpdef noiseTT(self, double [:] v, double [:] r)
-
-
+    
+    cpdef noiseTR(self, double [:] v, double [:] r)
+    
+    cpdef noiseRT(self, double [:] o, double [:] r)
+    
     cpdef noiseRR(self, double [:] o, double [:] r)
 
 

@@ -26,7 +26,7 @@ Please read the PyStokes [paper](https://doi.org/10.21105/joss.02318) and [Wiki]
 
 ![Image](https://raw.githubusercontent.com/rajeshrinet/pystokes-misc/master/gallery/2_volvox.gif)
 
-Our work shows that the oscillatory dynamics of a pair of active particles near
+Our [work](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.124.088003) shows that the oscillatory dynamics of a pair of active particles near
 a boundary, best exemplified by the fascinating dance of the green algae
 *Volvox*, can be understood in terms of Hamiltonian mechanics, even though the
 system does not conserve energy. Read more in the [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery).
@@ -36,7 +36,7 @@ system does not conserve energy. Read more in the [PyStokes Gallery](https://git
 It is well-known that crystallization of colloids approximating hard spheres
 is due, paradoxically, to the higher entropy of the ordered crystalline state
 compared to that of  the disordered liquid state. Out of equilibrium, no such general
-principle is available to rationalize crystallization. Here, we identify a new non-equilibrium mechanism, associated with entropy production rather than entropy gain, which drives crystallization of active colloids near plane walls. Read more in the [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery).
+principle is available to rationalize crystallization. In this [work](https://doi.org/10.1103/PhysRevLett.117.228002), we identify a new non-equilibrium mechanism, associated with entropy production rather than entropy gain, which drives crystallization of active colloids near plane walls. Read more in the [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery).
 
 
 ![Crystallization of active colloids](https://raw.githubusercontent.com/rajeshrinet/pystokes/master/examples/crystallite.gif) 

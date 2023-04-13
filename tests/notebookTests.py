@@ -20,7 +20,7 @@ def run_notebook_tests(path, recursive=False):
                    os.path.join(cwd, 'ex4-crystallization.ipynb'),
                    os.path.join(cwd, 'ex6-arrestedCluster.ipynb'),
                    os.path.join(cwd, 'ex7-benchmark.ipynb'),
-                   os.path.join(cwd, 'activeColloidsSingleTrap/convectiveRolls.ipynb'),
+                   os.path.join(cwd, 'others/abp/active_brownian_2D.ipynb'),
                     ]
 
     for ignored_book in ignore_list:

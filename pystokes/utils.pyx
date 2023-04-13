@@ -10,7 +10,7 @@ from libc.math cimport sqrt, pow, log
 from cython.parallel import prange
 cdef double PI = 3.1415926535
 
-DTYPE	= np.float
+DTYPE	= np.float32
 DTYP1	= np.int32
 ctypedef np.float_t DTYPE_t 
 

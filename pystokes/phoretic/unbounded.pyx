@@ -30,21 +30,21 @@ cdef class Phoresis:
     """
     def __init__(self, radius=1, particles=1, phoreticConstant=1.0):
         self.a  = radius
-        self.Np = particles
+        self.N = particles
         self.D  = phoreticConstant
 
     cpdef elastance00(self, double [:] C0, double [:] r, double [:] J0):
-        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, h2, hsq, idr2, A1
         cdef double vx, vy, vz, ii , cc=0 ## cc is the concentration constant
         cdef double mud = J0[0]/(4*PI*self.D)
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             cc=0;
-            for j in range(Np):
+            for j in range(N):
                 if i!=j:
                     dx = r[i]    - r[j]
-                    dy = r[i+Np]  - r[j+Np]
+                    dy = r[i+N]  - r[j+N]
                     dz = r[i+xx]  - r[j+xx]
                     idr = 1.0/sqrt(dx*dx + dy*dy + dz*dz)
                     cc += idr
@@ -55,17 +55,17 @@ cdef class Phoresis:
     
 
     cpdef elastance10(self, double [:] C1, double [:] r, double [:] J0):
-        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, h2, hsq, idr2, A1
         cdef double vx, vy, vz, ii , cc=1 ## cc is the concentration constant
         cdef double mud = 1.0/(4*PI*self.D)
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 if i!=j:
                     dx = r[i]    - r[j]
-                    dy = r[i+Np]  - r[j+Np]
+                    dy = r[i+N]  - r[j+N]
                     dz = r[i+xx]  - r[j+xx]
                     idr = 1.0/sqrt(dx*dx + dy*dy + dz*dz)
                     A1 = idr*idr*idr
@@ -74,49 +74,49 @@ cdef class Phoresis:
                     vz += A1*dz
 
             C1[i  ]  += mud*vx 
-            C1[i+Np] += mud*vy
+            C1[i+N] += mud*vy
             C1[i+xx] += mud*vz
         return 
 
 
     cpdef elastance11(self, double [:] C1, double [:] r, double [:] J1):
-        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, h2, hsq, idr2, A1, B1
         cdef double vx, vy, vz, ii , cc=1 ## cc is the concentration constant
         cdef double mud = 1.0/(16*PI*PI**self.a)
  
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 if i!=j:
                     dx = r[i]    - r[j]
-                    dy = r[i+Np] - r[j+Np]
+                    dy = r[i+N] - r[j+N]
                     dz = r[i+xx] - r[j+xx] 
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
                     A1 = idr*idr*idr
-                    B1  = 3*(J1[j]*dx + J1[j+Np]*dy + J1[j+xx]*dz)*idr*idr
+                    B1  = 3*(J1[j]*dx + J1[j+N]*dy + J1[j+xx]*dz)*idr*idr
                     vx += A1*(J1[j]    - B1*dx)
-                    vy += A1*(J1[j+Np] - B1*dy)
+                    vy += A1*(J1[j+N] - B1*dy)
                     vz += A1*(J1[j+xx] - B1*dz)
 
                     ###contributions from the image 
                     dz = r[i+xx]  + r[j+xx]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
                     A1 = idr*idr*idr
-                    B1  = 3*(J1[j]*dx + J1[j+Np]*dy + J1[j+xx]*dz)*idr*idr
+                    B1  = 3*(J1[j]*dx + J1[j+N]*dy + J1[j+xx]*dz)*idr*idr
                     vx += A1*(J1[j]    - B1*dx)
-                    vy += A1*(J1[j+Np] - B1*dy)
+                    vy += A1*(J1[j+N] - B1*dy)
                     vz += A1*(J1[j+xx] - B1*dz)
 
                 else:
                    ''' self contribution from the image point'''
                    dz = 2*r[i+xx] ; A1=1/(dz*dz*dz)
                    vx += A1*(   J1[j]    )
-                   vy += A1*(   J1[j+Np] )
+                   vy += A1*(   J1[j+N] )
                    vy += A1*(-2*J1[j+xx] )
 
             C1[i  ]  += mud*J1[i  ]  + mud*vx
-            C1[i+Np] += mud*J1[i+Np] + mud*vy
+            C1[i+N] += mud*J1[i+N] + mud*vy
             C1[i+xx] += mud*J1[i+xx] + mud*vz
         return
 
@@ -147,21 +147,21 @@ cdef class Field:
 
     def __init__(self, radius=1, particles=1, phoreticConstant=1, gridpoints=32):
         self.a  = radius
-        self.Np = particles
+        self.N = particles
         self.Nt = gridpoints
         self.D  = phoreticConstant
 
 
     cpdef phoreticField0(self, double [:] c, double [:] rt, double [:] r, double [:] J0):
-        cdef int Np = self.Np, Nt = self.Nt, xx = 2*Np
+        cdef int N = self.N, Nt = self.Nt, xx = 2*N
         cdef int i, j
         cdef double dx, dy, dz, idr, idr3, cc, mu1=J0[0]/(4*PI*self.D)
  
         for i in prange(Nt, nogil=True):
             cc=0
-            for j in range(Np):
+            for j in range(N):
                 dx = rt[i]      - r[j]
-                dy = rt[i+Nt]   - r[j+Np]
+                dy = rt[i+Nt]   - r[j+N]
                 dz = rt[i+2*Nt] - r[j+xx] 
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 cc +=idr
@@ -171,43 +171,43 @@ cdef class Field:
     
     
     cpdef phoreticField1(self, double [:] c, double [:] rt, double [:] r, double [:] J1):
-        cdef int Np = self.Np, Nt = self.Nt, xx = 2*Np
+        cdef int N = self.N, Nt = self.Nt, xx = 2*N
         cdef int i, j
         cdef double dx, dy, dz, idr, idr3, cc, mu1=1.0/(4*PI*self.D)
  
         for i in prange(Nt, nogil=True):
             cc=0
-            for j in range(Np):
+            for j in range(N):
                 dx = rt[i]      - r[j]
-                dy = rt[i+Nt]   - r[j+Np]
-                dz = rt[i+2*Nt] - r[j+2*Np] 
+                dy = rt[i+Nt]   - r[j+N]
+                dz = rt[i+2*Nt] - r[j+2*N] 
 
                 idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr 
 
-                cc  += idr3*(dx*J1[j] + dy*J1[j+Np] + dz*J1[j+2*Np])
+                cc  += idr3*(dx*J1[j] + dy*J1[j+N] + dz*J1[j+2*N])
 
             c[i] += mu1*cc
         return 
     
     
     cpdef phoreticField2(self, double [:] c, double [:] rt, double [:] r, double [:] J2):
-        cdef int Np = self.Np, Nt = self.Nt, xx = 2*Np
+        cdef int N = self.N, Nt = self.Nt, xx = 2*N
         cdef int i, j
         cdef double dx, dy, dz, idr, idr5, cc, mu1=1.0/(4*PI*self.D), jxx, jyy, jxy, jyz, jxz
  
         for i in prange(Nt, nogil=True):
             cc=0
-            for j in range(Np):
+            for j in range(N):
                 jxx = J2[j]
-                jyy = J2[j+Np]
-                jxy = J2[j+2*Np]
-                jxz = J2[j+3*Np]
-                jyz = J2[j+4*Np]
+                jyy = J2[j+N]
+                jxy = J2[j+2*N]
+                jxz = J2[j+3*N]
+                jyz = J2[j+4*N]
 
                 dx = rt[i]      - r[j]
-                dy = rt[i+Nt]   - r[j+Np]
-                dz = rt[i+2*Nt] - r[j+2*Np] 
+                dy = rt[i+Nt]   - r[j+N]
+                dz = rt[i+2*Nt] - r[j+2*N] 
 
                 idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr5 = idr*idr*idr*idr*idr 

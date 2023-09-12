@@ -1055,8 +1055,8 @@ cdef class Torques:
   
         cdef int N = self.N, i, xx = 2*N
         for i in prange(N, nogil=True):
-            T[i   ] += m0*(p[i+N]*Bz-p[i+xx]*By)
-            T[i+N] += m0*(p[i+xx]*Bx-p[i]*Bz)
-            T[i+xx] += m0*(p[i]*By-p[i+N]*Bx)
+            T[i  ]  += m0*(p[i+N]*Bz  -p[i+xx]*By)
+            T[i+N]  += m0*(p[i+xx]*Bx -p[i]*Bz)
+            T[i+xx] += m0*(p[i]*By    -p[i+N]*Bx)
         return 
 

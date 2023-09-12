@@ -105,7 +105,7 @@ Long test of example notebooks
 import pystokes, numpy as np, matplotlib.pyplot as plt
 
 # particle radius, self-propulsion speed, number and fluid viscosity
-b, eta, Np = 1.0, 1.0/6.0, 1
+b, eta, N = 1.0, 1.0/6.0, 1
 
 # initialize
 r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
@@ -115,7 +115,7 @@ V2s  = pystokes.utils.irreducibleTensors(2, p)
 dim, L, Ng = 3, 10, 64;
 
 # instantiate the Flow class
-flow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+flow = pystokes.wallBounded.Flow(radius=b, particles=N, viscosity=eta, gridpoints=Ng*Ng)
 
 # create grid, evaluate flow and plot
 rr, vv = pystokes.utils.gridYZ(dim, L, Ng)
@@ -127,17 +127,17 @@ pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='
 #Example 2: Phoretic field due to active surface flux of l=0 mode
 import pystokes, numpy as np, matplotlib.pyplot as plt
 # particle radius, fluid viscosity, and number of particles
-b, eta, Np = 1.0, 1.0/6.0, 1
+b, eta, N = 1.0, 1.0/6.0, 1
 
 #initialise
 r, p = np.array([0.0, 0.0, 5]), np.array([0.0, 0.0, 1])
-J0 = np.ones(Np)  # strength of chemical monopolar flux
+J0 = np.ones(N)  # strength of chemical monopolar flux
 
 # space dimension , extent , discretization
 dim, L, Ng = 3, 10, 64;
 
 # instantiate the Flow class
-phoreticField = pystokes.phoretic.unbounded.Field(radius=b, particles=Np, phoreticConstant=eta, gridpoints=Ng*Ng)
+phoreticField = pystokes.phoretic.unbounded.Field(radius=b, particles=N, phoreticConstant=eta, gridpoints=Ng*Ng)
 
 # create grid, evaluate phoretic field and plot
 rr, vv = pystokes.utils.gridYZ(dim, L, Ng)

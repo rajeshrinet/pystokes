@@ -11,7 +11,7 @@ cdef double PI = 3.14159265359
 @cython.nonecheck(False)
 cdef class Phoresis:
 
-    cdef readonly int Nx, Ny, Nz, Np
+    cdef readonly int Nx, Ny, Nz, N
     cdef readonly np.ndarray Mobility
     cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, D
 
@@ -28,7 +28,7 @@ cdef class Phoresis:
 @cython.nonecheck(False)
 cdef class Field:
 
-    cdef readonly int Nx, Ny, Nz, Np, Nt
+    cdef readonly int Nx, Ny, Nz, N, Nt
     cdef readonly np.ndarray Mobility
     cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, D
 

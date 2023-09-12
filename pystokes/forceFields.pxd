@@ -7,7 +7,7 @@ from cython.parallel import prange
 @cython.cdivision(True)
 @cython.nonecheck(False)
 cdef class Forces:
-    cdef int Np
+    cdef int N
     
     cpdef VdW(self, double [:] F, double [:] r, double A=?, double a0=?)
     
@@ -68,7 +68,8 @@ cdef class Forces:
 @cython.cdivision(True)
 @cython.nonecheck(False)
 cdef class Torques:
-    cdef int Np
+    cdef int N
 
     cpdef bottomHeaviness(self, double [:] T, double [:] p, double bh=?)
 
+    cpdef magnetic(self, double[:] T, double [:] p, double m0, double Bx, double By, double Bz)

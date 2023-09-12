@@ -11,7 +11,7 @@ cdef double PI = 3.14159265359
 @cython.nonecheck(False)
 cdef class Rbm:
     cdef double a, eta, mu, muv, mur
-    cdef int Np 
+    cdef int N 
     cdef readonly np.ndarray Mobility
 
     cpdef mobilityTT(self, double [:] v,  double [:] r, double [:] F)
@@ -69,7 +69,7 @@ cdef class Rbm:
 @cython.nonecheck(False)
 cdef class Flow:
     cdef double a, eta
-    cdef int Np
+    cdef int N
     cdef int Nt
 
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F)

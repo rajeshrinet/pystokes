@@ -5,14 +5,14 @@ import pystokes, os, sys
 
 #Parameters
 a, eta, dim = 1.0, 1.0/6, 3
-Np, Nb, Nm = 1, 1, 8
+N, Nb, Nm = 1, 1, 8
 ta =(4*np.pi/3)**(1.0/3) 
 L = ta/np.arange(0.01, 0.4, 0.01)
 
 #Memory allocation
-v = np.zeros(dim*Np)         
-r = np.zeros(dim*Np)        
-F = np.zeros(dim*Np)  
+v = np.zeros(dim*N)         
+r = np.zeros(dim*N)        
+F = np.zeros(dim*N)  
 vv  = np.zeros(np.size(L))
 phi = np.zeros(np.size(L) )
 
@@ -24,10 +24,10 @@ for i in range(np.size(L)):
 
     r[0], r[1], r[2] = 0.0, 0.0, 0.0
 
-    ff = pystokes.forceFields.Forces(Np)
+    ff = pystokes.forceFields.Forces(N)
     ff.sedimentation(F, g=-1)                          
     
-    pRbm = pystokes.periodic.Rbm(a, Np, eta, L[i])   
+    pRbm = pystokes.periodic.Rbm(a, N, eta, L[i])   
     pRbm.mobilityTT(v, r, F, Nb, Nm)                  
     
     phi[i] = (4*np.pi*a**3)/(3*L[i]**3)

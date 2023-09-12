@@ -6,49 +6,49 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 
-a, Np1d, Np = 1, 10, 100            # radius and number of particles
+a, N1d, N = 1, 10, 100            # radius and number of particles
 L, dim = 128,  3                    # size and dimensionality and the box
 latticeShape = 'square'             # shape of the lattice
-v = np.zeros(dim*Np)                # Memory allocation for velocity
-r = np.zeros(dim*Np)                # Position vector of the particles
-F = np.zeros(dim*Np)                # Forces on the particles
+v = np.zeros(dim*N)                # Memory allocation for velocity
+r = np.zeros(dim*N)                # Position vector of the particles
+F = np.zeros(dim*N)                # Forces on the particles
 Nb, Nm = 1, 4
 
-rm = pystokes.periodic.Rbm(a, Np, 1.0/6, L)   # instantiate the classes
-ff = pystokes.forceFields.Forces(Np)
+rm = pystokes.periodic.Rbm(a, N, 1.0/6, L)   # instantiate the classes
+ff = pystokes.forceFields.Forces(N)
 
-def initialise(r, Np1d, shape):
+def initialise(r, N1d, shape):
     ''' this is the module to initialise the particles on the lattice'''
     if shape=='cube':
-        for i in range(Np1d):
-            for j in range(Np1d):
-                for k in range(Np1d):
-                    ii = i*Np1d**2 + j*Np1d + k
-                    r[ii]      = L/2 + 3*(-Np1d + 2*i)                  
-                    r[ii+Np]   = L/2 + 3*(-Np1d + 2+ 2*j)               
-                    r[ii+2*Np] = L/2 + 3*(-Np1d + 2+ 2*k)               
+        for i in range(N1d):
+            for j in range(N1d):
+                for k in range(N1d):
+                    ii = i*N1d**2 + j*N1d + k
+                    r[ii]      = L/2 + 3*(-N1d + 2*i)                  
+                    r[ii+N]   = L/2 + 3*(-N1d + 2+ 2*j)               
+                    r[ii+2*N] = L/2 + 3*(-N1d + 2+ 2*k)               
     elif shape=='square':             
-        for i in range(Np1d):
-            for j in range(Np1d):
-                ii = i*Np1d + j
-                r[ii]      = L/2 + 4*(-Np1d + 2*i)                  
-                r[ii+Np]   = L/2 + 4*(-Np1d + 2+ 2*j)               
-        for i in range(Np):
-                r[i+2*Np] = L/2
+        for i in range(N1d):
+            for j in range(N1d):
+                ii = i*N1d + j
+                r[ii]      = L/2 + 4*(-N1d + 2*i)                  
+                r[ii+N]   = L/2 + 4*(-N1d + 2+ 2*j)               
+        for i in range(N):
+                r[i+2*N] = L/2
         
     elif shape=='rectangle':             
-        for i in range(Np1d):
-            for j in range(Np1d):
-                ii = i*Np1d + j
-                r[ii]      = L/2 + 4*(-Np1d + 2*i)                  
-                r[ii+Np]   = L/2 + 4*(-Np1d + 2+ 2*j)               
-        for i in range(Np):
-                r[i+2*Np] = L/2
+        for i in range(N1d):
+            for j in range(N1d):
+                ii = i*N1d + j
+                r[ii]      = L/2 + 4*(-N1d + 2*i)                  
+                r[ii+N]   = L/2 + 4*(-N1d + 2+ 2*j)               
+        for i in range(N):
+                r[i+2*N] = L/2
     else:
             pass
 
 
-initialise(r, Np1d, latticeShape)
+initialise(r, N1d, latticeShape)
 dt = 0.01
 fig = plt.figure()
 for tt in range(32):
@@ -56,9 +56,9 @@ for tt in range(32):
     v=v*0                            # setting v=0 in each time step
     rm.mobilityTT(v, r, F, Nb, Nm)   # and StokesletV module of pystokes
     r = (r + v*dt)%L
-    x = r[0:Np]
-    y = r[Np:2*Np]
-    z = r[2*Np:3*Np]
+    x = r[0:N]
+    y = r[N:2*N]
+    z = r[2*N:3*N]
     cc = x*x + y*y + z*z 
     ax3D = fig.add_subplot(111, projection='3d')
     scatCollection = ax3D.scatter(x, y, z, s=30,  c=cc, cmap=plt.cm.RdBu )

@@ -21,15 +21,15 @@ cdef class Rbm:
     radius: float
         Radius of the particles (a).    
     particles: int
-        Number of particles (Np)
+        Number of particles (N)
     viscosity: float 
         Viscosity of the fluid (eta)
     """
  
 
-    def __init__(self, a, Np, eta):
+    def __init__(self, a, N, eta):
         self.a  = a                 # radius of the particles
-        self.Np = Np                # number of particles
+        self.N = N                # number of particles
         self.eta = eta                # number of particles
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, double H):
@@ -41,40 +41,40 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         H: float 
             Height of the Hele-Shaw cell 
         """
 
-        cdef int i, j, Np=self.Np, xx=2*Np
+        cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, idr2, Fdotidr2, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H
         cdef double mu = 1.0/(6*PI*self.eta*self.a), mu1 = mu*self.a*0.75, a2=self.a*self.a/3.0
         cdef double fac0 = 3/(PI*self.eta*H*H*H), fac1, fac2
  
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 dx = r[i]    - r[j]
-                dy = r[i+Np]  - r[j+Np]
+                dy = r[i+N]  - r[j+N]
                 h2  =  2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
                 if i!=j:
                     idr = 1.0/sqrt( dx*dx + dy*dy )
                     idr2=idr*idr
-                    Fdotidr2 = (F[j] * dx + F[j+Np] * dy )*idr2
+                    Fdotidr2 = (F[j] * dx + F[j+N] * dy )*idr2
                     #
                     fac1 = fac0*(H-r[i+xx])*(H-r[j+xx])*r[i+xx]
                     vx += fac1*(0.5*F[j]    + Fdotidr2*dx)*idr2 
-                    vy += fac1*(0.5*F[j+Np] + Fdotidr2*dy)*idr2 
+                    vy += fac1*(0.5*F[j+N] + Fdotidr2*dy)*idr2 
                     
             v[i  ]  += mu*F[i]    + mu1*vx 
-            v[i+Np] += mu*F[i+Np] + mu1*vy
+            v[i+N] += mu*F[i+N] + mu1*vy
         return 
     
     
@@ -87,34 +87,34 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         S: np.array
             An array of forces
-            An array of size 5*Np,
+            An array of size 5*N,
         H: float 
             Height of the Hele-Shaw cell 
         """
 
-        cdef int Np=self.Np, i, j, xx=2*Np, xx1=3*Np , xx2=4*Np   
+        cdef int N=self.N, i, j, xx=2*N, xx1=3*N , xx2=4*N   
         cdef double dx, dy, dz, idr, idr2, idr4, idr6, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz 
         cdef double vx, vy, vz, mus =-(28.0*self.a**3)/24, tH = 2*H
         cdef double fac0 = 3/(PI*self.eta*H*H*H), fac1, fac2
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0; vy=0;   vz=0;
-            for j in  range(Np):
+            for j in  range(N):
                 h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
-                sxx = S[j]  ; syy = S[j+Np]; szz = -sxx-syy;
+                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
                 sxy = S[j+xx]; syx = sxy;
                 sxz = S[j+xx1]; szx = sxz;
                 syz = S[j+xx2]; szy = syz;
                 dx = r[i]   - r[j]
-                dy = r[i+Np] - r[j+Np]
+                dy = r[i+N] - r[j+N]
                 if i!=j:
                     idr  = 1.0/sqrt( dx*dx + dy*dy);
                     idr4 = idr*idr*idr*idr; idr6 = idr4*idr*idr; 
@@ -129,7 +129,7 @@ cdef class Rbm:
                     vy += -2*sry + 4*srr*dy;
                      
             v[i]    += vx*mus
-            v[i+Np] += vy*mus
+            v[i+N] += vy*mus
             v[i+xx] += vz*mus
         return
 
@@ -143,38 +143,38 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         D: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         H: float 
             Height of the Hele-Shaw cell 
         """
 
-        cdef int Np=self.Np, i, j, xx=2*Np
+        cdef int N=self.N, i, j, xx=2*N
         cdef double dx, dy, dz, idr, idr2, idr5, Ddotidr, tempD, hsq, h2, tH=2*H
         cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5
         cdef double fac0 = 6/(PI*self.eta*H*H*H), fac1, fac2
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 dx = r[i]    - r[j]
-                dy = r[i+Np]  - r[j+Np]
+                dy = r[i+N]  - r[j+N]
                 h2  =  2*r[j+xx]
                 if i!=j:
                     idr = 1.0/sqrt( dx*dx + dy*dy)
                     idr2=idr*idr
-                    Ddotidr = (D[j]*dx + D[j+Np]*dy)*idr2
+                    Ddotidr = (D[j]*dx + D[j+N]*dy)*idr2
                     
                     fac1 = -fac0*r[j+xx]*(H-r[j+xx])
                     vx += fac1*(0.5*D[j]    - Ddotidr*dx)*idr2
-                    vy += fac1*(0.5*D[j+Np] - Ddotidr*dy)*idr2
+                    vy += fac1*(0.5*D[j+N] - Ddotidr*dy)*idr2
             v[i]    += vx*mud
-            v[i+Np] += vy*mud
+            v[i+N] += vy*mud
             v[i+xx] += vz*mud
 
 
@@ -205,7 +205,7 @@ cdef class Flow:
 
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
         self.a  = radius
-        self.Np = particles
+        self.N = particles
         self.Nt = gridpoints
         self.eta= viscosity
 
@@ -225,15 +225,15 @@ cdef class Flow:
             An array of size 3*Nt,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of body force
-            An array of size 3*Np,
+            An array of size 3*N,
         H: float 
             Height of the Hele-Shaw cell 
         """
 
-        cdef int i, j, Np=self.Np, xx=2*Np, Nt=self.Nt
+        cdef int i, j, N=self.N, xx=2*N, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H
         cdef double mu = 1.0/(6*PI*self.eta*self.a), mu1 = mu*self.a*0.75, a2=self.a*self.a/3.0
@@ -241,15 +241,15 @@ cdef class Flow:
  
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 dx = rt[i]    - r[j]
-                dy = rt[i+Nt]  - r[j+Np]
+                dy = rt[i+Nt]  - r[j+N]
                 idr = 1.0/sqrt( dx*dx + dy*dy )
-                Fdotidr = (F[j] * dx + F[j+Np] * dy )*idr*idr
+                Fdotidr = (F[j] * dx + F[j+N] * dy )*idr*idr
                 #
                 fac1 = (H-rt[i+2*Nt])*(H-r[j+xx])*rt[i+2*Nt]*r[j+xx]
                 vx += fac1*(0.5*F[j]    - Fdotidr*dx)*idr*idr 
-                vy += fac1*(0.5*F[j+Np] - Fdotidr*dy)*idr*idr
+                vy += fac1*(0.5*F[j+N] - Fdotidr*dy)*idr*idr
                     
             vv[i  ]  += mu1*vx 
             vv[i+Nt] += mu1*vy 
@@ -271,14 +271,14 @@ cdef class Flow:
             An array of size 3*Nt,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         S: np.array
             An array of 2s mode of the slip 
-            An array of size 5*Np,
+            An array of size 5*N,
         H: float 
             Height of the Hele-Shaw cell 
         """
-        cdef int i, j, Np=self.Np, xx=2*Np, Nt=self.Nt, xx1=3*Np, xx2=4*Np
+        cdef int i, j, N=self.N, xx=2*N, Nt=self.Nt, xx1=3*N, xx2=4*N
         cdef double dx, dy, dz, idr, idr2, idr4, idr6, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz 
@@ -288,13 +288,13 @@ cdef class Flow:
  
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
-                sxx = S[j]  ; syy = S[j+Np]; szz = -sxx-syy;
+            for j in range(N):
+                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
                 sxy = S[j+xx]; syx = sxy;
                 sxz = S[j+xx1]; szx = sxz;
                 syz = S[j+xx2]; szy = syz;
                 dx = rt[i]    - r[j]
-                dy = rt[i+Nt] - r[j+Np]
+                dy = rt[i+Nt] - r[j+N]
                 idr  = 1.0/sqrt( dx*dx + dy*dy);
                 idr4 = idr*idr*idr*idr; idr6 = idr4*idr*idr; 
                 fac1 = (H-rt[i+2*Nt])*(H-r[j+xx])*rt[i+2*Nt]*idr4
@@ -325,14 +325,14 @@ cdef class Flow:
             An array of size 3*Nt,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         D: np.array
             An array of 2s mode of the slip 
-            An array of size r*Np,
+            An array of size r*N,
         H: float 
             Height of the Hele-Shaw cell 
         """
-        cdef int i, j, Np=self.Np, xx=2*Np, Nt=self.Nt
+        cdef int i, j, N=self.N, xx=2*N, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr2, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H, Ddotidr
         cdef double mu = 1.0/(6*PI*self.eta*self.a), mu1 = mu*self.a*0.75, a2=self.a*self.a/3.0
@@ -340,16 +340,16 @@ cdef class Flow:
  
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 dx = rt[i]   - r[j]
-                dy = rt[i+Nt] - r[j+Np]
+                dy = rt[i+Nt] - r[j+N]
                 idr = 1.0/sqrt( dx*dx + dy*dy)
                 idr2=idr*idr
-                Ddotidr = (D[j]*dx + D[j+Np]*dy)*idr2
+                Ddotidr = (D[j]*dx + D[j+N]*dy)*idr2
                 
                 fac1 = fac0*(H-rt[i+2*Nt])*(H-r[j+xx])*rt[i+2*Nt]*r[j+xx]
                 vx += fac1*(0.5*D[j]    - Ddotidr*dx)*idr2
-                vy += fac1*(0.5*D[j+Np] - Ddotidr*dy)*idr2
+                vy += fac1*(0.5*D[j+N] - Ddotidr*dy)*idr2
                     
             vv[i  ]  += mu1*vx 
             vv[i+Nt] += mu1*vy

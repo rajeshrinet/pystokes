@@ -92,9 +92,9 @@ cpdef irreducibleTensors(l, p, Y0=1):
 	
 	returns: Yl - tensorialHarmonics of rank l
 	"""
-	cdef int i, Np = int (np.size(p)/3)
+	cdef int i, N = int (np.size(p)/3)
 	cdef double S0 = Y0
-	YY = np.zeros((2*l+1)*Np, dtype=DTYPE)
+	YY = np.zeros((2*l+1)*N, dtype=DTYPE)
 	
 	cdef double [:] p1 = p
 	cdef double [:] Y1 = YY
@@ -107,28 +107,28 @@ cpdef irreducibleTensors(l, p, Y0=1):
 			YY = Y0*p
 	
 	if l==2:
-		for i in prange(Np, nogil=True):
-			Y1[i + 0*Np] = S0*(p1[i]*p1[i]					 -(1.0/3))
-			Y1[i + 1*Np] = S0*(p1[i + Np]*p1[i + Np] -(1.0/3))
-			Y1[i + 2*Np] = S0*(p1[i]*p1[i + Np])
-			Y1[i + 3*Np] = S0*(p1[i]*p1[i + 2*Np])
-			Y1[i + 4*Np] = S0*(p1[i + Np]*p1[i + 2*Np])
+		for i in prange(N, nogil=True):
+			Y1[i + 0*N] = S0*(p1[i]*p1[i]					 -(1.0/3))
+			Y1[i + 1*N] = S0*(p1[i + N]*p1[i + N] -(1.0/3))
+			Y1[i + 2*N] = S0*(p1[i]*p1[i + N])
+			Y1[i + 3*N] = S0*(p1[i]*p1[i + 2*N])
+			Y1[i + 4*N] = S0*(p1[i + N]*p1[i + 2*N])
 	
 	if l==3:
-		for i in range(Np):
+		for i in range(N):
 			YY[i]	   = Y0*(p[i]*p[i]*p[i]					   - 3/5*p[i]);
-			YY[i+Np]   = Y0*(p[i+Np]*p[i+Np]*p[i+Np]   - 3/5*p[i+Np]);
-			YY[i+2*Np] = Y0*(p[i]*p[i]*p[i+Np]				   - 1/5*p[i+Np]);
-			YY[i+3*Np] = Y0*(p[i]*p[i]*p[i+2*Np]	   - 1/5*p[i+2*Np]);
-			YY[i+4*Np] = Y0*(p[i]*p[i+Np]*p[1+Np]			-1/5* p[i]);
-			YY[i+5*Np] = Y0*(p[i+Np]*p[i+Np]*p[i+2*Np]);
-			YY[i+6*Np] = Y0*(p[i+Np]*p[i+Np]*p[i+2*Np] -1/5*p[i+2*Np]);
+			YY[i+N]   = Y0*(p[i+N]*p[i+N]*p[i+N]   - 3/5*p[i+N]);
+			YY[i+2*N] = Y0*(p[i]*p[i]*p[i+N]				   - 1/5*p[i+N]);
+			YY[i+3*N] = Y0*(p[i]*p[i]*p[i+2*N]	   - 1/5*p[i+2*N]);
+			YY[i+4*N] = Y0*(p[i]*p[i+N]*p[1+N]			-1/5* p[i]);
+			YY[i+5*N] = Y0*(p[i+N]*p[i+N]*p[i+2*N]);
+			YY[i+6*N] = Y0*(p[i+N]*p[i+N]*p[i+2*N] -1/5*p[i+2*N]);
 	return YY
 
 
 
 
-def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat',
+def simulate(rp0, Tf, Nts, rhs, integrator='odeint', filename='this.mat',
 			Ti=0, maxNumSteps=100000, **kwargs):
 	"""
 	Simulates using choice of integrator
@@ -141,7 +141,7 @@ def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat',
 		Initial condition 
 	Tf	: int 
 		 Final time 
-	Npts: int 
+	Nts: int 
 		Number of points to return data 
 	rhs : Python Function
 		Right hand side to integrate 
@@ -172,18 +172,18 @@ def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat',
 
 	if integrator=='odeint':
 		from scipy.integrate import odeint
-		time_points=np.linspace(Ti, Tf, Npts+1);
+		time_points=np.linspace(Ti, Tf, Nts+1);
 		X = odeint(dxdtEval, rp0, time_points, mxstep=maxNumSteps, **kwargs)
 
 	elif integrator=='solve_ivp':
 		from scipy.integrate import solve_ivp
-		time_points=np.linspace(Ti, Tf, Npts+1)															 
+		time_points=np.linspace(Ti, Tf, Nts+1)															 
 		X = solve_ivp(lambda t, xt: dxdtEval(xt,t), [0,Tf], rp0, 
 						 t_eval=time_points, **kwargs).y.T
 
 	elif integrator=='odespy-vode':
 		import odespy
-		time_points=np.linspace(Ti, Tf, Npts+1);
+		time_points=np.linspace(Ti, Tf, Nts+1);
 		solver = odespy.Vode(dxdtEval, method = 'bdf', 
 		atol=1E-7, rtol=1E-6, order=5, nsteps=maxNumSteps)
 		solver.set_initial_condition(rp0)
@@ -191,14 +191,14 @@ def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat',
 
 	elif integrator=='odespy-rkf45':
 		import odespy
-		time_points=np.linspace(Ti, Tf, Npts+1);
+		time_points=np.linspace(Ti, Tf, Nts+1);
 		solver = odespy.RKF45(dxdtEval)
 		solver.set_initial_condition(rp0)
 		X, t = solver.solve(time_points, **kwargs) 
 
 	elif integrator=='odespy-rk4':
 		import odespy
-		time_points=np.linspace(Ti, Tf, Npts+1);
+		time_points=np.linspace(Ti, Tf, Nts+1);
 		solver = odespy.RK4(dxdtEval)
 		solver.set_initial_condition(rp0)
 		X, t = solver.solve(time_points, **kwargs) 
@@ -224,34 +224,34 @@ def simulate(rp0, Tf, Npts, rhs, integrator='odeint', filename='this.mat',
 
 
 
-def initialCondition(Np, h0=3.1):
+def initialCondition(N, h0=3.1):
 	'''
 	Assigns initial condition. 
 	To DO: Need to include options to assign possibilites
 	'''
-	rp0 = np.zeros(3*Np) 
-	radius = np.sqrt(np.arange(Np)/float(Np))
+	rp0 = np.zeros(3*N) 
+	radius = np.sqrt(np.arange(N)/float(N))
 	golden_angle = np.pi * (3 - np.sqrt(5))
-	theta = golden_angle * np.arange(Np)
+	theta = golden_angle * np.arange(N)
 	
-	points = np.zeros((Np, 2)) 
+	points = np.zeros((N, 2)) 
 	points[:,0] = np.cos(theta)
 	points[:,1] = np.sin(theta)
-	points *= radius.reshape((Np, 1)) 
-	points = points*2.1*np.sqrt(Np)
+	points *= radius.reshape((N, 1)) 
+	points = points*2.1*np.sqrt(N)
 	
-	points[:,0] += 2*(2*np.random.random(Np)-np.ones(Np)) 
-	points[:,1] += 2*(2*np.random.random(Np)-np.ones(Np)) 
+	points[:,0] += 2*(2*np.random.random(N)-np.ones(N)) 
+	points[:,1] += 2*(2*np.random.random(N)-np.ones(N)) 
 	
 	
-	rp0[0:Np]		   = 1.5*points[:, 0]
-	rp0[Np:2*Np]   = 1.5*points[:, 1]
-	rp0[2*Np:3*Np] = h0
-	##rp0[0:3*Np] = ar*(2*np.random.random(3*Np)-np.ones(3*Np)) + rp0[0:3*Np]
+	rp0[0:N]		   = 1.5*points[:, 0]
+	rp0[N:2*N]   = 1.5*points[:, 1]
+	rp0[2*N:3*N] = h0
+	##rp0[0:3*N] = ar*(2*np.random.random(3*N)-np.ones(3*N)) + rp0[0:3*N]
 	#
-	#rp0[3*Np:4*Np] = np.zeros(Np)
-	#rp0[4*Np:5*Np] = np.zeros(Np)
-	#rp0[5*Np:6*Np] = -np.ones(Np)
+	#rp0[3*N:4*N] = np.zeros(N)
+	#rp0[4*N:5*N] = np.zeros(N)
+	#rp0[5*N:6*N] = -np.ones(N)
 	return rp0 
 
 
@@ -262,13 +262,13 @@ def plotLogo():
 	import pystokes 
 	import numpy as np, matplotlib.pyplot as plt
 	# particle radius, fluid viscosity, and number of particles
-	b, eta, Np = 1.0, 1.0/6.0, 4
+	b, eta, N = 1.0, 1.0/6.0, 4
 	
 	#initialise
-	r = np.zeros(3*Np);  r[2*Np:3*Np] = 2
-	p = np.zeros(3*Np);  p[2*Np:3*Np] = 1
+	r = np.zeros(3*N);  r[2*N:3*N] = 2
+	p = np.zeros(3*N);  p[2*N:3*N] = 1
 	
-	r[2*Np]=2.8;  r[Np:2*Np]=np.linspace(-3.2, 3.2, Np);
+	r[2*N]=2.8;  r[N:2*N]=np.linspace(-3.2, 3.2, N);
 	# irreducible coeffcients
 	F1s = pystokes.utils.irreducibleTensors(1, p)
 	V2s = pystokes.utils.irreducibleTensors(2, p)
@@ -278,9 +278,9 @@ def plotLogo():
 	dim, L, Ng = 3, 8, 100
 	
 	#Instantiate the Flow class
-	wFlow = pystokes.unbounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
-	wFlow = pystokes.wallBounded.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
-	#iFlow = pystokes.interface.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng)
+	wFlow = pystokes.unbounded.Flow(radius=b, particles=N, viscosity=eta, gridpoints=Ng*Ng)
+	wFlow = pystokes.wallBounded.Flow(radius=b, particles=N, viscosity=eta, gridpoints=Ng*Ng)
+	#iFlow = pystokes.interface.Flow(radius=b, particles=N, viscosity=eta, gridpoints=Ng*Ng)
 	
 	# create the grid
 	rr, vv = pystokes.utils.gridYZ(dim, L, Ng); 
@@ -293,18 +293,18 @@ def plotLogo():
 	density=0.75; arrowSize=4; mask=0.6; ms=36; offset=1e-6
 	plt.streamplot(yy, zz, vy, vz, color="gray", arrowsize =arrowSize, density=density, linewidth=4.4)
 	
-	for i in range(Np):
-			plt.plot(r[i+Np], r[i+2*Np], 'o', mfc='snow', mec='darkslategray', ms=4.8*ms, mew=5.2)
+	for i in range(N):
+			plt.plot(r[i+N], r[i+2*N], 'o', mfc='snow', mec='darkslategray', ms=4.8*ms, mew=5.2)
 	plt.grid()
 	
 	ww=0.3
 	plt.ylim(-ww, np.max(zz))
 	plt.axhspan(-ww, ww, facecolor='gray');
 	plt.axis('off')
-	plt.text(r[Np]-.6, r[2*Np]-.5, 'Py', fontsize=100);
-	plt.text(r[Np+1]-.66, r[2*Np+1]-.64, 'St', fontsize=111);
-	plt.text(r[Np+2]-.78, r[2*Np+2]-.64, 'ok', fontsize=111);
-	plt.text(r[Np+3]-.66, r[2*Np+3]-.64, 'es', fontsize=111);
+	plt.text(r[N]-.6, r[2*N]-.5, 'Py', fontsize=100);
+	plt.text(r[N+1]-.66, r[2*N+1]-.64, 'St', fontsize=111);
+	plt.text(r[N+2]-.78, r[2*N+2]-.64, 'ok', fontsize=111);
+	plt.text(r[N+3]-.66, r[2*N+3]-.64, 'es', fontsize=111);
 
 
 
@@ -316,7 +316,7 @@ def plotStreamlinesXY(vv, rr, r, density=0.82, arrowSize=1.2, mask=0.6, ms=36, o
 	rr: one dimensional arrays of positions where velocity is computed
 	"""
 	import matplotlib.pyplot as plt
-	Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
+	N, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
 	xx, yy = rr[0:Nt].reshape(Ng, Ng), rr[Nt:2*Nt].reshape(Ng, Ng)
 	vx, vy = vv[0:Nt].reshape(Ng, Ng), vv[Nt:2*Nt].reshape(Ng, Ng)
 
@@ -333,8 +333,8 @@ def plotStreamlinesXY(vv, rr, r, density=0.82, arrowSize=1.2, mask=0.6, ms=36, o
 			ss[1, ii]	   = a0*(-5 + j)
 
 	plt.streamplot(xx, yy, vx, vy, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density)
-	for i in range(Np):
-		plt.plot(r[i], r[i+Np], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )   
+	for i in range(N):
+		plt.plot(r[i], r[i+N], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )   
 	
 	plt.xlim(np.min(xx), np.max(xx))
 	plt.ylim(np.min(yy), np.max(yy))
@@ -361,7 +361,7 @@ def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, 
 	rr: one dimensional arrays of positions where velocity is computed
 	"""
 	import matplotlib.pyplot as plt
-	Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
+	N, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
 	yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
 	vy, vz = vv[Nt:2*Nt].reshape(Ng, Ng), vv[2*Nt:3*Nt].reshape(Ng, Ng)
 
@@ -377,8 +377,8 @@ def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, 
 			ss[0, ii]	   = a0*(-5 + i)
 			ss[1, ii]	   = 1*(0 + j)
 	plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density)
-	for i in range(Np):
-		plt.plot(r[i+Np], r[i+2*Np], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )	
+	for i in range(N):
+		plt.plot(r[i+N], r[i+2*N], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )	
 
 	plt.xlim(np.min(yy), np.max(yy))
 	plt.ylim(np.min(zz), np.max(zz))
@@ -405,7 +405,7 @@ def plotStreamlinesYZsurf(vv, rr, r, density=0.8, arrowSize=1.2, mask=0.6, ms=36
 	rr: one dimensional arrays of positions where velocity is computed
 	"""
 	import matplotlib.pyplot as plt
-	Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
+	N, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
 	yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
 	vy, vz = vv[Nt:2*Nt].reshape(Ng, Ng), vv[2*Nt:3*Nt].reshape(Ng, Ng)
 
@@ -421,8 +421,8 @@ def plotStreamlinesYZsurf(vv, rr, r, density=0.8, arrowSize=1.2, mask=0.6, ms=36
 			ss[0, ii]	   = a0*(-5 + i)
 			ss[1, ii]	   = 1*(0 + j)
 	plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density)
-	for i in range(Np):
-		plt.plot(r[i+Np], r[i+2*Np], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )	
+	for i in range(N):
+		plt.plot(r[i+N], r[i+2*N], 'o', mfc='snow', mec='darkslategray', ms=ms, mew=4 )	
 
 	plt.xlim(np.min(yy), np.max(yy))
 	ww=0.3
@@ -452,11 +452,8 @@ def plotContoursYZ(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, offse
 	rr: one dimensional arrays of positions where velocity is computed
 	"""
 	import matplotlib.pyplot as plt
-	Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
+	N, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
 	yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
-
-	for i in range(Np):
-		plt.plot(r[i+Np], r[i+2*Np], 'o', mfc='snow', mec='darkslategray', ms=ms, alpha=0.8, mew=4 )   
 
 	spd = np.sqrt(vv[0:Nt]*vv[0:Nt]).reshape(Ng, Ng)
 	spd+=offset
@@ -479,6 +476,9 @@ def plotContoursYZ(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, offse
 	else:
 		plt.title(title, fontsize=26);
 
+	for i in range(N):
+		plt.plot(r[i+N], r[i+2*N], 'o', mfc='snow', mec='darkslategray', ms=ms, alpha=0.8, mew=4 )   
+
 
 
 
@@ -490,11 +490,8 @@ def plotContoursYZsurf(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, o
 	rr: one dimensional arrays of positions where velocity is computed
 	"""
 	import matplotlib.pyplot as plt
-	Np, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
+	N, Nt = int(np.size(r)/3), int(np.size(rr)/3);  Ng=int(np.sqrt(Nt))
 	yy, zz = rr[Nt:2*Nt].reshape(Ng, Ng), rr[2*Nt:3*Nt].reshape(Ng, Ng)
-
-	for i in range(Np):
-		plt.plot(r[i+Np], r[i+2*Np], 'o', mfc='snow', mec='darkslategray', ms=ms, alpha=0.8, mew=4 )   
 
 	spd = np.sqrt(vv[0:Nt]*vv[0:Nt]).reshape(Ng, Ng)
 	spd+=offset
@@ -506,6 +503,9 @@ def plotContoursYZsurf(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, o
 	plt.ylim(-ww, np.max(zz))
 	plt.axhspan(-ww, ww, facecolor='black');
 	plt.axis('off')
+	for i in range(N):
+		plt.plot(r[i+N], r[i+2*N], 'o', mfc='snow', mec='darkslategray', ms=ms, alpha=0.8, mew=4 )   
+
 	
 	if title==str('None'):
 		pass 
@@ -599,85 +599,85 @@ def plotConfigs(t=[0,1], ms=36, tau=1, filename='None'):
 	from scipy.io import loadmat 
 	data  = loadmat(filename)
 	X	  = data['X']
-	xx = int(np.size(X[0,:]));	Np = int(xx/6);   
+	xx = int(np.size(X[0,:]));	N = int(xx/6);   
 	color='gray'
 
 
 	plt.figure(figsize=(28, 10), edgecolor='gray', linewidth=4)
 
-	ll = np.abs(np.max(X[t[0], 0:Np]))+5
+	ll = np.abs(np.max(X[t[0], 0:N]))+5
 	if np.size(t)==1:
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[0], 0:Np], X[t[0], Np:2*Np], s=ms, c=color, edgecolors='darkslategray', mew=4); 
+		plt.scatter(X[t[0], 0:N], X[t[0], N:2*N], s=ms, c=color, edgecolors='darkslategray', mew=4); 
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off');
 	
 	elif np.size(t)==2:
 		plt.subplot(141); 
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[0], 0:Np], X[t[0], Np:2*Np], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
+		plt.scatter(X[t[0], 0:N], X[t[0], N:2*N], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
 		plt.subplot(142);																	  
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[1], 0:Np], X[t[1], Np:2*Np], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
+		plt.scatter(X[t[1], 0:N], X[t[1], N:2*N], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
 																							  
 	elif np.size(t)==3:																		  
 		plt.subplot(141);																	  
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[0], 0:Np], X[t[0], Np:2*Np], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
+		plt.scatter(X[t[0], 0:N], X[t[0], N:2*N], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
 																							  
 		plt.subplot(142);																	  
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[1], 0:Np], X[t[1], Np:2*Np], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
+		plt.scatter(X[t[1], 0:N], X[t[1], N:2*N], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
 																							  
 		plt.subplot(143);																	  
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[2], 0:Np], X[t[2], Np:2*Np], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
+		plt.scatter(X[t[2], 0:N], X[t[2], N:2*N], s=ms, c=color, edgecolors='darkslategray'); plt.axis('off');
 
 	elif np.size(t)==4:
 		plt.subplot(141); 
 		c = createCircle(ll, alpha=.1);		showShape(c)
-		plt.scatter(X[t[0], 0:Np], X[t[0], Np:2*Np], s=ms, c=color, edgecolors='darkslategray'); 
+		plt.scatter(X[t[0], 0:N], X[t[0], N:2*N], s=ms, c=color, edgecolors='darkslategray'); 
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off'); plt.title(r'Time=%d$\tau$'%tNew[0], fontsize=32)
 		
 		plt.subplot(142); 
 		c = createCircle(ll, alpha=.1);		showShape(c)
-		plt.scatter(X[t[1], 0:Np], X[t[1], Np:2*Np], s=ms, c=color, edgecolors='darkslategray'); 
+		plt.scatter(X[t[1], 0:N], X[t[1], N:2*N], s=ms, c=color, edgecolors='darkslategray'); 
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off'); plt.title(r'Time=%d$\tau$'%tNew[1], fontsize=32)
 		
 		plt.subplot(143); 
 		c = createCircle(ll, alpha=.1);		showShape(c)
-		plt.scatter(X[t[2], 0:Np], X[t[2], Np:2*Np], s=ms, c=color, edgecolors='darkslategray');
+		plt.scatter(X[t[2], 0:N], X[t[2], N:2*N], s=ms, c=color, edgecolors='darkslategray');
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off'); plt.title(r'Time=%d$\tau$'%tNew[2], fontsize=32)
 		
 		plt.subplot(144); 
 		c = createCircle(ll, alpha=.1);		showShape(c)
-		plt.scatter(X[t[3], 0:Np], X[t[3], Np:2*Np], s=ms, c=color, edgecolors='darkslategray');
+		plt.scatter(X[t[3], 0:N], X[t[3], N:2*N], s=ms, c=color, edgecolors='darkslategray');
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off'); plt.title(r'Time=%d$\tau$'%tNew[3], fontsize=32)
 
 		
 	elif np.size(t)==5:
 		plt.subplot(151); 
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[0], 0:Np], X[t[0], Np:2*Np], s=ms, c=color, edgecolors='darkslategray'); 
+		plt.scatter(X[t[0], 0:N], X[t[0], N:2*N], s=ms, c=color, edgecolors='darkslategray'); 
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off'); plt.title('Time=%d$\tau$'%tNew[0], fontsize=26)
 		
 		plt.subplot(152); 
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[1], 0:Np], X[t[1], Np:2*Np], s=ms, c=color, edgecolors='darkslategray'); 
+		plt.scatter(X[t[1], 0:N], X[t[1], N:2*N], s=ms, c=color, edgecolors='darkslategray'); 
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off'); plt.title('Time=%d$\tau$'%tNew[1], fontsize=26)
 		
 		plt.subplot(153); 
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[2], 0:Np], X[t[2], Np:2*Np], s=ms, c=color, edgecolors='darkslategray');
+		plt.scatter(X[t[2], 0:N], X[t[2], N:2*N], s=ms, c=color, edgecolors='darkslategray');
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off'); plt.title('Time=%d$\tau$'%tNew[2], fontsize=26)
 		
 		plt.subplot(154); 
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[3], 0:Np], X[t[3], Np:2*Np], s=ms, c=color, edgecolors='darkslategray');
+		plt.scatter(X[t[3], 0:N], X[t[3], N:2*N], s=ms, c=color, edgecolors='darkslategray');
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off'); plt.title('Time=%d$\tau$'%tNew[3], fontsize=26)
 		
 		plt.subplot(155); 
 		c = createCircle(ll, alpha=1);	   showShape(c)
-		plt.scatter(X[t[4], 0:Np], X[t[4], Np:2*Np], s=ms, c=color, edgecolors='darkslategray');
+		plt.scatter(X[t[4], 0:N], X[t[4], N:2*N], s=ms, c=color, edgecolors='darkslategray');
 		plt.xlim(-ll, ll); plt.ylim(-ll, ll); plt.axis('off'); plt.title('Time=%d$\tau$'%tNew[4], fontsize=26)
 	return 
 
@@ -695,9 +695,9 @@ cpdef couplingTensors(l, p, M0=1):
 
 	returns: Yl - tensorial harmonics of rank l
 	"""
-	cdef int i, Np = int (np.size(p)/3)
+	cdef int i, N = int (np.size(p)/3)
 	cdef double S0 = M0
-	MM = np.zeros((2*l+1)*Np, dtype=DTYPE)
+	MM = np.zeros((2*l+1)*N, dtype=DTYPE)
 
 	cdef double [:] p1 = p
 	cdef double [:] Y1 = MM
@@ -710,22 +710,22 @@ cpdef couplingTensors(l, p, M0=1):
 		MM = -M0*p
 	
 	if l==2:
-		for i in prange(Np, nogil=True):
-			Y1[i + 0*Np] = S0*(p1[i]*p1[i]			 -(1.0/3))
-			Y1[i + 1*Np] = S0*(p1[i + Np]*p1[i + Np] -(1.0/3))
-			Y1[i + 2*Np] = S0*(p1[i]*p1[i + Np])
-			Y1[i + 3*Np] = S0*(p1[i]*p1[i + 2*Np])
-			Y1[i + 4*Np] = S0*(p1[i + Np]*p1[i + 2*Np])
+		for i in prange(N, nogil=True):
+			Y1[i + 0*N] = S0*(p1[i]*p1[i]			 -(1.0/3))
+			Y1[i + 1*N] = S0*(p1[i + N]*p1[i + N] -(1.0/3))
+			Y1[i + 2*N] = S0*(p1[i]*p1[i + N])
+			Y1[i + 3*N] = S0*(p1[i]*p1[i + 2*N])
+			Y1[i + 4*N] = S0*(p1[i + N]*p1[i + 2*N])
 
 	if l==3:
-		for i in range(Np):
+		for i in range(N):
 			MM[i]	   = M0*(p[i]*p[i]*p[i]			   - 3/5*p[i]);
-			MM[i+Np]   = M0*(p[i+Np]*p[i+Np]*p[i+Np]   - 3/5*p[i+Np]);
-			MM[i+2*Np] = M0*(p[i]*p[i]*p[i+Np]		   - 1/5*p[i+Np]);
-			MM[i+3*Np] = M0*(p[i]*p[i]*p[i+2*Np]	   - 1/5*p[i+2*Np]);
-			MM[i+4*Np] = M0*(p[i]*p[i+Np]*p[1+Np]		-1/5* p[i]);
-			MM[i+5*Np] = M0*(p[i+Np]*p[i+Np]*p[i+2*Np]);
-			MM[i+6*Np] = M0*(p[i+Np]*p[i+Np]*p[i+2*Np] -1/5*p[i+2*Np]);
+			MM[i+N]   = M0*(p[i+N]*p[i+N]*p[i+N]   - 3/5*p[i+N]);
+			MM[i+2*N] = M0*(p[i]*p[i]*p[i+N]		   - 1/5*p[i+N]);
+			MM[i+3*N] = M0*(p[i]*p[i]*p[i+2*N]	   - 1/5*p[i+2*N]);
+			MM[i+4*N] = M0*(p[i]*p[i+N]*p[1+N]		-1/5* p[i]);
+			MM[i+5*N] = M0*(p[i+N]*p[i+N]*p[i+2*N]);
+			MM[i+6*N] = M0*(p[i+N]*p[i+N]*p[i+2*N] -1/5*p[i+2*N]);
 	return MM
 
 

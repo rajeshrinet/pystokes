@@ -24,7 +24,7 @@ cdef class Rbm:
     radius: float
         Radius of the particles (a).    
     particles: int
-        Number of particles (Np)
+        Number of particles (N)
     viscosity: float 
         Viscosity of the fluid (eta)
     boxSize: float 
@@ -33,7 +33,7 @@ cdef class Rbm:
    """
     def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10, xi=123456789):
         self.a   = radius
-        self.Np  = particles
+        self.N  = particles
         self.eta = viscosity
         self.L   = boxSize 
         if xi==123456789:
@@ -55,13 +55,13 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 10
@@ -70,7 +70,7 @@ cdef class Rbm:
             Default is 1
         """
 
-        cdef int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1 ##used to be N1=-(Nm/2)+1
+        cdef int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1 ##used to be N1=-(Nm/2)+1
         cdef double L=self.L,  xi=self.xi, ixi2, siz=Nb*L, mu=self.mu, muv=self.muv
         cdef double a2=self.a*self.a/3, aidr2, k0=2*PI/L, fac=8*PI/(L*L*L), 
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1, mt, mpp
@@ -81,13 +81,13 @@ cdef class Rbm:
         ixi2=1/(xi*xi)
         mt=IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0); mpp=mu*(1+mt)    # include M^2(r=0)
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0;  vy=0;  vz=0;
-            for j in range(Np):
+            for j in range(N):
                 xd=r[i]-r[j];          xd1=xd-siz; 
-                yd=r[i+Np]-r[j+Np];    yd1=yd-siz;  
+                yd=r[i+N]-r[j+N];    yd1=yd-siz;  
                 zd=r[i+xx]-r[j+xx];    zd1=zd-siz;
-                fx=F[j];  fy=F[j+Np];  fz=F[j+xx];
+                fx=F[j];  fy=F[j+N];  fz=F[j+xx];
 
                 for ii in range(Nbb):
                     dx = xd1 + ii*L 
@@ -132,7 +132,7 @@ cdef class Rbm:
                                 vz += cc*(fz - fdotik*kz) 
         
             v[i]    += mpp*F[i]    + muv*vx 
-            v[i+Np] += mpp*F[i+Np] + muv*vy 
+            v[i+N] += mpp*F[i+N] + muv*vy 
             v[i+xx] += mpp*F[i+xx] + muv*vz
         return 
     
@@ -146,13 +146,13 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         T: np.array
             An array of torques
-            An array of size 3*Np,
+            An array of size 3*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -163,7 +163,7 @@ cdef class Rbm:
 
         cdef: 
             double L = self.L,  xi=self.xi, ixi2, vx, vy, vz, muv=self.muv
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N
             double xdr, xdr2, xdr3, e1, erxdr, fac=8*PI/(L*L*L),
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
         if xi0 != 123456789:
@@ -171,9 +171,9 @@ cdef class Rbm:
         ixi2=1/(xi*xi)
 
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0
-            for j in range(Np):
+            for j in range(N):
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -181,7 +181,7 @@ cdef class Rbm:
                                 pass
                             else:    
                                 dx = r[i]   - r[j]-Nb*L + ii*L 
-                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dy = r[i+N] - r[j+N]-Nb*L + jj*L 
                                 dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
                                 idr3 = idr*idr*idr
@@ -189,14 +189,14 @@ cdef class Rbm:
                                 xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
                                 D      = (-2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr))*idr3
                                 
-                                vx -= D*(dy*T[j+xx] - dz*T[j+Np]  )
+                                vx -= D*(dy*T[j+xx] - dz*T[j+N]  )
                                 vy -= D*(dz*T[j]    - dx*T[j+xx])
-                                vz -= D*(dx*T[j+Np] - dy*T[j   ])
+                                vz -= D*(dx*T[j+N] - dy*T[j   ])
         # Fourier space sum
-        for i in prange(Np, nogil=True):
-            for j  in range(Np):
+        for i in prange(N, nogil=True):
+            for j  in range(N):
                 dx = r[i]  -r[j]
-                dy = r[i+Np]-r[j+Np]
+                dy = r[i+N]-r[j+N]
                 dz = r[i+xx]-r[j+xx]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
@@ -208,11 +208,11 @@ cdef class Rbm:
                                 k2 = kx*kx + ky*ky + kz*kz    
                                 cc = fac*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2)
 
-                                vx -= cc*( T[j+Np]*kz - T[j+xx]*ky  ) 
+                                vx -= cc*( T[j+N]*kz - T[j+xx]*ky  ) 
                                 vy -= cc*( T[j+xx]*kx - T[j]  *kz  ) 
-                                vz -= cc*( T[j]  *ky - T[j+Np]*kx  ) 
+                                vz -= cc*( T[j]  *ky - T[j+N]*kx  ) 
             v[i]    += muv*vx 
-            v[i+Np] += muv*vy 
+            v[i+N] += muv*vy 
             v[i+xx] += muv*vz 
         return 
     
@@ -226,13 +226,13 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         S: np.array
             An array of 2s mode of the slip
-            An array of size 5*Np,
+            An array of size 5*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -242,7 +242,7 @@ cdef class Rbm:
         """
 
         cdef: 
-            int Np=self.Np, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1, xx1=3*Np, xx2=4*Np
+            int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1, xx1=3*N, xx2=4*N
             double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, ik2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
@@ -251,16 +251,16 @@ cdef class Rbm:
             xi = xi0 
         ixi2 = 1/(xi*xi),
         
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 sxx = S[j]
-                syy = S[j+Np]
+                syy = S[j+N]
                 sxy = S[j+xx]
                 sxz = S[j+xx1]
                 syz = S[j+xx2]
                 xd=r[i]-r[j];          xd1=xd-siz; 
-                yd=r[i+Np]-r[j+Np];    yd1=yd-siz;  
+                yd=r[i+N]-r[j+N];    yd1=yd-siz;  
                 zd=r[i+xx]-r[j+xx];    zd1=zd-siz;
                 
                 for ii in range(Nbb):
@@ -314,7 +314,7 @@ cdef class Rbm:
                                 vz += cc* (srz - srr*kz)
 
             v[i]    += mus*vx
-            v[i+Np] += mus*vy
+            v[i+N] += mus*vy
             v[i+xx ]+= mus*vz
         return 
       
@@ -328,13 +328,13 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         D: np.array
             An array of 3t mode of the slip
-            An array of size 3*Np,
+            An array of size 3*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -345,7 +345,7 @@ cdef class Rbm:
 
         cdef double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8.0*PI/(L*L*L)
         cdef double ixi2, vx, vy, vz
-        cdef int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
+        cdef int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
         cdef double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
         cdef double mud =3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
         cdef double xd, yd, zd, xd1, yd1, zd1
@@ -355,11 +355,11 @@ cdef class Rbm:
         mud = mud + mud1*IPI*xi*(80*xi*xi*self.a*self.a/3.0) ## adding the M^2(r=0) contribution
 
         
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0;  vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 xd=r[i]-r[j];          xd1=xd-siz; 
-                yd=r[i+Np]-r[j+Np];    yd1=yd-siz;  
+                yd=r[i+N]-r[j+N];    yd1=yd-siz;  
                 zd=r[i+xx]-r[j+xx];    zd1=zd-siz;
                 
                 for ii in range(Nbb):
@@ -377,10 +377,10 @@ cdef class Rbm:
                                 erxdr   = erfc(xdr); e1=IPI*exp(-xdr2);  
                                 A1 = (2*erxdr  + e1*( 2*xdr+28*xdr3-40*xdr3*xdr2+8*xdr3*xdr3*xdr ))*idr5 
                                 B1 = (-6*erxdr + e1*(-6*xdr-4*xdr3 +32*xdr3*xdr2-8*xdr3*xdr3*xdr ))*idr5 
-                                B1 = B1*(D[j]*dx + D[j+Np]*dy + D[j+xx]*dz )*idr*idr
+                                B1 = B1*(D[j]*dx + D[j+N]*dy + D[j+xx]*dz )*idr*idr
 
                                 vx += A1*D[j]    + B1*dx
-                                vy += A1*D[j+Np] + B1*dy
+                                vy += A1*D[j+N] + B1*dy
                                 vz += A1*D[j+xx] + B1*dz
                 #Fourier part
                 for ii in range(N1, N2):
@@ -392,14 +392,14 @@ cdef class Rbm:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
                                 cc = -fac*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
-                                Ddotik2  = (D[j]*kx + D[j+Np]*ky + D[j+xx]*kz)/k2
+                                Ddotik2  = (D[j]*kx + D[j+N]*ky + D[j+xx]*kz)/k2
                                 
                                 vx += cc*( D[j]    - Ddotik2*kx ) 
-                                vy += cc*( D[j+Np] - Ddotik2*ky ) 
+                                vy += cc*( D[j+N] - Ddotik2*ky ) 
                                 vz += cc*( D[j+xx] - Ddotik2*kz ) 
 
             v[i]   += mud*D[i]    + mud1*vx
-            v[i+Np]+= mud*D[i+Np] + mud1*vy
+            v[i+N]+= mud*D[i+N] + mud1*vy
             v[i+xx]+= mud*D[i+xx] + mud1*vz
         return
 
@@ -413,13 +413,13 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         G: np.array
             An array of 3s mode of the slip
-            An array of size 7*Np,
+            An array of size 7*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -430,7 +430,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi  
             double ixi2, vx, vy, vz
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, j,  ii, jj, kk, xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, j,  ii, jj, kk, xx=2*N
             double xdr, xdr2, xdr3, xdr5, xdr7, e1, erxdr, D1, D2, D11, D22
             double dx, dy, dz, idr, idr5, idr7, kx, ky, kz, k2, cc, fac=8*PI/(L*L*L)
             double aidr2, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
@@ -439,18 +439,18 @@ cdef class Rbm:
             xi = xi0 
         ixi2 = 1/(xi*xi)
         
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0
-            for j in range(Np):
+            for j in range(N):
                 gxxx = G[j]
-                gyyy = G[j+Np]
-                gxxy = G[j+2*Np]
-                gxxz = G[j+3*Np]
-                gxyy = G[j+4*Np]
-                gxyz = G[j+5*Np]
-                gyyz = G[j+6*Np]
+                gyyy = G[j+N]
+                gxxy = G[j+2*N]
+                gxxz = G[j+3*N]
+                gxyy = G[j+4*N]
+                gxyz = G[j+5*N]
+                gyyz = G[j+6*N]
                 dx = r[i]  -r[j]
-                dy = r[i+Np]-r[j+Np]
+                dy = r[i+N]-r[j+N]
                 dz = r[i+xx]-r[j+xx]
                 
                 for ii in range(2*Nb+1):
@@ -506,7 +506,7 @@ cdef class Rbm:
                                 vy += cc*(grry - grrr*ky) 
                                 vz += cc*(grrz - grrr*kz) 
             v[i]   += vx
-            v[i+Np]+= vy
+            v[i+N]+= vy
             v[i+xx]+= vz
 
         return
@@ -521,13 +521,13 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         V: np.array
             An array of 3a mode of the slip
-            An array of size 5*Np,
+            An array of size 5*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -538,7 +538,7 @@ cdef class Rbm:
 
         cdef: 
             double L = self.L,  xi=self.xi, ixi2
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
             double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz, vkx, vky, vkz, fac=8*PI/(L*L*L)
             double s1, kx, ky, kz, k2, xdr, xdr2, cc 
         if xi0 != 123456789:
@@ -546,13 +546,13 @@ cdef class Rbm:
         ixi2 = 1/(xi*xi)
 
  
-        for i in prange(Np, nogil=True):
-            for j in range(Np):
+        for i in prange(N, nogil=True):
+            for j in range(N):
                 vxx = V[j]
-                vyy = V[j+Np]
-                vxy = V[j+2*Np]
-                vxz = V[j+3*Np]
-                vyz = V[j+4*Np]
+                vyy = V[j+N]
+                vxy = V[j+2*N]
+                vxz = V[j+3*N]
+                vyz = V[j+4*N]
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -560,7 +560,7 @@ cdef class Rbm:
                                 pass
                             else:    
                                 dx = r[i]   - r[j]     -Nb*L + ii*L 
-                                dy = r[i+Np] - r[j+Np]  -Nb*L + jj*L 
+                                dy = r[i+N] - r[j+N]  -Nb*L + jj*L 
                                 dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr5 = pow(idr, 5)
@@ -571,13 +571,13 @@ cdef class Rbm:
                                 vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
                                 
                                 v[i]    -= s1*( dy*vrz - dz*vry )*idr5
-                                v[i+Np] -= s1*( dz*vrx - dx*vrz )*idr5
+                                v[i+N] -= s1*( dz*vrx - dx*vrz )*idr5
                                 v[i+xx] -= s1*( dx*vry - dy*vrx )*idr5
                 #Fourier part
                 N1 = -(Nm/2)+1
                 N2 =  (Nm/2)+1
                 dx = r[i]      - r[j]
-                dy = r[i+Np]   - r[j+Np]
+                dy = r[i+N]   - r[j+N]
                 dz = r[i+xx] - r[j+xx] 
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
@@ -593,7 +593,7 @@ cdef class Rbm:
                                 vkz = vxz*kx +  vyz*ky - (vxx+vyy)*kz 
                                 
                                 v[i]   += cc*( ky*vkz - kz*vky) 
-                                v[i+Np] += cc*( kz*vkx - kx*vkz) 
+                                v[i+N] += cc*( kz*vkx - kx*vkz) 
                                 v[i+xx] += cc*( kx*vky - ky*vkx) 
         return
 
@@ -607,13 +607,13 @@ cdef class Rbm:
         ----------
         v: np.array
             An array of velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         M: np.array
             An array of 4a mode of the slip
-            An array of size 7*Np,
+            An array of size 7*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -625,7 +625,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi, fac=8*PI/(L*L*L)
             double ixi2, vx, vy, vz
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
             double dx, dy, dz, idr, idr7, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
             double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc, 
         if xi0 != 123456789:
@@ -633,16 +633,16 @@ cdef class Rbm:
         ixi2 = 1/(xi*xi)
 
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 mxxx = M[j]
-                myyy = M[j+Np]
-                mxxy = M[j+2*Np]
-                mxxz = M[j+3*Np]
-                mxyy = M[j+4*Np]
-                mxyz = M[j+5*Np]
-                myyz = M[j+6*Np]
+                myyy = M[j+N]
+                mxxy = M[j+2*N]
+                mxxz = M[j+3*N]
+                mxyy = M[j+4*N]
+                mxyz = M[j+5*N]
+                myyz = M[j+6*N]
 
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
@@ -651,7 +651,7 @@ cdef class Rbm:
                                 pass
                             else:    
                                 dx = r[i]   - r[j]     -Nb*L + ii*L 
-                                dy = r[i+Np] - r[j+Np]  -Nb*L + jj*L 
+                                dy = r[i+N] - r[j+N]  -Nb*L + jj*L 
                                 dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr7 = pow(idr, 7)
@@ -668,7 +668,7 @@ cdef class Rbm:
                 N1 = -(Nm/2)+1
                 N2 =  (Nm/2)+1
                 dx = r[i]  - r[j]     
-                dy = r[i+Np]- r[j+Np]  
+                dy = r[i+N]- r[j+N]  
                 dz = r[i+xx]- r[j+xx]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
@@ -687,7 +687,7 @@ cdef class Rbm:
                                 vy += cc*( kz*mkkx - kx*mkkz) 
                                 vz += cc*( kx*mkky - ky*mkkx) 
             v[i]    += vx
-            v[i+Np] += vy
+            v[i+N] += vy
             v[i+xx ]+= vz
         return
 
@@ -703,13 +703,13 @@ cdef class Rbm:
         ----------
         o: np.array
             An array of angular velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -719,7 +719,7 @@ cdef class Rbm:
         """
 
         cdef: 
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N
             double L = self.L,  xi=self.xi, fac=8*PI/(L*L*L), muv=self.muv
             double  ixi2, ox, oy, oz
             double xdr, xdr2, xdr3, e1, erxdr 
@@ -729,9 +729,9 @@ cdef class Rbm:
         ixi2 = 1/(xi*xi)
 
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             ox=0; oy=0; oz=0
-            for j in range(Np):
+            for j in range(N):
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -739,7 +739,7 @@ cdef class Rbm:
                                 pass
                             else:    
                                 dx = r[i]   - r[j]  -Nb*L + ii*L 
-                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dy = r[i+N] - r[j+N]-Nb*L + jj*L 
                                 dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
                                 idr3 = idr*idr*idr
@@ -747,16 +747,16 @@ cdef class Rbm:
                                 xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
                                 D      = -2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr)
                                 
-                                ox -= D*(F[j+Np]*dz - F[j+xx]*dy )*idr3
+                                ox -= D*(F[j+N]*dz - F[j+xx]*dy )*idr3
                                 oy -= D*(F[j+xx]*dx - F[j]*dz    )*idr3
-                                oz -= D*(F[j]*dy    - F[j+Np]*dx )*idr3
+                                oz -= D*(F[j]*dy    - F[j+N]*dx )*idr3
         # Fourier space sum
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             i1 = i*3
-            for j  in range(Np):
+            for j  in range(N):
                 j1 = j*3
                 dx = r[i]  -r[j]
-                dy = r[i+Np]-r[j+Np]
+                dy = r[i+N]-r[j+N]
                 dz = r[i+xx]-r[j+xx]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
@@ -768,11 +768,11 @@ cdef class Rbm:
                                 k2 = kx*kx + ky*ky + kz*kz    
                                 cc = fac*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2)
 
-                                ox += cc*( F[j+Np]*dz - F[j+xx]*dy  ) 
+                                ox += cc*( F[j+N]*dz - F[j+xx]*dy  ) 
                                 oy += cc*( F[j+xx]*dx - F[j]*dz     ) 
-                                oz += cc*( F[j]*dy    - F[j+Np]*dx  ) 
+                                oz += cc*( F[j]*dy    - F[j+N]*dx  ) 
             o[i]    += muv*ox
-            o[i+Np] += muv*oy
+            o[i+N] += muv*oy
             o[i+xx ]+= muv*oz
         return 
 
@@ -786,13 +786,13 @@ cdef class Rbm:
         ----------
         o: np.array
             An array of angular velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         T: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -803,18 +803,18 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi 
             double ixi2, ox, oy, oz, fac=8*PI/(L*L*L), muv=self.muv
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk,  xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk,  xx=2*N
             double xdr, xdr2, A1, B1, Tdotik2, Tdotidr2, e1, erxdr, dx, dy, dz, idr,  kx, ky, kz, k2, cc
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
 
         
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             ox=0; oy=0; oz=0
-            for j in range(Np):
+            for j in range(N):
                 dx = r[i]  -r[j]
-                dy = r[i+Np]-r[j+Np]
+                dy = r[i+N]-r[j+N]
                 dz = r[i+xx]-r[j+xx]
               
                 for ii in range(2*Nb+1):
@@ -829,12 +829,12 @@ cdef class Rbm:
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
                                 xdr = xi/idr; xdr2=xdr*xdr; 
                                 erxdr   = erfc(xdr); e1=IPI*exp(-xdr2);  
-                                Tdotidr2 = (T[j]*dx + T[j+Np]*dy + T[j+xx]*dz )*idr*idr
+                                Tdotidr2 = (T[j]*dx + T[j+N]*dy + T[j+xx]*dz )*idr*idr
                                 A1    =  2*erxdr*idr*idr + e1*( 8*xdr2*xdr2*xdr*xi*xi - 40*xdr2*xdr*xi*xi +28*xdr*xi*xi + 2*xi*idr)
                                 B1    = -6*erxdr*idr*idr + e1*(-8*xdr2*xdr2*xdr*xi*xi + 32*xdr2*xdr*xi*xi - 4*xdr*xi*xi - 6*xi*idr )
                               
                                 ox += -(A1*T[j]  *idr + B1*Tdotidr2*dx)*idr;
-                                oy += -(A1*T[j+Np]*idr + B1*Tdotidr2*dy)*idr;
+                                oy += -(A1*T[j+N]*idr + B1*Tdotidr2*dy)*idr;
                                 oz += -(A1*T[j+xx]*idr + B1*Tdotidr2*dz)*idr;
                 #Fourier part
                 for ii in range(N1, N2):
@@ -846,13 +846,13 @@ cdef class Rbm:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
                                 cc = -fac*cos(kx*dx+ky*dy+kz*dz)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
-                                Tdotik2  = (T[j]*kx + T[j+Np]*ky + T[j+xx]*kz)/k2
+                                Tdotik2  = (T[j]*kx + T[j+N]*ky + T[j+xx]*kz)/k2
                                 
                                 ox += cc*( T[j]   - Tdotik2*kx ) 
-                                oy += cc*( T[j+Np] - Tdotik2*ky ) 
+                                oy += cc*( T[j+N] - Tdotik2*ky ) 
                                 oz += cc*( T[j+xx] - Tdotik2*kz ) 
             o[i]    += muv*ox
-            o[i+Np] += muv*oy
+            o[i+N] += muv*oy
             o[i+xx ]+= muv*oz
         return
 
@@ -866,13 +866,13 @@ cdef class Rbm:
         ----------
         o: np.array
             An array of angular velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         S: np.array
             An array of 2s mode of the slip
-            An array of size 5*Np,
+            An array of size 5*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -884,7 +884,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi 
             double ixi2, ox, oy, oz, fac=8*PI/(L*L*L)
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
             double dx, dy, dz, idr, idr5, sxx, syy, sxy, sxz, syz, srx, sry, srz, skx, sky, skz, s1
             double kx, ky, kz, k2, xdr, xdr2, cc, mus = (28.0*self.a**3)/24
         if xi0 != 123456789:
@@ -892,14 +892,14 @@ cdef class Rbm:
         ixi2 = 1/(xi*xi)
 
  
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             ox=0; oy=0; oz=0
-            for j in range(Np):
+            for j in range(N):
                 sxx = S[j]
-                syy = S[j+Np]
-                sxy = S[j+2*Np]
-                sxz = S[j+3*Np]
-                syz = S[j+4*Np]
+                syy = S[j+N]
+                sxy = S[j+2*N]
+                sxz = S[j+3*N]
+                syz = S[j+4*N]
 
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
@@ -908,7 +908,7 @@ cdef class Rbm:
                                 pass
                             else:    
                                 dx = r[i]   - r[j]  -Nb*L + ii*L 
-                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dy = r[i+N] - r[j+N]-Nb*L + jj*L 
                                 dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr5 = pow(idr, 5)
@@ -924,7 +924,7 @@ cdef class Rbm:
                                 oz += -s1*( dx*sry - dy*srx )*idr5
                 #Fourier part
                 dx = r[i]   - r[j]
-                dy = r[i+Np] - r[j+Np]
+                dy = r[i+N] - r[j+N]
                 dz = r[i+xx] - r[j+xx] 
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
@@ -943,7 +943,7 @@ cdef class Rbm:
                                 oy += cc*( kz*skx - kx*skz) 
                                 oz += cc*( kx*sky - ky*skx) 
             o[i]    += mus*ox
-            o[i+Np] += mus*oy
+            o[i+N] += mus*oy
             o[i+xx ]+= mus*oz
         pass
 
@@ -957,13 +957,13 @@ cdef class Rbm:
         ----------
         o: np.array
             An array of angular velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         G: np.array
             An array of 3s mode of the slip
-            An array of size 7*Np,
+            An array of size 7*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -975,7 +975,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi, 
             double ixi2, fac=8*PI/(L*L*L)
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
             double dx, dy, dz, idr, idr7, grrx, grry, grrz, gkkx, gkky, gkkz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz, 
             double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc,
         if xi0 != 123456789:
@@ -983,15 +983,15 @@ cdef class Rbm:
         ixi2 = 1/(xi*xi)
 
 
-        for i in prange(Np, nogil=True):
-            for j in range(Np):
+        for i in prange(N, nogil=True):
+            for j in range(N):
                 gxxx = G[j]
-                gyyy = G[j+Np]
-                gxxy = G[j+2*Np]
-                gxxz = G[j+3*Np]
-                gxyy = G[j+4*Np]
-                gxyz = G[j+5*Np]
-                gyyz = G[j+6*Np]
+                gyyy = G[j+N]
+                gxxy = G[j+2*N]
+                gxxz = G[j+3*N]
+                gxyy = G[j+4*N]
+                gxyz = G[j+5*N]
+                gyyz = G[j+6*N]
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -999,7 +999,7 @@ cdef class Rbm:
                                 pass
                             else:    
                                 dx = r[i]   - r[j]  -Nb*L + ii*L 
-                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dy = r[i+N] - r[j+N]-Nb*L + jj*L 
                                 dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr7 = pow(idr, 7)
@@ -1010,11 +1010,11 @@ cdef class Rbm:
                                 grrz = gxxz*(dx*dx-dz*dz) + gyyz*(dy*dy-dz*dz) +  2*gxyz*dx*dy - 2*(gxxx+gxyy)*dx*dz - 2*(gxxy+gyyy)*dy*dz
                                 
                                 o[i]   -= s2*( dy*grrz - dz*grry )*idr7
-                                o[i+Np]-= s2*( dz*grrx - dx*grrz )*idr7
+                                o[i+N]-= s2*( dz*grrx - dx*grrz )*idr7
                                 o[i+xx] -= s2*( dx*grry - dy*grrx )*idr7
                 #Fourier part
                 dx = r[i]   - r[j]     
-                dy = r[i+Np] - r[j+Np]  
+                dy = r[i+N] - r[j+N]  
                 dz = r[i+xx] - r[j+xx]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
@@ -1030,7 +1030,7 @@ cdef class Rbm:
                                 gkkz = gxxz*(kx*kx-kz*kz) + gyyz*(ky*ky-kz*kz) +  2*gxyz*kx*ky - 2*(gxxx+gxyy)*kx*kz-2*(gxxy+gyyy)*ky*kz
                                 
                                 o[i]   += cc*( ky*gkkz - kz*gkky) 
-                                o[i+Np] += cc*( kz*gkkx - kx*gkkz) 
+                                o[i+N] += cc*( kz*gkkx - kx*gkkz) 
                                 o[i+xx] += cc*( kx*gkky - ky*gkkx) 
                             else:    
                                 pass
@@ -1046,13 +1046,13 @@ cdef class Rbm:
         ----------
         o: np.array
             An array of angular velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         V: np.array
             An array of 3a mode of the slip
-            An array of size 5*Np,
+            An array of size 5*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -1064,7 +1064,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi   
             double ixi2, fac=8*PI/(L*L*L)
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
             double dx, dy, dz, idr, idr2, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz, vkx, vky, vkz, vkk
             double kx, ky, kz, k2,  xdr, e1, xdr2, cc,  s1, s3
         if xi0 != 123456789:
@@ -1072,13 +1072,13 @@ cdef class Rbm:
         ixi2 = 1/(xi*xi)
 
  
-        for i in prange(Np, nogil=True):
-            for j in range(Np):
+        for i in prange(N, nogil=True):
+            for j in range(N):
                 vxx = V[j]
-                vyy = V[j+Np]
-                vxy = V[j+2*Np]
-                vxz = V[j+3*Np]
-                vyz = V[j+4*Np]
+                vyy = V[j+N]
+                vxy = V[j+2*N]
+                vxz = V[j+3*N]
+                vyz = V[j+4*N]
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -1086,7 +1086,7 @@ cdef class Rbm:
                                 pass
                             else:    
                                 dx = r[i]   - r[j]  -Nb*L + ii*L 
-                                dy = r[i+Np] - r[j+Np]-Nb*L + jj*L 
+                                dy = r[i+N] - r[j+N]-Nb*L + jj*L 
                                 dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 
@@ -1100,11 +1100,11 @@ cdef class Rbm:
                                 vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
 
                                 o[i]   +=  ( (6*s1+s3)*vrx- (5*s1-s3)*vrr*dx )*idr5
-                                o[i+Np]+=  ( (6*s1+s3)*vry- (5*s1-s3)*vrr*dy )*idr5
+                                o[i+N]+=  ( (6*s1+s3)*vry- (5*s1-s3)*vrr*dy )*idr5
                                 o[i+xx] +=  ( (6*s1+s3)*vrz- (5*s1-s3)*vrr*dz )*idr5
                 #Fourier part
                 dx = r[i]   - r[j]
-                dy = r[i+Np] - r[j+Np]
+                dy = r[i+N] - r[j+N]
                 dz = r[i+xx] - r[j+xx] 
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
@@ -1121,7 +1121,7 @@ cdef class Rbm:
                                 vkz = vxz*kx +  vyz*ky - (vxx+vyy)*kz 
                                 
                                 o[i]   += cc*(vkx*k2 - vkk*kx) 
-                                o[i+Np] += cc*(vkx*k2 - vkk*kx) 
+                                o[i+N] += cc*(vkx*k2 - vkk*kx) 
                                 o[i+xx] += cc*(vkx*k2 - vkk*kx) 
         return
 
@@ -1135,13 +1135,13 @@ cdef class Rbm:
         ----------
         o: np.array
             An array of angular velocities
-            An array of size 3*Np,
+            An array of size 3*N,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         M: np.array
             An array of 4a mode of the slip
-            An array of size 7*Np,
+            An array of size 7*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -1153,7 +1153,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi
             double ixi2, ox, oy, oz, fac=8*PI/(L*L*L)
-            int Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*Np
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
             double dx, dy, dz, idr, idr2, idr7
             double mrrr, mkkk, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
             double kx, ky, kz, k2, xdr, e1, xdr2, xdr4, cc, s2, s4
@@ -1162,16 +1162,16 @@ cdef class Rbm:
         ixi2 = 1/(xi*xi)
 
  
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             ox=0; oy=0; oz=0;
-            for j in range(Np):
+            for j in range(N):
                 mxxx = M[j]
-                myyy = M[j+Np  ]
-                mxxy = M[j+2*Np]
-                mxxz = M[j+3*Np]
-                mxyy = M[j+4*Np]
-                mxyz = M[j+5*Np]
-                myyz = M[j+6*Np]
+                myyy = M[j+N  ]
+                mxxy = M[j+2*N]
+                mxxz = M[j+3*N]
+                mxyy = M[j+4*N]
+                mxyz = M[j+5*N]
+                myyz = M[j+6*N]
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -1179,7 +1179,7 @@ cdef class Rbm:
                                 pass
                             else:    
                                 dx = r[i]   - r[j]     -Nb*L + ii*L 
-                                dy = r[i+Np] - r[j+Np]  -Nb*L + jj*L 
+                                dy = r[i+N] - r[j+N]  -Nb*L + jj*L 
                                 dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr2 = idr*idr
@@ -1198,7 +1198,7 @@ cdef class Rbm:
                                 oz += (3*s2-s4)*mrrz*idr7 - (7*s2+s4)*mrrr*dz*idr7*idr2
                 #Fourier part
                 dx = r[i]  - r[j]     
-                dy = r[i+Np]- r[j+Np]  
+                dy = r[i+N]- r[j+N]  
                 dz = r[i+xx]- r[j+xx]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
@@ -1219,7 +1219,7 @@ cdef class Rbm:
                                 oy += cc*( mkky*k2 - mkkk*ky) 
                                 oz += cc*( mkkz*k2 - mkkk*kz) 
             o[i]    += ox
-            o[i+Np] += oy
+            o[i+N] += oy
             o[i+xx ]+= oz
         return
 
@@ -1252,7 +1252,7 @@ cdef class Flow:
     """
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32, boxsize=10):
         self.a  = radius
-        self.Np = particles
+        self.N = particles
         self.Nt = gridpoints
         self.eta= viscosity
         self.L  = boxsize
@@ -1273,10 +1273,10 @@ cdef class Flow:
             An array of size 3*Nt,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of body force
-            An array of size 3*Np,
+            An array of size 3*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -1291,7 +1291,7 @@ cdef class Flow:
         >>> import pystokes, numpy as np, matplotlib.pyplot as plt
         >>> 
         >>> # particle radius, self-propulsion speed, number and fluid viscosity
-        >>> b, eta, Np = 1.0, 1.0/6.0, 1
+        >>> b, eta, N = 1.0, 1.0/6.0, 1
         >>> 
         >>> # initialize
         >>> r, p = np.array([0.0, 0.0, 3.4]), np.array([0.0, 1.0, 0])
@@ -1301,7 +1301,7 @@ cdef class Flow:
         >>> dim, L, Ng = 3, 10, 64;
         >>> 
         >>> # instantiate the Flow class
-        >>> flow = pystokes.periodic.Flow(radius=b, particles=Np, viscosity=eta, gridpoints=Ng*Ng,
+        >>> flow = pystokes.periodic.Flow(radius=b, particles=N, viscosity=eta, gridpoints=Ng*Ng,
         >>>         boxSize=L)
         >>> 
         >>> # create grid, evaluate flow and plot
@@ -1309,7 +1309,7 @@ cdef class Flow:
         >>> flow.flowField1s(vv, rr, r, F1s)
         >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
-        cdef int Np=self.Np, Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
+        cdef int N=self.N, Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
         cdef double L=self.L,  xi=self.xi, ixi2, mu=1.0/(6*PI*self.eta*self.a), muv=mu*self.a*0.75, siz=Nb*L
         cdef double a2=0*self.a*self.a/6, k0=2*PI/L, fac=8*PI/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
@@ -1321,11 +1321,11 @@ cdef class Flow:
         
         for i in prange(Nt, nogil=True):
             vx=0;  vy=0;  vz=0;
-            for j in range(Np):
+            for j in range(N):
                 xd=rt[i]    -r[j];          xd1=xd-siz; 
-                yd=rt[i+Nt]  -r[j+Np];    yd1=yd-siz;  
+                yd=rt[i+Nt]  -r[j+N];    yd1=yd-siz;  
                 zd=rt[i+2*Nt]-r[j+xx];    zd1=zd-siz;
-                fx=F[j];  fy=F[j+Np];  fz=F[j+xx];
+                fx=F[j];  fy=F[j+N];  fz=F[j+xx];
 
                 for ii in range(Nbb):
                     dx = xd1 + ii*L 
@@ -1381,10 +1381,10 @@ cdef class Flow:
             An array of size 3*Nt,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         S: np.array
             An array of 2s mode of the slip
-            An array of size 5*Np,
+            An array of size 5*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -1394,7 +1394,7 @@ cdef class Flow:
         """
 
         cdef: 
-            int Np=self.Np,Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
+            int N=self.N,Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
             double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
@@ -1406,14 +1406,14 @@ cdef class Flow:
         
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 sxx = S[j]
-                syy = S[j+Np]
-                sxy = S[j+2*Np]
-                sxz = S[j+3*Np]
-                syz = S[j+4*Np]
+                syy = S[j+N]
+                sxy = S[j+2*N]
+                sxz = S[j+3*N]
+                syz = S[j+4*N]
                 xd=rt[i]-r[j];          xd1=xd-siz; 
-                yd=rt[i+Nt]-r[j+Np];    yd1=yd-siz;  
+                yd=rt[i+Nt]-r[j+N];    yd1=yd-siz;  
                 zd=rt[i+2*Nt]-r[j+xx];    zd1=zd-siz;
                 
                 for ii in range(Nbb):
@@ -1483,10 +1483,10 @@ cdef class Flow:
             An array of size 3*Nt,
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         D: np.array
             An array of 3t mode of the slip
-            An array of size 3*Np,
+            An array of size 3*N,
         Nb: int 
             Number of periodic boxed summed 
             Default is 6
@@ -1498,7 +1498,7 @@ cdef class Flow:
         cdef: 
             double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8*PI/(L*L*L)
             double ixi2, vx, vy, vz
-            int Nt=self.Nt,Np = self.Np, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*Np, Nbb=2*Nb+1
+            int Nt=self.Nt,N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
             double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
             double mud =3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
             double xd, yd, zd, xd1, yd1, zd1
@@ -1510,9 +1510,9 @@ cdef class Flow:
         
         for i in prange(Nt, nogil=True):
             vx=0;  vy=0; vz=0;
-            for j in range(Np):
+            for j in range(N):
                 xd=rt[i]-r[j];          xd1=xd-siz; 
-                yd=rt[i+Nt]-r[j+Np];    yd1=yd-siz;  
+                yd=rt[i+Nt]-r[j+N];    yd1=yd-siz;  
                 zd=rt[i+2*Nt]-r[j+xx];    zd1=zd-siz;
                 
                 for ii in range(Nbb):
@@ -1527,10 +1527,10 @@ cdef class Flow:
                             erxdr   = erfc(xdr); e1=IPI*exp(-xdr2);  
                             A1 = (2*erxdr  + e1*( 2*xdr+28*xdr3-40*xdr3*xdr2+8*xdr3*xdr3*xdr ))*idr5 
                             B1 = (-6*erxdr + e1*(-6*xdr-4*xdr3 +32*xdr3*xdr2-8*xdr3*xdr3*xdr ))*idr5 
-                            Ddotidr2 = (D[j]*dx + D[j+Np]*dy + D[j+xx]*dz )*idr*idr
+                            Ddotidr2 = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz )*idr*idr
                           
                             vx += A1*D[j]    + B1*Ddotidr2*dx
-                            vy += A1*D[j+Np] + B1*Ddotidr2*dy
+                            vy += A1*D[j+N] + B1*Ddotidr2*dy
                             vz += A1*D[j+xx] + B1*Ddotidr2*dz
                 #Fourier part
                 for ii in range(N1, N2):
@@ -1542,10 +1542,10 @@ cdef class Flow:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
                                 cc = -fac*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
-                                Ddotik2  = (D[j]*kx + D[j+Np]*ky + D[j+xx]*kz)/k2
+                                Ddotik2  = (D[j]*kx + D[j+N]*ky + D[j+xx]*kz)/k2
                                 
                                 vx += cc*( D[j]   - Ddotik2*kx ) 
-                                vy += cc*( D[j+Np] - Ddotik2*ky ) 
+                                vy += cc*( D[j+N] - Ddotik2*ky ) 
                                 vz += cc*( D[j+xx] - Ddotik2*kz ) 
             vv[i]      += mud1*vx
             vv[i+Nt]   += mud1*vy

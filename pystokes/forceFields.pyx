@@ -22,21 +22,21 @@ cdef class Forces:
     Parameters
     ----------
     particles: int
-        Number of particles (Np)
+        Number of particles (N)
 
 
     """
     def __init__(self, particles=1):
-        self.Np = particles
+        self.N = particles
         
     cpdef VdW(self, double [:] F, double [:] r, double A=0, double a0=0):
         """
         generic van der Waals attraction to a wall at z=0 with Hamaker constant a
         """
-        cdef int Np = self.Np, i, j, xx = 2*Np
+        cdef int N = self.N, i, j, xx = 2*N
         cdef double fz, iz, iz2
         
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             iz  = 1./r[i+xx]
             iz2 = iz*iz
             fz = -1./6*a0*A*iz2
@@ -47,14 +47,14 @@ cdef class Forces:
         """
         generic DLVO interaction used for example in thesis
         """
-        cdef int Np = self.Np, i, j, xx = 2*Np
+        cdef int N = self.N, i, j, xx = 2*N
         cdef double dx, dy, dz, dr, idr, idr3, fx, fy, fz, fac, facinv, dlvo_fac
 
-        for i in prange(Np,nogil=True):
+        for i in prange(N,nogil=True):
             fx = 0.0; fy = 0.0; fz = 0.0;
-            for j in range(Np):
+            for j in range(N):
                 dx = r[i   ] - r[j   ]
-                dy = r[i+Np] - r[j+Np]
+                dy = r[i+N] - r[j+N]
                 dz = r[i+xx] - r[j+xx]
                 dr = sqrt(dx*dx + dy*dy + dz*dz)
                 if i != j:
@@ -69,7 +69,7 @@ cdef class Forces:
                     fy += dlvo_fac*dy
                     fz += dlvo_fac*dz
             F[i]    += fx
-            F[i+Np] += fy
+            F[i+N] += fy
             F[i+xx] += fz
         return
         
@@ -89,10 +89,10 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         lje: float
             Strength of the LJ 
         ljr: float
@@ -101,14 +101,14 @@ cdef class Forces:
 
         """
 
-        cdef int Np = self.Np, i, j, xx = 2*Np
+        cdef int N = self.N, i, j, xx = 2*N
         cdef double dx, dy, dz, dr2, idr, rminbyr, fac, fx, fy, fz
 
-        for i in prange(Np,nogil=True):
+        for i in prange(N,nogil=True):
             fx = 0.0; fy = 0.0; fz = 0.0;
-            for j in range(Np):
+            for j in range(N):
                 dx = r[i   ] - r[j   ]
-                dy = r[i+Np] - r[j+Np]
+                dy = r[i+N] - r[j+N]
                 dz = r[i+xx] - r[j+xx]
                 dr2 = dx*dx + dy*dy + dz*dz
                 if i != j and dr2 < (ljr*ljr):
@@ -120,7 +120,7 @@ cdef class Forces:
                     fy += fac*dy
                     fz += fac*dz
             F[i]    += fx
-            F[i+Np] += fy
+            F[i+N] += fy
             F[i+xx] += fz
         return
 
@@ -138,10 +138,10 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         lje: float
             Strength of the LJ 
         ljr: float
@@ -150,10 +150,10 @@ cdef class Forces:
 
         """
 
-        cdef int Np=self.Np, i, j, xx=2*Np
+        cdef int N=self.N, i, j, xx=2*N
         cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             fx = 0.0; fy = 0.0; fz = 0.0;
             hh = r[i+xx]
             if hh<wljr:
@@ -162,9 +162,9 @@ cdef class Forces:
                 fac   = wlje*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr
                 fz += fac       ##LJ from the wall
 
-            for j in range(Np):
+            for j in range(N):
                 dx = r[i   ] - r[j   ]
-                dy = r[i+Np] - r[j+Np]
+                dy = r[i+N] - r[j+N]
                 dz = r[i+xx] - r[j+xx]
                 dr = sqrt(dx*dx + dy*dy + dz*dz)
                 if i != j and dr < ljr:
@@ -177,7 +177,7 @@ cdef class Forces:
                     fz += fac*dz
 
             F[i]    += fx
-            F[i+Np] += fy
+            F[i+N] += fy
             F[i+xx] += fz
         return
 
@@ -193,10 +193,10 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         pk: float
             Strength of harmonic potential between particles
         prmin: float
@@ -210,10 +210,10 @@ cdef class Forces:
             Range of the LJ from wall
 
         '''
-        cdef int Np=self.Np, i, j, xx=2*Np
+        cdef int N=self.N, i, j, xx=2*N
         cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh, facss,abshh,sgnhh
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             fx = 0.0; fy = 0.0; fz = 0.0;
             hh = r[i+xx]
             abshh=sqrt(hh*hh)
@@ -227,9 +227,9 @@ cdef class Forces:
                 # fac   = wlje*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr
                 # fz += fac      ##LJ from the wall
 
-            for j in range(Np):
+            for j in range(N):
                 dx = r[i   ] - r[j   ]
-                dy = r[i+Np] - r[j+Np]
+                dy = r[i+N] - r[j+N]
                 dz = r[i+xx] - r[j+xx]
                 dr = sqrt(dx*dx + dy*dy + dz*dz)
                 if i != j and dr < prmax:
@@ -241,7 +241,7 @@ cdef class Forces:
                     fz += fac*dz*idr
 
             F[i]    += fx
-            F[i+Np] += fy
+            F[i+N] += fy
             F[i+xx] += fz
         return
         
@@ -258,10 +258,10 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         pk: float
             Strength of harmonic potential between particles
         prmin: float
@@ -276,10 +276,10 @@ cdef class Forces:
         wljr: float
             Range of the LJ from wall
         '''
-        cdef int Np=self.Np, i, j, xx=2*Np
+        cdef int N=self.N, i, j, xx=2*N
         cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh, facss,abshh,sgnhh
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             fx = 0.0; fy = 0.0; fz = 0.0;
             hh = r[i+xx]
             abshh=sqrt(hh*hh)
@@ -293,9 +293,9 @@ cdef class Forces:
                 # fac   = wlje*(pow(rminbyr, 12) - pow(rminbyr, 6))*idr
                 # fz += fac      ##LJ from the wall
 
-            for j in range(Np):
+            for j in range(N):
                 dx = r[i   ] - r[j   ]
-                dy = r[i+Np] - r[j+Np]
+                dy = r[i+N] - r[j+N]
                 dz = r[i+xx] - r[j+xx]
                 dr = sqrt(dx*dx + dy*dy + dz*dz)
                 if i != j and dr < prmax:
@@ -315,24 +315,24 @@ cdef class Forces:
                     
 
             F[i]    += fx
-            F[i+Np] += fy
+            F[i+N] += fy
             F[i+xx] += fz
         return
         
 
     cpdef harmonicRepulsionPPPW(self, double [:] F, double [:] r, double partE=10, double partR=5, double wallE=2, double wallR=5.0):
-        cdef int Np = self.Np, i, j, xx = 2*Np
+        cdef int N = self.N, i, j, xx = 2*N
         cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             fx = 0.0; fy = 0.0; fz = 0.0;
             hh = r[i+xx]
             if hh<wallR:
                 fz += wallE*(wallR-hh)
 
-            for j in range(Np):
+            for j in range(N):
                 dx = r[i   ] - r[j   ]
-                dy = r[i+Np] - r[j+Np]
+                dy = r[i+N] - r[j+N]
                 dz = r[i+xx] - r[j+xx]
                 dr = sqrt(dx*dx + dy*dy + dz*dz)
                 if i != j and dr < partR:
@@ -343,7 +343,7 @@ cdef class Forces:
                     fz += fac*dz
 
             F[i]    += fx
-            F[i+Np] += fy
+            F[i+N] += fy
             F[i+xx] += fz
         return
 
@@ -362,10 +362,10 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         lje: float
             Strength of the LJ 
         ljr: float
@@ -374,10 +374,10 @@ cdef class Forces:
 
         """
 
-        cdef int Np=self.Np, i, j, xx=2*Np
+        cdef int N=self.N, i, j, xx=2*N
         cdef double dx, dy, dz, dr, idr, rminbyr, fac, fx, fy, fz, hh
 
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             fx = 0.0; fy = 0.0; fz = 0.0;
             hh = r[i]+11
             if hh<wljr:
@@ -400,21 +400,21 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         rS: float
             positions of non-dynamic particles
     
         '''
-        cdef int Np=self.Np, i, j, xx=2*Np, Ns = len(rS)/3
+        cdef int N=self.N, i, j, xx=2*N, Ns = len(rS)/3
         cdef double dx, dy, dz, dr, idr, fac=3*a/4, spring, fx, fy, fz,rminbyr
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             fx=0; fy=0; fz=0;
             for j in range(Ns):
                 dx = r[i   ] - rS[j   ]
-                dy = r[i+Np] - rS[j+Ns]
+                dy = r[i+N] - rS[j+Ns]
                 dz = r[i+xx] - rS[j+Ns*2]
                 dr = sqrt(dx*dx + dy*dy + dz*dz)
                 if dr < ljr:
@@ -428,7 +428,7 @@ cdef class Forces:
                     
                 
             F[i]    += fx
-            F[i+Np] += fy
+            F[i+N] += fy
             F[i+xx] += fz
         return
         
@@ -444,21 +444,21 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         rS: float
             positions of non-dynamic particles
     
         '''
-        cdef int Np=self.Np, i, j, xx=2*Np, Ns = len(rS)/3
+        cdef int N=self.N, i, j, xx=2*N, Ns = len(rS)/3
         cdef double dx, dy, dz, dr, idr, fac=3*a/4, spring, fx, fy, fz
-        for i in prange(Np, nogil=True):
+        for i in prange(N, nogil=True):
             fx=0; fy=0; fz=0;
             for j in range(Ns):
                 dx = r[i   ] - rS[j   ]
-                dy = r[i+Np] - rS[j+Ns]
+                dy = r[i+N] - rS[j+Ns]
                 dz = r[i+xx] - rS[j+Ns*2]
                 dr = sqrt(dx*dx + dy*dy + dz*dz)
                 if dr < prmax:
@@ -471,7 +471,7 @@ cdef class Forces:
                     
                 
             F[i]    += fx
-            F[i+Np] += fy
+            F[i+N] += fy
             F[i+xx] += fz
         return
 
@@ -480,8 +480,8 @@ cdef class Forces:
         '''
         Forces on colloids in a harmonic trap
         '''
-        cdef int Np = self.Np, i
-        for i in prange(3*Np, nogil=True):
+        cdef int N = self.N, i
+        for i in prange(3*N, nogil=True):
             F[i] -= cn*r[i]
         return
 
@@ -496,21 +496,21 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         r0: np.array
             An array of trap centers
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         k: float 
             Stiffness of the trap
         """
 
-        cdef int Np = self.Np, i, i1, xx = 2*Np
-        for i in prange(Np, nogil=True):
+        cdef int N = self.N, i, i1, xx = 2*N
+        for i in prange(N, nogil=True):
             F[i  ]  -= k[i]*(r[i]    - r0[i]  )
-            F[i+Np] -= k[i]*(r[i+Np] - r0[i+Np])
+            F[i+N] -= k[i]*(r[i+N] - r0[i+N])
             F[i+xx] -= k[i]*(r[i+xx] - r0[i+xx])
         return
 
@@ -525,17 +525,17 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         g: float 
             Gravity 
         """
-        cdef int Np = self.Np, i, xx = 2*Np
-        for i in prange(Np, nogil=True):
+        cdef int N = self.N, i, xx = 2*N
+        for i in prange(N, nogil=True):
 #            F[i   ] +=  0
-#            F[i+Np] +=  0
+#            F[i+N] +=  0
             F[i+xx] +=  g
         return
 
@@ -550,24 +550,24 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         r0: np.array
             An array of trap centers
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         cn: float 
             Stiffness of the trap
         """
 
-        cdef int Np = self.Np, xx = 2*Np
+        cdef int N = self.N, xx = 2*N
         cdef int i
         cdef double r0byr
-        for i in prange(Np, nogil=True):
-            r0byr = (1.0*r0)/sqrt( r[i]*r[i] + r[i+Np]*r[i+Np] + r[i+xx]*r[i+xx] )
+        for i in prange(N, nogil=True):
+            r0byr = (1.0*r0)/sqrt( r[i]*r[i] + r[i+N]*r[i+N] + r[i+xx]*r[i+xx] )
             F[i]   -= cn*(1 - r0byr)*r[i]
-            F[i+Np] -= cn*(1 - r0byr)*r[i+Np]
+            F[i+N] -= cn*(1 - r0byr)*r[i+N]
             F[i+xx] -= cn*(1 - r0byr)*r[i+xx]
         return
 
@@ -582,25 +582,25 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         r0: np.array
             An array of trap centers
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         cn: float 
             Stiffness of the trap
         """
-        cdef int Np = self.Np, xx = 2*Np
+        cdef int N = self.N, xx = 2*N
         cdef int i
         cdef double r0byr, dist
-        for i in prange(Np, nogil=True):
-            dist = sqrt( r[i]*r[i] + r[i+Np]*r[i+Np] + r[i+xx]*r[i+xx] )
+        for i in prange(N, nogil=True):
+            dist = sqrt( r[i]*r[i] + r[i+N]*r[i+N] + r[i+xx]*r[i+xx] )
             if  (dist - r0) > 0.0:
                 r0byr = (1.0*r0)/dist
                 F[i]   -= cn*(1 - r0byr)*r[i]
-                F[i+Np] -= cn*(1 - r0byr)*r[i+Np]
+                F[i+N] -= cn*(1 - r0byr)*r[i+N]
                 F[i+xx] -= cn*(1 - r0byr)*r[i+xx]
             else:
                 pass
@@ -619,16 +619,16 @@ cdef class Forces:
             An array of positions
         F: np.array
             An array of forces
-            An array of size 3*Np,
-            An array of size 3*Np,
+            An array of size 3*N,
+            An array of size 3*N,
         bondLength: float
             The size of natural spring 
         springModulus: float 
             Stiffness of the trap
         """
 
-        cdef int Np = self.Np, xx = 2*Np
-        cdef int Nf=1, Nm=Np
+        cdef int N = self.N, xx = 2*N
+        cdef int Nf=1, Nm=N
         cdef:
             int i, ii, ip, jp, kp
             double dx12, dy12, dz12, idr12, dx23, dy23, dz23, idr23,
@@ -640,15 +640,15 @@ cdef class Forces:
                 ip = Nm*ii + i
                 jp = Nm*ii + i + 1
                 dx12 = r[ip]    - r[jp]
-                dy12 = r[ip+Np] - r[jp+Np]
+                dy12 = r[ip+N] - r[jp+N]
                 dz12 = r[ip+xx] - r[jp+xx] #
                 F_spring = springModulus*(bondLength/sqrt(dx12*dx12+dy12*dy12+dz12*dz12) - 1.0) # Scalar part of spring force
 
                 F[ip]      += F_spring*dx12
-                F[ip + Np] += F_spring*dy12
+                F[ip + N] += F_spring*dy12
                 F[ip + xx] += F_spring*dz12
                 F[jp]      -= F_spring*dx12
-                F[jp + Np] -= F_spring*dy12
+                F[jp + N] -= F_spring*dy12
                 F[jp + xx] -= F_spring*dz12 
         return
 
@@ -665,17 +665,17 @@ cdef class Forces:
             An array of positions
         F: np.array
             An array of forces
-            An array of size 3*Np,
-            An array of size 3*Np,
+            An array of size 3*N,
+            An array of size 3*N,
         bondLength: float
             The size of natural spring 
         springModulus: float 
             Stiffness of the trap
         """
-        cdef int Np = self.Np, xx = 2*Np
+        cdef int N = self.N, xx = 2*N
         cdef:
             int i, ii, ip, jp, kp
-            int Nm = Np/Nf # int/int problem might happen
+            int Nm = N/Nf # int/int problem might happen
             double dx12, dy12, dz12, idr12, dx23, dy23, dz23, idr23,
             double F_bend, F_spring, f1, f3, cos1
 
@@ -685,15 +685,15 @@ cdef class Forces:
                 ip = Nm*ii + i
                 jp = Nm*ii + i + 1
                 dx12 = r[ip]    - r[jp]
-                dy12 = r[ip+Np] - r[jp+Np]
+                dy12 = r[ip+N] - r[jp+N]
                 dz12 = r[ip+xx] - r[jp+xx] #
                 F_spring = springModulus*(bondLength/sqrt(dx12*dx12+dy12*dy12+dz12*dz12) - 1.0) # Scalar part of spring force
 
                 F[ip]      += F_spring*dx12
-                F[ip + Np] += F_spring*dy12
+                F[ip + N] += F_spring*dy12
                 F[ip + xx] += F_spring*dz12
                 F[jp]      -= F_spring*dx12
-                F[jp + Np] -= F_spring*dy12
+                F[jp + N] -= F_spring*dy12
                 F[jp + xx] -= F_spring*dz12
 
         # Bending Force
@@ -703,12 +703,12 @@ cdef class Forces:
                 jp = (Nm*ii+i+1)
                 kp = (Nm*ii+i+2)
                 dx12 = r[ip]   - r[jp]
-                dy12 = r[ip+Np] - r[jp+Np]
+                dy12 = r[ip+N] - r[jp+N]
                 dz12 = r[ip+xx] - r[jp+xx] #
                 idr12 = 1.0/sqrt( dx12*dx12 + dy12*dy12 + dz12*dz12 )
 
                 dx23 = r[jp]   - r[kp]
-                dy23 = r[jp+Np] - r[kp+Np]
+                dy23 = r[jp+N] - r[kp+N]
                 dz23 = r[jp+xx] - r[kp+xx] #
                 idr23 = 1.0/sqrt( dx23*dx23 + dy23*dy23 + dz23*dz23 )
 
@@ -725,9 +725,9 @@ cdef class Forces:
                 f1 = F_bend*( dy23 - dy12*cos1*idr12*idr12)
                 f3 = F_bend*(-dy12 + dy23*cos1*idr23*idr23)
 
-                F[ip+Np] += f1
-                F[jp+Np] -= f1+f3
-                F[kp+Np] += f3
+                F[ip+N] += f1
+                F[jp+N] -= f1+f3
+                F[kp+N] += f3
 
                 f1 = F_bend*( dz23 - dz12*cos1*idr12*idr12)
                 f3 = F_bend*(-dz12 + dz23*cos1*idr23*idr23)
@@ -749,17 +749,17 @@ cdef class Forces:
             An array of positions
         F: np.array
             An array of forces
-            An array of size 3*Np,
-            An array of size 3*Np,
+            An array of size 3*N,
+            An array of size 3*N,
         bondLength: float
             The size of natural spring 
         springModulus: float 
             Stiffness of the trap
         """
-        cdef int Np = self.Np, xx = 2*Np
+        cdef int N = self.N, xx = 2*N
         cdef:
              int i, ii, ip, jp, kp
-             int Nm = Np/Nf # int/int problem might happen
+             int Nm = N/Nf # int/int problem might happen
              double dx12, dy12, dz12, idr12, dx23, dy23, dz23, idr23,
              double F_bend, F_spring, f1, f3, cos1
 
@@ -769,15 +769,15 @@ cdef class Forces:
                 ip = (ii*Nm + i)
                 jp = (ii*Nm +((i+1) % Nm)) #NOTE : Nm or Nm-1
                 dx12 = r[ip]   - r[jp]
-                dy12 = r[ip+Np] - r[jp+Np]
+                dy12 = r[ip+N] - r[jp+N]
                 dz12 = r[ip+xx] - r[jp+xx]
                 F_spring = springModulus*(bondLength/sqrt(dx12*dx12+dy12*dy12+dz12*dz12) - 1.0) # Scalar part of spring force
 
                 F[ip]     += F_spring*dx12
-                F[ip + Np] += F_spring*dy12
+                F[ip + N] += F_spring*dy12
                 F[ip + xx] += F_spring*dz12
                 F[jp]     -= F_spring*dx12
-                F[jp + Np] -= F_spring*dy12
+                F[jp + N] -= F_spring*dy12
                 F[jp + xx] -= F_spring*dz12
 
         # Bending Force
@@ -787,12 +787,12 @@ cdef class Forces:
                 jp = ( ii*Nm +((i+1) % Nm))
                 kp = ( ii*Nm +((i+2) % Nm))
                 dx12 = r[ip]      - r[jp]
-                dy12 = r[ip+Np]   - r[jp+Np]
+                dy12 = r[ip+N]   - r[jp+N]
                 dz12 = r[ip+xx]   - r[jp+xx] #
                 idr12 = 1.0/sqrt( dx12*dx12 + dy12*dy12 + dz12*dz12 )
 
                 dx23 = r[jp]   - r[kp]
-                dy23 = r[jp+Np] - r[kp+Np]
+                dy23 = r[jp+N] - r[kp+N]
                 dz23 = r[jp+xx] - r[kp+xx] #
                 idr23 = 1.0/sqrt( dx23*dx23 + dy23*dy23 + dz23*dz23 )
 
@@ -809,9 +809,9 @@ cdef class Forces:
                 f1 = F_bend*( dy23 - dy12*cos1*idr12*idr12)
                 f3 = F_bend*(-dy12 + dy23*cos1*idr23*idr23)
 
-                F[ip+Np] += f1
-                F[jp+Np] -= f1+f3
-                F[kp+Np] += f3
+                F[ip+N] += f1
+                F[jp+N] -= f1+f3
+                F[kp+N] += f3
 
                 f1 = F_bend*( dz23 - dz12*cos1*idr12*idr12)
                 f3 = F_bend*(-dz12 + dz23*cos1*idr23*idr23)
@@ -832,10 +832,10 @@ cdef class Forces:
         ----------
         r: np.array
             An array of positions
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of forces
-            An array of size 3*Np,
+            An array of size 3*N,
         bondLength: float
             The size of natural spring 
         springModulus: float 
@@ -845,7 +845,7 @@ cdef class Forces:
         """
 
 
-        cdef int Np = self.Np, xx = 2*Np
+        cdef int N = self.N, xx = 2*N
         cdef:
             int i1, i2, ip, jp, kp
             double dx12, dy12, dz12, idr12, dx23, dy23, dz23, idr23, cos1, f1, f3
@@ -866,15 +866,15 @@ cdef class Forces:
                 ip = Nmx*i2 + i1
                 jp = Nmx*i2 + (i1 + 1)
                 dx12 = ri[ip]   - rj[jp]
-                dy12 = ri[ip+Np] - rj[jp+Np]
+                dy12 = ri[ip+N] - rj[jp+N]
                 dz12 = ri[ip+xx] - rj[jp+xx]
                 F_spring = springModulus*(bondLength/sqrt(dx12*dx12+dy12*dy12+dz12*dz12) - 1.0) # Scalar part of spring force
 
                 Fi[ip]     += F_spring*dx12
-                Fi[ip + Np] += F_spring*dy12
+                Fi[ip + N] += F_spring*dy12
                 Fi[ip + xx] += F_spring*dz12
                 Fj[jp]     -= F_spring*dx12
-                Fj[jp + Np] -= F_spring*dy12
+                Fj[jp + N] -= F_spring*dy12
                 Fj[jp + xx] -= F_spring*dz12
 
         # Spring Force in y direction : first loop in x
@@ -884,15 +884,15 @@ cdef class Forces:
                 ip = Nmx*i2 + i1
                 jp = Nmx*(i2+1) + i1
                 dx12 = ri[ip]   - rj[jp]
-                dy12 = ri[ip+Np] - rj[jp+Np]
+                dy12 = ri[ip+N] - rj[jp+N]
                 dz12 = ri[ip+xx] - rj[jp+xx]
                 F_spring = springModulus*(bondLength/sqrt(dx12*dx12+dy12*dy12+dz12*dz12) - 1.0)
 
                 Fi[ip]     += F_spring*dx12
-                Fi[ip + Np] += F_spring*dy12
+                Fi[ip + N] += F_spring*dy12
                 Fi[ip + xx] += F_spring*dz12
                 Fj[jp]     -= F_spring*dx12
-                Fj[jp + Np] -= F_spring*dy12
+                Fj[jp + N] -= F_spring*dy12
                 Fj[jp + xx] -= F_spring*dz12
 
         # Bending Force
@@ -903,12 +903,12 @@ cdef class Forces:
                 kp = Nmx*i2 + (i1+2)
 
                 dx12 = ri[ip]   - rj[jp]
-                dy12 = ri[ip+Np] - rj[jp+Np]
+                dy12 = ri[ip+N] - rj[jp+N]
                 dz12 = ri[ip+xx] - rj[jp+xx] #
                 idr12 = 1.0/sqrt( dx12*dx12 + dy12*dy12 + dz12*dz12 )
 
                 dx23 = rj[jp]   - rk[kp]
-                dy23 = rj[jp+Np] - rk[kp+Np]
+                dy23 = rj[jp+N] - rk[kp+N]
                 dz23 = rj[jp+xx] - rk[kp+xx] #
                 idr23 = 1.0/sqrt( dx23*dx23 + dy23*dy23 + dz23*dz23 )
 
@@ -925,9 +925,9 @@ cdef class Forces:
                 f1 = F_bend*( dy23 - dy12*cos1*idr12*idr12)
                 f3 = F_bend*(-dy12 + dy23*cos1*idr23*idr23)
 
-                Fi[ip+Np] += f1
-                Fj[jp+Np] -= f1+f3
-                Fk[kp+Np] += f3
+                Fi[ip+N] += f1
+                Fj[jp+N] -= f1+f3
+                Fk[kp+N] += f3
 
                 f1 = F_bend*( dz23 - dz12*cos1*idr12*idr12)
                 f3 = F_bend*(-dz12 + dz23*cos1*idr23*idr23)
@@ -942,12 +942,12 @@ cdef class Forces:
                 kp = Nmx*(i2+2) + i1
 
                 dx12 = ri[ip]   - rj[jp]
-                dy12 = ri[ip+Np] - rj[jp+Np]
+                dy12 = ri[ip+N] - rj[jp+N]
                 dz12 = ri[ip+xx] - rj[jp+xx] #
                 idr12 = 1.0/sqrt( dx12*dx12 + dy12*dy12 + dz12*dz12 )
 
                 dx23 = rj[jp]   - rk[kp]
-                dy23 = rj[jp+Np] - rk[kp+Np]
+                dy23 = rj[jp+N] - rk[kp+N]
                 dz23 = rj[jp+xx] - rk[kp+xx] #
                 idr23 = 1.0/sqrt( dx23*dx23 + dy23*dy23 + dz23*dz23 )
 
@@ -964,9 +964,9 @@ cdef class Forces:
                 f1 = F_bend*( dy23 - dy12*cos1*idr12*idr12)
                 f3 = F_bend*(-dy12 + dy23*cos1*idr23*idr23)
 
-                Fi[ip+Np] += f1
-                Fj[jp+Np] -= f1+f3
-                Fk[kp+Np] += f3
+                Fi[ip+N] += f1
+                Fj[jp+N] -= f1+f3
+                Fk[kp+N] += f3
 
                 f1 = F_bend*( dz23 - dz12*cos1*idr12*idr12)
                 f3 = F_bend*(-dz12 + dz23*cos1*idr23*idr23)
@@ -998,12 +998,12 @@ cdef class Torques:
     Parameters
     ----------
     particles: int
-        Number of particles (Np)
+        Number of particles (N)
 
 
     """
     def __init__(self, particles=1):
-        self.Np = particles 
+        self.N = particles 
 
 
     cpdef bottomHeaviness(self, double [:] T, double [:] p, double bh=1.0):
@@ -1016,17 +1016,47 @@ cdef class Torques:
         ----------
         p: np.array
             An array of Orientations
-            An array of size 3*Np,
+            An array of size 3*N,
         F: np.array
             An array of Torques
-            An array of size 3*Np,
+            An array of size 3*N,
         bh: float 
             bottomHeaviness 
         """
-        cdef int Np = self.Np, i, xx = 2*Np
-        for i in prange(Np, nogil=True):
-            T[i   ] +=  -bh*p[i+Np]  # torque is bh\times p
-            T[i+Np] +=  bh*p[i]
+        cdef int N = self.N, i, xx = 2*N
+        for i in prange(N, nogil=True):
+            T[i   ] +=  -bh*p[i+N]  # torque is bh\times p
+            T[i+N] +=  bh*p[i]
             T[i+xx] +=  0
         return
+
+    
+    cpdef magnetic(self, double[:] T, double [:] p, double m0, double Bx, double By, double Bz):
+        """
+        
+        Torque due to magnetotaxis. 
+        The torque on microparticle in an external magnetic field ${\bf B}$  is ${\bf T} = {\bf m\times B}$
+        We assume $m = m_0 \bf p$
+        
+        ...
+        Parameters
+        ----------
+        p: np.array
+            An array of Orientations
+            An array of size 3*N,
+        T: np.array
+            An array of Torques
+            An array of size 3*N,
+        m0: float 
+            magnetic moment
+        Bx,By,Bz : float
+            magnetic field components
+        """
+  
+        cdef int N = self.N, i, xx = 2*N
+        for i in prange(N, nogil=True):
+            T[i   ] += m0*(p[i+N]*Bz-p[i+xx]*By)
+            T[i+N] += m0*(p[i+xx]*Bx-p[i]*Bz)
+            T[i+xx] += m0*(p[i]*By-p[i+N]*Bx)
+        return 
 

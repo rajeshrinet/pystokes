@@ -77,6 +77,11 @@ extension2 = Extension('pystokes/phoretic/*', ['pystokes/phoretic/*.pyx'],
         extra_compile_args=ompArgs,
         extra_link_args=ompArgs,
         )
+extension3 = Extension('pystokes/power/*', ['pystokes/power/*.pyx'],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=ompArgs,
+        extra_link_args=ompArgs,
+        )
 
 
 setup(
@@ -90,13 +95,13 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     platforms='tested on macOS, windows, and LINUX',
-    ext_modules=cythonize([extension1, extension2 ],
+    ext_modules=cythonize([extension1, extension2, extension3 ],
         compiler_directives={'language_level': sys.version_info[0],
                             'linetrace': True},
         ),
     libraries=[],
-    packages=['pystokes', 'pystokes/phoretic'],
-    package_data={'pystokes': ['*.pxd'], 'pystokes/phoretic': ['*.pxd']},
+    packages=['pystokes', 'pystokes/phoretic', 'pystokes/power'],
+    package_data={'pystokes': ['*.pxd'], 'pystokes/phoretic': ['*.pxd'], 'pystokes/power': ['*.pxd']},
     include_package_data=True,
     setup_requires=['wheel'],
     classifiers=[

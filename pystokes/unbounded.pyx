@@ -181,7 +181,7 @@ cdef class Rbm:
         cdef double dx, dy, dz, dr, idr,  idr3
         cdef double aa=(self.a*self.a*8.0)/3.0, vv1, vv2, aidr2
         cdef double vx, vy, vz, 
-        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (28.0*self.a**3)/24 
+        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = -(28.0*self.a*self.a)/24 
  
         for i in prange(N, nogil=True):
             vx=0; vy=0;   vz=0;
@@ -236,7 +236,7 @@ cdef class Rbm:
         """
 
         cdef int N = self.N, i, j, xx=2*N  
-        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
+        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**3)/5
  
         for i in prange(N, nogil=True):
             vx=0; vy=0;   vz=0; 
@@ -510,7 +510,7 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j, xx=2*N 
         cdef double dx, dy, dz, idr, idr5, ox, oy, oz
-        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (28.0*self.a*self.a*self.a)/24
+        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = -(28.0*self.a*self.a)/24
  
         for i in prange(N, nogil=True):
             ox=0;   oy=0;   oz=0;

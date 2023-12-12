@@ -221,6 +221,73 @@ def simulate(rp0, Tf, Nts, rhs, integrator='odeint', filename='this.mat',
 	savemat(filename, {'X':X, 't':time_points})
 	return
 
+def simulate_vo2rp(rp0, Tf, Nts, vo, filename='this.mat',
+			Ti=0, maxNumSteps=100000, **kwargs):
+	"""
+	Simulates using choice of integrator
+	
+	...
+
+	Parameters
+	----------
+	rp0 : np.array 
+		Initial condition 
+	Tf	: int 
+		 Final time 
+	Nts: int 
+		Number of points to return data 
+	vo : Python Function
+		velcotity and angular velocity
+	filename: string 
+		filename to write the data. 
+		Deafult is 'this.mat'
+	"""
+
+	def dxdtEval(rp, t): 
+		"""
+		returns velocity and angular velocity
+		"""
+		return vo(rp)
+
+	def dot(A, b):
+		"""
+		A: Array size of (3, 3)
+		b: Array size of 3
+		returns A \dot b
+		"""
+		retval = np.zeros(3)
+		for i in range(3):
+			for j in range(3):
+				retval[i] += A[i, j] * b[j]
+		return retval
+
+	from scipy.integrate import solve_ivp
+	from scipy.linalg import expm
+
+	time_points=np.linspace(Ti, Tf, Nts+1)
+	N = int(len(rp0) / 6)
+	X = np.zeros((Nts + 1, len(rp0)))
+	X[0] = rp0
+	for n in range(Nts):
+		X[n + 1] = solve_ivp(lambda t, xt: dxdtEval(xt,t), 
+			                 [time_points[n], time_points[n + 1]], X[n], 
+						     t_eval=[time_points[n], time_points[n + 1]], **kwargs).y.T[1]
+		P = X[n + 1, 3*N:6*N]
+		P_old = X[n, 3*N:6*N]
+		O = vo(X[n])[3*N:6*N]
+		for p in range(N):
+			Op = O[p::N]
+			skewOdt = np.array([[0.0, -Op[2], Op[1]],
+                              [Op[2], 0.0, -Op[0]],
+                              [-Op[1], Op[0], 0.0]]) \
+					* (time_points[n + 1] - time_points[n])
+			P[p::N] = dot(expm(skewOdt), P_old[p::N])
+		X[n + 1, 3*N:6*N] = P
+		
+	from scipy.io import savemat
+	savemat(filename, {'X':X, 't':time_points})
+	return
+
 
 
 

@@ -872,7 +872,7 @@ cdef class Flow:
         self.Nt = gridpoints
         self.eta= viscosity
 
-    cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F):
+    cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, double maskR=1.0):
         """
         Compute flow field at field points due body forces
         ...
@@ -919,7 +919,8 @@ cdef class Flow:
 
         cdef int N = self.N,  Nt = self.Nt
         cdef int i, ii, xx = 2*N
-        cdef double dx, dy, dz, idr, idr2, vv1, vv2, vx, vy, vz, muv = 1/(8*PI*self.eta), aa = self.a*self.a/3.0
+        cdef double dx, dy, dz, dr, idr, idr2, vv1, vv2, vx, vy, vz, radi=self.a
+        cdef double muv = 1/(8*PI*self.eta), aa = self.a*self.a/3.0
         for i in prange(Nt, nogil=True):
             vx = 0.0; vy = 0.0; vz = 0.0;
             for ii in range(N):
@@ -927,14 +928,16 @@ cdef class Flow:
                 dx = rt[i]      - r[ii]
                 dy = rt[i+Nt]   - r[ii+N]
                 dz = rt[i+2*Nt] - r[ii+xx] 
-                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                idr2= idr*idr
-                vv1 = (1+aa*idr2)*idr 
-                vv2 = (1-3*aa*idr2)*( F[ii]*dx + F[ii+N]*dy + F[ii+xx]*dz )*idr2*idr
-                
-                vx += vv1*F[ii]     + vv2*dx
-                vy += vv1*F[ii+ N] + vv2*dy
-                vz += vv1*F[ii+ xx] + vv2*dz
+                dr = sqrt( dx*dx + dy*dy + dz*dz )
+                if dr>maskR:
+                    idr = 1.0/dr
+                    idr2= idr*idr
+                    vv1 = (1+aa*idr2)*idr 
+                    vv2 = (1-3*aa*idr2)*( F[ii]*dx + F[ii+N]*dy + F[ii+xx]*dz )*idr2*idr
+
+                    vx += vv1*F[ii]     + vv2*dx
+                    vy += vv1*F[ii+ N] + vv2*dy
+                    vz += vv1*F[ii+ xx] + vv2*dz
             
             vv[i]         += vx*muv
             vv[i +   Nt]  += vy*muv
@@ -942,7 +945,7 @@ cdef class Flow:
         return 
 
 
-    cpdef flowField2a(self, double [:] vv, double [:] rt, double [:] r, double [:] T):
+    cpdef flowField2a(self, double [:] vv, double [:] rt, double [:] r, double [:] T, double maskR=1.0):
         """
         Compute flow field at field points due body Torque 
         ...
@@ -990,19 +993,21 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii, xx = 2*N
-        cdef double dx, dy, dz, idr, idr3, vx, vy, vz, mur1 = 1.0/(8*PI*self.eta)
+        cdef double dx, dy, dz, dr, idr, idr3, vx, vy, vz, mur1 = 1.0/(8*PI*self.eta), radi=self.a
         for i in prange(Nt, nogil=True):
             vx = 0.0; vy = 0.0; vz = 0.0;
             for ii in range(N):
                 dx = rt[i]      - r[ii]
                 dy = rt[i+Nt]   - r[ii+N]
                 dz = rt[i+2*Nt] - r[ii+xx] 
-                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                idr3 = idr*idr*idr
+                dr = sqrt( dx*dx + dy*dy + dz*dz )
+                if dr>maskR:
+                    idr = 1.0/dr                
+                    idr3 = idr*idr*idr
           
-                vx += ( dy*T[ii+xx] - dz*T[ii+N])*idr3
-                vy += ( dz*T[ii]    - dx*T[ii+xx])*idr3 
-                vz += ( dx*T[ii+N] - dy*T[ii]   )*idr3
+                    vx += ( dy*T[ii+xx] - dz*T[ii+N])*idr3
+                    vy += ( dz*T[ii]    - dx*T[ii+xx])*idr3 
+                    vz += ( dx*T[ii+N] - dy*T[ii]   )*idr3
 
             vv[i  ]      += vx*mur1
             vv[i + Nt]   += vy*mur1
@@ -1010,7 +1015,7 @@ cdef class Flow:
         return  
 
 
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S):
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, double maskR=1.0):
         """
         Compute flow field at field points  due to 2s mode of the slip 
         ...
@@ -1057,8 +1062,8 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii, xx= 2*N, xx1= 3*N, xx2 = 4*N
-        cdef double dx, dy, dz, idr, idr3, aidr2, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
-        cdef double aa = self.a**2, vv1, vv2, vx, vy, vz, mus = (28.0*self.a**3)/24 
+        cdef double dx, dy, dz, dr, idr, idr3, aidr2, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
+        cdef double aa = self.a**2, vv1, vv2, vx, vy, vz, mus = (28.0*self.a**3)/24, radi=self.a
         for i in prange(Nt, nogil=True):
             vx = 0.0;vy = 0.0; vz = 0.0;
             for ii in range(N):
@@ -1071,30 +1076,31 @@ cdef class Flow:
                 dx = rt[i]      - r[ii]
                 dy = rt[i+Nt]   - r[ii+N]
                 dz = rt[i+2*Nt] - r[ii+xx] 
-                
-                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                idr3 = idr*idr*idr      
-                aidr2  = aa*idr*idr
-                
-                srr = (sxx*(dx*dx-dz*dz) + syy*(dy*dy-dz*dz) +  2*sxy*dx*dy + 2*sxz*dx*dz  +  2*syz*dy*dz)*idr*idr
-                srx = sxx*dx +  sxy*dy + sxz*dz  
-                sry = sxy*dx +  syy*dy + syz*dz  
-                srz = sxz*dx +  syz*dy - (sxx+syy)*dz 
-                
-                vv1 = 3*(1-aidr2)*srr*idr3
-                vv2 = 1.2*aidr2*idr3
-                
-                vx +=  vv1*dx + vv2*srx
-                vy +=  vv1*dy + vv2*sry
-                vz +=  vv1*dz + vv2*srz
-                 
+                dr = sqrt( dx*dx + dy*dy + dz*dz )
+                if dr>maskR:
+                    idr = 1.0/dr
+                    idr3 = idr*idr*idr      
+                    aidr2  = aa*idr*idr
+
+                    srr = (sxx*(dx*dx-dz*dz) + syy*(dy*dy-dz*dz) +  2*sxy*dx*dy + 2*sxz*dx*dz  +  2*syz*dy*dz)*idr*idr
+                    srx = sxx*dx +  sxy*dy + sxz*dz  
+                    sry = sxy*dx +  syy*dy + syz*dz  
+                    srz = sxz*dx +  syz*dy - (sxx+syy)*dz 
+
+                    vv1 = 3*(1-aidr2)*srr*idr3
+                    vv2 = 1.2*aidr2*idr3
+
+                    vx +=  vv1*dx + vv2*srx
+                    vy +=  vv1*dy + vv2*sry
+                    vz +=  vv1*dz + vv2*srz
+
             vv[i]      +=  vx*mus
             vv[i+Nt]   +=  vy*mus
             vv[i+2*Nt] +=  vz*mus
         return
 
 
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D):
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, double maskR=1.0):
         """
         Compute flow field at field points due to 3t mode of the slip 
         ...
@@ -1141,7 +1147,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef  int i, ii 
-        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz,mud1 = -1.0*(self.a**5)/10
+        cdef double dx, dy, dz, dr, idr, idr3, Ddotidr, vx, vy, vz,mud1 = -1.0*(self.a**5)/10, radi=self.a
  
         for i in prange(Nt, nogil=True):
             vx =0.0; vy = 0.0; vz =0.0;
@@ -1149,13 +1155,16 @@ cdef class Flow:
                 dx = rt[i]      - r[ii]
                 dy = rt[i+Nt]   - r[ii+N]
                 dz = rt[i+2*Nt] - r[ii+2*N] 
-                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                idr3 = idr*idr*idr 
-                Ddotidr = (D[ii]*dx + D[ii+N]*dy + D[ii+2*N]*dz)*idr*idr
 
-                vx += (D[ii]      - 3.0*Ddotidr*dx )*idr3
-                vy += (D[ii+N]   - 3.0*Ddotidr*dy )*idr3
-                vz += (D[ii+2*N] - 3.0*Ddotidr*dz )*idr3
+                dr = sqrt( dx*dx + dy*dy + dz*dz )
+                if dr>maskR:
+                    idr = 1.0/dr
+                    idr3 = idr*idr*idr 
+                    Ddotidr = (D[ii]*dx + D[ii+N]*dy + D[ii+2*N]*dz)*idr*idr
+
+                    vx += (D[ii]      - 3.0*Ddotidr*dx )*idr3
+                    vy += (D[ii+N]   - 3.0*Ddotidr*dy )*idr3
+                    vz += (D[ii+2*N] - 3.0*Ddotidr*dz )*idr3
         
             vv[i]      += vx*mud1
             vv[i+Nt]   += vy*mud1
@@ -1164,7 +1173,7 @@ cdef class Flow:
         return 
 
 
-    cpdef flowField3s(self, double [:] vv, double [:] rt, double [:] r, double [:] G):
+    cpdef flowField3s(self, double [:] vv, double [:] rt, double [:] r, double [:] G, double maskR=1):
         """
         Compute flow field at field points  due to 3s mode of the slip 
         ...
@@ -1187,7 +1196,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii, 
-        cdef double dx, dy, dz, idr, idr5, idr7
+        cdef double dx, dy, dz, dr, idr, idr5, idr7, radi=self.a
         cdef double aidr2, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
         for i in prange(Nt, nogil=True):
             for ii in range(N):
@@ -1201,24 +1210,26 @@ cdef class Flow:
                 dx = rt[i]      - r[ii]
                 dy = rt[i+Nt]   - r[ii+N]
                 dz = rt[i+2*Nt] - r[ii+2*N] 
-                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                idr5 = idr*idr*idr*idr*idr      
-                idr7 = idr5*idr*idr     
-                aidr2 = self.a*self.a*idr*idr
-                
-                grrr = gxxx*dx*(dx*dx-3*dz*dz) + 3*gxxy*dy*(dx*dx-dz*dz) + gxxz*dz*(3*dx*dx-dz*dz) +\
-                       3*gxyy*dx*(dy*dy-dz*dz) + 6*gxyz*dx*dy*dz + gyyy*dy*(dy*dy-3*dz*dz) +  gyyz*dz*(3*dy*dy-dz*dz) 
-                grrx = gxxx*(dx*dx-dz*dz) + gxyy*(dy*dy-dz*dz) +  2*gxxy*dx*dy + 2*gxxz*dx*dz  +  2*gxyz*dy*dz
-                grry = gxxy*(dx*dx-dz*dz) + gyyy*(dy*dy-dz*dz) +  2*gxyy*dx*dy + 2*gxyz*dx*dz  +  2*gyyz*dy*dz
-                grrz = gxxz*(dx*dx-dz*dz) + gyyz*(dy*dy-dz*dz) +  2*gxyz*dx*dy - 2*(gxxx+gxyy)*dx*dz  - 2*(gxxy+gyyy)*dy*dz
-             
-                vv[i]      += 3*(1-(15.0/7)*aidr2)*grrx*idr5 - 15*(1-aidr2)*grrr*dx*idr7
-                vv[i+Nt]   += 3*(1-(15.0/7)*aidr2)*grry*idr5 - 15*(1-aidr2)*grrr*dy*idr7
-                vv[i+2*Nt] += 3*(1-(15.0/7)*aidr2)*grrz*idr5 - 15*(1-aidr2)*grrr*dz*idr7
+                dr = sqrt( dx*dx + dy*dy + dz*dz )
+                if dr>maskR:
+                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                    idr5 = idr*idr*idr*idr*idr      
+                    idr7 = idr5*idr*idr     
+                    aidr2 = self.a*self.a*idr*idr
+
+                    grrr = gxxx*dx*(dx*dx-3*dz*dz) + 3*gxxy*dy*(dx*dx-dz*dz) + gxxz*dz*(3*dx*dx-dz*dz) +\
+                           3*gxyy*dx*(dy*dy-dz*dz) + 6*gxyz*dx*dy*dz + gyyy*dy*(dy*dy-3*dz*dz) +  gyyz*dz*(3*dy*dy-dz*dz) 
+                    grrx = gxxx*(dx*dx-dz*dz) + gxyy*(dy*dy-dz*dz) +  2*gxxy*dx*dy + 2*gxxz*dx*dz  +  2*gxyz*dy*dz
+                    grry = gxxy*(dx*dx-dz*dz) + gyyy*(dy*dy-dz*dz) +  2*gxyy*dx*dy + 2*gxyz*dx*dz  +  2*gyyz*dy*dz
+                    grrz = gxxz*(dx*dx-dz*dz) + gyyz*(dy*dy-dz*dz) +  2*gxyz*dx*dy - 2*(gxxx+gxyy)*dx*dz  - 2*(gxxy+gyyy)*dy*dz
+
+                    vv[i]      += 3*(1-(15.0/7)*aidr2)*grrx*idr5 - 15*(1-aidr2)*grrr*dx*idr7
+                    vv[i+Nt]   += 3*(1-(15.0/7)*aidr2)*grry*idr5 - 15*(1-aidr2)*grrr*dy*idr7
+                    vv[i+2*Nt] += 3*(1-(15.0/7)*aidr2)*grrz*idr5 - 15*(1-aidr2)*grrr*dz*idr7
         return
 
 
-    cpdef flowField3a(self, double [:] vv, double [:] rt, double [:] r, double [:] V):
+    cpdef flowField3a(self, double [:] vv, double [:] rt, double [:] r, double [:] V, double maskR=1):
         """
         Compute flow field at field points  due to 3a mode of the slip 
         ...
@@ -1241,7 +1252,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii
-        cdef double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz
+        cdef double dx, dy, dz, dr, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz, radi=self.a
  
         for i in prange(Nt, nogil=True):
             for ii in range(N):
@@ -1253,19 +1264,21 @@ cdef class Flow:
                 dx = rt[i]      - r[ii]
                 dy = rt[i+Nt]   - r[ii+N]
                 dz = rt[i+2*Nt] - r[ii+2*N] 
-                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
-                idr5 = idr*idr*idr*idr*idr
-                vrx = vxx*dx +  vxy*dy + vxz*dz  
-                vry = vxy*dx +  vyy*dy + vyz*dz  
-                vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
+                dr = sqrt( dx*dx + dy*dy + dz*dz )
+                if dr>radi:
+                    idr = 1.0/dr
+                    idr5 = idr*idr*idr*idr*idr
+                    vrx = vxx*dx +  vxy*dy + vxz*dz  
+                    vry = vxy*dx +  vyy*dy + vyz*dz  
+                    vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
 
-                vv[i]      += 8*( dy*vrz - dz*vry )*idr5
-                vv[i+Nt]   += 8*( dz*vrx - dx*vrz )*idr5
-                vv[i+2*Nt] += 8*( dx*vry - dy*vrx )*idr5 
+                    vv[i]      += 8*( dy*vrz - dz*vry )*idr5
+                    vv[i+Nt]   += 8*( dz*vrx - dx*vrz )*idr5
+                    vv[i+2*Nt] += 8*( dx*vry - dy*vrx )*idr5 
         return 
 
 
-    cpdef flowField4a(self, double [:] vv, double [:] rt, double [:] r, double [:] M):
+    cpdef flowField4a(self, double [:] vv, double [:] rt, double [:] r, double [:] M, double maskR=1):
         """
         Compute flow field at field points  due to 4a mode of the slip 
         ...
@@ -1288,7 +1301,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii
-        cdef double dx, dy, dz, idr, idr7
+        cdef double dx, dy, dz, idr, idr7, dr, radi=self.a
         cdef double mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
  
         for i in prange(Nt, nogil=True):
@@ -1303,14 +1316,16 @@ cdef class Flow:
                 dx = rt[i]      - r[ii]
                 dy = rt[i+Nt]   - r[ii+N]
                 dz = rt[i+2*Nt] - r[ii+2*N] 
-                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                idr7 = idr*idr*idr*idr*idr*idr*idr
-                mrrx = mxxx*(dx*dx-dz*dz) + mxyy*(dy*dy-dz*dz) +  2*mxxy*dx*dy + 2*mxxz*dx*dz  +  2*mxyz*dy*dz
-                mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
-                mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz  - 2*(mxxy+myyy)*dy*dz
-                
-                vv[i]      -= 6*( dy*mrrz - dz*mrry )*idr7
-                vv[i+Nt]   -= 6*( dz*mrrx - dx*mrrz )*idr7
-                vv[i+2*Nt] -= 6*( dx*mrry - dy*mrrx )*idr7
+                dr = sqrt( dx*dx + dy*dy + dz*dz )
+                if dr>radi:
+                    idr = 1.0/dr                
+                    idr7 = idr*idr*idr*idr*idr*idr*idr
+                    mrrx = mxxx*(dx*dx-dz*dz) + mxyy*(dy*dy-dz*dz) +  2*mxxy*dx*dy + 2*mxxz*dx*dz  +  2*mxyz*dy*dz
+                    mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
+                    mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz  - 2*(mxxy+myyy)*dy*dz
+
+                    vv[i]      -= 6*( dy*mrrz - dz*mrry )*idr7
+                    vv[i+Nt]   -= 6*( dz*mrrx - dx*mrrz )*idr7
+                    vv[i+2*Nt] -= 6*( dx*mrry - dy*mrrx )*idr7
         return
 

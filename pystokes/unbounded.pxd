@@ -72,23 +72,23 @@ cdef class Flow:
     cdef int N
     cdef int Nt
 
-    cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F)
+    cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, double maskR=?)
                
-    cpdef flowField2a(   self, double [:] vv, double [:] rt, double [:] r, double [:] T)
+    cpdef flowField2a(   self, double [:] vv, double [:] rt, double [:] r, double [:] T, double maskR=?)
 
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S)
-
-
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D)
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, double maskR=?)
 
 
-    cpdef flowField3s(self,   double [:] vv, double [:] rt, double [:] r, double [:] G)
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, double maskR=?)
 
 
-    cpdef flowField3a(self,   double [:] vv, double [:] rt, double [:] r, double [:] V)
+    cpdef flowField3s(self,   double [:] vv, double [:] rt, double [:] r, double [:] G, double maskR=?)
 
 
-    cpdef flowField4a(self,   double [:] vv, double [:] rt, double [:] r, double [:] M)
+    cpdef flowField3a(self,   double [:] vv, double [:] rt, double [:] r, double [:] V, double maskR=?)
+
+
+    cpdef flowField4a(self,   double [:] vv, double [:] rt, double [:] r, double [:] M, double maskR=?)
 
 
 

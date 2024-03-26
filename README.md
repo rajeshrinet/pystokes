@@ -86,14 +86,14 @@ Test installation and running
 
 ```bash
 >> cd tests
->> python shortTests.py
+>> python test_short.py
 ```
 
 Long test of example notebooks 
 
 ```bash
 >> cd tests
->> python notebookTests.py
+>> python test_notebooks.py
 ```
 
 

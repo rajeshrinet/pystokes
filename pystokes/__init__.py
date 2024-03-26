@@ -6,7 +6,9 @@ import pystokes.utils
 import pystokes.wallBounded
 import pystokes.forceFields
 import pystokes.phoretic.unbounded
-import pystokes.phoretic.wallBounded
+import pystokes.phoretic.wallBounded 
+import pystokes.power.unbounded
+import pystokes.power.wallBounded
 
 
 

@@ -386,7 +386,7 @@ def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, 
             ss[1, ii]      = 1*(0 + j)
     plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density, zorder=1)
     for i in range(N):
-        ax.add_patch(patches.Circle((r[i],r[i+N]),1,color='k',alpha=1))
+        ax.add_patch(patches.Circle((r[i],r[i+2*N]),1,color='k',alpha=1))
 
     plt.xlim(np.min(yy), np.max(yy))
     plt.ylim(np.min(zz), np.max(zz))
@@ -489,7 +489,7 @@ def plotContoursYZ(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, offse
         plt.title(title, fontsize=26);
 
     for i in range(N):
-        ax.add_patch(patches.Circle((r[i],r[i+N]),1,color='k',alpha=1))
+        ax.add_patch(patches.Circle((r[i],r[i+2*N]),1,color='k',alpha=1))
 
 
 
@@ -518,7 +518,7 @@ def plotContoursYZsurf(vv, rr, r, density=1.2, arrowSize=1.2, mask=0.6, ms=36, o
     plt.axhspan(-ww, ww, facecolor='black');
     plt.axis('off')
     for i in range(N):
-        ax.add_patch(patches.Circle((r[i],r[i+N]),1,color='k',alpha=1))
+        ax.add_patch(patches.Circle((r[i],r[i+2*N]),1,color='k',alpha=1))
 
     
     if title==str('None'):

@@ -25,4 +25,4 @@ jobs:
         run: python setup.py install 
 
       - name: Test example notebooks
-        run: cd tests && python shortTests.py
+        run: cd tests && python test_notebooks.py

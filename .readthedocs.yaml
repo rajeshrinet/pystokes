@@ -18,7 +18,7 @@ python:
 
 sphinx:
   builder: html
-  configuration: docs/conf.py
+  configuration: docs/sphinx/conf.py
 
 # Don't build the docs in additional formats like pdf or epub
 formats: []

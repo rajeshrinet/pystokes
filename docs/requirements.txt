@@ -27,7 +27,7 @@ exceptiongroup==1.2.0
 executing==2.0.1
 fastjsonschema==2.19.1
 fqdn==1.5.1
-idna==3.6
+idna==3.7
 imagesize==1.4.1
 importlib-metadata==7.0.1
 ipykernel==6.28.0

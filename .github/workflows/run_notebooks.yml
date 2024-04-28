@@ -21,10 +21,13 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
 
+      - name: Install setup
+        run: python -m pip install -U pip setuptools 
 
       - name: Install dependencies 
-        run: python -m pip install -U pip setuptools 
         run: python -m pip install -r requirements.txt
+
+      - name: Install dependencies test
         run: cd tests && python -m pip install -r test_req.txt
 
       - name: Install pystokes 

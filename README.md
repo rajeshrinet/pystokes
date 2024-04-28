@@ -20,6 +20,12 @@
 
 [PyStokes](https://github.com/rajeshrinet/pystokes) is a numerical library for phoresis and Stokesian hydrodynamics in Python. It uses a grid-free method, combining the integral representation of Laplace and Stokes equations, spectral expansion, and Galerkin discretization, to compute phoretic and hydrodynamic interactions between spheres with slip boundary conditions on their surfaces. The library also computes suspension scale quantities, such as rheological response, energy dissipation and fluid flow. The computational cost is quadratic in the number of particles and upto 1e5 particles have been accommodated on multicore computers. The library has been used to model suspensions of **microorganisms**,  **synthetic autophoretic particles** and **self-propelling droplets**. 
 
+You can take PyStokes for a spin online using Google Colab: <a target="_blank" href="https://colab.research.google.com/github/rajeshrinet/pystokes/blob/master/examples/ex01a-colab.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
+<br>
+
 Please read the PyStokes [paper](https://doi.org/10.21105/joss.02318) and [Wiki](https://github.com/rajeshrinet/pystokes/wiki) before you use PyStokes for your research. Included below are some examples from [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery): 
 
 ### Periodic orbits of active particles
@@ -181,3 +187,4 @@ A selected list of publications is given below. See full publication list [here]
 ## License
 We believe that openness and sharing improves the practice of science and increases the reach of its benefits. This code is released under the [MIT license](http://opensource.org/licenses/MIT). Our choice is guided by the excellent article on [Licensing for the scientist-programmer](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002598). 
 		
+

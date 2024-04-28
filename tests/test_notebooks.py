@@ -93,11 +93,11 @@ cwd0 =os.getcwd()
 os.chdir('../examples/')
 cwd =os.getcwd()
 
-path1 = cwd+'/ex1-unboundedFlow.ipynb'   
-path2 = cwd+'/ex2-flowPlaneSurface.ipynb'
-path3 = cwd+'/ex5-phoreticField.ipynb'
-path4 = cwd+'/ex8-holographicTrap.ipynb' 
-path5 = cwd+'/ex3-crystalNucleation.ipynb' 
+path1 = cwd+'/ex01-unboundedFlow.ipynb'   
+path2 = cwd+'/ex02-flowPlaneSurface.ipynb'
+path5 = cwd+'/ex03-crystalNucleation.ipynb' 
+path3 = cwd+'/ex05-phoreticField.ipynb'
+path4 = cwd+'/ex08-holographicTrap.ipynb' 
 test_notebook(path1)
 test_notebook(path2)
 test_notebook(path3)

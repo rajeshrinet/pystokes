@@ -1,5 +1,9 @@
 # PyStokes changelogs
 
+## 2.3.2
+* add modules to study power dissipation of active particles in unbounded and wallBounded geometries. 
+* See Eq.(18) in R.Singh and R.Adhikari J. Phys. Com. 2 025025 (2018).
+
 ## 2.2.5
 * add a function for MSD in 2D in utils 
 

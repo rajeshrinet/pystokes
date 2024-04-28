@@ -4,8 +4,6 @@
 ## PyStokes: phoresis and Stokesian hydrodynamics in Python ![Installation](https://github.com/rajeshrinet/pystokes/workflows/CI/badge.svg) ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg) [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02318/status.svg)](https://doi.org/10.21105/joss.02318) [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes) [![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes) [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)  
 
 [About](#about) 
-| [Blog](https://rajeshrinet.github.io/pystokes-blog/)
-| [News](#news) 
 | [Installation](#installation) 
 | [Documentation](https://pystokes.readthedocs.io/en/latest/) 
 | [Examples](#examples) 
@@ -151,12 +149,12 @@ pystokes.utils.plotContoursYZ(vv, rr, r, density=.8, offset=1e-16,  title='l=0')
 ```
 
 Other examples include
-* [Irreducible Active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex1-unboundedFlow.ipynb)
-* [Effect of plane boundaries on active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex2-flowPlaneSurface.ipynb)
-* [Active Brownian Hydrodynamics near a plane wall](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex3-crystalNucleation.ipynb)
-* [Flow-induced phase separation at a plane surface](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex4-crystallization.ipynb)
-* [Irreducible autophoretic fields](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex5-phoreticField.ipynb)
-* [Autophoretic arrest of flow-induced phase separation](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex6-arrestedCluster.ipynb)
+* [Irreducible Active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex01-unboundedFlow.ipynb)
+* [Effect of plane boundaries on active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex02-flowPlaneSurface.ipynb)
+* [Active Brownian Hydrodynamics near a plane wall](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex03-crystalNucleation.ipynb)
+* [Flow-induced phase separation at a plane surface](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex04-crystallization.ipynb)
+* [Irreducible autophoretic fields](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex05-phoreticField.ipynb)
+* [Autophoretic arrest of flow-induced phase separation](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex06-arrestedCluster.ipynb)
 
 
 ## Publications

@@ -1,6 +1,6 @@
 name: notebooks
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -23,6 +23,9 @@ jobs:
 
 
       - name: Install dependencies 
+        run: python -m pip install -U pip setuptools 
+        run: python -m pip install -U pip wheel 
+        run: python -m pip install -r requirements.txt
         run: cd tests && python -m pip install -r test_req.txt
 
       - name: Install pystokes 

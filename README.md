@@ -1,7 +1,14 @@
 ![Imagel](https://raw.githubusercontent.com/rajeshrinet/pystokes/master/examples/banner.png)
 
 
-## PyStokes: phoresis and Stokesian hydrodynamics in Python ![Installation](https://github.com/rajeshrinet/pystokes/workflows/CI/badge.svg) ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg) [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02318/status.svg)](https://doi.org/10.21105/joss.02318) [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes) [![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes) [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)  
+## PyStokes: phoresis and Stokesian hydrodynamics in Python 
+![Installation](https://github.com/rajeshrinet/pystokes/workflows/CI/badge.svg) 
+![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg) 
+[![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest) 
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02318/status.svg)](https://doi.org/10.21105/joss.02318) 
+[![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes)
+[![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes) ![Stars](https://img.shields.io/github/stars/rajeshrinet/compPhy) 
+![Forks](https://img.shields.io/github/forks/rajeshrinet/compPhy) 
 
 [About](#about) 
 | [Installation](#installation) 
@@ -11,7 +18,6 @@
 | [Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery)
 | [Support](#support) 
 | [License](#license)
-
 
 
 ## About
@@ -185,4 +191,5 @@ A selected list of publications is given below. See full publication list [here]
 ## License
 We believe that openness and sharing improves the practice of science and increases the reach of its benefits. This code is released under the [MIT license](http://opensource.org/licenses/MIT). Our choice is guided by the excellent article on [Licensing for the scientist-programmer](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002598). 
 		
+
 

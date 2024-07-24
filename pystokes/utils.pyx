@@ -297,7 +297,7 @@ def plotLogo():
     plt.streamplot(yy, zz, vy, vz, color="gray", arrowsize =arrowSize, density=density, linewidth=4.4, zorder=1)
     
     for i in range(N):
-        ax.add_patch(patches.Circle((r[i],r[i+N]),1,color='k',alpha=1))
+        ax.add_patch(patches.Circle((r[i],r[i+N]),1.1,facecolor='w',alpha=1,edgecolor="steelblue", linewidth=4))
     plt.grid()
     
     ww=0.3
@@ -338,9 +338,9 @@ def plotStreamlinesXY(vv, rr, r, density=0.82, arrowSize=1.2, mask=1, ms=36, off
             ss[0, ii]      = a0*(-5 + i)
             ss[1, ii]      = a0*(-5 + j)
 
-    plt.streamplot(xx, yy, vx, vy, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density, zorder=1)
+    plt.streamplot(xx, yy, vx, vy, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density, broken_streamlines=True, zorder=1)
     for i in range(N):
-        ax.add_patch(patches.Circle((r[i],r[i+N]),1.0,color='k',alpha=1))
+        ax.add_patch(patches.Circle((r[i],r[i+N]),1.1,facecolor='w',alpha=1,edgecolor="steelblue", linewidth=4))
         
     plt.xlim(np.min(xx), np.max(xx))
     plt.ylim(np.min(yy), np.max(yy))
@@ -386,7 +386,7 @@ def plotStreamlinesYZ(vv, rr, r, density=0.795, arrowSize=1.2, mask=0.6, ms=36, 
             ss[1, ii]      = 1*(0 + j)
     plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density, zorder=1)
     for i in range(N):
-        ax.add_patch(patches.Circle((r[i],r[i+2*N]),1,color='k',alpha=1))
+        ax.add_patch(patches.Circle((r[i],r[i+2*N]),1.1,facecolor='w',alpha=1,edgecolor="steelblue", linewidth=4))
 
     plt.xlim(np.min(yy), np.max(yy))
     plt.ylim(np.min(zz), np.max(zz))
@@ -432,7 +432,7 @@ def plotStreamlinesYZsurf(vv, rr, r, density=0.8, arrowSize=1.2, mask=0.6, ms=36
             ss[1, ii]      = 1*(0 + j)
     plt.streamplot(yy, zz, vy, vz, color="black", arrowsize =arrowSize, arrowstyle='->', start_points=ss.T, density=density, zorder=1)
     for i in range(N):
-        ax.add_patch(patches.Circle((r[i],r[i+2*N]),1,color='k',alpha=1))
+        ax.add_patch(patches.Circle((r[i],r[i+2*N]),1.1,facecolor='w',alpha=1,edgecolor="steelblue", linewidth=4))
 
     plt.xlim(np.min(yy), np.max(yy))
     ww=0.3

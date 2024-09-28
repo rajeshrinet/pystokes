@@ -65,7 +65,7 @@ cdef class Rbm:
 @cython.nonecheck(False)
 @cython.wraparound(False)
 cdef class Flow:
-    cdef readonly double a, eta
+    cdef readonly double b, eta
     cdef readonly int Nt, N
 
 

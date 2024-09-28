@@ -32,7 +32,7 @@ cdef class Rbm:
 
    """
     def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10, xi=123456789):
-        self.a   = radius
+        self.b   = radius
         self.N  = particles
         self.eta = viscosity
         self.L   = boxSize 
@@ -42,7 +42,7 @@ cdef class Rbm:
         else:
             self.xi = xi 
 
-        self.mu  = 1.0/(6*PI*self.eta*self.a)
+        self.mu  = 1.0/(6*PI*self.eta*self.b)
         self.muv = 1.0/(8*PI*self.eta)
 
 
@@ -72,14 +72,14 @@ cdef class Rbm:
 
         cdef int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1 ##used to be N1=-(Nm/2)+1
         cdef double L=self.L,  xi=self.xi, ixi2, siz=Nb*L, mu=self.mu, muv=self.muv
-        cdef double a2=self.a*self.a/3, aidr2, k0=2*PI/L, fac=8*PI/(L*L*L), 
+        cdef double a2=self.b*self.b/3, aidr2, k0=2*PI/L, fac=8*PI/(L*L*L), 
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1, mt, mpp
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
         
         if xi0 != 123456789:
             xi = xi0 
         ixi2=1/(xi*xi)
-        mt=IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0); mpp=mu*(1+mt)    # include M^2(r=0)
+        mt=IPI*xi*self.b*(-3+20*xi*xi*self.b*self.b/3.0); mpp=mu*(1+mt)    # include M^2(r=0)
 
         for i in prange(N, nogil=True):
             vx=0;  vy=0;  vz=0;
@@ -246,7 +246,7 @@ cdef class Rbm:
             double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, ik2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
-            double a2 = self.a*self.a*4.0/15, aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.a**3)/24 
+            double a2 = self.b*self.b*4.0/15, aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.b**3)/24 
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi),
@@ -347,12 +347,12 @@ cdef class Rbm:
         cdef double ixi2, vx, vy, vz
         cdef int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
         cdef double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
-        cdef double mud =3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
+        cdef double mud =3.0*self.b*self.b*self.b/5, mud1 = -1.0*(self.b**5)/10
         cdef double xd, yd, zd, xd1, yd1, zd1
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi),
-        mud = mud + mud1*IPI*xi*(80*xi*xi*self.a*self.a/3.0) ## adding the M^2(r=0) contribution
+        mud = mud + mud1*IPI*xi*(80*xi*xi*self.b*self.b/3.0) ## adding the M^2(r=0) contribution
 
         
         for i in prange(N, nogil=True):
@@ -434,7 +434,7 @@ cdef class Rbm:
             double xdr, xdr2, xdr3, xdr5, xdr7, e1, erxdr, D1, D2, D11, D22
             double dx, dy, dz, idr, idr5, idr7, kx, ky, kz, k2, cc, fac=8*PI/(L*L*L)
             double aidr2, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
-            double a2 = self.a*self.a*5/21
+            double a2 = self.b*self.b*5/21
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
@@ -886,7 +886,7 @@ cdef class Rbm:
             double ixi2, ox, oy, oz, fac=8*PI/(L*L*L)
             int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
             double dx, dy, dz, idr, idr5, sxx, syy, sxy, sxz, syz, srx, sry, srz, skx, sky, skz, s1
-            double kx, ky, kz, k2, xdr, xdr2, cc, mus = (28.0*self.a**3)/24
+            double kx, ky, kz, k2, xdr, xdr2, cc, mus = (28.0*self.b**3)/24
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
@@ -1246,17 +1246,22 @@ cdef class Flow:
     viscosity: viscosity of the fluid 
     gridpoints: int 
         Number of grid points
-    boxsize: int 
+    boxSize: int 
         Box size
 
     """
-    def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32, boxsize=10):
-        self.a  = radius
+    def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32, boxSize=10, xi=123456789):
+        self.b  = radius
         self.N = particles
         self.Nt = gridpoints
         self.eta= viscosity
-        self.L  = boxsize
+        self.L  = boxSize
 
+        if xi==123456789:
+            self.xi = sqrt(PI)/boxSize 
+            #Nijboer and De Wette have shown that \pi^{1/2}/V^{1/3} is a good choice for cubic lattices 
+        else:
+            self.xi = xi 
 
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, int Nb=6, int Nm=6, double xi0=123456789):
         """
@@ -1310,8 +1315,8 @@ cdef class Flow:
         >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
         cdef int N=self.N, Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
-        cdef double L=self.L,  xi=self.xi, ixi2, mu=1.0/(6*PI*self.eta*self.a), muv=mu*self.a*0.75, siz=Nb*L
-        cdef double a2=0*self.a*self.a/6, k0=2*PI/L, fac=8*PI/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
+        cdef double L=self.L,  xi=self.xi, ixi2, mu=1.0/(6*PI*self.eta*self.b), muv=mu*self.b*0.75, siz=Nb*L
+        cdef double a2=0*self.b*self.b/6, k0=2*PI/L, fac=8*PI/(L*L*L), mt= IPI*xi*self.b*(-3+20*xi*xi*self.b*self.b/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
         if xi0 != 123456789:
@@ -1398,7 +1403,7 @@ cdef class Flow:
             double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
-            double a2 = self.a*self.a*4.0/15,aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.a**3)/24, ik2
+            double a2 = self.b*self.b*4.0/15,aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.b**3)/24, ik2
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
@@ -1500,9 +1505,9 @@ cdef class Flow:
             double ixi2, vx, vy, vz
             int Nt=self.Nt,N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
             double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
-            double mud =3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
+            double mud =3.0*self.b*self.b*self.b/5, mud1 = -1.0*(self.b**5)/10
             double xd, yd, zd, xd1, yd1, zd1
-        mud = mud + mud1*IPI*xi*(80*xi*xi*self.a*self.a/3.0) ## adding the M^2(r=0) contribution
+        mud = mud + mud1*IPI*xi*(80*xi*xi*self.b*self.b/3.0) ## adding the M^2(r=0) contribution
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)

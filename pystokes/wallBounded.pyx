@@ -29,12 +29,12 @@ cdef class Rbm:
     """
 
     def __init__(self, radius=1, particles=1, viscosity=1.0):
-        self.a   = radius
+        self.b   = radius
         self.N  = particles
         self.eta = viscosity
-        self.mu  = 1.0/(6*PI*self.eta*self.a)
+        self.mu  = 1.0/(6*PI*self.eta*self.b)
         self.muv = 1.0/(8*PI*self.eta)
-        self.mur = 1.0/(8*PI*self.eta*self.a**3)
+        self.mur = 1.0/(8*PI*self.eta*self.b**3)
 
         self.Mobility = np.zeros( (3*self.N, 3*self.N), dtype=np.float64)
 
@@ -88,9 +88,9 @@ cdef class Rbm:
         cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz
-        cdef double mu=self.mu, muv=self.muv, a2=self.a*self.a/3.0
+        cdef double mu=self.mu, muv=self.muv, a2=self.b*self.b/3.0
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv3, hbar_inv5
         cdef double muTTpara1 = -9./16., muTTpara2 = 1./8.
         cdef double muTTpara3 = -1./16.
@@ -184,9 +184,9 @@ cdef class Rbm:
         cdef double vx, vy, vz, T1, T2, T3
         cdef double muv=self.muv
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv4
-        cdef double muTR0 = 4.0/(3*self.a*self.a)
+        cdef double muTR0 = 4.0/(3*self.b*self.b)
         cdef double muTR2 = 3./32.0
         cdef double muTR
 
@@ -261,9 +261,9 @@ cdef class Rbm:
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr4, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz
-        cdef double vx, vy, vz, mus=(28.0*self.a**3)/24
+        cdef double vx, vy, vz, mus=(28.0*self.b**3)/24
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv4, hbar_inv6
         cdef double piT2s11 = 5./16.0, piT2s12 = -1./4.
         cdef double piT2s13 = 5./48.0
@@ -384,9 +384,9 @@ cdef class Rbm:
 
         cdef int N=self.N, i, j, xx=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2
-        cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, muv = -1.0*(self.a**5)/10
+        cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv3, hbar_inv5
         cdef double piT3tpara1 = -1./40.
         cdef double piT3tpara2 = 1./40.
@@ -473,9 +473,9 @@ cdef class Rbm:
         cdef double dx, dy, dz, idr, idr3, rlz, Fdotidr, h2
         cdef double ox, oy, oz, muv=self.muv
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv4
-        cdef double muRT0 = 4.0/(3*self.a*self.a)
+        cdef double muRT0 = 4.0/(3*self.b*self.b)
         cdef double muRT2 = -3./32.0
         cdef double muRT, F1, F2
 
@@ -551,7 +551,7 @@ cdef class Rbm:
         cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
         cdef double ox, oy, oz, mur=self.mur, muv=self.muv
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv3
         cdef double muRRpara = -5./16.0
         cdef double muRRperp = -1./8.0
@@ -616,9 +616,9 @@ cdef class Rbm:
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz, rlz, smr3, smkrk3
-        cdef double ox, oy, oz, mus = (28.0*self.a**3)/24
+        cdef double ox, oy, oz, mus = (28.0*self.b**3)/24
         
-        cdef double a = self.a, a_inv = 1.0/a
+        cdef double a = self.b, a_inv = 1.0/a
         cdef double h, hbar_inv, hbar_inv3, hbar_inv5
         cdef double piR2s1 = 5.0/32.0, piR2s2 = -1./8.0
         cdef double piR2s
@@ -737,7 +737,7 @@ cdef class Rbm:
         cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
         cdef double ox, oy, oz, mur=self.mur, muv=self.muv
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv4
         cdef double piR3t0 = 3./(80.0*a)
         cdef double piR3t, V1, V2
@@ -923,8 +923,8 @@ cdef class Rbm:
 
         cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
-        cdef double mu=self.mu, muv=2*mu*self.a*0.75, a2=self.a*self.a/3.0
-        cdef double vx, vy, vz, mm=1/(.75*self.a)
+        cdef double mu=self.mu, muv=2*mu*self.b*0.75, a2=self.b*self.b/3.0
+        cdef double vx, vy, vz, mm=1/(.75*self.b)
 
         cdef double [:, :] M = self.Mobility
         cdef double [:]    Fr = np.random.normal(size=3*N)
@@ -1083,7 +1083,7 @@ cdef class Rbm:
 
         cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
-        cdef double mur=self.mur, muv=0.25*sqrt(2.0)*mur, mm=4/(self.a**3)
+        cdef double mur=self.mur, muv=0.25*sqrt(2.0)*mur, mm=4/(self.b**3)
         cdef double ox, oy, oz
 
         cdef double [:, :] M = self.Mobility
@@ -1208,14 +1208,14 @@ cdef class Rbm:
         
         cdef double [:]    Fr = np.random.normal(size=3*N)
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
         cdef double muTTparaCoeff1 = -9./16., muTTparaCoeff2 = 1./8.
         cdef double muTTparaCoeff3 = -1./16.
         cdef double muTTperpCoeff1 = -9./8., muTTperpCoeff2 = 1./2.
         cdef double muTTperpCoeff3 = -1./8.
         
-        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
+        cdef double muTRCoeff = 4.0/(3*self.b*self.b)
         cdef double muTRCoeff1 = 3./32.0
         
         cdef double muRRparaCoeff = -5./16.0
@@ -1274,14 +1274,14 @@ cdef class Rbm:
         
         cdef double [:]    Tr = np.random.normal(size=3*N)
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
         cdef double muTTparaCoeff1 = -9./16., muTTparaCoeff2 = 1./8.
         cdef double muTTparaCoeff3 = -1./16.
         cdef double muTTperpCoeff1 = -9./8., muTTperpCoeff2 = 1./2.
         cdef double muTTperpCoeff3 = -1./8.
         
-        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
+        cdef double muTRCoeff = 4.0/(3*self.b*self.b)
         cdef double muTRCoeff1 = 3./32.0
         
         cdef double muRRparaCoeff = -5./16.0
@@ -1336,14 +1336,14 @@ cdef class Rbm:
         
         cdef double [:]    Fr = np.random.normal(size=3*N)
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
         cdef double muTTparaCoeff1 = -9./16., muTTparaCoeff2 = 1./8.
         cdef double muTTparaCoeff3 = -1./16.
         cdef double muTTperpCoeff1 = -9./8., muTTperpCoeff2 = 1./2.
         cdef double muTTperpCoeff3 = -1./8.
         
-        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
+        cdef double muTRCoeff = 4.0/(3*self.b*self.b)
         cdef double muTRCoeff1 = 3./32.0
         
         cdef double muRRparaCoeff = -5./16.0
@@ -1398,14 +1398,14 @@ cdef class Rbm:
         
         cdef double [:]    Tr = np.random.normal(size=3*N)
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
         cdef double muTTparaCoeff1 = -9./16., muTTparaCoeff2 = 1./8.
         cdef double muTTparaCoeff3 = -1./16.
         cdef double muTTperpCoeff1 = -9./8., muTTperpCoeff2 = 1./2.
         cdef double muTTperpCoeff3 = -1./8.
         
-        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
+        cdef double muTRCoeff = 4.0/(3*self.b*self.b)
         cdef double muTRCoeff1 = 3./32.0
         
         cdef double muRRparaCoeff = -5./16.0
@@ -1488,7 +1488,7 @@ cdef class Flow:
     """
 
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
-        self.a  = radius
+        self.b  = radius
         self.N = particles
         self.Nt = gridpoints
         self.eta= viscosity
@@ -1542,7 +1542,7 @@ cdef class Flow:
 
         cdef int i, j, N=self.N, Nt=self.Nt, xx=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, tempF, hsq, h2
-        cdef double vx, vy, vz, muv=1.0/(8*PI*self.eta), a2=self.a*self.a/6.0
+        cdef double vx, vy, vz, muv=1.0/(8*PI*self.eta), a2=self.b*self.b/6.0
 
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
@@ -1648,7 +1648,7 @@ cdef class Flow:
         cdef double vx, vy, vz, muv = 1.0/(8*PI*self.eta)
 #        cdef int i, j, N=self.N, Nt=self.Nt, xx=2*N
 #        cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, tempF, hsq, h2
-#        cdef double vx, vy, vz, muv=1.0/(8*PI*self.eta), a2=self.a*self.a/6.0
+#        cdef double vx, vy, vz, muv=1.0/(8*PI*self.eta), a2=self.b*self.b/6.0
  
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
@@ -1744,7 +1744,7 @@ cdef class Flow:
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz 
-        cdef double vx, vy, vz, mus = (28.0*self.a**3)/24 
+        cdef double vx, vy, vz, mus = (28.0*self.b**3)/24 
 
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
@@ -1868,7 +1868,7 @@ cdef class Flow:
 
         cdef int i, j, N=self.N, Nt=self.Nt, xx=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2
-        cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, muv = -1.0*(self.a**5)/10
+        cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
 
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
@@ -1936,11 +1936,11 @@ cdef class PD:
     """
 
     def __init__(self, radius=1, particles=1, viscosity=1.0):
-        self.a   = radius
+        self.b   = radius
         self.N  = particles
         self.eta = viscosity
-        self.gammaT = 6*PI*self.eta*self.a
-        self.gammaR = 8*PI*self.eta*self.a**3
+        self.gammaT = 6*PI*self.eta*self.b
+        self.gammaR = 8*PI*self.eta*self.b**3
         self.mu  = 1.0/self.gammaT
         self.muv = 1.0/(8*PI*self.eta)
         self.mur = 1.0/self.gammaR
@@ -1967,10 +1967,10 @@ cdef class PD:
         cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Vdotidr, h2, hsq, tempV
         cdef double vx, vy, vz
-        cdef double mu=self.mu, muv=self.muv, a2=self.a*self.a/3.0
+        cdef double mu=self.mu, muv=self.muv, a2=self.b*self.b/3.0
         cdef double gT=self.gammaT, gg = -gT*gT
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv3, hbar_inv5
         cdef double muTTpara1 = -9./16., muTTpara2 = 1./8.
         cdef double muTTpara3 = -1./16.
@@ -2065,9 +2065,9 @@ cdef class PD:
         cdef double vx, vy, vz, T1, T2, T3
         cdef double muv=self.muv, gg=-self.gammaT*self.gammaR
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv4
-        cdef double muTR0 = 4.0/(3*self.a*self.a)
+        cdef double muTR0 = 4.0/(3*self.b*self.b)
         cdef double muTR2 = 3./32.0
         cdef double muTR
 
@@ -2143,9 +2143,9 @@ cdef class PD:
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr4, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz
-        cdef double vx, vy, vz, mus=(28.0*self.a**3)/24
+        cdef double vx, vy, vz, mus=(28.0*self.b**3)/24
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv4, hbar_inv6
         cdef double piT2s11 = 5./16.0, piT2s12 = -1./4.
         cdef double piT2s13 = 5./48.0
@@ -2267,9 +2267,9 @@ cdef class PD:
 
         cdef int N=self.N, i, j, xx=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2
-        cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, muv = -1.0*(self.a**5)/10
+        cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv3, hbar_inv5
         cdef double piT3tpara1 = -1./40.
         cdef double piT3tpara2 = 1./40.
@@ -2360,9 +2360,9 @@ cdef class PD:
         cdef double dx, dy, dz, idr, idr3, rlz, Fdotidr, h2
         cdef double ox, oy, oz, muv=self.muv
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv4
-        cdef double muRT0 = 4.0/(3*self.a*self.a)
+        cdef double muRT0 = 4.0/(3*self.b*self.b)
         cdef double muRT2 = -3./32.0
         cdef double muRT, F1, F2
         cdef double gg = -self.gammaT * self.gammaR
@@ -2437,7 +2437,7 @@ cdef class PD:
         cdef double dx, dy, dz, idr, idr3, idr5, Odotidr, tempO, hsq, h2
         cdef double ox, oy, oz, mur=self.mur, muv=self.muv
         
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv3
         cdef double muRRpara = -5./16.0
         cdef double muRRperp = -1./8.0

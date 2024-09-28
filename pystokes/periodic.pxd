@@ -8,7 +8,7 @@ from cython.parallel import prange
 @cython.nonecheck(False)
 cdef class Rbm:
     cdef int N
-    cdef double a, eta, L, mu, xi, muv, mur
+    cdef double b, eta, L, mu, xi, muv, mur
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, int Nb=?, int Nm=?, double xi0=?)
     
@@ -57,9 +57,9 @@ cdef class Rbm:
 @cython.cdivision(True)
 @cython.nonecheck(False)
 cdef class Flow:
-    cdef double a
+    cdef double b
     cdef int N, Nt
-    cdef double L, eta
+    cdef double L, eta, xi
 
     cpdef flowField1s(self, double [:] v, double [:] rt, double [:] r, double [:] F, int Nb=?, int Nm=?, double xi0=?)
     

@@ -27,9 +27,9 @@ cdef class Rbm:
     """
  
 
-    def __init__(self, a, N, eta):
-        self.a  = a                 # radius of the particles
-        self.N = N                # number of particles
+    def __init__(self, b, N, eta):
+        self.b   = b                 # radius of the particles
+        self.N   = N                # number of particles
         self.eta = eta                # number of particles
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, double H):
@@ -55,7 +55,7 @@ cdef class Rbm:
         cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, idr2, Fdotidr2, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H
-        cdef double mu = 1.0/(6*PI*self.eta*self.a), mu1 = mu*self.a*0.75, a2=self.a*self.a/3.0
+        cdef double mu = 1.0/(6*PI*self.eta*self.b), mu1 = mu*self.b*0.75, a2=self.b*self.b/3.0
         cdef double fac0 = 3/(PI*self.eta*H*H*H), fac1, fac2
  
         for i in prange(N, nogil=True):
@@ -102,7 +102,7 @@ cdef class Rbm:
         cdef double dx, dy, dz, idr, idr2, idr4, idr6, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz 
-        cdef double vx, vy, vz, mus =-(28.0*self.a**3)/24, tH = 2*H
+        cdef double vx, vy, vz, mus =-(28.0*self.b**3)/24, tH = 2*H
         cdef double fac0 = 3/(PI*self.eta*H*H*H), fac1, fac2
 
         for i in prange(N, nogil=True):
@@ -156,7 +156,7 @@ cdef class Rbm:
 
         cdef int N=self.N, i, j, xx=2*N
         cdef double dx, dy, dz, idr, idr2, idr5, Ddotidr, tempD, hsq, h2, tH=2*H
-        cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5
+        cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5
         cdef double fac0 = 6/(PI*self.eta*H*H*H), fac1, fac2
 
         for i in prange(N, nogil=True):
@@ -204,7 +204,7 @@ cdef class Flow:
     """
 
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
-        self.a  = radius
+        self.b  = radius
         self.N = particles
         self.Nt = gridpoints
         self.eta= viscosity
@@ -236,7 +236,7 @@ cdef class Flow:
         cdef int i, j, N=self.N, xx=2*N, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H
-        cdef double mu = 1.0/(6*PI*self.eta*self.a), mu1 = mu*self.a*0.75, a2=self.a*self.a/3.0
+        cdef double mu = 1.0/(6*PI*self.eta*self.b), mu1 = mu*self.b*0.75, a2=self.b*self.b/3.0
         cdef double fac0 = 3/(PI*self.eta*H*H*H), fac1, fac2
  
         for i in prange(Nt, nogil=True):
@@ -282,7 +282,7 @@ cdef class Flow:
         cdef double dx, dy, dz, idr, idr2, idr4, idr6, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz 
-        cdef double vx, vy, vz, mus =-(28.0*self.a**3)/24, tH = 2*H
+        cdef double vx, vy, vz, mus =-(28.0*self.b**3)/24, tH = 2*H
         cdef double fac0 = 3/(PI*self.eta*H*H*H), fac1, fac2
 
  
@@ -335,7 +335,7 @@ cdef class Flow:
         cdef int i, j, N=self.N, xx=2*N, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr2, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H, Ddotidr
-        cdef double mu = 1.0/(6*PI*self.eta*self.a), mu1 = mu*self.a*0.75, a2=self.a*self.a/3.0
+        cdef double mu = 1.0/(6*PI*self.eta*self.b), mu1 = mu*self.b*0.75, a2=self.b*self.b/3.0
         cdef double fac0 = 3/(PI*self.eta*H*H*H), fac1, fac2
  
         for i in prange(Nt, nogil=True):

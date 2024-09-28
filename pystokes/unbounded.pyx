@@ -35,12 +35,12 @@ cdef class Rbm:
    """
 
     def __init__(self, radius=1, particles=1, viscosity=1.0):
-        self.a   = radius
+        self.b   = radius
         self.N  = particles
         self.eta = viscosity
-        self.mu  = 1.0/(6*PI*self.eta*self.a)
+        self.mu  = 1.0/(6*PI*self.eta*self.b)
         self.muv = 1.0/(8*PI*self.eta)
-        self.mur = 1.0/(8*PI*self.eta*self.a**3)
+        self.mur = 1.0/(8*PI*self.eta*self.b**3)
 
         self.Mobility = np.zeros( (3*self.N, 3*self.N), dtype=np.float64)
 
@@ -94,7 +94,7 @@ cdef class Rbm:
 
 
         cdef int N  = self.N, i, j, xx=2*N
-        cdef double dx, dy, dz, idr, idr2, vx, vy, vz, vv1, vv2, aa = (2.0*self.a*self.a)/3.0 
+        cdef double dx, dy, dz, idr, idr2, vx, vy, vz, vv1, vv2, aa = (2.0*self.b*self.b)/3.0 
         cdef double mu=self.mu, muv=self.muv        
         
         for i in prange(N, nogil=True):
@@ -181,9 +181,9 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j, xx=2*N, xx1=3*N, xx2=4*N
         cdef double dx, dy, dz, dr, idr,  idr3
-        cdef double aa=(self.a*self.a*8.0)/3.0, vv1, vv2, aidr2
+        cdef double aa=(self.b*self.b*8.0)/3.0, vv1, vv2, aidr2
         cdef double vx, vy, vz, 
-        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = -(28.0*self.a*self.a)/24 
+        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = -(28.0*self.b*self.b)/24 
  
         for i in prange(N, nogil=True):
             vx=0; vy=0;   vz=0;
@@ -238,7 +238,7 @@ cdef class Rbm:
         """
 
         cdef int N = self.N, i, j, xx=2*N  
-        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**3)/5
+        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, mud1 = -1.0*(self.b**3)/5
  
         for i in prange(N, nogil=True):
             vx=0; vy=0;   vz=0; 
@@ -344,7 +344,7 @@ cdef class Rbm:
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr5 = idr*idr*idr*idr*idr      
                     idr7 = idr5*idr*idr     
-                    aidr2 = (10.0/3)*self.a*self.a*idr*idr
+                    aidr2 = (10.0/3)*self.b*self.b*idr*idr
                     
                     grrr = gxxx*dx*(dx*dx-3*dz*dz) + 3*gxxy*dy*(dx*dx-dz*dz) + gxxz*dz*(3*dx*dx-dz*dz) +\
                        3*gxyy*dx*(dy*dy-dz*dz) + 6*gxyz*dx*dy*dz + gyyy*dy*(dy*dy-3*dz*dz) +  gyyz*dz*(3*dy*dy-dz*dz) 
@@ -512,7 +512,7 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j, xx=2*N 
         cdef double dx, dy, dz, idr, idr5, ox, oy, oz
-        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = -(28.0*self.a*self.a)/24
+        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = -(28.0*self.b*self.b)/24
  
         for i in prange(N, nogil=True):
             ox=0;   oy=0;   oz=0;
@@ -709,8 +709,8 @@ cdef class Rbm:
 
         cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
-        cdef double mu=self.mu, muv=2*mu*self.a*0.75, a2=self.a*self.a/3.0
-        cdef double vx, vy, vz, mm=1/(.75*self.a)
+        cdef double mu=self.mu, muv=2*mu*self.b*0.75, a2=self.b*self.b/3.0
+        cdef double vx, vy, vz, mm=1/(.75*self.b)
 
         cdef double [:, :] M = self.Mobility
         cdef double [:]    Fr = np.random.normal(size=3*N)
@@ -788,7 +788,7 @@ cdef class Rbm:
 
         cdef int i, j, N=self.N, xx=2*N
         cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
-        cdef double mur=1/(8*np.pi*self.eta), muv=0.25*sqrt(2.0)*mur, mm=4/(self.a**3)
+        cdef double mur=1/(8*np.pi*self.eta), muv=0.25*sqrt(2.0)*mur, mm=4/(self.b**3)
         cdef double ox, oy, oz
 
         cdef double [:, :] M = self.Mobility
@@ -869,7 +869,7 @@ cdef class Flow:
 
 
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
-        self.a  = radius
+        self.b  = radius
         self.N = particles
         self.Nt = gridpoints
         self.eta= viscosity
@@ -921,8 +921,8 @@ cdef class Flow:
 
         cdef int N = self.N,  Nt = self.Nt
         cdef int i, ii, xx = 2*N
-        cdef double dx, dy, dz, dr, idr, idr2, vv1, vv2, vx, vy, vz, radi=self.a
-        cdef double muv = 1/(8*PI*self.eta), aa = self.a*self.a/3.0
+        cdef double dx, dy, dz, dr, idr, idr2, vv1, vv2, vx, vy, vz, radi=self.b
+        cdef double muv = 1/(8*PI*self.eta), aa = self.b*self.b/3.0
         for i in prange(Nt, nogil=True):
             vx = 0.0; vy = 0.0; vz = 0.0;
             for ii in range(N):
@@ -995,7 +995,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii, xx = 2*N
-        cdef double dx, dy, dz, dr, idr, idr3, vx, vy, vz, mur1 = 1.0/(8*PI*self.eta), radi=self.a
+        cdef double dx, dy, dz, dr, idr, idr3, vx, vy, vz, mur1 = 1.0/(8*PI*self.eta), radi=self.b
         for i in prange(Nt, nogil=True):
             vx = 0.0; vy = 0.0; vz = 0.0;
             for ii in range(N):
@@ -1065,7 +1065,7 @@ cdef class Flow:
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii, xx= 2*N, xx1= 3*N, xx2 = 4*N
         cdef double dx, dy, dz, dr, idr, idr3, aidr2, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
-        cdef double aa = self.a**2, vv1, vv2, vx, vy, vz, mus = (28.0*self.a**3)/24, radi=self.a
+        cdef double aa = self.b**2, vv1, vv2, vx, vy, vz, mus = (28.0*self.b**3)/24, radi=self.b
         for i in prange(Nt, nogil=True):
             vx = 0.0;vy = 0.0; vz = 0.0;
             for ii in range(N):
@@ -1149,7 +1149,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef  int i, ii 
-        cdef double dx, dy, dz, dr, idr, idr3, Ddotidr, vx, vy, vz,mud1 = -1.0*(self.a**5)/10, radi=self.a
+        cdef double dx, dy, dz, dr, idr, idr3, Ddotidr, vx, vy, vz,mud1 = -1.0*(self.b**5)/10, radi=self.b
  
         for i in prange(Nt, nogil=True):
             vx =0.0; vy = 0.0; vz =0.0;
@@ -1198,7 +1198,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii, 
-        cdef double dx, dy, dz, dr, idr, idr5, idr7, radi=self.a
+        cdef double dx, dy, dz, dr, idr, idr5, idr7, radi=self.b
         cdef double aidr2, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
         for i in prange(Nt, nogil=True):
             for ii in range(N):
@@ -1217,7 +1217,7 @@ cdef class Flow:
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr5 = idr*idr*idr*idr*idr      
                     idr7 = idr5*idr*idr     
-                    aidr2 = self.a*self.a*idr*idr
+                    aidr2 = self.b*self.b*idr*idr
 
                     grrr = gxxx*dx*(dx*dx-3*dz*dz) + 3*gxxy*dy*(dx*dx-dz*dz) + gxxz*dz*(3*dx*dx-dz*dz) +\
                            3*gxyy*dx*(dy*dy-dz*dz) + 6*gxyz*dx*dy*dz + gyyy*dy*(dy*dy-3*dz*dz) +  gyyz*dz*(3*dy*dy-dz*dz) 
@@ -1254,7 +1254,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii
-        cdef double dx, dy, dz, dr, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz, radi=self.a
+        cdef double dx, dy, dz, dr, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz, radi=self.b
  
         for i in prange(Nt, nogil=True):
             for ii in range(N):
@@ -1303,7 +1303,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii
-        cdef double dx, dy, dz, idr, idr7, dr, radi=self.a
+        cdef double dx, dy, dz, idr, idr7, dr, radi=self.b
         cdef double mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
  
         for i in prange(Nt, nogil=True):
@@ -1362,11 +1362,11 @@ cdef class PD:
    """
 
     def __init__(self, radius=1, particles=1, viscosity=1.0):
-        self.a   = radius
+        self.b   = radius
         self.N  = particles
         self.eta = viscosity
-        self.gammaT = 6*PI*self.eta*self.a
-        self.gammaR = 8*PI*self.eta*self.a**3
+        self.gammaT = 6*PI*self.eta*self.b
+        self.gammaR = 8*PI*self.eta*self.b**3
         self.mu  = 1.0/self.gammaT
         self.muv = 1.0/(8*PI*self.eta)
         self.mur = 1.0/(self.gammaR)
@@ -1392,7 +1392,7 @@ cdef class PD:
 
 
         cdef int N  = self.N, i, j, xx=2*N
-        cdef double dx, dy, dz, idr, idr2, vx, vy, vz, vv1, vv2, aa = (2.0*self.a*self.a)/3.0 
+        cdef double dx, dy, dz, idr, idr2, vx, vy, vz, vv1, vv2, aa = (2.0*self.b*self.b)/3.0 
         cdef double gT=self.gammaT, gg = -gT*gT, muv=self.muv        
         
         for i in prange(N, nogil=True):
@@ -1481,9 +1481,9 @@ cdef class PD:
 
         cdef int N = self.N, i, j, xx=2*N, xx1=3*N, xx2=4*N
         cdef double dx, dy, dz, dr, idr,  idr3
-        cdef double aa=(self.a*self.a*8.0)/3.0, vv1, vv2, aidr2
+        cdef double aa=(self.b*self.b*8.0)/3.0, vv1, vv2, aidr2
         cdef double vx, vy, vz, 
-        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (28.0*self.a**3)/24 
+        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (28.0*self.b**3)/24 
         cdef double gT = self.gammaT
  
         for i in prange(N, nogil=True):
@@ -1540,7 +1540,7 @@ cdef class PD:
         """
 
         cdef int N = self.N, i, j, xx=2*N  
-        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
+        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, mud1 = -1.0*(self.b**5)/10
         cdef double gammaT = self.gammaT
  
         for i in prange(N, nogil=True):

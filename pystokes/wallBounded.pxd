@@ -13,7 +13,7 @@ cdef class Rbm:
 
     cdef readonly int Nx, Ny, Nz, N
     cdef readonly np.ndarray Mobility
-    cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, eta, mu, muv, mur
+    cdef readonly double Lx, Ly, Lz, b, facx, facy, facz, eta, mu, muv, mur
 
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F)
@@ -86,7 +86,7 @@ cdef class PD:
 
     cdef readonly int Nx, Ny, Nz, N
     cdef readonly np.ndarray Mobility
-    cdef readonly double Lx, Ly, Lz, a, facx, facy, facz, eta, gammaT, gammaR, mu, muv, mur
+    cdef readonly double Lx, Ly, Lz, b, facx, facy, facz, eta, gammaT, gammaR, mu, muv, mur
 
 
     cpdef frictionTT(self, double depsilon, double [:] v, double [:] r)

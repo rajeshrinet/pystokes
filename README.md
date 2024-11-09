@@ -7,7 +7,8 @@
 [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest) 
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.02318/status.svg)](https://doi.org/10.21105/joss.02318) 
 [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes)
-[![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes) ![Stars](https://img.shields.io/github/stars/rajeshrinet/compPhy) 
+![PyPI Downloads](https://static.pepy.tech/badge/pystokes)
+![Stars](https://img.shields.io/github/stars/rajeshrinet/compPhy) 
 ![Forks](https://img.shields.io/github/forks/rajeshrinet/compPhy) 
 
 [About](#about) 

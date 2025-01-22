@@ -1,5 +1,6 @@
 import pystokes.interface
 import pystokes.periodic
+import pystokes.pair
 import pystokes.twoWalls
 import pystokes.unbounded
 import pystokes.utils

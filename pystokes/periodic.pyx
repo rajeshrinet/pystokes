@@ -70,7 +70,7 @@ cdef class Rbm:
             Default is 1
         """
 
-        cdef int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1 ##used to be N1=-(Nm/2)+1
+        cdef int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
         cdef double L=self.L,  xi=self.xi, ixi2, siz=Nb*L, mu=self.mu, muv=self.muv
         cdef double a2=self.b*self.b/3, aidr2, k0=2*PI/L, fac=8*PI/(L*L*L), 
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1, mt, mpp
@@ -79,7 +79,8 @@ cdef class Rbm:
         if xi0 != 123456789:
             xi = xi0 
         ixi2=1/(xi*xi)
-        mt=IPI*xi*self.b*(-3+20*xi*xi*self.b*self.b/3.0); mpp=mu*(1+mt)    # include M^2(r=0)
+        mt=IPI*xi*self.b*(-3+20*xi*xi*self.b*self.b/3.0); mpp=mu*(1+mt)    
+        # include M^2(r=0); see Eq.15, Beenakker JCP 85(3) 1986 
 
         for i in prange(N, nogil=True):
             vx=0;  vy=0;  vz=0;
@@ -132,7 +133,7 @@ cdef class Rbm:
                                 vz += cc*(fz - fdotik*kz) 
         
             v[i]    += mpp*F[i]    + muv*vx 
-            v[i+N] += mpp*F[i+N] + muv*vy 
+            v[i+N]  += mpp*F[i+N]  + muv*vy 
             v[i+xx] += mpp*F[i+xx] + muv*vz
         return 
     
@@ -345,14 +346,15 @@ cdef class Rbm:
 
         cdef double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8.0*PI/(L*L*L)
         cdef double ixi2, vx, vy, vz
-        cdef int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
+        cdef int N = self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
         cdef double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
-        cdef double mud =3.0*self.b*self.b*self.b/5, mud1 = -1.0*(self.b**5)/10
+        cdef double b3=self.b*self.b*self.b, muv=-(b3)/20, xi2
         cdef double xd, yd, zd, xd1, yd1, zd1
         if xi0 != 123456789:
             xi = xi0 
-        ixi2 = 1/(xi*xi),
-        mud = mud + mud1*IPI*xi*(80*xi*xi*self.b*self.b/3.0) ## adding the M^2(r=0) contribution
+        xi2 = xi*xi 
+        ixi2 = 1/(xi2)
+        mud = 0.2 - IPI*(4*xi2*xi*b3/3.0) ## adding the M^2(r=0) contribution
 
         
         for i in prange(N, nogil=True):
@@ -398,9 +400,9 @@ cdef class Rbm:
                                 vy += cc*( D[j+N] - Ddotik2*ky ) 
                                 vz += cc*( D[j+xx] - Ddotik2*kz ) 
 
-            v[i]   += mud*D[i]    + mud1*vx
-            v[i+N]+= mud*D[i+N] + mud1*vy
-            v[i+xx]+= mud*D[i+xx] + mud1*vz
+            v[i]    += mud*D[i]    + muv*vx
+            v[i+N]  += mud*D[i+N]  + muv*vy
+            v[i+xx] += mud*D[i+xx] + muv*vz
         return
 
 
@@ -1505,9 +1507,8 @@ cdef class Flow:
             double ixi2, vx, vy, vz
             int Nt=self.Nt,N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
             double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
-            double mud =3.0*self.b*self.b*self.b/5, mud1 = -1.0*(self.b**5)/10
+            double mud1 = -1.0*(self.b**3)/5
             double xd, yd, zd, xd1, yd1, zd1
-        mud = mud + mud1*IPI*xi*(80*xi*xi*self.b*self.b/3.0) ## adding the M^2(r=0) contribution
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)

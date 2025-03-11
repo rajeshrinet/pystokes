@@ -163,7 +163,7 @@ cdef class Rbm:
     
     cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] V2s):
         """
-        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot V2s` 
+        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot V^{(2s)}` 
         ...
 
         Parameters
@@ -221,7 +221,7 @@ cdef class Rbm:
     
     cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] V3t):
         """
-        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot V3t` 
+        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot V^{(3t)}` 
         ...
 
         Parameters
@@ -308,7 +308,7 @@ cdef class Rbm:
 
     cpdef propulsionT3s(self, double [:] v, double [:] r, double [:] V3s):
         """
-        Compute velocity due to 3s mode of the slip :math:`v=\pi^{T,3s}\cdot V3s` 
+        Compute velocity due to 3s mode of the slip :math:`v=\pi^{T,3s}\cdot V^{(3s)}` 
         ...
 
         Parameters
@@ -360,7 +360,7 @@ cdef class Rbm:
 
     cpdef propulsionT4a(self, double [:] v, double [:] r, double [:] V4a):
         """
-        Compute velocity due to 4a mode of the slip :math:`v=\pi^{T,4a}\cdot V4a` 
+        Compute velocity due to 4a mode of the slip :math:`v=\pi^{T,4a}\cdot V^{(4a)}` 
         ...
 
         Parameters
@@ -494,7 +494,7 @@ cdef class Rbm:
     
     cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] V2s):
         """
-        Compute angular velocity due to 2s mode of the slip :math:`v=\pi^{R,2s}\cdot V2s` 
+        Compute angular velocity due to 2s mode of the slip :math:`v=\pi^{R,2s}\cdot V^{(2s)}` 
         ...
 
         Parameters
@@ -544,7 +544,7 @@ cdef class Rbm:
     
     cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V3a):
         """
-        Compute angular velocity due to 3a mode of the slip :math:`v=\pi^{R,3a}\cdot V3a` 
+        Compute angular velocity due to 3a mode of the slip :math:`v=\pi^{R,3a}\cdot V^{(3a)}` 
         ...
 
         Parameters
@@ -590,7 +590,7 @@ cdef class Rbm:
     
     cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] V3s):
         """
-        Compute angular velocity due to 3s mode of the slip :math:`v=\pi^{R,3s}\cdot V3s` 
+        Compute angular velocity due to 3s mode of the slip :math:`v=\pi^{R,3s}\cdot V^{(3s)}` 
         ...
 
         Parameters
@@ -639,7 +639,7 @@ cdef class Rbm:
     
     cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] V4a):
         """
-        Compute angular velocity due to 4a mode of the slip :math:`v=\pi^{R,4a}\cdot V4a` 
+        Compute angular velocity due to 4a mode of the slip :math:`v=\pi^{R,4a}\cdot V^{(4a)}` 
         ...
 
         Parameters
@@ -714,7 +714,7 @@ cdef class Flow:
         Number of grid points
     Examples
     --------
-    An example of the RBV4a
+    An example of the RBM
 
     """
 
@@ -767,7 +767,7 @@ cdef class Flow:
         >>> # create grid, evaluate flow and plot
         >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
         >>> flow.flowField1s(vv, rr, r, F1s)
-        >>> pystokes.utils.plotV2streamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
 
         cdef int N = self.N,  Nt = self.Nt
@@ -820,7 +820,7 @@ cdef class Flow:
     
         Examples
         --------
-        An example of the RBV4a 
+        An example of the RBM 
 
         # Example 1: Flow field due to $2a$ mode of force per unit area
         >>> import pystokes, numpy as np, matplotlib.pyplot as plt
@@ -841,7 +841,7 @@ cdef class Flow:
         >>> # create grid, evaluate flow and plot
         >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
         >>> flow.flowField2a(vv, rr, r, V2a)
-        >>> pystokes.utils.plotV2streamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='2s')
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='2s')
         """
 
         cdef int N = self.N, Nt = self.Nt
@@ -910,7 +910,7 @@ cdef class Flow:
         >>> # create grid, evaluate flow and plot
         >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
         >>> flow.flowField3t(vv, rr, r, V3t)
-        >>> pystokes.utils.plotV2streamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
 
         cdef int N = self.N, Nt = self.Nt
@@ -995,7 +995,7 @@ cdef class Flow:
         >>> # create grid, evaluate flow and plot
         >>> rr, vv = pystokes.utils.gridXY(dim, L, Ng)
         >>> flow.flowField3t(vv, rr, r, V3t)
-        >>> pystokes.utils.plotV2streamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='2s')
+        >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='2s')
         """
 
         cdef int N = self.N, Nt = self.Nt

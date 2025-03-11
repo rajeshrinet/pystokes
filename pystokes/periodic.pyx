@@ -354,7 +354,7 @@ cdef class Rbm:
             xi = xi0 
         xi2 = xi*xi 
         ixi2 = 1/(xi2)
-        mud = 0.2 - IPI*(4*xi2*xi*b3/3.0) ## adding the M^2(r=0) contribution
+        mud = 0.2# - IPI*(4*xi2*xi*b3/3.0) ## adding the M^2(r=0) contribution
 
         
         for i in prange(N, nogil=True):

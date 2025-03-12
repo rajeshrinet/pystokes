@@ -132,8 +132,8 @@ cdef class Rbm:
                                 vy += cc*(fy - fdotik*ky) 
                                 vz += cc*(fz - fdotik*kz) 
         
-            v[i]   += mpp*F[i]    + muv*vx 
-            v[i+N] += mpp*F[i+N]  + muv*vy 
+            v[i]   += mpp*F[i]   + muv*vx 
+            v[i+N] += mpp*F[i+N] + muv*vy 
             v[i+Z] += mpp*F[i+Z] + muv*vz
         return 
     
@@ -517,7 +517,7 @@ cdef class Rbm:
     
     cpdef propulsionT3a(  self, double [:] v, double [:] r, double [:] V3a, int Nb=6, int Nm=6, double xi0=123456789):
         """
-        Compute velocity due to 3a mode of the slip :math:`v=\pi^{T,3a}\cdot V` 
+        Compute velocity due to 3a mode of the slip :math:`v=\pi^{T,3a}\cdot V^{3a}` 
         ...
 
         Parameters
@@ -953,7 +953,7 @@ cdef class Rbm:
 
     cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] V3s, int Nb=6, int Nm=6, double xi0=123456789):
         """
-        Compute angular velocity due to 3s mode of the slip :math:`v=\pi^{R,3s}\cdot G` 
+        Compute angular velocity due to 3s mode of the slip :math:`v=\pi^{R,3s}\cdot V^{3s}` 
         ...
 
         Parameters

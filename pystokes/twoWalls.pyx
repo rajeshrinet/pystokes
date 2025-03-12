@@ -78,7 +78,7 @@ cdef class Rbm:
         return 
     
     
-    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, double H):
+    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] V2s, double H):
         """
         Compute velocity due to 2s mode of the slip 
         ...
@@ -91,7 +91,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        S: np.array
+        V2s: np.array
             An array of forces
             An array of size 5*N,
         H: float 
@@ -109,10 +109,10 @@ cdef class Rbm:
             vx=0; vy=0;   vz=0;
             for j in  range(N):
                 h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
-                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
-                sxy = S[j+xx]; syx = sxy;
-                sxz = S[j+xx1]; szx = sxz;
-                syz = S[j+xx2]; szy = syz;
+                sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
+                sxy = V2s[j+xx]; syx = sxy;
+                sxz = V2s[j+xx1]; szx = sxz;
+                syz = V2s[j+xx2]; szy = syz;
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
                 if i!=j:
@@ -134,7 +134,7 @@ cdef class Rbm:
         return
 
    
-    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, double H):
+    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] V3t, double H):
         """
         Compute velocity due to 3t mode of the slip 
         ...
@@ -147,7 +147,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        D: np.array
+        V3t: np.array
             An array of forces
             An array of size 3*N,
         H: float 
@@ -155,7 +155,7 @@ cdef class Rbm:
         """
 
         cdef int N=self.N, i, j, xx=2*N
-        cdef double dx, dy, dz, idr, idr2, idr5, Ddotidr, tempD, hsq, h2, tH=2*H
+        cdef double dx, dy, dz, idr, idr2, idr5, V3tdotidr, tempD, hsq, h2, tH=2*H
         cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5
         cdef double fac0 = 6/(PI*self.eta*H*H*H), fac1, fac2
 
@@ -168,11 +168,11 @@ cdef class Rbm:
                 if i!=j:
                     idr = 1.0/sqrt( dx*dx + dy*dy)
                     idr2=idr*idr
-                    Ddotidr = (D[j]*dx + D[j+N]*dy)*idr2
+                    V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy)*idr2
                     
                     fac1 = -fac0*r[j+xx]*(H-r[j+xx])
-                    vx += fac1*(0.5*D[j]    - Ddotidr*dx)*idr2
-                    vy += fac1*(0.5*D[j+N] - Ddotidr*dy)*idr2
+                    vx += fac1*(0.5*V3t[j]    - V3tdotidr*dx)*idr2
+                    vy += fac1*(0.5*V3t[j+N] - V3tdotidr*dy)*idr2
             v[i]    += vx*mud
             v[i+N] += vy*mud
             v[i+xx] += vz*mud
@@ -256,7 +256,7 @@ cdef class Flow:
 
 
 
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, double H):
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] V2s, double H):
         """
         Compute flow field at field points due to 2s mode of th slip 
         ...
@@ -272,7 +272,7 @@ cdef class Flow:
         r: np.array
             An array of positions
             An array of size 3*N,
-        S: np.array
+        V2s: np.array
             An array of 2s mode of the slip 
             An array of size 5*N,
         H: float 
@@ -289,10 +289,10 @@ cdef class Flow:
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
             for j in range(N):
-                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
-                sxy = S[j+xx]; syx = sxy;
-                sxz = S[j+xx1]; szx = sxz;
-                syz = S[j+xx2]; szy = syz;
+                sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
+                sxy = V2s[j+xx]; syx = sxy;
+                sxz = V2s[j+xx1]; szx = sxz;
+                syz = V2s[j+xx2]; szy = syz;
                 dx = rt[i]    - r[j]
                 dy = rt[i+Nt] - r[j+N]
                 idr  = 1.0/sqrt( dx*dx + dy*dy);
@@ -310,7 +310,7 @@ cdef class Flow:
             vv[i+Nt] += mus*vy
 
 
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, double H):
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] V3t, double H):
         """
         Compute flow field at field points due to 3t mode of th slip 
         ...
@@ -326,7 +326,7 @@ cdef class Flow:
         r: np.array
             An array of positions
             An array of size 3*N,
-        D: np.array
+        V3t: np.array
             An array of 2s mode of the slip 
             An array of size r*N,
         H: float 
@@ -334,7 +334,7 @@ cdef class Flow:
         """
         cdef int i, j, N=self.N, xx=2*N, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr2, idr5, Fdotidr, h2, hsq, tempF
-        cdef double vx, vy, vz, tH = 2*H, Ddotidr
+        cdef double vx, vy, vz, tH = 2*H, V3tdotidr
         cdef double mu = 1.0/(6*PI*self.eta*self.b), mu1 = mu*self.b*0.75, a2=self.b*self.b/3.0
         cdef double fac0 = 3/(PI*self.eta*H*H*H), fac1, fac2
  
@@ -345,11 +345,11 @@ cdef class Flow:
                 dy = rt[i+Nt] - r[j+N]
                 idr = 1.0/sqrt( dx*dx + dy*dy)
                 idr2=idr*idr
-                Ddotidr = (D[j]*dx + D[j+N]*dy)*idr2
+                V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy)*idr2
                 
                 fac1 = fac0*(H-rt[i+2*Nt])*(H-r[j+xx])*rt[i+2*Nt]*r[j+xx]
-                vx += fac1*(0.5*D[j]    - Ddotidr*dx)*idr2
-                vy += fac1*(0.5*D[j+N] - Ddotidr*dy)*idr2
+                vx += fac1*(0.5*V3t[j]    - V3tdotidr*dx)*idr2
+                vy += fac1*(0.5*V3t[j+N]  - V3tdotidr*dy)*idr2
                     
             vv[i  ]  += mu1*vx 
             vv[i+Nt] += mu1*vy

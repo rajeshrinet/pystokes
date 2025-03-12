@@ -22,10 +22,10 @@ cdef class Rbm:
     cpdef mobilityTR(   self, double [:] v, double [:] r, double [:] T, double ll=?)
 
 
-    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, double ll=?)
+    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] V2s, double ll=?)
 
 
-    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, double ll=?)
+    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] V3t, double ll=?)
 
 
 
@@ -35,24 +35,11 @@ cdef class Rbm:
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T, double ll=?)
     
     
-    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S, double ll=?)
+    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] V2s, double ll=?)
     
     
-    cpdef propulsionR3t(self, double [:] o, double [:] r, double [:] D, double ll=?)
+    cpdef propulsionR3t(self, double [:] o, double [:] r, double [:] V3t, double ll=?)
 
-
-    cpdef noiseTT_old(self, double [:] v, double [:] r)
-
-    cpdef noiseRR_old(self, double [:] o, double [:] r)
-    
-    
-    cpdef noiseTT(self, double [:] v, double [:] r, double ll=?)
-    
-    cpdef noiseTR(self, double [:] v, double [:] r, double ll=?)
-    
-    cpdef noiseRT(self, double [:] o, double [:] r, double ll=?)
-    
-    cpdef noiseRR(self, double [:] o, double [:] r, double ll=?)
 
 
 
@@ -69,7 +56,7 @@ cdef class Flow:
 
     cpdef flowField2a(  self, double [:] vv, double [:] rt, double [:] r, double [:] T)
 
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S)
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] V2s)
 
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D)
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] V3t)
     

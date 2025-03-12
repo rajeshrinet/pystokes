@@ -20,19 +20,19 @@ cdef class Rbm:
     cpdef mobilityTR(self,    double [:] v,  double [:] r, double [:] T)
     
     
-    cpdef propulsionT2s(self, double [:] v,  double [:] r, double [:] S)
+    cpdef propulsionT2s(self, double [:] v,  double [:] r, double [:] V2s)
 
 
-    cpdef propulsionT3t(self, double [:] v,  double [:] r, double [:] D)
+    cpdef propulsionT3t(self, double [:] v,  double [:] r, double [:] V3t)
 
 
-    cpdef propulsionT3a(self,   double [:] v,  double [:] r, double [:] V)
+    cpdef propulsionT3a(self,   double [:] v,  double [:] r, double [:] V3a)
 
 
-    cpdef propulsionT3s(self,   double [:] v,  double [:] r, double [:] G)
+    cpdef propulsionT3s(self,   double [:] v,  double [:] r, double [:] V3s)
 
 
-    cpdef propulsionT4a(self,   double [:] v,  double [:] r, double [:] M)
+    cpdef propulsionT4a(self,   double [:] v,  double [:] r, double [:] V4a)
 
 
     ## Angular velocities
@@ -44,16 +44,16 @@ cdef class Rbm:
     cpdef mobilityRR(   self, double [:] o,  double [:] r, double [:] T)
 
     
-    cpdef propulsionR2s(self, double [:] o,  double [:] r, double [:] S)
+    cpdef propulsionR2s(self, double [:] o,  double [:] r, double [:] V2s)
     
     
-    cpdef propulsionR3a(  self, double [:] o,  double [:] r, double [:] V)
+    cpdef propulsionR3a(  self, double [:] o,  double [:] r, double [:] V3a)
 
 
-    cpdef propulsionR3s(  self, double [:] o,  double [:] r, double [:] G)
+    cpdef propulsionR3s(  self, double [:] o,  double [:] r, double [:] V3s)
 
 
-    cpdef propulsionR4a(  self, double [:] o,  double [:] r, double [:] M) 
+    cpdef propulsionR4a(  self, double [:] o,  double [:] r, double [:] V4a) 
 
 
 
@@ -70,19 +70,19 @@ cdef class Flow:
                
     cpdef flowField2a(   self, double [:] vv, double [:] rt, double [:] r, double [:] T, double maskR=?)
 
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, double maskR=?)
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] V2s, double maskR=?)
 
 
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, double maskR=?)
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] V3t, double maskR=?)
 
 
-    cpdef flowField3s(self,   double [:] vv, double [:] rt, double [:] r, double [:] G, double maskR=?)
+    cpdef flowField3s(self,   double [:] vv, double [:] rt, double [:] r, double [:] V3s, double maskR=?)
 
 
-    cpdef flowField3a(self,   double [:] vv, double [:] rt, double [:] r, double [:] V, double maskR=?)
+    cpdef flowField3a(self,   double [:] vv, double [:] rt, double [:] r, double [:] V3a, double maskR=?)
 
 
-    cpdef flowField4a(self,   double [:] vv, double [:] rt, double [:] r, double [:] M, double maskR=?)
+    cpdef flowField4a(self,   double [:] vv, double [:] rt, double [:] r, double [:] V4a, double maskR=?)
 
 
 
@@ -101,10 +101,10 @@ cdef class PD:
     cpdef frictionTR(self, double depsilon, double [:] v, double [:] o, double [:] r)
     
     
-    cpdef frictionT2s(self, double depsilon, double [:] V1s, double [:] S, double [:] r)
+    cpdef frictionT2s(self, double depsilon, double [:] V1s, double [:] V2s, double [:] r)
 
 
-    cpdef frictionT3t(self, double depsilon, double [:] V1s, double [:] D, double [:] r)
+    cpdef frictionT3t(self, double depsilon, double [:] V1s, double [:] V3t, double [:] r)
 
 
     ## Angular velocities

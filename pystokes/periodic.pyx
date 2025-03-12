@@ -163,7 +163,7 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi=self.xi, ixi2, vx, vy, vz, muv=self.muv
+            double L = self.L,  xi=self.xi, ixi2, vx, vy, vz, muv=0.5*self.muv
             int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, Z=2*N
             double xdr, xdr2, xdr3, e1, erxdr, fac=8*PI/(L*L*L),
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
@@ -188,11 +188,11 @@ cdef class Rbm:
                                 idr3 = idr*idr*idr
                                 xdr    = xi/idr;    erxdr = erfc(xdr) 
                                 xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
-                                D      = (-2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr))*idr3
-                                
-                                vx -= D*(dy*T[j+Z] - dz*T[j+N]  )
-                                vy -= D*(dz*T[j]    - dx*T[j+Z])
-                                vz -= D*(dx*T[j+N] - dy*T[j   ])
+                                D      = (2*erfc(xdr) + e1*(2*xdr - 12*xdr2*xdr + 4*xdr2*xdr2*xdr))*idr3
+
+                                vx -= D*(dy*T[j+Z] - dz*T[j+N])
+                                vy -= D*(dz*T[j]   - dx*T[j+Z])
+                                vz -= D*(dx*T[j+N] - dy*T[j  ])
         # Fourier space sum
         for i in prange(N, nogil=True):
             for j  in range(N):
@@ -209,9 +209,9 @@ cdef class Rbm:
                                 k2 = kx*kx + ky*ky + kz*kz    
                                 cc = fac*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2)
 
-                                vx -= cc*( T[j+N]*kz - T[j+Z]*ky  ) 
-                                vy -= cc*( T[j+Z]*kx - T[j]  *kz  ) 
-                                vz -= cc*( T[j]  *ky - T[j+N]*kx  ) 
+                                vx += cc*( T[j+N]*kz - T[j+Z]*ky  ) 
+                                vy += cc*( T[j+Z]*kx - T[j]  *kz  ) 
+                                vz += cc*( T[j]  *ky - T[j+N]*kx  ) 
             v[i]   += muv*vx 
             v[i+N] += muv*vy 
             v[i+Z] += muv*vz 
@@ -723,7 +723,7 @@ cdef class Rbm:
 
         cdef: 
             int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, Z=2*N
-            double L = self.L,  xi=self.xi, fac=8*PI/(L*L*L), muv=self.muv
+            double L = self.L,  xi=self.xi, fac=8*PI/(L*L*L), muv=0.5*self.muv
             double  ixi2, ox, oy, oz
             double xdr, xdr2, xdr3, e1, erxdr 
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
@@ -748,11 +748,11 @@ cdef class Rbm:
                                 idr3 = idr*idr*idr
                                 xdr    = xi/idr;    erxdr = erfc(xdr) 
                                 xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
-                                D      = -2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr)
+                                D      = (2*erfc(xdr) + e1*(2*xdr - 12*xdr2*xdr + 4*xdr2*xdr2*xdr))
                                 
-                                ox -= D*(F[j+N]*dz - F[j+Z]*dy )*idr3
-                                oy -= D*(F[j+Z]*dx - F[j]*dz    )*idr3
-                                oz -= D*(F[j]*dy    - F[j+N]*dx )*idr3
+                                ox += D*(F[j+N]*dz - F[j+Z]*dy )
+                                oy += D*(F[j+Z]*dx - F[j]*dz   )
+                                oz += D*(F[j]*dy    - F[j+N]*dx)
         # Fourier space sum
         for i in prange(N, nogil=True):
             i1 = i*3
@@ -771,12 +771,12 @@ cdef class Rbm:
                                 k2 = kx*kx + ky*ky + kz*kz    
                                 cc = fac*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2)
 
-                                ox += cc*( F[j+N]*dz - F[j+Z]*dy  ) 
-                                oy += cc*( F[j+Z]*dx - F[j]*dz     ) 
-                                oz += cc*( F[j]*dy    - F[j+N]*dx  ) 
-            o[i]    += muv*ox
+                                ox += cc*( F[j+Z]*ky - F[j+N]*kz) 
+                                oy += cc*( F[j]*kz   - F[j+Z]*kx) 
+                                oz += cc*( F[j+N]*kx - F[j]*ky  ) 
+            o[i]   += muv*ox
             o[i+N] += muv*oy
-            o[i+Z]+= muv*oz
+            o[i+Z] += muv*oz
         return 
 
 

@@ -26,13 +26,13 @@ cdef class Rbm:
     cpdef propulsionT3t(self, double [:] v,  double [:] r, double [:] V3t)
 
 
-    cpdef propulsionT3a(self,   double [:] v,  double [:] r, double [:] V3a)
+    cpdef propulsionT3a(self, double [:] v,  double [:] r, double [:] V3a)
 
 
-    cpdef propulsionT3s(self,   double [:] v,  double [:] r, double [:] V3s)
+    cpdef propulsionT3s(self, double [:] v,  double [:] r, double [:] V3s)
 
 
-    cpdef propulsionT4a(self,   double [:] v,  double [:] r, double [:] V4a)
+    cpdef propulsionT4a(self, double [:] v,  double [:] r, double [:] V4a)
 
 
     ## Angular velocities

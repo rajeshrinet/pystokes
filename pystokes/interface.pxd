@@ -54,7 +54,7 @@ cdef class Flow:
 
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F)
 
-    cpdef flowField2a(  self, double [:] vv, double [:] rt, double [:] r, double [:] T)
+    cpdef flowField2a(self, double [:] vv, double [:] rt, double [:] r, double [:] T)
 
     cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] V2s)
 

@@ -18,10 +18,12 @@ cdef class Rbm:
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, double H)
     
     
-    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, double H)
+    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] V2s, double H)
     
     
-    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, double H)
+    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] V3t, double H)
+
+    
 
     
 @cython.wraparound(False)
@@ -34,8 +36,10 @@ cdef class Flow:
     cdef int Nt
 
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, double H)
+    
 
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, double H)
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] V2s, double H)
+    
 
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, double H)
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] V3t, double H)
     

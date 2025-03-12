@@ -748,7 +748,7 @@ cdef class Rbm:
                                 idr3 = idr*idr*idr
                                 xdr    = xi/idr;    erxdr = erfc(xdr) 
                                 xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
-                                D      = (2*erfc(xdr) + e1*(2*xdr - 12*xdr2*xdr + 4*xdr2*xdr2*xdr))
+                                D      = (2*erfc(xdr) + e1*(2*xdr - 12*xdr2*xdr + 4*xdr2*xdr2*xdr))*idr3
                                 
                                 ox += D*(F[j+N]*dz - F[j+Z]*dy )
                                 oy += D*(F[j+Z]*dx - F[j]*dz   )

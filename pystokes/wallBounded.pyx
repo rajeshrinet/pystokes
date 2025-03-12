@@ -233,15 +233,15 @@ cdef class Rbm:
                     vx += -muTR*T2   #change sign here to make up for '-=' below...
                     vy += muTR*T1  #same here
 
-            v[i]    -= muv*vx
-            v[i+N] -= muv*vy
-            v[i+xx] -= muv*vz
+            v[i]    += muv*vx
+            v[i+N]  += muv*vy
+            v[i+xx] += muv*vz
         return
 
 
-    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S):
+    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] V2s):
         """
-        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot S` 
+        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot V^{2s}` 
         ...
 
         Parameters
@@ -276,10 +276,10 @@ cdef class Rbm:
             vx=0; vy=0;   vz=0;
             for j in  range(N):
                 h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
-                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
-                sxy = S[j+xx]; syx = sxy;
-                sxz = S[j+xx1]; szx = sxz;
-                syz = S[j+xx2]; szy = syz;
+                sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
+                sxy = V2s[j+xx]; syx = sxy;
+                sxz = V2s[j+xx1]; szx = sxz;
+                syz = V2s[j+xx2]; szy = syz;
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
                 if i!=j:
@@ -364,9 +364,9 @@ cdef class Rbm:
         return
 
 
-    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D):
+    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] V3t):
         """
-        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot D` 
+        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot V^{3t}` 
         ...
 
         Parameters
@@ -377,13 +377,13 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        D: np.array
+        V3t: np.array
             An array of 3t mode of the slip
             An array of size 3*N,
         """
 
         cdef int N=self.N, i, j, xx=2*N
-        cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2
+        cdef double dx, dy, dz, idr, idr3, idr5, V3tdotidr, tempD, hsq, h2
         cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
         
         cdef double a = self.b
@@ -404,33 +404,33 @@ cdef class Rbm:
                     dz = r[i+xx] - r[j+xx]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3=idr*idr*idr
-                    Ddotidr = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz)*idr*idr
+                    V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+xx]*dz)*idr*idr
                     #
-                    vx += (2*D[j]    - 6*Ddotidr*dx)*idr3
-                    vy += (2*D[j+N] - 6*Ddotidr*dy)*idr3
-                    vz += (2*D[j+xx] - 6*Ddotidr*dz)*idr3
+                    vx += (2*V3t[j]    - 6*V3tdotidr*dx)*idr3
+                    vy += (2*V3t[j+N] - 6*V3tdotidr*dy)*idr3
+                    vz += (2*V3t[j+xx] - 6*V3tdotidr*dz)*idr3
 
                     ##contributions from the image
                     dz = r[i+xx] + r[j+xx]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     idr5 = idr3*idr*idr
-                    Ddotidr = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz)*idr*idr
+                    V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+xx]*dz)*idr*idr
 
-                    vx += -(2*D[j]    - 6*Ddotidr*dx )*idr3
-                    vy += -(2*D[j+N] - 6*Ddotidr*dy )*idr3
-                    vz += -(2*D[j+xx] - 6*Ddotidr*dz )*idr3
+                    vx += -(2*V3t[j]    - 6*V3tdotidr*dx )*idr3
+                    vy += -(2*V3t[j+N] - 6*V3tdotidr*dy )*idr3
+                    vz += -(2*V3t[j+xx] - 6*V3tdotidr*dz )*idr3
 
-                    tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
-                    Ddotidr = ( D[j]*dx + D[j+N]*dy + tempD*dz )*idr*idr
+                    tempD = -V3t[j+xx]     # D_i = M_ij D_j, reflection of the strength
+                    V3tdotidr = ( V3t[j]*dx + V3t[j+N]*dy + tempD*dz )*idr*idr
 
-                    vx += 12*dz*( dz*D[j]   - 5*dz*Ddotidr*dx + 2*tempD*dx )*idr5
-                    vy += 12*dz*( dz*D[j+N]- 5*dz*Ddotidr*dy + 2*tempD*dy )*idr5
-                    vz += 12*dz*( dz*tempD  - 5*dz*Ddotidr*dz + 2*tempD*dz )*idr5
+                    vx += 12*dz*( dz*V3t[j]   - 5*dz*V3tdotidr*dx + 2*tempD*dx )*idr5
+                    vy += 12*dz*( dz*V3t[j+N]- 5*dz*V3tdotidr*dy + 2*tempD*dy )*idr5
+                    vz += 12*dz*( dz*tempD  - 5*dz*V3tdotidr*dz + 2*tempD*dz )*idr5
 
-                    vx += -6*h2*(dz*D[j]   -5*Ddotidr*dx*dz + tempD*dx)*idr5
-                    vy += -6*h2*(dz*D[j+N]-5*Ddotidr*dy*dz + tempD*dy)*idr5
-                    vz += -6*h2*(dz*tempD  -5*Ddotidr*dz*dz + tempD*dz)*idr5 -6*h2*Ddotidr*idr3
+                    vx += -6*h2*(dz*V3t[j]   -5*V3tdotidr*dx*dz + tempD*dx)*idr5
+                    vy += -6*h2*(dz*V3t[j+N]-5*V3tdotidr*dy*dz + tempD*dy)*idr5
+                    vz += -6*h2*(dz*tempD  -5*V3tdotidr*dz*dz + tempD*dz)*idr5 -6*h2*V3tdotidr*idr3
 
                 else:
                     ''' self contribution from the image point'''
@@ -442,9 +442,9 @@ cdef class Rbm:
                     piy = pix
                     piz = piT3tperp1*hbar_inv3 + piT3tperp2*hbar_inv5
 
-            v[i  ]  += pix*D[j]    + muv*vx
-            v[i+N] += piy*D[j+N] + muv*vy
-            v[i+xx] += piz*D[j+xx] + muv*vz
+            v[i  ]  += pix*V3t[j]    + muv*vx
+            v[i+N]  += piy*V3t[j+N]  + muv*vy
+            v[i+xx] += piz*V3t[j+xx] + muv*vz
         return
    
 
@@ -611,7 +611,7 @@ cdef class Rbm:
         return
         
         
-    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S):
+    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] V2s):
         cdef int N=self.N, i, j, xx=2*N, xx1=3*N , xx2=4*N
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
@@ -625,14 +625,14 @@ cdef class Rbm:
 
         for i in prange(N, nogil=True):
             ox=0;   oy=0;   oz=0;
-            sxz = S[i+xx1];
-            syz = S[i+xx2];
+            sxz = V2s[i+xx1];
+            syz = V2s[i+xx2];
             for j in range(N):
-                sxx = S[j    ]  ;
-                syy = S[j+N ];
-                sxy = S[j+xx ];
-                sxz = S[j+xx1];
-                syz = S[j+xx2];
+                sxx = V2s[j    ]  ;
+                syy = V2s[j+N ];
+                sxy = V2s[j+xx ];
+                sxz = V2s[j+xx1];
+                syz = V2s[j+xx2];
                 if i != j:
                     #syx = sxy;
                     # szx = sxz;
@@ -715,9 +715,9 @@ cdef class Rbm:
         return
     
     
-    cpdef propulsionR3t(self, double [:] o, double [:] r, double [:] D):
+    cpdef propulsionR3t(self, double [:] o, double [:] r, double [:] V3t):
         """
-        Compute angular velocity due to 3t mode of the slip :math:`o=\pi^{R,3t}\cdot D` 
+        Compute angular velocity due to 3t mode of the slip :math:`o=\pi^{R,3t}\cdot V^{3t}` 
         ...
 
         Parameters
@@ -764,8 +764,8 @@ cdef class Rbm:
                     
                     piR3t = piR3t0*hbar_inv4
                     
-                    V1 = D[j];
-                    V2 = D[j+N]
+                    V1 = V3t[j];
+                    V2 = V3t[j+N]
                     
                     ox += piR3t*V2
                     oy += -piR3t*V1 
@@ -776,7 +776,7 @@ cdef class Rbm:
         return
 
 
-    cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V):
+    cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V3a):
         '''
         approximation involved
         '''
@@ -787,11 +787,11 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             ox=0; oy=0; oz=0;
             for j in range(N):
-                vxx = V[j]
-                vyy = V[j+N]
-                vxy = V[j+xx]
-                vxz = V[j+3*N]
-                vyz = V[j+4*N]
+                vxx = V3a[j]
+                vyy = V3a[j+N]
+                vxy = V3a[j+xx]
+                vxz = V3a[j+3*N]
+                vyz = V3a[j+4*N]
                 if i != j:
                     pass
                     #dx = r[i]      - r[j]
@@ -834,9 +834,9 @@ cdef class Rbm:
         return
 
 
-    cpdef propulsionR4a(self, double [:] o, double [:] r, double [:] M):
+    cpdef propulsionR4a(self, double [:] o, double [:] r, double [:] V4a):
         '''
-        approximation involved
+        incomplete expression
         '''
         cdef int N = self.N, i, j, xx=2*N
         cdef double ox, oy, oz, dx, dy, dz, idr, idr5, idr7, idr9, muv = 1
@@ -845,13 +845,13 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             ox=0; oy=0; oz=0;
             for j in range(N):
-                mxxx = M[j]
-                myyy = M[j+N]
-                mxxy = M[j+2*N]
-                mxxz = M[j+3*N]
-                mxyy = M[j+4*N]
-                mxyz = M[j+5*N]
-                myyz = M[j+6*N]
+                mxxx = V4a[j]
+                myyy = V4a[j+N]
+                mxxy = V4a[j+2*N]
+                mxxz = V4a[j+3*N]
+                mxyy = V4a[j+4*N]
+                mxyz = V4a[j+5*N]
+                myyz = V4a[j+6*N]
                 if i != j:
                     pass
                     #dx = r[i]      - r[j]
@@ -1695,7 +1695,7 @@ cdef class Flow:
         return 
     
    
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S):
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] V2s):
         """
         Compute flow field at field points  due to 2s mode of the slip 
         ...
@@ -1749,10 +1749,10 @@ cdef class Flow:
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
             for j in  range(N):
-                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
-                sxy = S[j+xx]; syx = sxy;
-                sxz = S[j+xx1]; szx = sxz;
-                syz = S[j+xx2]; szy = syz;
+                sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
+                sxy = V2s[j+xx]; syx = sxy;
+                sxz = V2s[j+xx1]; szx = sxz;
+                syz = V2s[j+xx2]; szy = syz;
                 
                 dx = rt[i]   - r[j]
                 dy = rt[i+Nt] - r[j+N]
@@ -1821,7 +1821,7 @@ cdef class Flow:
         return
 
    
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D):
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] V3t):
         """
         Compute flow field at field points due to 3t mode of the slip 
         ...
@@ -1867,7 +1867,7 @@ cdef class Flow:
         """
 
         cdef int i, j, N=self.N, Nt=self.Nt, xx=2*N
-        cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2
+        cdef double dx, dy, dz, idr, idr3, idr5, V3tdotidr, tempD, hsq, h2
         cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
 
         for i in prange(Nt, nogil=True):
@@ -1879,33 +1879,33 @@ cdef class Flow:
                 dz = rt[i+2*Nt] - r[j+xx] 
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3=idr*idr*idr
-                Ddotidr = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz)*idr*idr
+                V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+xx]*dz)*idr*idr
                 #
-                vx += (2*D[j]    - 6*Ddotidr*dx)*idr3
-                vy += (2*D[j+N] - 6*Ddotidr*dy)*idr3
-                vz += (2*D[j+xx] - 6*Ddotidr*dz)*idr3
+                vx += (2*V3t[j]    - 6*V3tdotidr*dx)*idr3
+                vy += (2*V3t[j+N] - 6*V3tdotidr*dy)*idr3
+                vz += (2*V3t[j+xx] - 6*V3tdotidr*dz)*idr3
                 
                 ##contributions from the image 
                 dz = rt[i+2*Nt] + r[j+xx]        
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                 idr5 = idr3*idr*idr
-                Ddotidr = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz)*idr*idr
+                V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+xx]*dz)*idr*idr
                 
-                vx += -(2*D[j]    - 6*Ddotidr*dx )*idr3
-                vy += -(2*D[j+N] - 6*Ddotidr*dy )*idr3
-                vz += -(2*D[j+xx] - 6*Ddotidr*dz )*idr3
+                vx += -(2*V3t[j]    - 6*V3tdotidr*dx )*idr3
+                vy += -(2*V3t[j+N] - 6*V3tdotidr*dy )*idr3
+                vz += -(2*V3t[j+xx] - 6*V3tdotidr*dz )*idr3
                 
-                tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
-                Ddotidr = ( D[j]*dx + D[j+N]*dy + tempD*dz )*idr*idr
+                tempD = -V3t[j+xx]     # D_i = M_ij D_j, reflection of the strength
+                V3tdotidr = ( V3t[j]*dx + V3t[j+N]*dy + tempD*dz )*idr*idr
                 
-                vx += 12*dz*( dz*D[j]   - 5*dz*Ddotidr*dx + 2*tempD*dx )*idr5
-                vy += 12*dz*( dz*D[j+N]- 5*dz*Ddotidr*dy + 2*tempD*dy )*idr5
-                vz += 12*dz*( dz*tempD  - 5*dz*Ddotidr*dz + 2*tempD*dz )*idr5
+                vx += 12*dz*( dz*V3t[j]   - 5*dz*V3tdotidr*dx + 2*tempD*dx )*idr5
+                vy += 12*dz*( dz*V3t[j+N]- 5*dz*V3tdotidr*dy + 2*tempD*dy )*idr5
+                vz += 12*dz*( dz*tempD  - 5*dz*V3tdotidr*dz + 2*tempD*dz )*idr5
 
-                vx += -6*h2*(dz*D[j]   -5*Ddotidr*dx*dz + tempD*dx)*idr5
-                vy += -6*h2*(dz*D[j+N]-5*Ddotidr*dy*dz + tempD*dy)*idr5
-                vz += -6*h2*(dz*tempD  -5*Ddotidr*dz*dz + tempD*dz)*idr5 -6*h2*Ddotidr*idr3
+                vx += -6*h2*(dz*V3t[j]   -5*V3tdotidr*dx*dz + tempD*dx)*idr5
+                vy += -6*h2*(dz*V3t[j+N]-5*V3tdotidr*dy*dz + tempD*dy)*idr5
+                vz += -6*h2*(dz*tempD  -5*V3tdotidr*dz*dz + tempD*dz)*idr5 -6*h2*V3tdotidr*idr3
                 
             vv[i  ]    += muv*vx
             vv[i+Nt]   += muv*vy
@@ -2120,7 +2120,7 @@ cdef class PD:
         return depsilon
 
 
-    cpdef frictionT2s(self, double depsilon, double [:] V1s, double [:] S, double [:] r):
+    cpdef frictionT2s(self, double depsilon, double [:] V1s, double [:] V2s, double [:] r):
         """
         Compute energy dissipation due to 2s mode of the slip :math:`\dot{\epsilon}=V^{1s}\cdot\gamma^{T,2s}\cdot V^{2s}`
         ...
@@ -2130,7 +2130,7 @@ cdef class PD:
         V1s: np.array
             An array of 1s mode of velocities
             An array of size 3*N,
-        S: np.array
+        V2s: np.array
             An array of 2s mode of the slip
             An array of size 5*N,
         r: np.array
@@ -2158,10 +2158,10 @@ cdef class PD:
             vx=0; vy=0;   vz=0;
             for j in  range(N):
                 h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
-                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
-                sxy = S[j+xx]; syx = sxy;
-                sxz = S[j+xx1]; szx = sxz;
-                syz = S[j+xx2]; szy = syz;
+                sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
+                sxy = V2s[j+xx]; syx = sxy;
+                sxz = V2s[j+xx1]; szx = sxz;
+                syz = V2s[j+xx2]; szy = syz;
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
                 if i!=j:
@@ -2246,7 +2246,7 @@ cdef class PD:
         return depsilon
 
 
-    cpdef frictionT3t(self, double depsilon, double [:] V1s, double [:] D, double [:] r):
+    cpdef frictionT3t(self, double depsilon, double [:] V1s, double [:] V3t, double [:] r):
         """
         Compute energy dissipation due to 3t mode of the slip :math:`\dot{\epsilon}=V^{1s}\cdot\gamma^{T,3t}\cdot V^{3t}`
         ...
@@ -2256,7 +2256,7 @@ cdef class PD:
         V1s: np.array
             An array of 1s mode of velocities
             An array of size 3*N,
-        D: np.array
+        V3t: np.array
             An array of 3t mode of the slip
             An array of size 3*N,
         r: np.array
@@ -2266,7 +2266,7 @@ cdef class PD:
         """
 
         cdef int N=self.N, i, j, xx=2*N
-        cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2
+        cdef double dx, dy, dz, idr, idr3, idr5, V3tdotidr, tempD, hsq, h2
         cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
         
         cdef double a = self.b
@@ -2288,33 +2288,33 @@ cdef class PD:
                     dz = r[i+xx] - r[j+xx]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3=idr*idr*idr
-                    Ddotidr = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz)*idr*idr
+                    V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+xx]*dz)*idr*idr
                     #
-                    vx += (2*D[j]    - 6*Ddotidr*dx)*idr3
-                    vy += (2*D[j+N] - 6*Ddotidr*dy)*idr3
-                    vz += (2*D[j+xx] - 6*Ddotidr*dz)*idr3
+                    vx += (2*V3t[j]    - 6*V3tdotidr*dx)*idr3
+                    vy += (2*V3t[j+N]  - 6*V3tdotidr*dy)*idr3
+                    vz += (2*V3t[j+xx] - 6*V3tdotidr*dz)*idr3
 
                     ##contributions from the image
                     dz = r[i+xx] + r[j+xx]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     idr5 = idr3*idr*idr
-                    Ddotidr = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz)*idr*idr
+                    V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+xx]*dz)*idr*idr
 
-                    vx += -(2*D[j]    - 6*Ddotidr*dx )*idr3
-                    vy += -(2*D[j+N] - 6*Ddotidr*dy )*idr3
-                    vz += -(2*D[j+xx] - 6*Ddotidr*dz )*idr3
+                    vx += -(2*V3t[j]    - 6*V3tdotidr*dx )*idr3
+                    vy += -(2*V3t[j+N] - 6*V3tdotidr*dy )*idr3
+                    vz += -(2*V3t[j+xx] - 6*V3tdotidr*dz )*idr3
 
-                    tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
-                    Ddotidr = ( D[j]*dx + D[j+N]*dy + tempD*dz )*idr*idr
+                    tempD = -V3t[j+xx]     # D_i = M_ij D_j, reflection of the strength
+                    V3tdotidr = ( V3t[j]*dx + V3t[j+N]*dy + tempD*dz )*idr*idr
 
-                    vx += 12*dz*( dz*D[j]   - 5*dz*Ddotidr*dx + 2*tempD*dx )*idr5
-                    vy += 12*dz*( dz*D[j+N]- 5*dz*Ddotidr*dy + 2*tempD*dy )*idr5
-                    vz += 12*dz*( dz*tempD  - 5*dz*Ddotidr*dz + 2*tempD*dz )*idr5
+                    vx += 12*dz*( dz*V3t[j]   - 5*dz*V3tdotidr*dx + 2*tempD*dx )*idr5
+                    vy += 12*dz*( dz*V3t[j+N]- 5*dz*V3tdotidr*dy + 2*tempD*dy )*idr5
+                    vz += 12*dz*( dz*tempD  - 5*dz*V3tdotidr*dz + 2*tempD*dz )*idr5
 
-                    vx += -6*h2*(dz*D[j]   -5*Ddotidr*dx*dz + tempD*dx)*idr5
-                    vy += -6*h2*(dz*D[j+N]-5*Ddotidr*dy*dz + tempD*dy)*idr5
-                    vz += -6*h2*(dz*tempD  -5*Ddotidr*dz*dz + tempD*dz)*idr5 -6*h2*Ddotidr*idr3
+                    vx += -6*h2*(dz*V3t[j]   -5*V3tdotidr*dx*dz + tempD*dx)*idr5
+                    vy += -6*h2*(dz*V3t[j+N]-5*V3tdotidr*dy*dz + tempD*dy)*idr5
+                    vz += -6*h2*(dz*tempD  -5*V3tdotidr*dz*dz + tempD*dz)*idr5 -6*h2*V3tdotidr*idr3
 
                 else:
                     ''' self contribution from the image point'''
@@ -2326,9 +2326,9 @@ cdef class PD:
                     piy = pix
                     piz = piT3tperp1*hbar_inv3 + piT3tperp2*hbar_inv5
 
-            depsilon -= V1s[i] * gT * (-pix*D[j]    + muv*vx)
-            depsilon -= V1s[i+N] * gT * (-piy*D[j+N] + muv*vy)
-            depsilon -= V1s[i+xx] * gT * (-piz*D[j+xx] + muv*vz)
+            depsilon -= V1s[i] * gT * (-pix*V3t[j]    + muv*vx)
+            depsilon -= V1s[i+N] * gT * (-piy*V3t[j+N] + muv*vy)
+            depsilon -= V1s[i+xx] * gT * (-piz*V3t[j+xx] + muv*vz)
         return depsilon
    
 

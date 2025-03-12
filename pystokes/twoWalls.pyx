@@ -52,7 +52,7 @@ cdef class Rbm:
             Height of the Hele-Shaw cell 
         """
 
-        cdef int i, j, N=self.N, xx=2*N
+        cdef int i, j, N=self.N, Z=2*N
         cdef double dx, dy, dz, idr, idr2, Fdotidr2, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H
         cdef double mu = 1.0/(6*PI*self.eta*self.b), mu1 = mu*self.b*0.75, a2=self.b*self.b/3.0
@@ -63,13 +63,13 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
+                h2  =  2*r[j+Z]; hsq=r[j+Z]*r[j+Z]
                 if i!=j:
                     idr = 1.0/sqrt( dx*dx + dy*dy )
                     idr2=idr*idr
                     Fdotidr2 = (F[j] * dx + F[j+N] * dy )*idr2
                     #
-                    fac1 = fac0*(H-r[i+xx])*(H-r[j+xx])*r[i+xx]
+                    fac1 = fac0*(H-r[i+Z])*(H-r[j+Z])*r[i+Z]
                     vx += fac1*(0.5*F[j]    + Fdotidr2*dx)*idr2 
                     vy += fac1*(0.5*F[j+N] + Fdotidr2*dy)*idr2 
                     
@@ -98,7 +98,7 @@ cdef class Rbm:
             Height of the Hele-Shaw cell 
         """
 
-        cdef int N=self.N, i, j, xx=2*N, xx1=3*N , xx2=4*N   
+        cdef int N=self.N, i, j, Z=2*N, xx1=3*N , xx2=4*N   
         cdef double dx, dy, dz, idr, idr2, idr4, idr6, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz 
@@ -108,9 +108,9 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             vx=0; vy=0;   vz=0;
             for j in  range(N):
-                h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
+                h2 = 2*r[j+Z]; hsq = r[j+Z]*r[j+Z];
                 sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
-                sxy = V2s[j+xx]; syx = sxy;
+                sxy = V2s[j+Z]; syx = sxy;
                 sxz = V2s[j+xx1]; szx = sxz;
                 syz = V2s[j+xx2]; szy = syz;
                 dx = r[i]   - r[j]
@@ -118,7 +118,7 @@ cdef class Rbm:
                 if i!=j:
                     idr  = 1.0/sqrt( dx*dx + dy*dy);
                     idr4 = idr*idr*idr*idr; idr6 = idr4*idr*idr; 
-                    fac1 = fac0*(H-r[i+xx])*(H-r[j+xx])*r[i+xx]
+                    fac1 = fac0*(H-r[i+Z])*(H-r[j+Z])*r[i+Z]
 
                     srx = fac1*(sxx*dx +  sxy*dy )*idr4; 
                     sry = fac1*(sxy*dx +  syy*dy )*idr4;
@@ -130,7 +130,7 @@ cdef class Rbm:
                      
             v[i]    += vx*mus
             v[i+N] += vy*mus
-            v[i+xx] += vz*mus
+            v[i+Z] += vz*mus
         return
 
    
@@ -154,7 +154,7 @@ cdef class Rbm:
             Height of the Hele-Shaw cell 
         """
 
-        cdef int N=self.N, i, j, xx=2*N
+        cdef int N=self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr2, idr5, V3tdotidr, tempD, hsq, h2, tH=2*H
         cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5
         cdef double fac0 = 6/(PI*self.eta*H*H*H), fac1, fac2
@@ -164,18 +164,18 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]
+                h2  =  2*r[j+Z]
                 if i!=j:
                     idr = 1.0/sqrt( dx*dx + dy*dy)
                     idr2=idr*idr
                     V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy)*idr2
                     
-                    fac1 = -fac0*r[j+xx]*(H-r[j+xx])
+                    fac1 = -fac0*r[j+Z]*(H-r[j+Z])
                     vx += fac1*(0.5*V3t[j]    - V3tdotidr*dx)*idr2
                     vy += fac1*(0.5*V3t[j+N] - V3tdotidr*dy)*idr2
             v[i]    += vx*mud
             v[i+N] += vy*mud
-            v[i+xx] += vz*mud
+            v[i+Z] += vz*mud
 
 
 
@@ -233,7 +233,7 @@ cdef class Flow:
             Height of the Hele-Shaw cell 
         """
 
-        cdef int i, j, N=self.N, xx=2*N, Nt=self.Nt
+        cdef int i, j, N=self.N, Z=2*N, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H
         cdef double mu = 1.0/(6*PI*self.eta*self.b), mu1 = mu*self.b*0.75, a2=self.b*self.b/3.0
@@ -247,7 +247,7 @@ cdef class Flow:
                 idr = 1.0/sqrt( dx*dx + dy*dy )
                 Fdotidr = (F[j] * dx + F[j+N] * dy )*idr*idr
                 #
-                fac1 = (H-rt[i+2*Nt])*(H-r[j+xx])*rt[i+2*Nt]*r[j+xx]
+                fac1 = (H-rt[i+2*Nt])*(H-r[j+Z])*rt[i+2*Nt]*r[j+Z]
                 vx += fac1*(0.5*F[j]    - Fdotidr*dx)*idr*idr 
                 vy += fac1*(0.5*F[j+N] - Fdotidr*dy)*idr*idr
                     
@@ -278,7 +278,7 @@ cdef class Flow:
         H: float 
             Height of the Hele-Shaw cell 
         """
-        cdef int i, j, N=self.N, xx=2*N, Nt=self.Nt, xx1=3*N, xx2=4*N
+        cdef int i, j, N=self.N, Z=2*N, Nt=self.Nt, xx1=3*N, xx2=4*N
         cdef double dx, dy, dz, idr, idr2, idr4, idr6, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz 
@@ -290,14 +290,14 @@ cdef class Flow:
             vx=0; vy=0; vz=0;
             for j in range(N):
                 sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
-                sxy = V2s[j+xx]; syx = sxy;
+                sxy = V2s[j+Z]; syx = sxy;
                 sxz = V2s[j+xx1]; szx = sxz;
                 syz = V2s[j+xx2]; szy = syz;
                 dx = rt[i]    - r[j]
                 dy = rt[i+Nt] - r[j+N]
                 idr  = 1.0/sqrt( dx*dx + dy*dy);
                 idr4 = idr*idr*idr*idr; idr6 = idr4*idr*idr; 
-                fac1 = (H-rt[i+2*Nt])*(H-r[j+xx])*rt[i+2*Nt]*idr4
+                fac1 = (H-rt[i+2*Nt])*(H-r[j+Z])*rt[i+2*Nt]*idr4
 
                 srx = fac1*(sxx*dx    +  sxy*dy ); 
                 sry = fac1*(sxy*dx    +  syy*dy );
@@ -332,7 +332,7 @@ cdef class Flow:
         H: float 
             Height of the Hele-Shaw cell 
         """
-        cdef int i, j, N=self.N, xx=2*N, Nt=self.Nt
+        cdef int i, j, N=self.N, Z=2*N, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr2, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, tH = 2*H, V3tdotidr
         cdef double mu = 1.0/(6*PI*self.eta*self.b), mu1 = mu*self.b*0.75, a2=self.b*self.b/3.0
@@ -347,7 +347,7 @@ cdef class Flow:
                 idr2=idr*idr
                 V3tdotidr = (V3t[j]*dx + V3t[j+N]*dy)*idr2
                 
-                fac1 = fac0*(H-rt[i+2*Nt])*(H-r[j+xx])*rt[i+2*Nt]*r[j+xx]
+                fac1 = fac0*(H-rt[i+2*Nt])*(H-r[j+Z])*rt[i+2*Nt]*r[j+Z]
                 vx += fac1*(0.5*V3t[j]    - V3tdotidr*dx)*idr2
                 vy += fac1*(0.5*V3t[j+N]  - V3tdotidr*dy)*idr2
                     

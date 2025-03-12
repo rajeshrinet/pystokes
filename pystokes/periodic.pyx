@@ -348,7 +348,7 @@ cdef class Rbm:
         cdef double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8.0*PI/(L*L*L)
         cdef double ixi2, vx, vy, vz
         cdef int N = self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, i1, j, j1, ii, jj, kk, Z=2*N, Nbb=2*Nb+1
-        cdef double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
+        cdef double xdr, xdr2, xdr3, A1, B1, V3tdotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
         cdef double b3=self.b*self.b*self.b, muv=-(b3)/20, xi2
         cdef double xd, yd, zd, xd1, yd1, zd1
         if xi0 != 123456789:
@@ -382,7 +382,7 @@ cdef class Rbm:
                                 B1 = (-6*erxdr + e1*(-6*xdr-4*xdr3 +32*xdr3*xdr2-8*xdr3*xdr3*xdr ))*idr5 
                                 B1 = B1*(V3t[j]*dx + V3t[j+N]*dy + V3t[j+Z]*dz )*idr*idr
 
-                                vx += A1*V3t[j]    + B1*dx
+                                vx += A1*V3t[j]   + B1*dx
                                 vy += A1*V3t[j+N] + B1*dy
                                 vz += A1*V3t[j+Z] + B1*dz
                 #Fourier part
@@ -395,11 +395,11 @@ cdef class Rbm:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
                                 cc = -fac*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
-                                Ddotik2  = (V3t[j]*kx + V3t[j+N]*ky + V3t[j+Z]*kz)/k2
+                                V3tdotik2  = (V3t[j]*kx + V3t[j+N]*ky + V3t[j+Z]*kz)/k2
                                 
-                                vx += cc*( V3t[j]    - Ddotik2*kx ) 
-                                vy += cc*( V3t[j+N] - Ddotik2*ky ) 
-                                vz += cc*( V3t[j+Z] - Ddotik2*kz ) 
+                                vx += cc*( V3t[j]   - V3tdotik2*kx ) 
+                                vy += cc*( V3t[j+N] - V3tdotik2*ky ) 
+                                vz += cc*( V3t[j+Z] - V3tdotik2*kz ) 
 
             v[i]   += mud*V3t[i]    + muv*vx
             v[i+N] += mud*V3t[i+N]  + muv*vy
@@ -1507,7 +1507,7 @@ cdef class Flow:
             double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8*PI/(L*L*L)
             double ixi2, vx, vy, vz
             int Nt=self.Nt,N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, Z=2*N, Nbb=2*Nb+1
-            double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
+            double xdr, xdr2, xdr3, A1, B1, V3tdotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
             double mud1 = -1.0*(self.b**3)/5
             double xd, yd, zd, xd1, yd1, zd1
         if xi0 != 123456789:
@@ -1549,11 +1549,11 @@ cdef class Flow:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
                                 cc = -fac*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
-                                Ddotik2  = (V3t[j]*kx + V3t[j+N]*ky + V3t[j+Z]*kz)/k2
+                                V3tdotik2  = (V3t[j]*kx + V3t[j+N]*ky + V3t[j+Z]*kz)/k2
                                 
-                                vx += cc*( V3t[j]   - Ddotik2*kx ) 
-                                vy += cc*( V3t[j+N] - Ddotik2*ky ) 
-                                vz += cc*( V3t[j+Z] - Ddotik2*kz ) 
+                                vx += cc*( V3t[j]   - V3tdotik2*kx ) 
+                                vy += cc*( V3t[j+N] - V3tdotik2*ky ) 
+                                vz += cc*( V3t[j+Z] - V3tdotik2*kz ) 
             vv[i]      += mud1*vx
             vv[i+Nt]   += mud1*vy
             vv[i+2*Nt] += mud1*vz

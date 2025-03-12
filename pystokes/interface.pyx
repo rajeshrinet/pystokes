@@ -90,7 +90,7 @@ cdef class Rbm:
         >>>    Tf,Nts,rhs,integrator='odeint', filename='crystallization')
         """
 
-        cdef int i, j, N=self.N, xx=2*N
+        cdef int i, j, N=self.N, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, F1, F2, F3
         cdef double mu=self.mu, muv=self.muv, a2=self.b*self.b/3.0
@@ -110,20 +110,20 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
+                h2  =  2*r[j+Z]; hsq=r[j+Z]*r[j+Z]
                 if i!=j:
-                    dz = r[i+xx]  - r[j+xx]
+                    dz = r[i+Z]  - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3=idr*idr*idr
-                    Fdotidr = (F[j] * dx + F[j+N] * dy + F[j+xx] * dz)*idr*idr
+                    Fdotidr = (F[j] * dx + F[j+N] * dy + F[j+Z] * dz)*idr*idr
                     #
                     vx += (F[j]   +Fdotidr*dx)*idr + a2*(2*F[j]   -6*Fdotidr*dx)*idr3
                     vy += (F[j+N]+Fdotidr*dy)*idr  + a2*(2*F[j+N]-6*Fdotidr*dy)*idr3
-                    vz += (F[j+xx]+Fdotidr*dz)*idr + a2*(2*F[j+xx]-6*Fdotidr*dz)*idr3
+                    vz += (F[j+Z]+Fdotidr*dz)*idr + a2*(2*F[j+Z]-6*Fdotidr*dz)*idr3
 
                     ##contributions from the image
-                    F1 = ll1*F[j];   F2 = ll1*F[j+N];   F3 = -F[j+xx];
-                    dz = r[i+xx] + r[j+xx]
+                    F1 = ll1*F[j];   F2 = ll1*F[j+N];   F3 = -F[j+Z];
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     idr5 = idr3*idr*idr
@@ -132,7 +132,7 @@ cdef class Rbm:
                     vy += (F2+Fdotidr*dy)*idr + a2*(2*F2-6*Fdotidr*dy)*idr3
                     vz += (F3+Fdotidr*dz)*idr + a2*(2*F3-6*Fdotidr*dz)*idr3
 
-                    tempF  = -F[j+xx]     # F_i = M_ij F_j, reflection of the strength
+                    tempF  = -F[j+Z]     # F_i = M_ij F_j, reflection of the strength
                     Fdotidr = ( F[j]*dx + F[j+N]*dy + tempF*dz )*idr*idr
 
                     vx += ll2*(-h2*(dz*(F[j]   - 3*Fdotidr*dx) + tempF*dx)*idr3)
@@ -152,7 +152,7 @@ cdef class Rbm:
                     vz += ll2*(-h2*6*a2*(dz*tempF  -5*Fdotidr*dz*dz + tempF*dz)*idr5 -6*a2*h2*Fdotidr*idr3)
                 else:
                     ''' self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
                     hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
                     
@@ -162,9 +162,9 @@ cdef class Rbm:
                     muz = mu*(1 + muTTperp1*hbar_inv + muTTperp2*hbar_inv3 
                               + muTTperp3*hbar_inv5)
 
-            v[i  ]  += mux*F[i]    + muv*vx
-            v[i+N] += muy*F[i+N] + muv*vy
-            v[i+xx] += muz*F[i+xx] + muv*vz
+            v[i  ] += mux*F[i]    + muv*vx
+            v[i+N] += muy*F[i+N]  + muv*vy
+            v[i+Z] += muz*F[i+Z] + muv*vz
         return
 
 
@@ -189,7 +189,7 @@ cdef class Rbm:
             Default is zero 
         """
 
-        cdef int N = self.N, i, j, xx=2*N
+        cdef int N = self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2,
         cdef double vx, vy, vz, T1, T2, T3
         cdef double muv=self.muv 
@@ -207,22 +207,22 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
-                h2 = 2*r[i+xx]
+                h2 = 2*r[i+Z]
                 if i != j:
                     #contributions from the source
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
 
-                    vx += (T[j+N]*dz - T[j+xx]*dy )*idr3
-                    vy += (T[j+xx]*dx - T[j]   *dz )*idr3
+                    vx += (T[j+N]*dz - T[j+Z]*dy )*idr3
+                    vy += (T[j+Z]*dx - T[j]   *dz )*idr3
                     vz += (T[j]   *dy - T[j+N]*dx )*idr3
 
                     #contributions from the image
                     T1 = T[j];
                     T2 = T[j+N]
                     T3 = -T[j+2*N];
-                    dz = r[i+xx] + r[j+xx]
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
 
@@ -236,7 +236,7 @@ cdef class Rbm:
                     vz += ll2*(h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
                 else:
                     ''' the self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv
                     hbar_inv4 = hbar_inv2*hbar_inv*hbar_inv
                     
@@ -248,9 +248,9 @@ cdef class Rbm:
                     vx += -muTR*T2   #change sign here to make up for '-=' below...
                     vy += muTR*T1  #same here
 
-            v[i]    += muv*vx   
-            v[i+N]  += muv*vy
-            v[i+xx] += muv*vz
+            v[i]   += muv*vx   
+            v[i+N] += muv*vy
+            v[i+Z] += muv*vz
         return
 
 
@@ -272,7 +272,7 @@ cdef class Rbm:
             An array of size 5*N,
         """
 
-        cdef int N=self.N, i, j, xx=2*N, xx1=3*N , xx2=4*N
+        cdef int N=self.N, i, j, Z=2*N, xx1=3*N , xx2=4*N
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz
@@ -292,15 +292,15 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             vx=0; vy=0;   vz=0;
             for j in  range(N):
-                h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
+                h2 = 2*r[j+Z]; hsq = r[j+Z]*r[j+Z];
                 sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
-                sxy = V2s[j+xx]; syx = sxy;
+                sxy = V2s[j+Z]; syx = sxy;
                 sxz = V2s[j+xx1]; szx = sxz;
                 syz = V2s[j+xx2]; szy = syz;
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
                 if i!=j:
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz );
                     idr2 = idr*idr; idr3 = idr2*idr; idr5 = idr3*idr2; idr7 = idr5*idr2;
                     srx = (sxx*dx +  sxy*dy + sxz*dz );
@@ -314,7 +314,7 @@ cdef class Rbm:
                     vz += 3*srr*dz*idr5;
 
                     ## contributions from the image
-                    dz = r[i+xx]+r[j+xx]
+                    dz = r[i+Z]+r[j+Z]
                     idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr2 = idr*idr; idr3 = idr2*idr; idr5 = idr3*idr2; idr7 = idr5*idr2;
 
@@ -361,7 +361,7 @@ cdef class Rbm:
 
                 else:
                     ''' the self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv
                     hbar_inv4 = hbar_inv2*hbar_inv*hbar_inv
                     hbar_inv6 = hbar_inv4*hbar_inv2
@@ -374,9 +374,9 @@ cdef class Rbm:
                     vy += mus_inv * 2*piT2s1*syz
                     vz += mus_inv * 3*(piT2s2*sxx + piT2s2*syy)
 
-            v[i]    += vx*mus
+            v[i]   += vx*mus
             v[i+N] += vy*mus
-            v[i+xx] += vz*mus
+            v[i+Z] += vz*mus
         return
 
 
@@ -398,7 +398,7 @@ cdef class Rbm:
             An array of size 3*N,
         """
 
-        cdef int N=self.N, i, j, xx=2*N
+        cdef int N=self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2, D1, D2, D3
         cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
         cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
@@ -417,19 +417,19 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]
+                h2  =  2*r[j+Z]
                 if i!=j:
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3=idr*idr*idr
-                    Ddotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+xx]*dz)*idr*idr
+                    Ddotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+Z]*dz)*idr*idr
                     #
                     vx += (2*V3t[j]    - 6*Ddotidr*dx)*idr3
                     vy += (2*V3t[j+N] - 6*Ddotidr*dy)*idr3
-                    vz += (2*V3t[j+xx] - 6*Ddotidr*dz)*idr3
+                    vz += (2*V3t[j+Z] - 6*Ddotidr*dz)*idr3
 
                     ##contributions from the image
-                    dz = r[i+xx] + r[j+xx]
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     idr5 = idr3*idr*idr
@@ -442,7 +442,7 @@ cdef class Rbm:
                     vy += (2*D2 - 6*Ddotidr*dy )*idr3
                     vz += (2*D3 - 6*Ddotidr*dz )*idr3
 
-                    tempD = -V3t[j+xx]     # D_i = M_ij D_j, reflection of the strength
+                    tempD = -V3t[j+Z]     # D_i = M_ij D_j, reflection of the strength
                     Ddotidr = ( V3t[j]*dx + V3t[j+N]*dy + tempD*dz )*idr*idr
                     
                     vx += ll*12*dz*( dz*V3t[j]   - 5*dz*Ddotidr*dx + 2*tempD*dx )*idr5
@@ -455,7 +455,7 @@ cdef class Rbm:
 
                 else:
                     ''' self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
                     hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
                     
@@ -463,9 +463,9 @@ cdef class Rbm:
                     piy = pix
                     piz = piT3tperp1*hbar_inv3 + piT3tperp2*hbar_inv5
 
-            v[i  ]  += pix*V3t[j]    + muv*vx
-            v[i+N]  += piy*V3t[j+N] + muv*vy
-            v[i+xx] += piz*V3t[j+xx] + muv*vz
+            v[i  ] += pix*V3t[j]   + muv*vx
+            v[i+N] += piy*V3t[j+N] + muv*vy
+            v[i+Z] += piz*V3t[j+Z] + muv*vz
         return
     
     
@@ -473,7 +473,7 @@ cdef class Rbm:
     
     ## Angular Velocities
     cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F, double ll=0):
-        cdef int N = self.N, i, j, xx=2*N
+        cdef int N = self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, rlz, Fdotidr, h2
         cdef double ox, oy, oz, muv=1.0/(8*PI*self.eta)
         cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll)
@@ -490,25 +490,25 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
-                h2 = 2*r[i+xx]
+                h2 = 2*r[i+Z]
                 if i != j:
                     #contributions from the source
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
 
-                    ox += (F[j+N]*dz - F[j+xx]*dy )*idr3
-                    oy += (F[j+xx]*dx - F[j]   *dz )*idr3
+                    ox += (F[j+N]*dz - F[j+Z]*dy )*idr3
+                    oy += (F[j+Z]*dx - F[j]   *dz )*idr3
                     oz += (F[j]   *dy - F[j+N]*dx )*idr3
 
                     #contributions from the image
-                    dz = r[i+xx] + r[j+xx]
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     rlz = (dx*F[j+N] - dy*F[j])*idr*idr
 
-                    ox += (F[j+N]*dz + F[j+xx]*dy )*idr3
-                    oy += (-F[j+xx]*dx - F[j]   *dz )*idr3
+                    ox += (F[j+N]*dz + F[j+Z]*dy )*idr3
+                    oy += (-F[j+Z]*dx - F[j]   *dz )*idr3
                     oz += (F[j]   *dy - F[j+N]*dx )*idr3
 
                     ox += (ll*h2*(F[j+N]-3*rlz*dx) + 6*dz*dx*rlz)*idr3
@@ -517,7 +517,7 @@ cdef class Rbm:
 
                 else:
                     ''' the self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv
                     hbar_inv4 = hbar_inv2*hbar_inv*hbar_inv
                     
@@ -529,14 +529,14 @@ cdef class Rbm:
                     ox += muRT*F2
                     oy += -muRT*F1 
                    
-            o[i  ]  += muv*ox
+            o[i  ] += muv*ox
             o[i+N] += muv*oy
-            o[i+xx] += muv*oz
+            o[i+Z] += muv*oz
         return
 
 
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T, double ll=0):
-        cdef int N=self.N, i, j, xx=2*N
+        cdef int N=self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
         cdef double ox, oy, oz, mur=self.mur, muv=self.muv
         
@@ -552,29 +552,29 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]
+                h2  =  2*r[j+Z]
                 if i!=j:
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3=idr*idr*idr
-                    Tdotidr = (T[j]*dx + T[j+N]*dy + T[j+xx]*dz)*idr*idr
+                    Tdotidr = (T[j]*dx + T[j+N]*dy + T[j+Z]*dz)*idr*idr
                     #
                     ox += (2*T[j]    - 6*Tdotidr*dx)*idr3
                     oy += (2*T[j+N] - 6*Tdotidr*dy)*idr3
-                    oz += (2*T[j+xx] - 6*Tdotidr*dz)*idr3
+                    oz += (2*T[j+Z] - 6*Tdotidr*dz)*idr3
 
                     ##contributions from the image
-                    dz = r[i+xx] + r[j+xx]
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     idr5 = idr3*idr*idr
-                    Tdotidr = (T[j]*dx + T[j+N]*dy - T[j+xx]*dz)*idr*idr
+                    Tdotidr = (T[j]*dx + T[j+N]*dy - T[j+Z]*dz)*idr*idr
 
                     ox += (2*T[j]    - 6*Tdotidr*dx )*idr3
                     oy += (2*T[j+N] - 6*Tdotidr*dy )*idr3
-                    oz += (-2*T[j+xx] - 6*Tdotidr*dz )*idr3
+                    oz += (-2*T[j+Z] - 6*Tdotidr*dz )*idr3
 
-                    tempT = -T[j+xx]     # D_i = M_ij D_j, reflection of the strength
+                    tempT = -T[j+Z]     # D_i = M_ij D_j, reflection of the strength
                     Tdotidr = ( T[j]*dx + T[j+N]*dy + tempT*dz )*idr*idr
                     
                     ox += ll*12*dz*( dz*T[j]   - 5*dz*Tdotidr*dx + 2*tempT*dx )*idr5
@@ -587,7 +587,7 @@ cdef class Rbm:
 
                 else:
                     ''' self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
                     
                     mux = mur*(1 + muRRpara*hbar_inv3)
@@ -596,7 +596,7 @@ cdef class Rbm:
 
             o[i  ]  += mux*T[i  ]  - muv*ox
             o[i+N] += muy*T[i+N] - muv*oy
-            o[i+xx] += muz*T[i+xx] - muv*oz
+            o[i+Z] += muz*T[i+Z] - muv*oz
         return
     
     
@@ -618,7 +618,7 @@ cdef class Rbm:
              An array of size 3*N,
         """
 
-        cdef int N=self.N, i, j, xx=2*N
+        cdef int N=self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
         cdef double ox, oy, oz, mur=self.mur, muv=self.muv
         cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
@@ -634,7 +634,7 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]
+                h2  =  2*r[j+Z]
                 
                 if i!=j:
                     pass
@@ -646,7 +646,7 @@ cdef class Rbm:
                     
                 else:
                     ''' self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv4 = hbar_inv*hbar_inv*hbar_inv*hbar_inv
                     
                     piR3t = piR3t0*hbar_inv4
@@ -659,7 +659,7 @@ cdef class Rbm:
                    
             o[i  ]  += ox
             o[i+N] += oy
-            o[i+xx] += oz
+            o[i+Z] += oz
         return
     
     
@@ -681,7 +681,7 @@ cdef class Rbm:
              An array of size 5*N,
         """
 
-        cdef int N=self.N, i, j, xx=2*N, xx1=3*N , xx2=4*N
+        cdef int N=self.N, i, j, Z=2*N, xx1=3*N , xx2=4*N
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz
@@ -697,9 +697,9 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             ox=0; oy=0;  oz=0;
             for j in  range(N):
-                h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
+                h2 = 2*r[j+Z]; hsq = r[j+Z]*r[j+Z];
                 sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
-                sxy = V2s[j+xx]; syx = sxy;
+                sxy = V2s[j+Z]; syx = sxy;
                 sxz = V2s[j+xx1]; szx = sxz;
                 syz = V2s[j+xx2]; szy = syz;
                 dx = r[i]   - r[j]
@@ -714,7 +714,7 @@ cdef class Rbm:
 
                 else:
                     ''' the self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
                     hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
                     
@@ -723,9 +723,9 @@ cdef class Rbm:
                     ox += -2*piR2s*syz 
                     oy +=  2*piR2s*sxz
 
-            o[i  ]  += ox
+            o[i  ] += ox
             o[i+N] += oy
-            o[i+xx] += oz
+            o[i+Z] += oz
         return
 
 
@@ -810,34 +810,34 @@ cdef class Flow:
         >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
 
-        cdef int i, j, N=self.N, Nt=self.Nt, xx=2*N
+        cdef int i, j, N=self.N, Nt=self.Nt, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, tempF, hsq, h2, F3
         cdef double vx, vy, vz, muv=1.0/(8*PI*self.eta), a2=self.b*self.b/6.0
 
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
             for j in range(N):
-                h2  =  2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
+                h2  =  2*r[j+Z]; hsq=r[j+Z]*r[j+Z]
                 dx = rt[i]    - r[j]
                 dy = rt[i+Nt] - r[j+N]
-                dz = rt[i+2*Nt]  - r[j+xx]
+                dz = rt[i+2*Nt]  - r[j+Z]
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3=idr*idr*idr
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3=idr*idr*idr
-                Fdotidr = (F[j] * dx + F[j+N] * dy + F[j+xx] * dz)*idr*idr
+                Fdotidr = (F[j] * dx + F[j+N] * dy + F[j+Z] * dz)*idr*idr
                 #
                 vx += (F[j]   +Fdotidr*dx)*idr + a2*(2*F[j]   -6*Fdotidr*dx)*idr3
                 vy += (F[j+N]+Fdotidr*dy)*idr + a2*(2*F[j+N]-6*Fdotidr*dy)*idr3
-                vz += (F[j+xx]+Fdotidr*dz)*idr + a2*(2*F[j+xx]-6*Fdotidr*dz)*idr3
+                vz += (F[j+Z]+Fdotidr*dz)*idr + a2*(2*F[j+Z]-6*Fdotidr*dz)*idr3
 
                 ##contributions from the image
-                dz = rt[i+2*Nt] + r[j+xx]
+                dz = rt[i+2*Nt] + r[j+Z]
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                 idr5 = idr3*idr*idr 
 
-                F3 = -F[j+xx]
+                F3 = -F[j+Z]
                 Fdotidr = ( F[j]*dx + F[j+N]*dy + F3*dz )*idr*idr
 
                 vx += (F[j]   +Fdotidr*dx)*idr - a2*(2*F[j]   -6*Fdotidr*dx)*idr3
@@ -894,7 +894,7 @@ cdef class Flow:
         >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """ 
 
-        cdef int N = self.N, i, j, xx=2*N, Nt=self.Nt
+        cdef int N = self.N, i, j, Z=2*N, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2, 
         cdef double vx, vy, vz, muv = 1.0/(8*PI*self.eta)
  
@@ -905,21 +905,21 @@ cdef class Flow:
                 dy = rt[i+Nt] - r[j+N]   
                 h2 = 2*rt[i+Nt*2]
                     #contributions from the source 
-                dz = rt[i+2*Nt] - r[j+xx] 
+                dz = rt[i+2*Nt] - r[j+Z] 
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                  
-                vx += (T[j+N]*dz - T[j+xx]*dy )*idr3
-                vy += (T[j+xx]*dx - T[j]   *dz )*idr3
+                vx += (T[j+N]*dz - T[j+Z]*dy )*idr3
+                vy += (T[j+Z]*dx - T[j]   *dz )*idr3
                 vz += (T[j]   *dy - T[j+N]*dx )*idr3
                     
                 #contributions from the image 
-                dz = rt[i+2*Nt] + r[j+xx]            
+                dz = rt[i+2*Nt] + r[j+Z]            
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                 
-                vx += -(T[j+N]*dz - T[j+xx]*dy )*idr3
-                vy += -(T[j+xx]*dx - T[j]   *dz )*idr3
+                vx += -(T[j+N]*dz - T[j+Z]*dy )*idr3
+                vy += -(T[j+Z]*dx - T[j]   *dz )*idr3
                 vz += -(T[j]   *dy - T[j+N]*dx )*idr3
                 
                 rlz = (dx*T[j+N] - dy*T[j])*idr*idr
@@ -928,7 +928,7 @@ cdef class Flow:
                 vz += (h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
 
                 ''' the self contribution from the image point''' 
-                dz = rt[i+2*Nt] + r[j+xx]            
+                dz = rt[i+2*Nt] + r[j+Z]            
                 idr = 1.0/dz
                 idr3 = idr*idr*idr
                 
@@ -989,7 +989,7 @@ cdef class Flow:
         >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
 
-        cdef int N=self.N,  Nt=self.Nt, xx=2*N, xx1=3*N, xx2=4*N
+        cdef int N=self.N,  Nt=self.Nt, Z=2*N, xx1=3*N, xx2=4*N
         cdef int i, j  
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
@@ -1000,14 +1000,14 @@ cdef class Flow:
             vx=0; vy=0; vz=0;
             for j in  range(N):
                 sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
-                sxy = V2s[j+xx]; syx = sxy;
+                sxy = V2s[j+Z]; syx = sxy;
                 sxz = V2s[j+xx1]; szx = sxz;
                 syz = V2s[j+xx2]; szy = syz;
                 
                 dx = rt[i]   - r[j]
                 dy = rt[i+Nt] - r[j+N]
-                dz = rt[i+2*Nt] - r[j+xx] 
-                h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
+                dz = rt[i+2*Nt] - r[j+Z] 
+                h2 = 2*r[j+Z]; hsq = r[j+Z]*r[j+Z];
                 idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz );
                 idr2 = idr*idr; idr3 = idr2*idr; idr5 = idr3*idr2; idr7 = idr5*idr2;
                 srx = (sxx*dx +  sxy*dy + sxz*dz ); 
@@ -1021,7 +1021,7 @@ cdef class Flow:
                 vz += 3*srr*dz*idr5;
                  
                 ## contributions from the image 
-                dz = rt[i+2*Nt]+r[j+xx]
+                dz = rt[i+2*Nt]+r[j+Z]
                 idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr2 = idr*idr; idr3 = idr2*idr; idr5 = idr3*idr2; idr7 = idr5*idr2;
                 
@@ -1091,31 +1091,31 @@ cdef class Flow:
         >>> flow.flowField3t(vv, rr, r, V3t)
         >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='2s')
         """
-        cdef int i, j, N=self.N, Nt=self.Nt, xx=2*N
+        cdef int i, j, N=self.N, Nt=self.Nt, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2, D3
         cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
 
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
             for j in range(N):
-                h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
+                h2 = 2*r[j+Z]; hsq = r[j+Z]*r[j+Z];
                 dx = rt[i]      - r[j]
                 dy = rt[i+Nt]   - r[j+N]
-                dz = rt[i+2*Nt] - r[j+xx] 
+                dz = rt[i+2*Nt] - r[j+Z] 
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3=idr*idr*idr
-                Ddotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+xx]*dz)*idr*idr
+                Ddotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+Z]*dz)*idr*idr
                 #
                 vx += (2*V3t[j]    - 6*Ddotidr*dx)*idr3
                 vy += (2*V3t[j+N] - 6*Ddotidr*dy)*idr3
-                vz += (2*V3t[j+xx] - 6*Ddotidr*dz)*idr3
+                vz += (2*V3t[j+Z] - 6*Ddotidr*dz)*idr3
                 
                 ##contributions from the image 
-                dz = rt[i+2*Nt] + r[j+xx]        
+                dz = rt[i+2*Nt] + r[j+Z]        
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                 idr5 = idr3*idr*idr 
-                D3 = -V3t[j+xx]
+                D3 = -V3t[j+Z]
                 Ddotidr = (V3t[j]*dx + V3t[j+N]*dy + D3*dz)*idr*idr
                 
                 vx += (2*V3t[j]    - 6*Ddotidr*dx )*idr3

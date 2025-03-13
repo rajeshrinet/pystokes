@@ -245,7 +245,7 @@ cdef class Rbm:
         cdef: 
             int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, Z=2*N, Nbb=2*Nb+1, xx1=3*N, xx2=4*N
             double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
-            double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
+            double xdr, xdr2, xdr3, xdr5,  E1, E2, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, ik2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
             double a2 = self.b*self.b*4.0/15, aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.b**3)/24 
         if xi0 != 123456789:
@@ -277,22 +277,22 @@ cdef class Rbm:
                                 idr3 = idr*idr*idr; aidr2=a2*idr*idr
                                 xdr = xi/idr; xdr2=xdr*xdr; xdr3 = xdr2*xdr; xdr5 = xdr3*xdr2;
                                 erxdr   = erfc(xdr);   e1  = IPI*exp(-xdr2);
-                                D =  e1*(8*xdr3 - 4*xdr5 ) 
-                                E = -3*erxdr + e1*(-3*xdr - 2*xdr3  + 4*xdr5 ) 
+                                E1 =  e1*(8*xdr3 - 4*xdr5 ) 
+                                E2 = -3*erxdr + e1*(-3*xdr - 2*xdr3  + 4*xdr5 ) 
                                 
                                 srx = sxx*dx + sxy*dy + sxz*dz  
                                 sry = sxy*dx + syy*dy + syz*dz  
                                 srz = sxz*dx + syz*dy - (sxx+syy)*dz 
                                 srr = srx*dx + sry*dy + srz*dz
 
-                                # D += -12*erxdr+ e1*(-12*xdr - 8*xdr3  - 104*xdr5 + 104*xdr5*xdr2 - 16*xdr3*xdr3*xdr3)*aidr2
-                                # E += 30*erxdr + e1*(30*xdr  + 20*xdr3 + 8*xdr5   - 80*xdr5*xdr2  + 16*xdr3*xdr3*xdr3)*aidr2
-                                # D  = D*idr3
-                                # E  = E*srr*idr*idr*idr3
+                                # E1 += -12*erxdr+ e1*(-12*xdr - 8*xdr3  - 104*xdr5 + 104*xdr5*xdr2 - 16*xdr3*xdr3*xdr3)*aidr2
+                                # E2 += 30*erxdr + e1*(30*xdr  + 20*xdr3 + 8*xdr5   - 80*xdr5*xdr2  + 16*xdr3*xdr3*xdr3)*aidr2
+                                E1  = E1*idr3
+                                E2  = E2*srr*idr*idr*idr3
 
-                                vx += D*srx + E*dx
-                                vy += D*sry + E*dy
-                                vz += D*srz + E*dz
+                                vx += E1*srx + E2*dx
+                                vy += E1*sry + E2*dy
+                                vz += E1*srz + E2*dz
                 #Fourier part
                 for ii in range(N1, N2):
                     kx = k0*ii;
@@ -348,7 +348,7 @@ cdef class Rbm:
         cdef double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8.0*PI/(L*L*L)
         cdef double ixi2, vx, vy, vz
         cdef int N = self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, i1, j, j1, ii, jj, kk, Z=2*N, Nbb=2*Nb+1
-        cdef double xdr, xdr2, xdr3, A1, B1, V3tdotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
+        cdef double xdr, xdr2, xdr3, A1, B1, V3tdotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr3,  kx, ky, kz, k2, cc
         cdef double b3=self.b*self.b*self.b, muv=-(b3)/20, xi2
         cdef double xd, yd, zd, xd1, yd1, zd1
         if xi0 != 123456789:
@@ -375,11 +375,11 @@ cdef class Rbm:
                                 pass
                             else:    
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
-                                idr5=idr*idr*idr*idr*idr
+                                idr3=idr*idr*idr
                                 xdr = xi/idr; xdr2=xdr*xdr; xdr3 = xdr2*xdr;
                                 erxdr   = erfc(xdr); e1=IPI*exp(-xdr2);  
-                                A1 = (2*erxdr  + e1*( 2*xdr+28*xdr3-40*xdr3*xdr2+8*xdr3*xdr3*xdr ))*idr5 
-                                B1 = (-6*erxdr + e1*(-6*xdr-4*xdr3 +32*xdr3*xdr2-8*xdr3*xdr3*xdr ))*idr5 
+                                A1 = (2*erxdr  + e1*( 2*xdr+28*xdr3-40*xdr3*xdr2+8*xdr3*xdr3*xdr ))*idr3
+                                B1 = (-6*erxdr + e1*(-6*xdr-4*xdr3 +32*xdr3*xdr2-8*xdr3*xdr3*xdr ))*idr3
                                 B1 = B1*(V3t[j]*dx + V3t[j+N]*dy + V3t[j+Z]*dz )*idr*idr
 
                                 vx += A1*V3t[j]   + B1*dx
@@ -568,7 +568,8 @@ cdef class Rbm:
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr5 = pow(idr, 5)
                                 xdr = xi/idr; xdr2 = xdr*xdr;  
-                                s1 = -6*erfc(xdr) + IPI*xdr2*(-16 + 32*xdr2 - 8*xdr2*xdr2)*exp(-xdr2)
+                                s1 = -6*erfc(xdr) + IPI*(-16*xdr2*xdr + 32*xdr2*xdr2*xdr - 8*xdr2*xdr2*xdr2*xdr)*exp(-xdr2)
+
                                 vrx = vxx*dx +  vxy*dy + vxz*dz  
                                 vry = vxy*dx +  vyy*dy + vyz*dz  
                                 vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
@@ -980,7 +981,7 @@ cdef class Rbm:
             double ixi2, fac=8*PI/(L*L*L)
             int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, Z=2*N
             double dx, dy, dz, idr, idr7, grrx, grry, grrz, gkkx, gkky, gkkz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz, 
-            double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc,
+            double s2, kx, ky, kz, k2, xdr, e1, xdr2, xdr3, xdr5, cc,
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
@@ -1006,14 +1007,15 @@ cdef class Rbm:
                                 dz = r[i+Z] - r[j+Z]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr7 = pow(idr, 7)
-                                xdr = xi/idr; xdr2 = xdr*xdr; 
-                                s2 = 3*erfc(xdr) + IPI*(12*xdr - 32*xdr2*xdr - 16* xdr2*xdr2*xdr2*xdr)*exp(-xdr2)
+                                xdr = xi/idr; xdr2=xdr*xdr; xdr3=xdr2*xdr;   xdr5=xdr3*xdr3;
+                                s2 = 30*erfc(xdr) + IPI*(6*xdr + 32*xdr3 - 32*xdr5 - 80*xdr5*xdr2 + 16*xdr5*xdr3*xdr)*exp(-xdr2)
+
                                 grrx = gxxx*(dx*dx-dz*dz) + gxyy*(dy*dy-dz*dz) +  2*gxxy*dx*dy + 2*gxxz*dx*dz  +  2*gxyz*dy*dz
                                 grry = gxxy*(dx*dx-dz*dz) + gyyy*(dy*dy-dz*dz) +  2*gxyy*dx*dy + 2*gxyz*dx*dz  +  2*gyyz*dy*dz
                                 grrz = gxxz*(dx*dx-dz*dz) + gyyz*(dy*dy-dz*dz) +  2*gxyz*dx*dy - 2*(gxxx+gxyy)*dx*dz - 2*(gxxy+gyyy)*dy*dz
                                 
                                 o[i]   -= s2*( dy*grrz - dz*grry )*idr7
-                                o[i+N]-= s2*( dz*grrx - dx*grrz )*idr7
+                                o[i+N] -= s2*( dz*grrx - dx*grrz )*idr7
                                 o[i+Z] -= s2*( dx*grry - dy*grrx )*idr7
                 #Fourier part
                 dx = r[i]   - r[j]     
@@ -1189,6 +1191,7 @@ cdef class Rbm:
                                 idr7 = idr2*idr2*idr2*idr
                                 xdr = xi/idr; xdr2 = xdr*xdr; xdr4 = xdr2*xdr2; e1 = IPI*exp(-xdr2);
                                 s2 = 30*erfc(xdr) + e1*xdr*(6 + 32*xdr2 - 32*xdr4 - 80*xdr4*xdr2 + 16*xdr4*xdr4)
+
                                 s4  =e1*xdr*(-24 + 84*xdr2 + 160*xdr4 - 336*xdr4*xdr2 + 304*xdr4*xdr4 -32*xdr4*xdr4*xdr2)
                                 mrrr = mxxx*dx*(dx*dx-3*dz*dz) + 3*mxxy*dy*(dx*dx-dz*dz) + mxxz*dz*(3*dx*dx-dz*dz) +\
                                    3*mxyy*dx*(dy*dy-dz*dz) + 6*mxyz*dx*dy*dz + myyy*dy*(dy*dy-3*dz*dz) +  myyz*dz*(3*dy*dy-dz*dz) 
@@ -1442,8 +1445,8 @@ cdef class Flow:
                             srz = sxz*dx + syz*dy - (sxx+syy)*dz 
                             srr = srx*dx + sry*dy + srz*dz
 
-                            D += -12*erxdr+ e1*(-12*xdr - 8*xdr3  - 104*xdr5 + 104*xdr5*xdr2 - 16*xdr3*xdr3*xdr3)*aidr2
-                            E += 30*erxdr + e1*(30*xdr  + 20*xdr3 + 8*xdr5   - 80*xdr5*xdr2  + 16*xdr3*xdr3*xdr3)*aidr2
+                            # D += -12*erxdr+ e1*(-12*xdr - 8*xdr3  - 104*xdr5 + 104*xdr5*xdr2 - 16*xdr3*xdr3*xdr3)*aidr2
+                            # E += 30*erxdr + e1*(30*xdr  + 20*xdr3 + 8*xdr5   - 80*xdr5*xdr2  + 16*xdr3*xdr3*xdr3)*aidr2
                             D  = D*idr3
                             E  = E*srr*idr*idr*idr3
 

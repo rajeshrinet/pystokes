@@ -1,4 +1,5 @@
-"""Some utilities codes which do not fit anywhere else,
+"""
+Some utilities codes which do not fit anywhere else,
 but are essential in simulations of active colloids,
 and plotting flow and phoretic fields
 """

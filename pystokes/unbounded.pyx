@@ -1198,7 +1198,7 @@ cdef class PD:
     using the inputs of -  power dissipation, arrays of positions, velocity or angular velocity, 
     along with an array of forces or torques or a slip mode
 
-    The power dissipation is then update by each method. 
+    The power dissipation is then updated by each method. 
     
     ...
 

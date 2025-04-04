@@ -250,7 +250,7 @@ cdef class Rbm:
             double a2 = self.b*self.b*4.0/15, aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.b**3)/24 
         if xi0 != 123456789:
             xi = xi0 
-        ixi2 = 1/(xi*xi),
+        ixi2 = 1/(xi*xi)
         
         for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0;
@@ -855,9 +855,9 @@ cdef class Rbm:
                                 ox += cc*( T[j]   - Tdotik2*kx ) 
                                 oy += cc*( T[j+N] - Tdotik2*ky ) 
                                 oz += cc*( T[j+Z] - Tdotik2*kz ) 
-            o[i]    += muv*ox
+            o[i]   += muv*ox
             o[i+N] += muv*oy
-            o[i+Z]+= muv*oz
+            o[i+Z] += muv*oz
         return
 
     

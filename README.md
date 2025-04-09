@@ -70,6 +70,18 @@ principle is available to rationalize crystallization. In this [work](https://do
 >> python setup.py install
 ```
 
+### Via a conda environment
+
+###  Install PyStokes and its dependencies in an [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml) named "pystokes" via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
+
+
+```bash
+>> git clone https://github.com/rajeshrinet/pystokes.git
+>> cd pystokes
+>> make env
+>> conda activate pystokes
+>> make
+```
 
 ### Via pip
 

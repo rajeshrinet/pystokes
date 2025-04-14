@@ -1,24 +1,35 @@
 ![Imagel](https://raw.githubusercontent.com/rajeshrinet/pystokes/master/examples/banner.png)
 
 
-## PyStokes: phoresis and Stokesian hydrodynamics in Python  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder) ![Installation](https://github.com/rajeshrinet/pystokes/workflows/CI/badge.svg) ![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg) [![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02318/status.svg)](https://doi.org/10.21105/joss.02318) [![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes) [![Python Version](https://img.shields.io/pypi/pyversions/pystokes)](https://pypi.org/project/pystokes) [![Downloads](https://pepy.tech/badge/pystokes)](https://pepy.tech/project/pystokes)  
+## PyStokes: phoresis and Stokesian hydrodynamics in Python 
+![Installation](https://github.com/rajeshrinet/pystokes/workflows/CI/badge.svg) 
+![Notebooks](https://github.com/rajeshrinet/pystokes/workflows/notebooks/badge.svg) 
+[![Documentation Status](https://readthedocs.org/projects/pystokes/badge/?version=latest)](https://pystokes.readthedocs.io/en/latest/?badge=latest) 
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02318/status.svg)](https://doi.org/10.21105/joss.02318) 
+[![PyPI](https://img.shields.io/pypi/v/pystokes.svg)](https://pypi.python.org/pypi/pystokes)
+![PyPI Downloads](https://static.pepy.tech/badge/pystokes)
+![Stars](https://img.shields.io/github/stars/rajeshrinet/compPhy) 
+![Forks](https://img.shields.io/github/forks/rajeshrinet/compPhy) 
 
 [About](#about) 
-| [Blog](https://rajeshrinet.github.io/pystokes-blog/)
-| [News](#news) 
 | [Installation](#installation) 
 | [Documentation](https://pystokes.readthedocs.io/en/latest/) 
 | [Examples](#examples) 
-| [Publications ](#publications)
+| [Publications](#publications)
 | [Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery)
 | [Support](#support) 
 | [License](#license)
 
 
-
 ## About
 
 [PyStokes](https://github.com/rajeshrinet/pystokes) is a numerical library for phoresis and Stokesian hydrodynamics in Python. It uses a grid-free method, combining the integral representation of Laplace and Stokes equations, spectral expansion, and Galerkin discretization, to compute phoretic and hydrodynamic interactions between spheres with slip boundary conditions on their surfaces. The library also computes suspension scale quantities, such as rheological response, energy dissipation and fluid flow. The computational cost is quadratic in the number of particles and upto 1e5 particles have been accommodated on multicore computers. The library has been used to model suspensions of **microorganisms**,  **synthetic autophoretic particles** and **self-propelling droplets**. 
+
+You can take PyStokes for a spin online using Google Colab: <a target="_blank" href="https://colab.research.google.com/github/rajeshrinet/pystokes/blob/master/examples/ex01a-colab.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
+<br>
 
 Please read the PyStokes [paper](https://doi.org/10.21105/joss.02318) and [Wiki](https://github.com/rajeshrinet/pystokes/wiki) before you use PyStokes for your research. Included below are some examples from [PyStokes Gallery](https://github.com/rajeshrinet/pystokes/wiki/Gallery): 
 
@@ -47,7 +58,6 @@ principle is available to rationalize crystallization. In this [work](https://do
 
 
 ## Installation
-You can take PyStokes for a spin **without installation**: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder). Please be patient while [Binder](https://mybinder.org/v2/gh/rajeshrinet/pystokes/master?filepath=binder) loads.
 
 ### From a checkout of this repo
 
@@ -60,8 +70,9 @@ You can take PyStokes for a spin **without installation**: [![Binder](https://my
 >> python setup.py install
 ```
 
+### Via a conda environment
 
-####  Install PyStokes and its dependencies in an [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml) named "pystokes" via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
+###  Install PyStokes and its dependencies in an [environment](https://github.com/rajeshrinet/pystokes/blob/master/environment.yml) named "pystokes" via [Anaconda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/index.html)
 
 
 ```bash
@@ -86,14 +97,14 @@ Test installation and running
 
 ```bash
 >> cd tests
->> python shortTests.py
+>> python test_short.py
 ```
 
 Long test of example notebooks 
 
 ```bash
 >> cd tests
->> python notebookTests.py
+>> python test_notebooks.py
 ```
 
 
@@ -146,15 +157,17 @@ pystokes.utils.plotContoursYZ(vv, rr, r, density=.8, offset=1e-16,  title='l=0')
 ```
 
 Other examples include
-* [Irreducible Active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex1-unboundedFlow.ipynb)
-* [Effect of plane boundaries on active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex2-flowPlaneSurface.ipynb)
-* [Active Brownian Hydrodynamics near a plane wall](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex3-crystalNucleation.ipynb)
-* [Flow-induced phase separation at a plane surface](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex4-crystallization.ipynb)
-* [Irreducible autophoretic fields](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex5-phoreticField.ipynb)
-* [Autophoretic arrest of flow-induced phase separation](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex6-arrestedCluster.ipynb)
+* [Irreducible Active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex01-unboundedFlow.ipynb)
+* [Effect of plane boundaries on active flows](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex02-flowPlaneSurface.ipynb)
+* [Active Brownian Hydrodynamics near a plane wall](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex03-crystalNucleation.ipynb)
+* [Flow-induced phase separation at a plane surface](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex04-crystallization.ipynb)
+* [Irreducible autophoretic fields](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex05-phoreticField.ipynb)
+* [Autophoretic arrest of flow-induced phase separation](https://github.com/rajeshrinet/pystokes/blob/master/examples/ex06-arrestedCluster.ipynb)
 
 
-## Selected publications
+## Publications
+
+A selected list of publications is given below. See full publication list [here](https://github.com/rajeshrinet/pystokes/wiki/Publications).
 
 * [PyStokes: phoresis and Stokesian hydrodynamics in Python](https://doi.org/10.21105/joss.02318), R Singh and R Adhikari, **Journal of Open Source Software**, 5(50), 2318, (2020). *(Please cite this paper if you use PyStokes in your research)*.
 
@@ -171,7 +184,6 @@ Other examples include
 
 * [Universal hydrodynamic mechanisms for crystallization in active colloidal suspensions](https://doi.org/10.1103/PhysRevLett.117.228002), R Singh and R Adhikari,  **Physical Review Letters**, 117, 228002 (2016)
 
-See full publication list [here](https://github.com/rajeshrinet/pystokes/wiki/Publications).
 
 ## Support
 
@@ -181,3 +193,5 @@ See full publication list [here](https://github.com/rajeshrinet/pystokes/wiki/Pu
 ## License
 We believe that openness and sharing improves the practice of science and increases the reach of its benefits. This code is released under the [MIT license](http://opensource.org/licenses/MIT). Our choice is guided by the excellent article on [Licensing for the scientist-programmer](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002598). 
 		
+
+

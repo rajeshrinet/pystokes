@@ -1,8 +1,0 @@
-name: pystokes
-channels:
-  - conda-forge
-dependencies:
-  - python
-  - pip
-  - pip:
-    - pystokes

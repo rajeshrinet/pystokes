@@ -31,15 +31,16 @@ cdef class Rbm:
 
 
     def __init__(self, radius=1, particles=1, viscosity=1.0):
-        self.a   = radius
+        self.b   = radius
         self.N  = particles
         self.eta = viscosity
-        self.mu  = 1.0/(6*PI*self.eta*self.a)
+        self.mu  = 1.0/(6*PI*self.eta*self.b)
         self.muv = 1.0/(8*PI*self.eta)
-        self.mur = 1.0/(8*PI*self.eta*self.a**3)
+        self.mur = 1.0/(8*PI*self.eta*self.b**3)
 
         self.Mobility = np.zeros( (3*self.N, 3*self.N), dtype=np.float64)
 
+        
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, double ll=0):
         """
         Compute velocity due to body forces using :math:`v=\mu^{TT}\cdot F` 
@@ -89,14 +90,14 @@ cdef class Rbm:
         >>>    Tf,Nts,rhs,integrator='odeint', filename='crystallization')
         """
 
-        cdef int i, j, N=self.N, xx=2*N
+        cdef int i, j, N=self.N, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, h2, hsq, tempF
         cdef double vx, vy, vz, F1, F2, F3
-        cdef double mu=self.mu, muv=self.muv, a2=self.a*self.a/3.0
+        cdef double mu=self.mu, muv=self.muv, a2=self.b*self.b/3.0
         cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
         
         cdef double llp = 1.0/(1+ll);
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv3, hbar_inv5
         cdef double muTTpara1 = 3*(2-3*ll)*llp/16.0, muTTpara2 = (1+2*ll)*llp/16.0
         cdef double muTTpara3 = - ll*llp/16.0
@@ -109,20 +110,20 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
+                h2  =  2*r[j+Z]; hsq=r[j+Z]*r[j+Z]
                 if i!=j:
-                    dz = r[i+xx]  - r[j+xx]
+                    dz = r[i+Z]  - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3=idr*idr*idr
-                    Fdotidr = (F[j] * dx + F[j+N] * dy + F[j+xx] * dz)*idr*idr
+                    Fdotidr = (F[j] * dx + F[j+N] * dy + F[j+Z] * dz)*idr*idr
                     #
                     vx += (F[j]   +Fdotidr*dx)*idr + a2*(2*F[j]   -6*Fdotidr*dx)*idr3
-                    vy += (F[j+N]+Fdotidr*dy)*idr + a2*(2*F[j+N]-6*Fdotidr*dy)*idr3
-                    vz += (F[j+xx]+Fdotidr*dz)*idr + a2*(2*F[j+xx]-6*Fdotidr*dz)*idr3
+                    vy += (F[j+N]+Fdotidr*dy)*idr  + a2*(2*F[j+N]-6*Fdotidr*dy)*idr3
+                    vz += (F[j+Z]+Fdotidr*dz)*idr + a2*(2*F[j+Z]-6*Fdotidr*dz)*idr3
 
                     ##contributions from the image
-                    F1 = ll1*F[j];   F2 = ll1*F[j+N];   F3 = -F[j+xx];
-                    dz = r[i+xx] + r[j+xx]
+                    F1 = ll1*F[j];   F2 = ll1*F[j+N];   F3 = -F[j+Z];
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     idr5 = idr3*idr*idr
@@ -131,7 +132,7 @@ cdef class Rbm:
                     vy += (F2+Fdotidr*dy)*idr + a2*(2*F2-6*Fdotidr*dy)*idr3
                     vz += (F3+Fdotidr*dz)*idr + a2*(2*F3-6*Fdotidr*dz)*idr3
 
-                    tempF  = -F[j+xx]     # F_i = M_ij F_j, reflection of the strength
+                    tempF  = -F[j+Z]     # F_i = M_ij F_j, reflection of the strength
                     Fdotidr = ( F[j]*dx + F[j+N]*dy + tempF*dz )*idr*idr
 
                     vx += ll2*(-h2*(dz*(F[j]   - 3*Fdotidr*dx) + tempF*dx)*idr3)
@@ -151,7 +152,7 @@ cdef class Rbm:
                     vz += ll2*(-h2*6*a2*(dz*tempF  -5*Fdotidr*dz*dz + tempF*dz)*idr5 -6*a2*h2*Fdotidr*idr3)
                 else:
                     ''' self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
                     hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
                     
@@ -161,9 +162,9 @@ cdef class Rbm:
                     muz = mu*(1 + muTTperp1*hbar_inv + muTTperp2*hbar_inv3 
                               + muTTperp3*hbar_inv5)
 
-            v[i  ]  += mux*F[i]    + muv*vx
-            v[i+N] += muy*F[i+N] + muv*vy
-            v[i+xx] += muz*F[i+xx] + muv*vz
+            v[i  ] += mux*F[i]    + muv*vx
+            v[i+N] += muy*F[i+N]  + muv*vy
+            v[i+Z] += muz*F[i+Z] + muv*vz
         return
 
 
@@ -188,16 +189,16 @@ cdef class Rbm:
             Default is zero 
         """
 
-        cdef int N = self.N, i, j, xx=2*N
+        cdef int N = self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2,
         cdef double vx, vy, vz, T1, T2, T3
         cdef double muv=self.muv 
         cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
         
         cdef double llp = 1.0/(1+ll);
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv4
-        cdef double muTR0 = 4.0/(3*self.a*self.a)
+        cdef double muTR0 = 4.0/(3*self.b*self.b)
         cdef double muTR1 = -3*llp/16.0, muTR2 = 3*ll2/32.0
         cdef double muTR
 
@@ -206,22 +207,22 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
-                h2 = 2*r[i+xx]
+                h2 = 2*r[i+Z]
                 if i != j:
                     #contributions from the source
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
 
-                    vx += (T[j+N]*dz - T[j+xx]*dy )*idr3
-                    vy += (T[j+xx]*dx - T[j]   *dz )*idr3
+                    vx += (T[j+N]*dz - T[j+Z]*dy )*idr3
+                    vy += (T[j+Z]*dx - T[j]   *dz )*idr3
                     vz += (T[j]   *dy - T[j+N]*dx )*idr3
 
                     #contributions from the image
                     T1 = T[j];
                     T2 = T[j+N]
                     T3 = -T[j+2*N];
-                    dz = r[i+xx] + r[j+xx]
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
 
@@ -235,7 +236,7 @@ cdef class Rbm:
                     vz += ll2*(h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
                 else:
                     ''' the self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv
                     hbar_inv4 = hbar_inv2*hbar_inv*hbar_inv
                     
@@ -247,15 +248,15 @@ cdef class Rbm:
                     vx += -muTR*T2   #change sign here to make up for '-=' below...
                     vy += muTR*T1  #same here
 
-            v[i]    -= muv*vx  #why is here a '-='? 
-            v[i+N] -= muv*vy
-            v[i+xx] -= muv*vz
+            v[i]   += muv*vx   
+            v[i+N] += muv*vy
+            v[i+Z] += muv*vz
         return
 
 
-    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, double ll=0):
+    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] V2s, double ll=0):
         """
-        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot S` 
+        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot V^{2s}` 
         ...
 
         Parameters
@@ -266,20 +267,20 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        S: np.array
+        V2s: np.array
             An array of 2s mode of the slip
             An array of size 5*N,
         """
 
-        cdef int N=self.N, i, j, xx=2*N, xx1=3*N , xx2=4*N
+        cdef int N=self.N, i, j, Z=2*N, xx1=3*N , xx2=4*N
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz
-        cdef double vx, vy, vz, mus =(28.0*self.a**3)/24
+        cdef double vx, vy, vz, mus =(28.0*self.b**3)/24
         cdef double ll2 = ll/(1+ll);
         
         cdef double llp = 1.0/(1+ll);
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv4, hbar_inv6
         cdef double piT2s11 = 5*ll2/16.0, piT2s12 = -(1+3*ll)*llp/12.0
         cdef double piT2s13 = 5*ll2/48.0
@@ -291,15 +292,15 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             vx=0; vy=0;   vz=0;
             for j in  range(N):
-                h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
-                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
-                sxy = S[j+xx]; syx = sxy;
-                sxz = S[j+xx1]; szx = sxz;
-                syz = S[j+xx2]; szy = syz;
+                h2 = 2*r[j+Z]; hsq = r[j+Z]*r[j+Z];
+                sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
+                sxy = V2s[j+Z]; syx = sxy;
+                sxz = V2s[j+xx1]; szx = sxz;
+                syz = V2s[j+xx2]; szy = syz;
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
                 if i!=j:
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz );
                     idr2 = idr*idr; idr3 = idr2*idr; idr5 = idr3*idr2; idr7 = idr5*idr2;
                     srx = (sxx*dx +  sxy*dy + sxz*dz );
@@ -313,7 +314,7 @@ cdef class Rbm:
                     vz += 3*srr*dz*idr5;
 
                     ## contributions from the image
-                    dz = r[i+xx]+r[j+xx]
+                    dz = r[i+Z]+r[j+Z]
                     idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr2 = idr*idr; idr3 = idr2*idr; idr5 = idr3*idr2; idr7 = idr5*idr2;
 
@@ -360,7 +361,7 @@ cdef class Rbm:
 
                 else:
                     ''' the self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv
                     hbar_inv4 = hbar_inv2*hbar_inv*hbar_inv
                     hbar_inv6 = hbar_inv4*hbar_inv2
@@ -373,15 +374,15 @@ cdef class Rbm:
                     vy += mus_inv * 2*piT2s1*syz
                     vz += mus_inv * 3*(piT2s2*sxx + piT2s2*syy)
 
-            v[i]    += vx*mus
+            v[i]   += vx*mus
             v[i+N] += vy*mus
-            v[i+xx] += vz*mus
+            v[i+Z] += vz*mus
         return
 
 
-    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, double ll=0):
+    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] V3t, double ll=0):
         """
-        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot D` 
+        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot V^{3t}` 
         ...
 
         Parameters
@@ -392,18 +393,18 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        D: np.array
+        V3t: np.array
             An array of 3t mode of the slip
             An array of size 3*N,
         """
 
-        cdef int N=self.N, i, j, xx=2*N
+        cdef int N=self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2, D1, D2, D3
-        cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, muv = -1.0*(self.a**5)/10
+        cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
         cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
         
         cdef double llp = 1.0/(1+ll);
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv3, hbar_inv5
         cdef double piT3tpara1 = -(1+2*ll)*llp/80.0
         cdef double piT3tpara2 = ll2/40.0
@@ -416,45 +417,45 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]
+                h2  =  2*r[j+Z]
                 if i!=j:
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3=idr*idr*idr
-                    Ddotidr = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz)*idr*idr
+                    Ddotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+Z]*dz)*idr*idr
                     #
-                    vx += (2*D[j]    - 6*Ddotidr*dx)*idr3
-                    vy += (2*D[j+N] - 6*Ddotidr*dy)*idr3
-                    vz += (2*D[j+xx] - 6*Ddotidr*dz)*idr3
+                    vx += (2*V3t[j]    - 6*Ddotidr*dx)*idr3
+                    vy += (2*V3t[j+N] - 6*Ddotidr*dy)*idr3
+                    vz += (2*V3t[j+Z] - 6*Ddotidr*dz)*idr3
 
                     ##contributions from the image
-                    dz = r[i+xx] + r[j+xx]
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     idr5 = idr3*idr*idr
-                    D1 = D[j];
-                    D2 = D[j+N]
-                    D3 = -D[j+2*N];
+                    D1 = V3t[j];
+                    D2 = V3t[j+N]
+                    D3 = -V3t[j+2*N];
                     Ddotidr = (D1*dx + D2*dy + D3*dz)*idr*idr
 
                     vx += (2*D1 - 6*Ddotidr*dx )*idr3
                     vy += (2*D2 - 6*Ddotidr*dy )*idr3
                     vz += (2*D3 - 6*Ddotidr*dz )*idr3
 
-                    tempD = -D[j+xx]     # D_i = M_ij D_j, reflection of the strength
-                    Ddotidr = ( D[j]*dx + D[j+N]*dy + tempD*dz )*idr*idr
+                    tempD = -V3t[j+Z]     # D_i = M_ij D_j, reflection of the strength
+                    Ddotidr = ( V3t[j]*dx + V3t[j+N]*dy + tempD*dz )*idr*idr
                     
-                    vx += ll*12*dz*( dz*D[j]   - 5*dz*Ddotidr*dx + 2*tempD*dx )*idr5
-                    vy += ll*12*dz*( dz*D[j+N]- 5*dz*Ddotidr*dy + 2*tempD*dy )*idr5
+                    vx += ll*12*dz*( dz*V3t[j]   - 5*dz*Ddotidr*dx + 2*tempD*dx )*idr5
+                    vy += ll*12*dz*( dz*V3t[j+N]- 5*dz*Ddotidr*dy + 2*tempD*dy )*idr5
                     vz += ll*12*dz*( dz*tempD  - 5*dz*Ddotidr*dz + 2*tempD*dz )*idr5
 
-                    vx += -ll*6*h2*(dz*D[j]   -5*Ddotidr*dx*dz + tempD*dx)*idr5
-                    vy += -ll*6*h2*(dz*D[j+N]-5*Ddotidr*dy*dz + tempD*dy)*idr5
+                    vx += -ll*6*h2*(dz*V3t[j]   -5*Ddotidr*dx*dz + tempD*dx)*idr5
+                    vy += -ll*6*h2*(dz*V3t[j+N]-5*Ddotidr*dy*dz + tempD*dy)*idr5
                     vz += -ll*6*h2*(dz*tempD  -5*Ddotidr*dz*dz + tempD*dz)*idr5 -6*h2*Ddotidr*idr3
 
                 else:
                     ''' self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
                     hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
                     
@@ -462,9 +463,9 @@ cdef class Rbm:
                     piy = pix
                     piz = piT3tperp1*hbar_inv3 + piT3tperp2*hbar_inv5
 
-            v[i  ]  += pix*D[j]    + muv*vx
-            v[i+N] += piy*D[j+N] + muv*vy
-            v[i+xx] += piz*D[j+xx] + muv*vz
+            v[i  ] += pix*V3t[j]   + muv*vx
+            v[i+N] += piy*V3t[j+N] + muv*vy
+            v[i+Z] += piz*V3t[j+Z] + muv*vz
         return
     
     
@@ -472,15 +473,15 @@ cdef class Rbm:
     
     ## Angular Velocities
     cpdef mobilityRT(self, double [:] o, double [:] r, double [:] F, double ll=0):
-        cdef int N = self.N, i, j, xx=2*N
+        cdef int N = self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, rlz, Fdotidr, h2
         cdef double ox, oy, oz, muv=1.0/(8*PI*self.eta)
         cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll)
         
         cdef double llp = 1.0/(1+ll);
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv2, hbar_inv4
-        cdef double muRT0 = 4.0/(3*self.a*self.a)
+        cdef double muRT0 = 4.0/(3*self.b*self.b)
         cdef double muRT1 = 3*llp/16.0, muRT2 = -3*ll2/32.0
         cdef double muRT, F1, F2
 
@@ -489,25 +490,25 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
-                h2 = 2*r[i+xx]
+                h2 = 2*r[i+Z]
                 if i != j:
                     #contributions from the source
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
 
-                    ox += (F[j+N]*dz - F[j+xx]*dy )*idr3
-                    oy += (F[j+xx]*dx - F[j]   *dz )*idr3
+                    ox += (F[j+N]*dz - F[j+Z]*dy )*idr3
+                    oy += (F[j+Z]*dx - F[j]   *dz )*idr3
                     oz += (F[j]   *dy - F[j+N]*dx )*idr3
 
                     #contributions from the image
-                    dz = r[i+xx] + r[j+xx]
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     rlz = (dx*F[j+N] - dy*F[j])*idr*idr
 
-                    ox += (F[j+N]*dz + F[j+xx]*dy )*idr3
-                    oy += (-F[j+xx]*dx - F[j]   *dz )*idr3
+                    ox += (F[j+N]*dz + F[j+Z]*dy )*idr3
+                    oy += (-F[j+Z]*dx - F[j]   *dz )*idr3
                     oz += (F[j]   *dy - F[j+N]*dx )*idr3
 
                     ox += (ll*h2*(F[j+N]-3*rlz*dx) + 6*dz*dx*rlz)*idr3
@@ -516,7 +517,7 @@ cdef class Rbm:
 
                 else:
                     ''' the self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv
                     hbar_inv4 = hbar_inv2*hbar_inv*hbar_inv
                     
@@ -528,19 +529,19 @@ cdef class Rbm:
                     ox += muRT*F2
                     oy += -muRT*F1 
                    
-            o[i  ]  += muv*ox
+            o[i  ] += muv*ox
             o[i+N] += muv*oy
-            o[i+xx] += muv*oz
+            o[i+Z] += muv*oz
         return
 
 
     cpdef mobilityRR(self, double [:] o, double [:] r, double [:] T, double ll=0):
-        cdef int N=self.N, i, j, xx=2*N
+        cdef int N=self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
         cdef double ox, oy, oz, mur=self.mur, muv=self.muv
         
         cdef double llp = 1.0/(1+ll);
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv3
         cdef double muRRpara = (1-5*ll)*llp/16.0
         cdef double muRRperp = (1-ll)*llp/8.0
@@ -551,29 +552,29 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]
+                h2  =  2*r[j+Z]
                 if i!=j:
-                    dz = r[i+xx] - r[j+xx]
+                    dz = r[i+Z] - r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3=idr*idr*idr
-                    Tdotidr = (T[j]*dx + T[j+N]*dy + T[j+xx]*dz)*idr*idr
+                    Tdotidr = (T[j]*dx + T[j+N]*dy + T[j+Z]*dz)*idr*idr
                     #
                     ox += (2*T[j]    - 6*Tdotidr*dx)*idr3
                     oy += (2*T[j+N] - 6*Tdotidr*dy)*idr3
-                    oz += (2*T[j+xx] - 6*Tdotidr*dz)*idr3
+                    oz += (2*T[j+Z] - 6*Tdotidr*dz)*idr3
 
                     ##contributions from the image
-                    dz = r[i+xx] + r[j+xx]
+                    dz = r[i+Z] + r[j+Z]
                     idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                     idr3 = idr*idr*idr
                     idr5 = idr3*idr*idr
-                    Tdotidr = (T[j]*dx + T[j+N]*dy - T[j+xx]*dz)*idr*idr
+                    Tdotidr = (T[j]*dx + T[j+N]*dy - T[j+Z]*dz)*idr*idr
 
                     ox += (2*T[j]    - 6*Tdotidr*dx )*idr3
                     oy += (2*T[j+N] - 6*Tdotidr*dy )*idr3
-                    oz += (-2*T[j+xx] - 6*Tdotidr*dz )*idr3
+                    oz += (-2*T[j+Z] - 6*Tdotidr*dz )*idr3
 
-                    tempT = -T[j+xx]     # D_i = M_ij D_j, reflection of the strength
+                    tempT = -T[j+Z]     # D_i = M_ij D_j, reflection of the strength
                     Tdotidr = ( T[j]*dx + T[j+N]*dy + tempT*dz )*idr*idr
                     
                     ox += ll*12*dz*( dz*T[j]   - 5*dz*Tdotidr*dx + 2*tempT*dx )*idr5
@@ -586,7 +587,7 @@ cdef class Rbm:
 
                 else:
                     ''' self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
                     
                     mux = mur*(1 + muRRpara*hbar_inv3)
@@ -595,35 +596,35 @@ cdef class Rbm:
 
             o[i  ]  += mux*T[i  ]  - muv*ox
             o[i+N] += muy*T[i+N] - muv*oy
-            o[i+xx] += muz*T[i+xx] - muv*oz
+            o[i+Z] += muz*T[i+Z] - muv*oz
         return
     
     
-    cpdef propulsionR3t(self, double [:] o, double [:] r, double [:] D, double ll=0):
+    cpdef propulsionR3t(self, double [:] o, double [:] r, double [:] V3t, double ll=0):
         """
-        Compute angular velocity due to 3t mode of the slip :math:`o=\pi^{R,3t}\cdot D` 
+        Compute angular velocity due to 3t mode of the slip :math:`o=\pi^{R,3t}\cdot V^{3t}` 
         ...
 
         Parameters
         ----------
-        o: np.array
-            An array of angular velocities
-            An array of size 3*N,
-        r: np.array
-            An array of positions
-            An array of size 3*N,
-        D: np.array
-            An array of 3t mode of the slip
-            An array of size 3*N,
+        o:   np.array
+             An array of angular velocities
+             An array of size 3*N,
+        r:   np.array
+             An array of positions
+             An array of size 3*N,
+        V3t: np.array
+             An array of 3t mode of the slip
+             An array of size 3*N,
         """
 
-        cdef int N=self.N, i, j, xx=2*N
+        cdef int N=self.N, i, j, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Tdotidr, tempT, hsq, h2
         cdef double ox, oy, oz, mur=self.mur, muv=self.muv
         cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
         
         cdef double llp = 1.0/(1+ll);
-        cdef double a = self.a
+        cdef double a = self.b
         cdef double h, hbar_inv, hbar_inv4
         cdef double piR3t0 = 3*ll2/(80.0*a)
         cdef double piR3t, V1, V2
@@ -633,7 +634,7 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]    - r[j]
                 dy = r[i+N]  - r[j+N]
-                h2  =  2*r[j+xx]
+                h2  =  2*r[j+Z]
                 
                 if i!=j:
                     pass
@@ -645,42 +646,42 @@ cdef class Rbm:
                     
                 else:
                     ''' self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv4 = hbar_inv*hbar_inv*hbar_inv*hbar_inv
                     
                     piR3t = piR3t0*hbar_inv4
                     
-                    V1 = D[j];
-                    V2 = D[j+N]
+                    V1 = V3t[j];
+                    V2 = V3t[j+N]
                     
                     ox += piR3t*V2
                     oy += -piR3t*V1 
                    
             o[i  ]  += ox
             o[i+N] += oy
-            o[i+xx] += oz
+            o[i+Z] += oz
         return
     
     
-    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S, double ll=0):
+    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] V2s, double ll=0):
         """
         Compute angular velocity due to 2s mode of the slip :math:`o=\pi^{R,2s}\cdot S` 
         ...
 
         Parameters
         ----------
-        o: np.array
-            An array of angular velocities
-            An array of size 3*N,
-        r: np.array
-            An array of positions
-            An array of size 3*N,
-        S: np.array
-            An array of 2s mode of the slip
-            An array of size 5*N,
+        o:   np.array
+             An array of angular velocities
+             An array of size 3*N,
+        r:   np.array
+             An array of positions
+             An array of size 3*N,
+        V2s: np.array
+             An array of 2s mode of the slip
+             An array of size 5*N,
         """
 
-        cdef int N=self.N, i, j, xx=2*N, xx1=3*N , xx2=4*N
+        cdef int N=self.N, i, j, Z=2*N, xx1=3*N , xx2=4*N
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz
@@ -688,7 +689,7 @@ cdef class Rbm:
         cdef double ll2 = ll/(1+ll);
         
         cdef double llp = 1.0/(1+ll);
-        cdef double a = self.a, a_inv = 1.0/a
+        cdef double a = self.b, a_inv = 1.0/a
         cdef double h, hbar_inv, hbar_inv3, hbar_inv5
         cdef double piR2s1 = 5.0/32.0, piR2s2 = -ll2/8.0
         cdef double piR2s
@@ -696,11 +697,11 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             ox=0; oy=0;  oz=0;
             for j in  range(N):
-                h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
-                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
-                sxy = S[j+xx]; syx = sxy;
-                sxz = S[j+xx1]; szx = sxz;
-                syz = S[j+xx2]; szy = syz;
+                h2 = 2*r[j+Z]; hsq = r[j+Z]*r[j+Z];
+                sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
+                sxy = V2s[j+Z]; syx = sxy;
+                sxz = V2s[j+xx1]; szx = sxz;
+                syz = V2s[j+xx2]; szy = syz;
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
                 if i!=j:
@@ -713,7 +714,7 @@ cdef class Rbm:
 
                 else:
                     ''' the self contribution from the image point'''
-                    h = r[j+xx]
+                    h = r[j+Z]
                     hbar_inv = a/h; hbar_inv3 = hbar_inv*hbar_inv*hbar_inv
                     hbar_inv5 = hbar_inv3*hbar_inv*hbar_inv
                     
@@ -722,493 +723,14 @@ cdef class Rbm:
                     ox += -2*piR2s*syz 
                     oy +=  2*piR2s*sxz
 
-            o[i  ]  += ox
+            o[i  ] += ox
             o[i+N] += oy
-            o[i+xx] += oz
+            o[i+Z] += oz
         return
 
 
 
-    ## Noise
-    cpdef noiseTT_old(self, double [:] v, double [:] r):
-        """
-        Compute translation Brownian motion 
-        ...
-
-        Parameters
-        ----------
-        v: np.array
-            An array of velocities
-            An array of size 3*N,
-        r: np.array
-            An array of positions
-            An array of size 3*N,
-        """
-        cdef int i, j, N=self.N, xx=2*N
-        cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
-        cdef double mu=self.mu, muv=2*mu*self.a*0.75, a2=self.a*self.a/3.0
-        cdef double vx, vy, vz, mm=1.0/(.75*self.a)
-
-        cdef double [:, :] M = self.Mobility
-        cdef double [:]    Fr = np.random.normal(size=3*N)
-
-
-        for i in prange(N, nogil=True):
-            for j in range(N):
-                dx = r[i]    - r[j]
-                dy = r[i+N] - r[j+N]
-                h2=2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
-                if i!=j:
-                    dz = r[i+xx] - r[j+xx]
-                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                    idr2=idr*idr;  idr3=idr*idr*idr
-                    dx = dx*idr; dy=dy*idr; dz=dz*idr
-                    #
-                    M[i,    j   ] = (1 + dx*dx)*idr + a2*(2 - 6*dx*dx)*idr3
-                    M[i+N, j+N] = (1 + dy*dy)*idr + a2*(2 - 6*dy*dy)*idr3
-                    M[i+xx, j+xx] = (1 + dz*dz)*idr + a2*(2 - 6*dz*dz)*idr3
-                    M[i,    j+N] = (    dx*dy)*idr + a2*(  - 6*dx*dy)*idr3
-                    M[i,    j+xx] = (    dx*dz)*idr + a2*(  - 6*dx*dz)*idr3
-                    M[i+N, j+xx] = (    dy*dz)*idr + a2*(  - 6*dy*dz)*idr3
-
-                    ###contributions from the image
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                    dx = dx*idr; dy=dy*idr; dz=dz*idr
-                    idr2=idr*idr;  idr3=idr2*idr;
-
-                    M[i,    j   ] += (1 + dx*dx)*idr + a2*(2 - 6*dx*dx)*idr3
-                    M[i+N, j+N] += (1 + dy*dy)*idr + a2*(2 - 6*dy*dy)*idr3
-                    M[i+xx, j+xx] +=-(1 + dz*dz)*idr - a2*(2 - 6*dz*dz)*idr3
-                    M[i,    j+N] += (    dx*dy)*idr + a2*(  - 6*dx*dy)*idr3
-                    M[i,    j+xx] +=-(    dx*dz)*idr - a2*(  - 6*dx*dz)*idr3
-                    M[i+N, j+xx] +=-(    dy*dz)*idr - a2*(  - 6*dy*dz)*idr3
-
-                else:
-                    # one-body mobility
-                    M[i,    j   ] = mm
-                    M[i+N, j+N] = mm
-                    M[i+xx, j+xx] = mm
-                    M[i,    j+N] = 0
-                    M[i,    j+xx] = 0
-                    M[i+N, j+xx] = 0
-
-                    ##self contribtion from the image point
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                    dx = dx*idr; dy=dy*idr; dz=dz*idr
-                    idr2=idr*idr;  idr3=idr2*idr
-
-                    M[i,    j   ] += (1 + dx*dx)*idr + a2*(2 - 6*dx*dx)*idr3
-                    M[i+N, j+N] += (1 + dy*dy)*idr + a2*(2 - 6*dy*dy)*idr3
-                    M[i+xx, j+xx] +=-(1 + dz*dz)*idr - a2*(2 - 6*dz*dz)*idr3
-                    M[i,    j+N] += (    dx*dy)*idr + a2*(  - 6*dx*dy)*idr3
-                    M[i,    j+xx] +=-(    dx*dz)*idr - a2*(  - 6*dx*dz)*idr3
-                    M[i+N, j+xx] +=-(    dy*dz)*idr - a2*(  - 6*dy*dz)*idr3
-
-        for i in prange(N, nogil=True):
-            for j in range(N):
-                M[i,    j   ] = muv*M[i,    j   ]
-                M[i+N, j+N] = muv*M[i+N, j+N]
-                M[i+xx, j+xx] = muv*M[i+xx, j+xx]
-                M[i,    j+N] = muv*M[i,    j+N]
-                M[i,    j+xx] = muv*M[i,    j+xx]
-                M[i+N, j+xx] = muv*M[i+N, j+xx]
-
-                M[i+N, j   ] =     M[i,    j+N]
-                M[i+xx, j   ] =     M[i,    j+xx]
-                M[i+xx, j+N] =     M[i+N, j+xx]
-
-        cdef double [:, :] L = np.linalg.cholesky(self.Mobility)
-
-        for i in prange(N, nogil=True):
-            vx=0; vy=0; vz=0;
-            for j in range(N):
-                vx += L[i   , j]*Fr[j] + L[i   , j+N]*Fr[j+N] + L[i   , j+xx]*Fr[j+xx]
-                vy += L[i+N, j]*Fr[j] + L[i+N, j+N]*Fr[j+N] + L[i+N, j+xx]*Fr[j+xx]
-                vz += L[i+xx, j]*Fr[j] + L[i+xx, j+N]*Fr[j+N] + L[i+xx, j+xx]*Fr[j+xx]
-            v[i  ]  += vx
-            v[i+N] += vy
-            v[i+xx] += vz
-
-        return
-
-
-    cpdef noiseRR_old(self, double [:] o, double [:] r):
-        """
-        Compute rotational Brownian motion 
-        ...
-
-        Parameters
-        ----------
-        o: np.array
-            An array of angular velocities
-            An array of size 3*N,
-        r: np.array
-            An array of positions
-            An array of size 3*N,
-        """
-
-        cdef int i, j, N=self.N, xx=2*N
-        cdef double dx, dy, dz, idr, h2, hsq, idr2, idr3, idr4, idr5
-        cdef double mur=self.muv, muv=0.25*sqrt(2.0)*mur, mm=4.0/(self.a**3)
-        cdef double ox, oy, oz
-
-        cdef double [:, :] M = self.Mobility
-        cdef double [:]   Tr = np.random.normal(size=3*N)
-
-
-        for i in prange(N, nogil=True):
-            for j in range(N):
-                dx = r[i]    - r[j]
-                dy = r[i+N] - r[j+N]
-                h2=2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
-                if i!=j:
-                    dz = r[i+xx] - r[j+xx]
-                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                    idr2=idr*idr;  idr3=idr*idr*idr
-                    dx = dx*idr; dy=dy*idr; dz=dz*idr
-                    #
-                    M[i,    j   ] = (2 - 6*dx*dx)*idr3
-                    M[i+N, j+N] = (2 - 6*dy*dy)*idr3
-                    M[i+xx, j+xx] = (2 - 6*dz*dz)*idr3
-                    M[i,    j+N] = (  - 6*dx*dy)*idr3
-                    M[i,    j+xx] = (  - 6*dx*dz)*idr3
-                    M[i+N, j+xx] = (  - 6*dy*dz)*idr3
-
-                    ###contributions from the image
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                    dx = dx*idr; dy=dy*idr; dz=dz*idr
-                    idr2=idr*idr;  idr3=idr2*idr;  idr4=idr3*idr
-
-                    M[i,    j   ] += -(2 - 6*dx*dx)*idr3
-                    M[i+N, j+N] += -(2 - 6*dy*dy)*idr3
-                    M[i+xx, j+xx] += -(2 - 6*dz*dz)*idr3
-                    M[i,    j+N] += -(  - 6*dx*dy)*idr3
-                    M[i,    j+xx] += -(  - 6*dx*dz)*idr3
-                    M[i+N, j+xx] += -(  - 6*dy*dz)*idr3
-                else:
-                    # one-body mobility
-                    M[i,    j   ] = mm
-                    M[i+N, j+N] = mm
-                    M[i+xx, j+xx] = mm
-                    M[i,    j+N] = 0
-                    M[i,    j+xx] = 0
-                    M[i+N, j+xx] = 0
-
-                    ##self contribtion from the image point
-                    dz = r[i+xx] + r[j+xx]
-                    idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
-                    dx = dx*idr; dy=dy*idr; dz=dz*idr
-                    idr2=idr*idr;  idr3=idr2*idr;  idr4=idr3*idr
-
-                    M[i,    j   ] += -(2 - 6*dx*dx)*idr3
-                    M[i+N, j+N] += -(2 - 6*dy*dy)*idr3
-                    M[i+xx, j+xx] += -(2 - 6*dz*dz)*idr3
-                    M[i,    j+N] += -(  - 6*dx*dy)*idr3
-                    M[i,    j+xx] += -(  - 6*dx*dz)*idr3
-                    M[i+N, j+xx] += -(  - 6*dy*dz)*idr3
-
-        for i in prange(N, nogil=True):
-            for j in range(N):
-                M[i,    j   ] = muv*M[i,    j   ]
-                M[i+N, j+N] = muv*M[i+N, j+N]
-                M[i+xx, j+xx] = muv*M[i+xx, j+xx]
-                M[i,    j+N] = muv*M[i,    j+N]
-                M[i,    j+xx] = muv*M[i,    j+xx]
-                M[i+N, j+xx] = muv*M[i+N, j+xx]
-
-                M[i+N, j   ] =     M[i,    j+N]
-                M[i+xx, j   ] =     M[i,    j+xx]
-                M[i+xx, j+N] =     M[i+N, j+xx]
-
-        cdef double [:, :] L = muv*np.linalg.cholesky(self.Mobility)
-        for i in prange(N, nogil=True):
-            ox=0; oy=0; oz=0;
-            for j in range(N):
-                ox += L[i   , j]*Tr[j] + L[i   , j+N]*Tr[j+N] + L[i   , j+xx]*Tr[j+xx]
-                oy += L[i+N, j]*Tr[j] + L[i+N, j+N]*Tr[j+N] + L[i+N, j+xx]*Tr[j+xx]
-                oz += L[i+xx, j]*Tr[j] + L[i+xx, j+N]*Tr[j+N] + L[i+xx, j+xx]*Tr[j+xx]
-            o[i  ]  += ox
-            o[i+N] += oy
-            o[i+xx] += oz
-        return
-    
-    
-    
-    
-    
-    
-    cpdef noiseTT(self, double [:] v, double [:] r, double ll=0):
-        """
-        Brownian noise for 1 particle only so far
-        """
-        
-        cdef int i, j, N=self.N, xx=2*N
-        cdef double vx, vy, vz
-        cdef double mu=self.mu, muv=self.muv, mur=self.mur
-        cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
-        
-        cdef double llp = 1.0/(1+ll);
-        
-        cdef double [:]    Fr = np.random.normal(size=3*N)
-        
-        cdef double a = self.a
-        cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
-        cdef double muTTparaCoeff1 = 3*(2-3*ll)*llp/16.0, muTTparaCoeff2 = (1+2*ll)*llp/16.0
-        cdef double muTTparaCoeff3 = - ll*llp/16.0
-        cdef double muTTperpCoeff1 = - 3*(2+3*ll)*llp/8.0, muTTperpCoeff2 = (1+4*ll)*llp/8.0
-        cdef double muTTperpCoeff3 = - ll*llp/8.0
-        
-        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
-        cdef double muTRCoeff1 = -3*llp/16.0, muTRCoeff2 = 3*ll2/32.0
-        
-        cdef double muRRparaCoeff = (1-5*ll)*llp/16.0
-        cdef double muRRperpCoeff = (1-ll)*llp/8.0
-        
-        cdef double muTTpara, sqrtMuTTperp, muRRpara, sqrtMuRRperp, muTR
-        cdef double sqrtMuPara2, sqrtMuParaPlus, sqrtMuParaMinus
-        cdef double sqrtMuXX, sqrtMuZZ, sqrtMuXE, sqrtMuExEx, sqrtMuEzEz
-        
-        for i in prange(N, nogil=True):
-            vx=0; vy=0; vz=0;
-            for j in range(N):
-                if i==j:
-                    h = r[j+xx]
-                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv; hbar_inv3 = hbar_inv2*hbar_inv
-                    hbar_inv4 = hbar_inv2*hbar_inv2; hbar_inv5 = hbar_inv3*hbar_inv2
-                    
-                    muTTpara = mu*(1 + muTTparaCoeff1*hbar_inv + muTTparaCoeff2*hbar_inv3 
-                                   + muTTparaCoeff3*hbar_inv5)
-                    
-                    sqrtMuTTperp = sqrt( mu*(1 + muTTperpCoeff1*hbar_inv + muTTperpCoeff2*hbar_inv3 
-                                         + muTTperpCoeff3*hbar_inv5) )
-                    
-                    muTR = muv*muTRCoeff*(muTRCoeff1*hbar_inv2 + muTRCoeff2*hbar_inv4)
-                    
-                    muRRpara = mur*(1 + muRRparaCoeff*hbar_inv3)
-                    
-                    sqrtMuPara2 = sqrt( muRRpara*muRRpara + muTTpara*muTTpara - 2*muRRpara*muTTpara + 4*muTR*muTR )
-                    
-                    sqrtMuParaPlus = sqrt( muRRpara + muTTpara + sqrtMuPara2 )
-                    
-                    sqrtMuParaMinus = sqrt( muRRpara + muTTpara - sqrtMuPara2 )
-                    
-                    sqrtMuXX = (sqrtMuParaMinus * (muRRpara - muTTpara + sqrtMuPara2) +
-                                sqrtMuParaPlus  * (muTTpara - muRRpara + sqrtMuPara2)   )/( sqrt8 * sqrtMuPara2 )
-                    
-                    vx += sqrt2*sqrtMuXX * Fr[j]
-                    vy += sqrt2*sqrtMuXX * Fr[j+N]
-                    vz += sqrt2*sqrtMuTTperp * Fr[j+xx]
-            
-            v[i  ]  += vx
-            v[i+N] += vy
-            v[i+xx] += vz
-            
-        return 
-    
-    
-    cpdef noiseTR(self, double [:] v, double [:] r, double ll=0):
-        """
-        Brownian noise for 1 particle only so far
-        """
-        
-        cdef int i, j, N=self.N, xx=2*N
-        cdef double vx, vy, vz
-        cdef double mu=self.mu, muv=self.muv, mur=self.mur
-        cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
-        
-        cdef double llp = 1.0/(1+ll);
-        
-        cdef double [:]    Tr = np.random.normal(size=3*N)
-        
-        cdef double a = self.a
-        cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
-        cdef double muTTparaCoeff1 = 3*(2-3*ll)*llp/16.0, muTTparaCoeff2 = (1+2*ll)*llp/16.0
-        cdef double muTTparaCoeff3 = - ll*llp/16.0
-        cdef double muTTperpCoeff1 = - 3*(2+3*ll)*llp/8.0, muTTperpCoeff2 = (1+4*ll)*llp/8.0
-        cdef double muTTperpCoeff3 = - ll*llp/8.0
-        
-        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
-        cdef double muTRCoeff1 = -3*llp/16.0, muTRCoeff2 = 3*ll2/32.0
-        
-        cdef double muRRparaCoeff = (1-5*ll)*llp/16.0
-        cdef double muRRperpCoeff = (1-ll)*llp/8.0
-        
-        cdef double muTTpara, sqrtMuTTperp, muRRpara, sqrtMuRRperp, muTR
-        cdef double sqrtMuPara2, sqrtMuParaPlus, sqrtMuParaMinus
-        cdef double sqrtMuXX, sqrtMuZZ, sqrtMuXE, sqrtMuExEx, sqrtMuEzEz
-        
-        for i in prange(N, nogil=True):
-            vx=0; vy=0; vz=0;
-            for j in range(N):
-                if i==j:
-                    h = r[j+xx]
-                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv; hbar_inv3 = hbar_inv2*hbar_inv
-                    hbar_inv4 = hbar_inv2*hbar_inv2; hbar_inv5 = hbar_inv3*hbar_inv2
-                    
-                    muTTpara = mu*(1 + muTTparaCoeff1*hbar_inv + muTTparaCoeff2*hbar_inv3 
-                                   + muTTparaCoeff3*hbar_inv5)
-                    
-                    muTR = muv*muTRCoeff*(muTRCoeff1*hbar_inv2 + muTRCoeff2*hbar_inv4)
-                    
-                    muRRpara = mur*(1 + muRRparaCoeff*hbar_inv3)
-                    
-                    sqrtMuPara2 = sqrt( muRRpara*muRRpara + muTTpara*muTTpara - 2*muRRpara*muTTpara + 4*muTR*muTR )
-                    
-                    sqrtMuParaPlus = sqrt( muRRpara + muTTpara + sqrtMuPara2 )
-                    
-                    sqrtMuParaMinus = sqrt( muRRpara + muTTpara - sqrtMuPara2 )
-                    
-                    sqrtMuXE = muTR * (sqrtMuParaPlus - sqrtMuParaMinus)/( sqrt2 * sqrtMuPara2 )
-                    
-                    vx += sqrt2*sqrtMuXE * Tr[j+N]
-                    vy += -sqrt2*sqrtMuXE * Tr[j]
-            
-            v[i  ]  += vx
-            v[i+N] += vy
-            v[i+xx] += vz
-            
-        return 
-    
-    
-    
-    cpdef noiseRT(self, double [:] o, double [:] r, double ll=0):
-        """
-        Brownian noise for 1 particle only so far
-        """
-        
-        cdef int i, j, N=self.N, xx=2*N
-        cdef double ox, oy, oz
-        cdef double mu=self.mu, muv=self.muv, mur=self.mur
-        cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
-        
-        cdef double llp = 1.0/(1+ll);
-        
-        cdef double [:]    Fr = np.random.normal(size=3*N)
-        
-        cdef double a = self.a
-        cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
-        cdef double muTTparaCoeff1 = 3*(2-3*ll)*llp/16.0, muTTparaCoeff2 = (1+2*ll)*llp/16.0
-        cdef double muTTparaCoeff3 = - ll*llp/16.0
-        cdef double muTTperpCoeff1 = - 3*(2+3*ll)*llp/8.0, muTTperpCoeff2 = (1+4*ll)*llp/8.0
-        cdef double muTTperpCoeff3 = - ll*llp/8.0
-        
-        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
-        cdef double muTRCoeff1 = -3*llp/16.0, muTRCoeff2 = 3*ll2/32.0
-        
-        cdef double muRRparaCoeff = (1-5*ll)*llp/16.0
-        cdef double muRRperpCoeff = (1-ll)*llp/8.0
-        
-        cdef double muTTpara, sqrtMuTTperp, muRRpara, sqrtMuRRperp, muTR
-        cdef double sqrtMuPara2, sqrtMuParaPlus, sqrtMuParaMinus
-        cdef double sqrtMuXX, sqrtMuZZ, sqrtMuXE, sqrtMuExEx, sqrtMuEzEz
-        
-        for i in prange(N, nogil=True):
-            ox=0; oy=0; oz=0;
-            for j in range(N):
-                if i==j:
-                    h = r[j+xx]
-                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv; hbar_inv3 = hbar_inv2*hbar_inv
-                    hbar_inv4 = hbar_inv2*hbar_inv2; hbar_inv5 = hbar_inv3*hbar_inv2
-                    
-                    muTTpara = mu*(1 + muTTparaCoeff1*hbar_inv + muTTparaCoeff2*hbar_inv3 
-                                   + muTTparaCoeff3*hbar_inv5)
-                    
-                    muTR = muv*muTRCoeff*(muTRCoeff1*hbar_inv2 + muTRCoeff2*hbar_inv4)
-                    
-                    muRRpara = mur*(1 + muRRparaCoeff*hbar_inv3)
-                    
-                    sqrtMuPara2 = sqrt( muRRpara*muRRpara + muTTpara*muTTpara - 2*muRRpara*muTTpara + 4*muTR*muTR )
-                    
-                    sqrtMuParaPlus = sqrt( muRRpara + muTTpara + sqrtMuPara2 )
-                    
-                    sqrtMuParaMinus = sqrt( muRRpara + muTTpara - sqrtMuPara2 )
-                    
-                    sqrtMuXE = muTR * (sqrtMuParaPlus - sqrtMuParaMinus)/( sqrt2 * sqrtMuPara2 )
-                    
-                    ox += -sqrt2*sqrtMuXE * Fr[j+N]
-                    oy += sqrt2*sqrtMuXE * Fr[j]
-            
-            o[i  ]  += ox
-            o[i+N] += oy
-            o[i+xx] += oz
-            
-        return 
-    
-    
-    
-    cpdef noiseRR(self, double [:] o, double [:] r, double ll=0):
-        """
-        Brownian noise for 1 particle only so far
-        """
-        
-        cdef int i, j, N=self.N, xx=2*N
-        cdef double ox, oy, oz
-        cdef double mu=self.mu, muv=self.muv, mur=self.mur
-        cdef double ll1 = (1-ll)/(1+ll), ll2 = ll/(1+ll);
-        
-        cdef double llp = 1.0/(1+ll);
-        
-        cdef double [:]    Tr = np.random.normal(size=3*N)
-        
-        cdef double a = self.a
-        cdef double h, hbar_inv, hbar_inv2, hbar_inv3, hbar_inv4, hbar_inv5
-        cdef double muTTparaCoeff1 = 3*(2-3*ll)*llp/16.0, muTTparaCoeff2 = (1+2*ll)*llp/16.0
-        cdef double muTTparaCoeff3 = - ll*llp/16.0
-        cdef double muTTperpCoeff1 = - 3*(2+3*ll)*llp/8.0, muTTperpCoeff2 = (1+4*ll)*llp/8.0
-        cdef double muTTperpCoeff3 = - ll*llp/8.0
-        
-        cdef double muTRCoeff = 4.0/(3*self.a*self.a)
-        cdef double muTRCoeff1 = -3*llp/16.0, muTRCoeff2 = 3*ll2/32.0
-        
-        cdef double muRRparaCoeff = (1-5*ll)*llp/16.0
-        cdef double muRRperpCoeff = (1-ll)*llp/8.0
-        
-        cdef double muTTpara, sqrtMuTTperp, muRRpara, sqrtMuRRperp, muTR
-        cdef double sqrtMuPara2, sqrtMuParaPlus, sqrtMuParaMinus
-        cdef double sqrtMuXX, sqrtMuZZ, sqrtMuXE, sqrtMuExEx, sqrtMuEzEz
-        
-        for i in prange(N, nogil=True):
-            ox=0; oy=0; oz=0;
-            for j in range(N):
-                if i==j:
-                    h = r[j+xx]
-                    hbar_inv = a/h; hbar_inv2 = hbar_inv*hbar_inv; hbar_inv3 = hbar_inv2*hbar_inv
-                    hbar_inv4 = hbar_inv2*hbar_inv2; hbar_inv5 = hbar_inv3*hbar_inv2
-                    
-                    muTTpara = mu*(1 + muTTparaCoeff1*hbar_inv + muTTparaCoeff2*hbar_inv3 
-                                   + muTTparaCoeff3*hbar_inv5)
-                    
-                    muTR = muv*muTRCoeff*(muTRCoeff1*hbar_inv2 + muTRCoeff2*hbar_inv4)
-                    
-                    muRRpara = mur*(1 + muRRparaCoeff*hbar_inv3)
-                    
-                    sqrtMuRRperp = sqrt( mur*(1 + muRRperpCoeff*hbar_inv3) )
-                    
-                    sqrtMuPara2 = sqrt( muRRpara*muRRpara + muTTpara*muTTpara - 2*muRRpara*muTTpara + 4*muTR*muTR )
-                    
-                    sqrtMuParaPlus = sqrt( muRRpara + muTTpara + sqrtMuPara2 )
-                    
-                    sqrtMuParaMinus = sqrt( muRRpara + muTTpara - sqrtMuPara2 )
-                    
-                    sqrtMuExEx = (muTTpara * (sqrtMuParaMinus - sqrtMuParaPlus) + muRRpara * (sqrtMuParaPlus - sqrtMuParaMinus) + 
-                                 sqrtMuPara2 * (sqrtMuParaPlus + sqrtMuParaMinus) )/( sqrt8 * sqrtMuPara2 )
-                    
-                    ox += sqrt2*sqrtMuExEx * Tr[j]
-                    oy += sqrt2*sqrtMuExEx * Tr[j+N]
-                    oz += sqrt2*sqrtMuRRperp * Tr[j+xx]
-            
-            o[i  ]  += ox
-            o[i+N] += oy
-            o[i+xx] += oz
-            
-        return 
-    
-    
-    
-
+   
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
@@ -1237,7 +759,7 @@ cdef class Flow:
     """
 
     def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32):
-        self.a  = radius
+        self.b  = radius
         self.N = particles
         self.Nt = gridpoints
         self.eta= viscosity
@@ -1288,34 +810,34 @@ cdef class Flow:
         >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
 
-        cdef int i, j, N=self.N, Nt=self.Nt, xx=2*N
+        cdef int i, j, N=self.N, Nt=self.Nt, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Fdotidr, tempF, hsq, h2, F3
-        cdef double vx, vy, vz, muv=1.0/(8*PI*self.eta), a2=self.a*self.a/6.0
+        cdef double vx, vy, vz, muv=1.0/(8*PI*self.eta), a2=self.b*self.b/6.0
 
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
             for j in range(N):
-                h2  =  2*r[j+xx]; hsq=r[j+xx]*r[j+xx]
+                h2  =  2*r[j+Z]; hsq=r[j+Z]*r[j+Z]
                 dx = rt[i]    - r[j]
                 dy = rt[i+Nt] - r[j+N]
-                dz = rt[i+2*Nt]  - r[j+xx]
+                dz = rt[i+2*Nt]  - r[j+Z]
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3=idr*idr*idr
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3=idr*idr*idr
-                Fdotidr = (F[j] * dx + F[j+N] * dy + F[j+xx] * dz)*idr*idr
+                Fdotidr = (F[j] * dx + F[j+N] * dy + F[j+Z] * dz)*idr*idr
                 #
                 vx += (F[j]   +Fdotidr*dx)*idr + a2*(2*F[j]   -6*Fdotidr*dx)*idr3
                 vy += (F[j+N]+Fdotidr*dy)*idr + a2*(2*F[j+N]-6*Fdotidr*dy)*idr3
-                vz += (F[j+xx]+Fdotidr*dz)*idr + a2*(2*F[j+xx]-6*Fdotidr*dz)*idr3
+                vz += (F[j+Z]+Fdotidr*dz)*idr + a2*(2*F[j+Z]-6*Fdotidr*dz)*idr3
 
                 ##contributions from the image
-                dz = rt[i+2*Nt] + r[j+xx]
+                dz = rt[i+2*Nt] + r[j+Z]
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                 idr5 = idr3*idr*idr 
 
-                F3 = -F[j+xx]
+                F3 = -F[j+Z]
                 Fdotidr = ( F[j]*dx + F[j+N]*dy + F3*dz )*idr*idr
 
                 vx += (F[j]   +Fdotidr*dx)*idr - a2*(2*F[j]   -6*Fdotidr*dx)*idr3
@@ -1372,7 +894,7 @@ cdef class Flow:
         >>> pystokes.utils.plotStreamlinesYZsurf(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """ 
 
-        cdef int N = self.N, i, j, xx=2*N, Nt=self.Nt
+        cdef int N = self.N, i, j, Z=2*N, Nt=self.Nt
         cdef double dx, dy, dz, idr, idr3, rlz, Tdotidr, h2, 
         cdef double vx, vy, vz, muv = 1.0/(8*PI*self.eta)
  
@@ -1383,21 +905,21 @@ cdef class Flow:
                 dy = rt[i+Nt] - r[j+N]   
                 h2 = 2*rt[i+Nt*2]
                     #contributions from the source 
-                dz = rt[i+2*Nt] - r[j+xx] 
+                dz = rt[i+2*Nt] - r[j+Z] 
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                  
-                vx += (T[j+N]*dz - T[j+xx]*dy )*idr3
-                vy += (T[j+xx]*dx - T[j]   *dz )*idr3
+                vx += (T[j+N]*dz - T[j+Z]*dy )*idr3
+                vy += (T[j+Z]*dx - T[j]   *dz )*idr3
                 vz += (T[j]   *dy - T[j+N]*dx )*idr3
                     
                 #contributions from the image 
-                dz = rt[i+2*Nt] + r[j+xx]            
+                dz = rt[i+2*Nt] + r[j+Z]            
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                 
-                vx += -(T[j+N]*dz - T[j+xx]*dy )*idr3
-                vy += -(T[j+xx]*dx - T[j]   *dz )*idr3
+                vx += -(T[j+N]*dz - T[j+Z]*dy )*idr3
+                vy += -(T[j+Z]*dx - T[j]   *dz )*idr3
                 vz += -(T[j]   *dy - T[j+N]*dx )*idr3
                 
                 rlz = (dx*T[j+N] - dy*T[j])*idr*idr
@@ -1406,7 +928,7 @@ cdef class Flow:
                 vz += (h2*(       -3*rlz*dz) + 6*dz*dz*rlz)*idr3
 
                 ''' the self contribution from the image point''' 
-                dz = rt[i+2*Nt] + r[j+xx]            
+                dz = rt[i+2*Nt] + r[j+Z]            
                 idr = 1.0/dz
                 idr3 = idr*idr*idr
                 
@@ -1422,25 +944,25 @@ cdef class Flow:
         return 
     
    
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S):
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] V2s):
         """
         Compute flow field at field points  due to 2s mode of the slip 
         ...
 
         Parameters
         ----------
-        vv: np.array
-            An array of flow at field points
-            An array of size 3*Nt,
-        rt: np.array
-            An array of field points
-            An array of size 3*Nt,
-        r: np.array
-            An array of positions
-            An array of size 3*N,
-        S: np.array
-            An array of 2s mode of the slip
-            An array of size 5*N,
+        vv:  np.array
+             An array of flow at field points
+             An array of size 3*Nt,
+        rt:  np.array
+             An array of field points
+             An array of size 3*Nt,
+        r:   np.array
+             An array of positions
+             An array of size 3*N,
+        V2s: np.array
+             An array of 2s mode of the slip
+             An array of size 5*N,
         
         Examples
         --------
@@ -1467,25 +989,25 @@ cdef class Flow:
         >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
 
-        cdef int N=self.N,  Nt=self.Nt, xx=2*N, xx1=3*N, xx2=4*N
+        cdef int N=self.N,  Nt=self.Nt, Z=2*N, xx1=3*N, xx2=4*N
         cdef int i, j  
         cdef double dx, dy, dz, idr, idr2, idr3, idr5, idr7, aidr2, trS, h2, hsq
         cdef double sxx, syy, szz, sxy, syx, syz, szy, sxz, szx, srr, srx, sry, srz
         cdef double Sljrlx, Sljrly, Sljrlz, Sljrjx, Sljrjy, Sljrjz 
-        cdef double vx, vy, vz, mus = (28.0*self.a**3)/24 
+        cdef double vx, vy, vz, mus = (28.0*self.b**3)/24 
 
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
             for j in  range(N):
-                sxx = S[j]  ; syy = S[j+N]; szz = -sxx-syy;
-                sxy = S[j+xx]; syx = sxy;
-                sxz = S[j+xx1]; szx = sxz;
-                syz = S[j+xx2]; szy = syz;
+                sxx = V2s[j]  ; syy = V2s[j+N]; szz = -sxx-syy;
+                sxy = V2s[j+Z]; syx = sxy;
+                sxz = V2s[j+xx1]; szx = sxz;
+                syz = V2s[j+xx2]; szy = syz;
                 
                 dx = rt[i]   - r[j]
                 dy = rt[i+Nt] - r[j+N]
-                dz = rt[i+2*Nt] - r[j+xx] 
-                h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
+                dz = rt[i+2*Nt] - r[j+Z] 
+                h2 = 2*r[j+Z]; hsq = r[j+Z]*r[j+Z];
                 idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz );
                 idr2 = idr*idr; idr3 = idr2*idr; idr5 = idr3*idr2; idr7 = idr5*idr2;
                 srx = (sxx*dx +  sxy*dy + sxz*dz ); 
@@ -1499,7 +1021,7 @@ cdef class Flow:
                 vz += 3*srr*dz*idr5;
                  
                 ## contributions from the image 
-                dz = rt[i+2*Nt]+r[j+xx]
+                dz = rt[i+2*Nt]+r[j+Z]
                 idr  = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr2 = idr*idr; idr3 = idr2*idr; idr5 = idr3*idr2; idr7 = idr5*idr2;
                 
@@ -1525,25 +1047,25 @@ cdef class Flow:
             vv[i+2*Nt] += mus*vz
 
    
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D):
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] V3t):
         """
         Compute flow field at field points due to 3t mode of the slip 
         ...
 
         Parameters
         ----------
-        vv: np.array
-            An array of flow at field points
-            An array of size 3*Nt,
-        rt: np.array
-            An array of field points
-            An array of size 3*Nt,
-        r: np.array
-            An array of positions
-            An array of size 3*N,
-        D: np.array
-            An array of 3t mode of the slip
-            An array of size 3*N,
+        vv:  np.array
+             An array of flow at field points
+             An array of size 3*Nt,
+        rt:  np.array
+             An array of field points
+             An array of size 3*Nt,
+        r:   np.array
+             An array of positions
+             An array of size 3*N,
+        V3t: np.array
+             An array of 3t mode of the slip
+             An array of size 3*N,
  
         Examples
         --------
@@ -1569,35 +1091,35 @@ cdef class Flow:
         >>> flow.flowField3t(vv, rr, r, V3t)
         >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='2s')
         """
-        cdef int i, j, N=self.N, Nt=self.Nt, xx=2*N
+        cdef int i, j, N=self.N, Nt=self.Nt, Z=2*N
         cdef double dx, dy, dz, idr, idr3, idr5, Ddotidr, tempD, hsq, h2, D3
-        cdef double vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, muv = -1.0*(self.a**5)/10
+        cdef double vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, muv = -1.0*(self.b**5)/10
 
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
             for j in range(N):
-                h2 = 2*r[j+xx]; hsq = r[j+xx]*r[j+xx];
+                h2 = 2*r[j+Z]; hsq = r[j+Z]*r[j+Z];
                 dx = rt[i]      - r[j]
                 dy = rt[i+Nt]   - r[j+N]
-                dz = rt[i+2*Nt] - r[j+xx] 
+                dz = rt[i+2*Nt] - r[j+Z] 
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3=idr*idr*idr
-                Ddotidr = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz)*idr*idr
+                Ddotidr = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+Z]*dz)*idr*idr
                 #
-                vx += (2*D[j]    - 6*Ddotidr*dx)*idr3
-                vy += (2*D[j+N] - 6*Ddotidr*dy)*idr3
-                vz += (2*D[j+xx] - 6*Ddotidr*dz)*idr3
+                vx += (2*V3t[j]    - 6*Ddotidr*dx)*idr3
+                vy += (2*V3t[j+N] - 6*Ddotidr*dy)*idr3
+                vz += (2*V3t[j+Z] - 6*Ddotidr*dz)*idr3
                 
                 ##contributions from the image 
-                dz = rt[i+2*Nt] + r[j+xx]        
+                dz = rt[i+2*Nt] + r[j+Z]        
                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                 idr3 = idr*idr*idr
                 idr5 = idr3*idr*idr 
-                D3 = -D[j+xx]
-                Ddotidr = (D[j]*dx + D[j+N]*dy + D3*dz)*idr*idr
+                D3 = -V3t[j+Z]
+                Ddotidr = (V3t[j]*dx + V3t[j+N]*dy + D3*dz)*idr*idr
                 
-                vx += (2*D[j]    - 6*Ddotidr*dx )*idr3
-                vy += (2*D[j+N] - 6*Ddotidr*dy )*idr3
+                vx += (2*V3t[j]    - 6*Ddotidr*dx )*idr3
+                vy += (2*V3t[j+N] - 6*Ddotidr*dy )*idr3
                 vz += (2*D3      - 6*Ddotidr*dz )*idr3
 
             vv[i  ]    += muv*vx

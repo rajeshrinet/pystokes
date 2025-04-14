@@ -1,0 +1,8 @@
+ipython
+jupyter
+nbconvert
+numpy
+wheel
+matplotlib
+cython
+scipy 

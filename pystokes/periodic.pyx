@@ -32,7 +32,7 @@ cdef class Rbm:
 
    """
     def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10, xi=123456789):
-        self.a   = radius
+        self.b   = radius
         self.N  = particles
         self.eta = viscosity
         self.L   = boxSize 
@@ -42,7 +42,7 @@ cdef class Rbm:
         else:
             self.xi = xi 
 
-        self.mu  = 1.0/(6*PI*self.eta*self.a)
+        self.mu  = 1.0/(6*PI*self.eta*self.b)
         self.muv = 1.0/(8*PI*self.eta)
 
 
@@ -70,24 +70,25 @@ cdef class Rbm:
             Default is 1
         """
 
-        cdef int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1 ##used to be N1=-(Nm/2)+1
+        cdef int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, Z=2*N, Nbb=2*Nb+1
         cdef double L=self.L,  xi=self.xi, ixi2, siz=Nb*L, mu=self.mu, muv=self.muv
-        cdef double a2=self.a*self.a/3, aidr2, k0=2*PI/L, fac=8*PI/(L*L*L), 
+        cdef double a2=self.b*self.b/3, aidr2, k0=2*PI/L, fac=8*PI/(L*L*L), 
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1, mt, mpp
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
         
         if xi0 != 123456789:
             xi = xi0 
         ixi2=1/(xi*xi)
-        mt=IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0); mpp=mu*(1+mt)    # include M^2(r=0)
+        mt=IPI*xi*self.b*(-3+20*xi*xi*self.b*self.b/3.0); mpp=mu*(1+mt)    
+        # include M^2(r=0); see Eq.15, Beenakker JCP 85(3) 1986 
 
         for i in prange(N, nogil=True):
             vx=0;  vy=0;  vz=0;
             for j in range(N):
-                xd=r[i]-r[j];          xd1=xd-siz; 
-                yd=r[i+N]-r[j+N];    yd1=yd-siz;  
-                zd=r[i+xx]-r[j+xx];    zd1=zd-siz;
-                fx=F[j];  fy=F[j+N];  fz=F[j+xx];
+                xd=r[i]  -r[j];       xd1=xd-siz; 
+                yd=r[i+N]-r[j+N];     yd1=yd-siz;  
+                zd=r[i+Z]-r[j+Z];     zd1=zd-siz;
+                fx=F[j];  fy=F[j+N];  fz=F[j+Z];
 
                 for ii in range(Nbb):
                     dx = xd1 + ii*L 
@@ -131,9 +132,9 @@ cdef class Rbm:
                                 vy += cc*(fy - fdotik*ky) 
                                 vz += cc*(fz - fdotik*kz) 
         
-            v[i]    += mpp*F[i]    + muv*vx 
+            v[i]   += mpp*F[i]   + muv*vx 
             v[i+N] += mpp*F[i+N] + muv*vy 
-            v[i+xx] += mpp*F[i+xx] + muv*vz
+            v[i+Z] += mpp*F[i+Z] + muv*vz
         return 
     
     
@@ -162,8 +163,8 @@ cdef class Rbm:
         """
 
         cdef: 
-            double L = self.L,  xi=self.xi, ixi2, vx, vy, vz, muv=self.muv
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N
+            double L = self.L,  xi=self.xi, ixi2, vx, vy, vz, muv=0.5*self.muv
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, Z=2*N
             double xdr, xdr2, xdr3, e1, erxdr, fac=8*PI/(L*L*L),
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
         if xi0 != 123456789:
@@ -182,22 +183,22 @@ cdef class Rbm:
                             else:    
                                 dx = r[i]   - r[j]-Nb*L + ii*L 
                                 dy = r[i+N] - r[j+N]-Nb*L + jj*L 
-                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                dz = r[i+Z] - r[j+Z]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
                                 idr3 = idr*idr*idr
                                 xdr    = xi/idr;    erxdr = erfc(xdr) 
                                 xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
-                                D      = (-2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr))*idr3
-                                
-                                vx -= D*(dy*T[j+xx] - dz*T[j+N]  )
-                                vy -= D*(dz*T[j]    - dx*T[j+xx])
-                                vz -= D*(dx*T[j+N] - dy*T[j   ])
+                                D      = (2*erfc(xdr) + e1*(2*xdr - 12*xdr2*xdr + 4*xdr2*xdr2*xdr))*idr3
+
+                                vx -= D*(dy*T[j+Z] - dz*T[j+N])
+                                vy -= D*(dz*T[j]   - dx*T[j+Z])
+                                vz -= D*(dx*T[j+N] - dy*T[j  ])
         # Fourier space sum
         for i in prange(N, nogil=True):
             for j  in range(N):
                 dx = r[i]  -r[j]
                 dy = r[i+N]-r[j+N]
-                dz = r[i+xx]-r[j+xx]
+                dz = r[i+Z]-r[j+Z]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
                     for jj in range(N1, N2):               
@@ -208,18 +209,18 @@ cdef class Rbm:
                                 k2 = kx*kx + ky*ky + kz*kz    
                                 cc = fac*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2)
 
-                                vx -= cc*( T[j+N]*kz - T[j+xx]*ky  ) 
-                                vy -= cc*( T[j+xx]*kx - T[j]  *kz  ) 
-                                vz -= cc*( T[j]  *ky - T[j+N]*kx  ) 
-            v[i]    += muv*vx 
+                                vx += cc*( T[j+N]*kz - T[j+Z]*ky  ) 
+                                vy += cc*( T[j+Z]*kx - T[j]  *kz  ) 
+                                vz += cc*( T[j]  *ky - T[j+N]*kx  ) 
+            v[i]   += muv*vx 
             v[i+N] += muv*vy 
-            v[i+xx] += muv*vz 
+            v[i+Z] += muv*vz 
         return 
     
     
-    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] S, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] V2s, int Nb=6, int Nm=6, double xi0=123456789):
         """
-        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot S` 
+        Compute velocity due to 2s mode of the slip :math:`v=\pi^{T,2s}\cdot V^{2s}` 
         ...
 
         Parameters
@@ -230,7 +231,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        S: np.array
+        V2s: np.array
             An array of 2s mode of the slip
             An array of size 5*N,
         Nb: int 
@@ -242,26 +243,26 @@ cdef class Rbm:
         """
 
         cdef: 
-            int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1, xx1=3*N, xx2=4*N
+            int N=self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, Z=2*N, Nbb=2*Nb+1, xx1=3*N, xx2=4*N
             double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
-            double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
+            double xdr, xdr2, xdr3, xdr5,  E1, E2, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, ik2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
-            double a2 = self.a*self.a*4.0/15, aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.a**3)/24 
+            double a2 = self.b*self.b*4.0/15, aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.b**3)/24 
         if xi0 != 123456789:
             xi = xi0 
-        ixi2 = 1/(xi*xi),
+        ixi2 = 1/(xi*xi)
         
         for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0;
             for j in range(N):
-                sxx = S[j]
-                syy = S[j+N]
-                sxy = S[j+xx]
-                sxz = S[j+xx1]
-                syz = S[j+xx2]
+                sxx = V2s[j]
+                syy = V2s[j+N]
+                sxy = V2s[j+Z]
+                sxz = V2s[j+xx1]
+                syz = V2s[j+xx2]
                 xd=r[i]-r[j];          xd1=xd-siz; 
                 yd=r[i+N]-r[j+N];    yd1=yd-siz;  
-                zd=r[i+xx]-r[j+xx];    zd1=zd-siz;
+                zd=r[i+Z]-r[j+Z];    zd1=zd-siz;
                 
                 for ii in range(Nbb):
                     dx = xd1 + ii*L 
@@ -276,22 +277,22 @@ cdef class Rbm:
                                 idr3 = idr*idr*idr; aidr2=a2*idr*idr
                                 xdr = xi/idr; xdr2=xdr*xdr; xdr3 = xdr2*xdr; xdr5 = xdr3*xdr2;
                                 erxdr   = erfc(xdr);   e1  = IPI*exp(-xdr2);
-                                D =  e1*(8*xdr3 - 4*xdr5 ) 
-                                E = -3*erxdr + e1*(-3*xdr - 2*xdr3  + 4*xdr5 ) 
+                                E1 =  e1*(8*xdr3 - 4*xdr5 ) 
+                                E2 = -3*erxdr + e1*(-3*xdr - 2*xdr3  + 4*xdr5 ) 
                                 
                                 srx = sxx*dx + sxy*dy + sxz*dz  
                                 sry = sxy*dx + syy*dy + syz*dz  
                                 srz = sxz*dx + syz*dy - (sxx+syy)*dz 
                                 srr = srx*dx + sry*dy + srz*dz
 
-                                D += -12*erxdr+ e1*(-12*xdr - 8*xdr3  - 104*xdr5 + 104*xdr5*xdr2 - 16*xdr3*xdr3*xdr3)*aidr2
-                                E += 30*erxdr + e1*(30*xdr  + 20*xdr3 + 8*xdr5   - 80*xdr5*xdr2  + 16*xdr3*xdr3*xdr3)*aidr2
-                                D  = D*idr3
-                                E  = E*srr*idr*idr*idr3
+                                # E1 += -12*erxdr+ e1*(-12*xdr - 8*xdr3  - 104*xdr5 + 104*xdr5*xdr2 - 16*xdr3*xdr3*xdr3)*aidr2
+                                # E2 += 30*erxdr + e1*(30*xdr  + 20*xdr3 + 8*xdr5   - 80*xdr5*xdr2  + 16*xdr3*xdr3*xdr3)*aidr2
+                                E1  = E1*idr3
+                                E2  = E2*srr*idr*idr*idr3
 
-                                vx += D*srx + E*dx
-                                vy += D*sry + E*dy
-                                vz += D*srz + E*dz
+                                vx += E1*srx + E2*dx
+                                vy += E1*sry + E2*dy
+                                vz += E1*srz + E2*dz
                 #Fourier part
                 for ii in range(N1, N2):
                     kx = k0*ii;
@@ -302,7 +303,8 @@ cdef class Rbm:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz); ik2=1.0/k2    
                                 ixk2 = 0.25*k2*ixi2
-                                cc = -fac*(1-a2*k2)*sin(kx*xd+ky*yd+kz*zd)*(1+ixk2+2*ixk2*ixk2)*exp(-ixk2)*ik2
+                                #cc = -fac*(1-a2*k2)*sin(kx*xd+ky*yd+kz*zd)*(1+ixk2+2*ixk2*ixk2)*exp(-ixk2)*ik2
+                                cc = -fac*sin(kx*xd+ky*yd+kz*zd)*(1+ixk2+2*ixk2*ixk2)*exp(-ixk2)*ik2
 
                                 srx = sxx*kx + sxy*ky + sxz*kz  
                                 sry = sxy*kx + syy*ky + syz*kz  
@@ -313,13 +315,13 @@ cdef class Rbm:
                                 vy += cc* (sry - srr*ky)
                                 vz += cc* (srz - srr*kz)
 
-            v[i]    += mus*vx
+            v[i]   += mus*vx
             v[i+N] += mus*vy
-            v[i+xx ]+= mus*vz
+            v[i+Z] += mus*vz
         return 
       
 
-    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] V3t, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot D` 
         ...
@@ -332,7 +334,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        D: np.array
+        V3t: np.array
             An array of 3t mode of the slip
             An array of size 3*N,
         Nb: int 
@@ -345,14 +347,15 @@ cdef class Rbm:
 
         cdef double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8.0*PI/(L*L*L)
         cdef double ixi2, vx, vy, vz
-        cdef int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
-        cdef double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
-        cdef double mud =3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
+        cdef int N = self.N, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, i1, j, j1, ii, jj, kk, Z=2*N, Nbb=2*Nb+1
+        cdef double xdr, xdr2, xdr3, A1, B1, V3tdotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr3,  kx, ky, kz, k2, cc
+        cdef double b3=self.b*self.b*self.b, muv=-(b3)/20, xi2
         cdef double xd, yd, zd, xd1, yd1, zd1
         if xi0 != 123456789:
             xi = xi0 
-        ixi2 = 1/(xi*xi),
-        mud = mud + mud1*IPI*xi*(80*xi*xi*self.a*self.a/3.0) ## adding the M^2(r=0) contribution
+        xi2 = xi*xi 
+        ixi2 = 1/(xi2)
+        mud = 0.2# - IPI*(4*xi2*xi*b3/3.0) ## adding the M^2(r=0) contribution
 
         
         for i in prange(N, nogil=True):
@@ -360,7 +363,7 @@ cdef class Rbm:
             for j in range(N):
                 xd=r[i]-r[j];          xd1=xd-siz; 
                 yd=r[i+N]-r[j+N];    yd1=yd-siz;  
-                zd=r[i+xx]-r[j+xx];    zd1=zd-siz;
+                zd=r[i+Z]-r[j+Z];    zd1=zd-siz;
                 
                 for ii in range(Nbb):
                     dx = xd1 + ii*L 
@@ -372,16 +375,16 @@ cdef class Rbm:
                                 pass
                             else:    
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
-                                idr5=idr*idr*idr*idr*idr
+                                idr3=idr*idr*idr
                                 xdr = xi/idr; xdr2=xdr*xdr; xdr3 = xdr2*xdr;
                                 erxdr   = erfc(xdr); e1=IPI*exp(-xdr2);  
-                                A1 = (2*erxdr  + e1*( 2*xdr+28*xdr3-40*xdr3*xdr2+8*xdr3*xdr3*xdr ))*idr5 
-                                B1 = (-6*erxdr + e1*(-6*xdr-4*xdr3 +32*xdr3*xdr2-8*xdr3*xdr3*xdr ))*idr5 
-                                B1 = B1*(D[j]*dx + D[j+N]*dy + D[j+xx]*dz )*idr*idr
+                                A1 = (2*erxdr  + e1*( 2*xdr+28*xdr3-40*xdr3*xdr2+8*xdr3*xdr3*xdr ))*idr3
+                                B1 = (-6*erxdr + e1*(-6*xdr-4*xdr3 +32*xdr3*xdr2-8*xdr3*xdr3*xdr ))*idr3
+                                B1 = B1*(V3t[j]*dx + V3t[j+N]*dy + V3t[j+Z]*dz )*idr*idr
 
-                                vx += A1*D[j]    + B1*dx
-                                vy += A1*D[j+N] + B1*dy
-                                vz += A1*D[j+xx] + B1*dz
+                                vx += A1*V3t[j]   + B1*dx
+                                vy += A1*V3t[j+N] + B1*dy
+                                vz += A1*V3t[j+Z] + B1*dz
                 #Fourier part
                 for ii in range(N1, N2):
                     kx = k0*ii;
@@ -392,21 +395,21 @@ cdef class Rbm:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
                                 cc = -fac*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
-                                Ddotik2  = (D[j]*kx + D[j+N]*ky + D[j+xx]*kz)/k2
+                                V3tdotik2  = (V3t[j]*kx + V3t[j+N]*ky + V3t[j+Z]*kz)/k2
                                 
-                                vx += cc*( D[j]    - Ddotik2*kx ) 
-                                vy += cc*( D[j+N] - Ddotik2*ky ) 
-                                vz += cc*( D[j+xx] - Ddotik2*kz ) 
+                                vx += cc*( V3t[j]   - V3tdotik2*kx ) 
+                                vy += cc*( V3t[j+N] - V3tdotik2*ky ) 
+                                vz += cc*( V3t[j+Z] - V3tdotik2*kz ) 
 
-            v[i]   += mud*D[i]    + mud1*vx
-            v[i+N]+= mud*D[i+N] + mud1*vy
-            v[i+xx]+= mud*D[i+xx] + mud1*vz
+            v[i]   += mud*V3t[i]    + muv*vx
+            v[i+N] += mud*V3t[i+N]  + muv*vy
+            v[i+Z] += mud*V3t[i+Z] + muv*vz
         return
 
 
-    cpdef propulsionT3s(  self, double [:] v, double [:] r, double [:] G, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef propulsionT3s(  self, double [:] v, double [:] r, double [:] V3s, int Nb=6, int Nm=6, double xi0=123456789):
         """
-        Compute velocity due to 3s mode of the slip :math:`v=\pi^{T,3s}\cdot G` 
+        Compute velocity due to 3s mode of the slip :math:`v=\pi^{T,3s}\cdot V^{3s}` 
         ...
 
         Parameters
@@ -417,7 +420,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        G: np.array
+        V3s: np.array
             An array of 3s mode of the slip
             An array of size 7*N,
         Nb: int 
@@ -430,11 +433,11 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi  
             double ixi2, vx, vy, vz
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, j,  ii, jj, kk, xx=2*N
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, j,  ii, jj, kk, Z=2*N
             double xdr, xdr2, xdr3, xdr5, xdr7, e1, erxdr, D1, D2, D11, D22
             double dx, dy, dz, idr, idr5, idr7, kx, ky, kz, k2, cc, fac=8*PI/(L*L*L)
             double aidr2, grrr, grrx, grry, grrz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz
-            double a2 = self.a*self.a*5/21
+            double a2 = self.b*self.b*5/21
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
@@ -442,16 +445,16 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0
             for j in range(N):
-                gxxx = G[j]
-                gyyy = G[j+N]
-                gxxy = G[j+2*N]
-                gxxz = G[j+3*N]
-                gxyy = G[j+4*N]
-                gxyz = G[j+5*N]
-                gyyz = G[j+6*N]
+                gxxx = V3s[j]
+                gyyy = V3s[j+N]
+                gxxy = V3s[j+2*N]
+                gxxz = V3s[j+3*N]
+                gxyy = V3s[j+4*N]
+                gxyz = V3s[j+5*N]
+                gyyz = V3s[j+6*N]
                 dx = r[i]  -r[j]
                 dy = r[i+N]-r[j+N]
-                dz = r[i+xx]-r[j+xx]
+                dz = r[i+Z]-r[j+Z]
                 
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
@@ -507,14 +510,14 @@ cdef class Rbm:
                                 vz += cc*(grrz - grrr*kz) 
             v[i]   += vx
             v[i+N]+= vy
-            v[i+xx]+= vz
+            v[i+Z]+= vz
 
         return
 
     
-    cpdef propulsionT3a(  self, double [:] v, double [:] r, double [:] V, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef propulsionT3a(  self, double [:] v, double [:] r, double [:] V3a, int Nb=6, int Nm=6, double xi0=123456789):
         """
-        Compute velocity due to 3a mode of the slip :math:`v=\pi^{T,3a}\cdot V` 
+        Compute velocity due to 3a mode of the slip :math:`v=\pi^{T,3a}\cdot V^{3a}` 
         ...
 
         Parameters
@@ -525,7 +528,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        V: np.array
+        V3a: np.array
             An array of 3a mode of the slip
             An array of size 5*N,
         Nb: int 
@@ -538,7 +541,7 @@ cdef class Rbm:
 
         cdef: 
             double L = self.L,  xi=self.xi, ixi2
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, Z=2*N
             double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz, vkx, vky, vkz, fac=8*PI/(L*L*L)
             double s1, kx, ky, kz, k2, xdr, xdr2, cc 
         if xi0 != 123456789:
@@ -548,11 +551,11 @@ cdef class Rbm:
  
         for i in prange(N, nogil=True):
             for j in range(N):
-                vxx = V[j]
-                vyy = V[j+N]
-                vxy = V[j+2*N]
-                vxz = V[j+3*N]
-                vyz = V[j+4*N]
+                vxx = V3a[j]
+                vyy = V3a[j+N]
+                vxy = V3a[j+2*N]
+                vxz = V3a[j+3*N]
+                vyz = V3a[j+4*N]
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -561,24 +564,25 @@ cdef class Rbm:
                             else:    
                                 dx = r[i]   - r[j]     -Nb*L + ii*L 
                                 dy = r[i+N] - r[j+N]  -Nb*L + jj*L 
-                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                dz = r[i+Z] - r[j+Z]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr5 = pow(idr, 5)
                                 xdr = xi/idr; xdr2 = xdr*xdr;  
-                                s1 = -6*erfc(xdr) + IPI*xdr2*(-16 + 32*xdr2 - 8*xdr2*xdr2)*exp(-xdr2)
+                                s1 = -6*erfc(xdr) + IPI*(-16*xdr2*xdr + 32*xdr2*xdr2*xdr - 8*xdr2*xdr2*xdr2*xdr)*exp(-xdr2)
+
                                 vrx = vxx*dx +  vxy*dy + vxz*dz  
                                 vry = vxy*dx +  vyy*dy + vyz*dz  
                                 vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
                                 
                                 v[i]    -= s1*( dy*vrz - dz*vry )*idr5
                                 v[i+N] -= s1*( dz*vrx - dx*vrz )*idr5
-                                v[i+xx] -= s1*( dx*vry - dy*vrx )*idr5
+                                v[i+Z] -= s1*( dx*vry - dy*vrx )*idr5
                 #Fourier part
                 N1 = -(Nm/2)+1
                 N2 =  (Nm/2)+1
                 dx = r[i]      - r[j]
                 dy = r[i+N]   - r[j+N]
-                dz = r[i+xx] - r[j+xx] 
+                dz = r[i+Z] - r[j+Z] 
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
                     for jj in range(N1, N2):               
@@ -594,11 +598,11 @@ cdef class Rbm:
                                 
                                 v[i]   += cc*( ky*vkz - kz*vky) 
                                 v[i+N] += cc*( kz*vkx - kx*vkz) 
-                                v[i+xx] += cc*( kx*vky - ky*vkx) 
+                                v[i+Z] += cc*( kx*vky - ky*vkx) 
         return
 
 
-    cpdef propulsionT4a(  self, double [:] v, double [:] r, double [:] M, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef propulsionT4a(  self, double [:] v, double [:] r, double [:] V4a, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute velocity due to 4a mode of the slip :math:`v=\pi^{T,4a}\cdot M` 
         ...
@@ -611,7 +615,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        M: np.array
+        V4a: np.array
             An array of 4a mode of the slip
             An array of size 7*N,
         Nb: int 
@@ -625,7 +629,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi, fac=8*PI/(L*L*L)
             double ixi2, vx, vy, vz
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, Z=2*N
             double dx, dy, dz, idr, idr7, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
             double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc, 
         if xi0 != 123456789:
@@ -636,13 +640,13 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             vx=0; vy=0; vz=0;
             for j in range(N):
-                mxxx = M[j]
-                myyy = M[j+N]
-                mxxy = M[j+2*N]
-                mxxz = M[j+3*N]
-                mxyy = M[j+4*N]
-                mxyz = M[j+5*N]
-                myyz = M[j+6*N]
+                mxxx = V4a[j]
+                myyy = V4a[j+N]
+                mxxy = V4a[j+2*N]
+                mxxz = V4a[j+3*N]
+                mxyy = V4a[j+4*N]
+                mxyz = V4a[j+5*N]
+                myyz = V4a[j+6*N]
 
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
@@ -652,7 +656,7 @@ cdef class Rbm:
                             else:    
                                 dx = r[i]   - r[j]     -Nb*L + ii*L 
                                 dy = r[i+N] - r[j+N]  -Nb*L + jj*L 
-                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                dz = r[i+Z] - r[j+Z]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr7 = pow(idr, 7)
                                 xdr = xi/idr; xdr2 = xdr*xdr; 
@@ -669,7 +673,7 @@ cdef class Rbm:
                 N2 =  (Nm/2)+1
                 dx = r[i]  - r[j]     
                 dy = r[i+N]- r[j+N]  
-                dz = r[i+xx]- r[j+xx]
+                dz = r[i+Z]- r[j+Z]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
                     for jj in range(N1, N2):               
@@ -688,7 +692,7 @@ cdef class Rbm:
                                 vz += cc*( kx*mkky - ky*mkkx) 
             v[i]    += vx
             v[i+N] += vy
-            v[i+xx ]+= vz
+            v[i+Z]+= vz
         return
 
 
@@ -719,8 +723,8 @@ cdef class Rbm:
         """
 
         cdef: 
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N
-            double L = self.L,  xi=self.xi, fac=8*PI/(L*L*L), muv=self.muv
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, Z=2*N
+            double L = self.L,  xi=self.xi, fac=8*PI/(L*L*L), muv=0.5*self.muv
             double  ixi2, ox, oy, oz
             double xdr, xdr2, xdr3, e1, erxdr 
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, D 
@@ -740,16 +744,16 @@ cdef class Rbm:
                             else:    
                                 dx = r[i]   - r[j]  -Nb*L + ii*L 
                                 dy = r[i+N] - r[j+N]-Nb*L + jj*L 
-                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                dz = r[i+Z] - r[j+Z]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
                                 idr3 = idr*idr*idr
                                 xdr    = xi/idr;    erxdr = erfc(xdr) 
                                 xdr2   = xdr*xdr ; e1 = IPI*exp(-xdr2);
-                                D      = -2*erfc(xdr) + e1*(-2*xdr +  12*xdr2*xdr - 4*xdr2*xdr2*xdr)
+                                D      = (2*erfc(xdr) + e1*(2*xdr - 12*xdr2*xdr + 4*xdr2*xdr2*xdr))*idr3
                                 
-                                ox -= D*(F[j+N]*dz - F[j+xx]*dy )*idr3
-                                oy -= D*(F[j+xx]*dx - F[j]*dz    )*idr3
-                                oz -= D*(F[j]*dy    - F[j+N]*dx )*idr3
+                                ox += D*(F[j+N]*dz - F[j+Z]*dy )
+                                oy += D*(F[j+Z]*dx - F[j]*dz   )
+                                oz += D*(F[j]*dy    - F[j+N]*dx)
         # Fourier space sum
         for i in prange(N, nogil=True):
             i1 = i*3
@@ -757,7 +761,7 @@ cdef class Rbm:
                 j1 = j*3
                 dx = r[i]  -r[j]
                 dy = r[i+N]-r[j+N]
-                dz = r[i+xx]-r[j+xx]
+                dz = r[i+Z]-r[j+Z]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
                     for jj in range(N1, N2):               
@@ -768,12 +772,12 @@ cdef class Rbm:
                                 k2 = kx*kx + ky*ky + kz*kz    
                                 cc = fac*sin( kx*dx+ky*dy+kz*dz )* (1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)/(k2)
 
-                                ox += cc*( F[j+N]*dz - F[j+xx]*dy  ) 
-                                oy += cc*( F[j+xx]*dx - F[j]*dz     ) 
-                                oz += cc*( F[j]*dy    - F[j+N]*dx  ) 
-            o[i]    += muv*ox
+                                ox += cc*( F[j+Z]*ky - F[j+N]*kz) 
+                                oy += cc*( F[j]*kz   - F[j+Z]*kx) 
+                                oz += cc*( F[j+N]*kx - F[j]*ky  ) 
+            o[i]   += muv*ox
             o[i+N] += muv*oy
-            o[i+xx ]+= muv*oz
+            o[i+Z] += muv*oz
         return 
 
 
@@ -803,7 +807,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi 
             double ixi2, ox, oy, oz, fac=8*PI/(L*L*L), muv=self.muv
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk,  xx=2*N
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk,  Z=2*N
             double xdr, xdr2, A1, B1, Tdotik2, Tdotidr2, e1, erxdr, dx, dy, dz, idr,  kx, ky, kz, k2, cc
         if xi0 != 123456789:
             xi = xi0 
@@ -815,7 +819,7 @@ cdef class Rbm:
             for j in range(N):
                 dx = r[i]  -r[j]
                 dy = r[i+N]-r[j+N]
-                dz = r[i+xx]-r[j+xx]
+                dz = r[i+Z]-r[j+Z]
               
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
@@ -829,13 +833,13 @@ cdef class Rbm:
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
                                 xdr = xi/idr; xdr2=xdr*xdr; 
                                 erxdr   = erfc(xdr); e1=IPI*exp(-xdr2);  
-                                Tdotidr2 = (T[j]*dx + T[j+N]*dy + T[j+xx]*dz )*idr*idr
+                                Tdotidr2 = (T[j]*dx + T[j+N]*dy + T[j+Z]*dz )*idr*idr
                                 A1    =  2*erxdr*idr*idr + e1*( 8*xdr2*xdr2*xdr*xi*xi - 40*xdr2*xdr*xi*xi +28*xdr*xi*xi + 2*xi*idr)
                                 B1    = -6*erxdr*idr*idr + e1*(-8*xdr2*xdr2*xdr*xi*xi + 32*xdr2*xdr*xi*xi - 4*xdr*xi*xi - 6*xi*idr )
                               
                                 ox += -(A1*T[j]  *idr + B1*Tdotidr2*dx)*idr;
                                 oy += -(A1*T[j+N]*idr + B1*Tdotidr2*dy)*idr;
-                                oz += -(A1*T[j+xx]*idr + B1*Tdotidr2*dz)*idr;
+                                oz += -(A1*T[j+Z]*idr + B1*Tdotidr2*dz)*idr;
                 #Fourier part
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
@@ -846,20 +850,20 @@ cdef class Rbm:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
                                 cc = -fac*cos(kx*dx+ky*dy+kz*dz)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
-                                Tdotik2  = (T[j]*kx + T[j+N]*ky + T[j+xx]*kz)/k2
+                                Tdotik2  = (T[j]*kx + T[j+N]*ky + T[j+Z]*kz)/k2
                                 
                                 ox += cc*( T[j]   - Tdotik2*kx ) 
                                 oy += cc*( T[j+N] - Tdotik2*ky ) 
-                                oz += cc*( T[j+xx] - Tdotik2*kz ) 
-            o[i]    += muv*ox
+                                oz += cc*( T[j+Z] - Tdotik2*kz ) 
+            o[i]   += muv*ox
             o[i+N] += muv*oy
-            o[i+xx ]+= muv*oz
+            o[i+Z] += muv*oz
         return
 
     
-    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] S, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef propulsionR2s(self, double [:] o, double [:] r, double [:] V2s, int Nb=6, int Nm=6, double xi0=123456789):
         """
-        Compute angular velocity due to 2s mode of the slip :math:`v=\pi^{R,2s}\cdot S` 
+        Compute angular velocity due to 2s mode of the slip :math:`v=\pi^{R,2s}\cdot V^{2s}` 
         ...
 
         Parameters
@@ -870,7 +874,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        S: np.array
+        V2s: np.array
             An array of 2s mode of the slip
             An array of size 5*N,
         Nb: int 
@@ -884,9 +888,9 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi 
             double ixi2, ox, oy, oz, fac=8*PI/(L*L*L)
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, Z=2*N
             double dx, dy, dz, idr, idr5, sxx, syy, sxy, sxz, syz, srx, sry, srz, skx, sky, skz, s1
-            double kx, ky, kz, k2, xdr, xdr2, cc, mus = (28.0*self.a**3)/24
+            double kx, ky, kz, k2, xdr, xdr2, cc, mus = (28.0*self.b**3)/24
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
@@ -895,11 +899,11 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             ox=0; oy=0; oz=0
             for j in range(N):
-                sxx = S[j]
-                syy = S[j+N]
-                sxy = S[j+2*N]
-                sxz = S[j+3*N]
-                syz = S[j+4*N]
+                sxx = V2s[j]
+                syy = V2s[j+N]
+                sxy = V2s[j+2*N]
+                sxz = V2s[j+3*N]
+                syz = V2s[j+4*N]
 
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
@@ -909,7 +913,7 @@ cdef class Rbm:
                             else:    
                                 dx = r[i]   - r[j]  -Nb*L + ii*L 
                                 dy = r[i+N] - r[j+N]-Nb*L + jj*L 
-                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                dz = r[i+Z] - r[j+Z]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr5 = pow(idr, 5)
                                 xdr = xi/idr; xdr2 = xdr*xdr;
@@ -925,7 +929,7 @@ cdef class Rbm:
                 #Fourier part
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
-                dz = r[i+xx] - r[j+xx] 
+                dz = r[i+Z] - r[j+Z] 
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
                     for jj in range(N1, N2):               
@@ -944,13 +948,13 @@ cdef class Rbm:
                                 oz += cc*( kx*sky - ky*skx) 
             o[i]    += mus*ox
             o[i+N] += mus*oy
-            o[i+xx ]+= mus*oz
+            o[i+Z]+= mus*oz
         pass
 
 
-    cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] G, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef propulsionR3s(  self, double [:] o, double [:] r, double [:] V3s, int Nb=6, int Nm=6, double xi0=123456789):
         """
-        Compute angular velocity due to 3s mode of the slip :math:`v=\pi^{R,3s}\cdot G` 
+        Compute angular velocity due to 3s mode of the slip :math:`v=\pi^{R,3s}\cdot V^{3s}` 
         ...
 
         Parameters
@@ -961,7 +965,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        G: np.array
+        V3s: np.array
             An array of 3s mode of the slip
             An array of size 7*N,
         Nb: int 
@@ -975,9 +979,9 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi, 
             double ixi2, fac=8*PI/(L*L*L)
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, Z=2*N
             double dx, dy, dz, idr, idr7, grrx, grry, grrz, gkkx, gkky, gkkz, gxxx, gyyy, gxxy, gxxz, gxyy, gxyz, gyyz, 
-            double s2, kx, ky, kz, k2, xdr, e1, xdr2, cc,
+            double s2, kx, ky, kz, k2, xdr, e1, xdr2, xdr3, xdr5, cc,
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
@@ -985,13 +989,13 @@ cdef class Rbm:
 
         for i in prange(N, nogil=True):
             for j in range(N):
-                gxxx = G[j]
-                gyyy = G[j+N]
-                gxxy = G[j+2*N]
-                gxxz = G[j+3*N]
-                gxyy = G[j+4*N]
-                gxyz = G[j+5*N]
-                gyyz = G[j+6*N]
+                gxxx = V3s[j]
+                gyyy = V3s[j+N]
+                gxxy = V3s[j+2*N]
+                gxxz = V3s[j+3*N]
+                gxyy = V3s[j+4*N]
+                gxyz = V3s[j+5*N]
+                gyyz = V3s[j+6*N]
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -1000,22 +1004,23 @@ cdef class Rbm:
                             else:    
                                 dx = r[i]   - r[j]  -Nb*L + ii*L 
                                 dy = r[i+N] - r[j+N]-Nb*L + jj*L 
-                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                dz = r[i+Z] - r[j+Z]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr7 = pow(idr, 7)
-                                xdr = xi/idr; xdr2 = xdr*xdr; 
-                                s2 = 3*erfc(xdr) + IPI*(12*xdr - 32*xdr2*xdr - 16* xdr2*xdr2*xdr2*xdr)*exp(-xdr2)
+                                xdr = xi/idr; xdr2=xdr*xdr; xdr3=xdr2*xdr;   xdr5=xdr3*xdr3;
+                                s2 = 30*erfc(xdr) + IPI*(6*xdr + 32*xdr3 - 32*xdr5 - 80*xdr5*xdr2 + 16*xdr5*xdr3*xdr)*exp(-xdr2)
+
                                 grrx = gxxx*(dx*dx-dz*dz) + gxyy*(dy*dy-dz*dz) +  2*gxxy*dx*dy + 2*gxxz*dx*dz  +  2*gxyz*dy*dz
                                 grry = gxxy*(dx*dx-dz*dz) + gyyy*(dy*dy-dz*dz) +  2*gxyy*dx*dy + 2*gxyz*dx*dz  +  2*gyyz*dy*dz
                                 grrz = gxxz*(dx*dx-dz*dz) + gyyz*(dy*dy-dz*dz) +  2*gxyz*dx*dy - 2*(gxxx+gxyy)*dx*dz - 2*(gxxy+gyyy)*dy*dz
                                 
                                 o[i]   -= s2*( dy*grrz - dz*grry )*idr7
-                                o[i+N]-= s2*( dz*grrx - dx*grrz )*idr7
-                                o[i+xx] -= s2*( dx*grry - dy*grrx )*idr7
+                                o[i+N] -= s2*( dz*grrx - dx*grrz )*idr7
+                                o[i+Z] -= s2*( dx*grry - dy*grrx )*idr7
                 #Fourier part
                 dx = r[i]   - r[j]     
                 dy = r[i+N] - r[j+N]  
-                dz = r[i+xx] - r[j+xx]
+                dz = r[i+Z] - r[j+Z]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
                     for jj in range(N1, N2):               
@@ -1031,15 +1036,15 @@ cdef class Rbm:
                                 
                                 o[i]   += cc*( ky*gkkz - kz*gkky) 
                                 o[i+N] += cc*( kz*gkkx - kx*gkkz) 
-                                o[i+xx] += cc*( kx*gkky - ky*gkkx) 
+                                o[i+Z] += cc*( kx*gkky - ky*gkkx) 
                             else:    
                                 pass
         return
 
 
-    cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V3a, int Nb=6, int Nm=6, double xi0=123456789):
         """
-        Compute angular velocity due to 3a mode of the slip :math:`v=\pi^{R,3a}\cdot V` 
+        Compute angular velocity due to 3a mode of the slip :math:`v=\pi^{R,3a}\cdot V^{3a}` 
         ...
 
         Parameters
@@ -1050,7 +1055,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        V: np.array
+        V3a: np.array
             An array of 3a mode of the slip
             An array of size 5*N,
         Nb: int 
@@ -1064,7 +1069,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi   
             double ixi2, fac=8*PI/(L*L*L)
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, Z=2*N
             double dx, dy, dz, idr, idr2, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz, vkx, vky, vkz, vkk
             double kx, ky, kz, k2,  xdr, e1, xdr2, cc,  s1, s3
         if xi0 != 123456789:
@@ -1074,11 +1079,11 @@ cdef class Rbm:
  
         for i in prange(N, nogil=True):
             for j in range(N):
-                vxx = V[j]
-                vyy = V[j+N]
-                vxy = V[j+2*N]
-                vxz = V[j+3*N]
-                vyz = V[j+4*N]
+                vxx = V3a[j]
+                vyy = V3a[j+N]
+                vxy = V3a[j+2*N]
+                vxz = V3a[j+3*N]
+                vyz = V3a[j+4*N]
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -1087,7 +1092,7 @@ cdef class Rbm:
                             else:    
                                 dx = r[i]   - r[j]  -Nb*L + ii*L 
                                 dy = r[i+N] - r[j+N]-Nb*L + jj*L 
-                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                dz = r[i+Z] - r[j+Z]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 
                                 xdr = xi/idr; xdr2 = xdr*xdr; e1 = IPI*exp(-xdr2);
@@ -1101,11 +1106,11 @@ cdef class Rbm:
 
                                 o[i]   +=  ( (6*s1+s3)*vrx- (5*s1-s3)*vrr*dx )*idr5
                                 o[i+N]+=  ( (6*s1+s3)*vry- (5*s1-s3)*vrr*dy )*idr5
-                                o[i+xx] +=  ( (6*s1+s3)*vrz- (5*s1-s3)*vrr*dz )*idr5
+                                o[i+Z] +=  ( (6*s1+s3)*vrz- (5*s1-s3)*vrr*dz )*idr5
                 #Fourier part
                 dx = r[i]   - r[j]
                 dy = r[i+N] - r[j+N]
-                dz = r[i+xx] - r[j+xx] 
+                dz = r[i+Z] - r[j+Z] 
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
                     for jj in range(N1, N2):               
@@ -1122,13 +1127,13 @@ cdef class Rbm:
                                 
                                 o[i]   += cc*(vkx*k2 - vkk*kx) 
                                 o[i+N] += cc*(vkx*k2 - vkk*kx) 
-                                o[i+xx] += cc*(vkx*k2 - vkk*kx) 
+                                o[i+Z] += cc*(vkx*k2 - vkk*kx) 
         return
 
 
-    cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] M, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] V4a, int Nb=6, int Nm=6, double xi0=123456789):
         """
-        Compute angular velocity due to 4a mode of the slip :math:`v=\pi^{R,4a}\cdot M` 
+        Compute angular velocity due to 4a mode of the slip :math:`v=\pi^{R,4a}\cdot V^{4a}` 
         ...
 
         Parameters
@@ -1139,7 +1144,7 @@ cdef class Rbm:
         r: np.array
             An array of positions
             An array of size 3*N,
-        M: np.array
+        V4a: np.array
             An array of 4a mode of the slip
             An array of size 7*N,
         Nb: int 
@@ -1153,7 +1158,7 @@ cdef class Rbm:
         cdef: 
             double L = self.L,  xi=self.xi
             double ixi2, ox, oy, oz, fac=8*PI/(L*L*L)
-            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, xx=2*N
+            int N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, j2, ii, jj, kk, Z=2*N
             double dx, dy, dz, idr, idr2, idr7
             double mrrr, mkkk, mrrx, mrry, mrrz, mkkx, mkky, mkkz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz, 
             double kx, ky, kz, k2, xdr, e1, xdr2, xdr4, cc, s2, s4
@@ -1165,13 +1170,13 @@ cdef class Rbm:
         for i in prange(N, nogil=True):
             ox=0; oy=0; oz=0;
             for j in range(N):
-                mxxx = M[j]
-                myyy = M[j+N  ]
-                mxxy = M[j+2*N]
-                mxxz = M[j+3*N]
-                mxyy = M[j+4*N]
-                mxyz = M[j+5*N]
-                myyz = M[j+6*N]
+                mxxx = V4a[j]
+                myyy = V4a[j+N  ]
+                mxxy = V4a[j+2*N]
+                mxxz = V4a[j+3*N]
+                mxyy = V4a[j+4*N]
+                mxyz = V4a[j+5*N]
+                myyz = V4a[j+6*N]
                 for ii in range(2*Nb+1):
                     for jj in range(2*Nb+1):               
                         for kk in range(2*Nb+1):                 
@@ -1180,12 +1185,13 @@ cdef class Rbm:
                             else:    
                                 dx = r[i]   - r[j]     -Nb*L + ii*L 
                                 dy = r[i+N] - r[j+N]  -Nb*L + jj*L 
-                                dz = r[i+xx] - r[j+xx]-Nb*L + kk*L
+                                dz = r[i+Z] - r[j+Z]-Nb*L + kk*L
                                 idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
                                 idr2 = idr*idr
                                 idr7 = idr2*idr2*idr2*idr
                                 xdr = xi/idr; xdr2 = xdr*xdr; xdr4 = xdr2*xdr2; e1 = IPI*exp(-xdr2);
                                 s2 = 30*erfc(xdr) + e1*xdr*(6 + 32*xdr2 - 32*xdr4 - 80*xdr4*xdr2 + 16*xdr4*xdr4)
+
                                 s4  =e1*xdr*(-24 + 84*xdr2 + 160*xdr4 - 336*xdr4*xdr2 + 304*xdr4*xdr4 -32*xdr4*xdr4*xdr2)
                                 mrrr = mxxx*dx*(dx*dx-3*dz*dz) + 3*mxxy*dy*(dx*dx-dz*dz) + mxxz*dz*(3*dx*dx-dz*dz) +\
                                    3*mxyy*dx*(dy*dy-dz*dz) + 6*mxyz*dx*dy*dz + myyy*dy*(dy*dy-3*dz*dz) +  myyz*dz*(3*dy*dy-dz*dz) 
@@ -1199,7 +1205,7 @@ cdef class Rbm:
                 #Fourier part
                 dx = r[i]  - r[j]     
                 dy = r[i+N]- r[j+N]  
-                dz = r[i+xx]- r[j+xx]
+                dz = r[i+Z]- r[j+Z]
                 for ii in range(N1, N2):
                     kx = (2*PI/L)*ii;
                     for jj in range(N1, N2):               
@@ -1218,9 +1224,9 @@ cdef class Rbm:
                                 ox += cc*( mkkx*k2 - mkkk*kx) 
                                 oy += cc*( mkky*k2 - mkkk*ky) 
                                 oz += cc*( mkkz*k2 - mkkk*kz) 
-            o[i]    += ox
+            o[i]   += ox
             o[i+N] += oy
-            o[i+xx ]+= oz
+            o[i+Z] += oz
         return
 
 
@@ -1246,17 +1252,22 @@ cdef class Flow:
     viscosity: viscosity of the fluid 
     gridpoints: int 
         Number of grid points
-    boxsize: int 
+    boxSize: int 
         Box size
 
     """
-    def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32, boxsize=10):
-        self.a  = radius
+    def __init__(self, radius=1, particles=1, viscosity=1, gridpoints=32, boxSize=10, xi=123456789):
+        self.b  = radius
         self.N = particles
         self.Nt = gridpoints
         self.eta= viscosity
-        self.L  = boxsize
+        self.L  = boxSize
 
+        if xi==123456789:
+            self.xi = sqrt(PI)/boxSize 
+            #Nijboer and De Wette have shown that \pi^{1/2}/V^{1/3} is a good choice for cubic lattices 
+        else:
+            self.xi = xi 
 
     cpdef flowField1s(self, double [:] vv, double [:] rt, double [:] r, double [:] F, int Nb=6, int Nm=6, double xi0=123456789):
         """
@@ -1309,9 +1320,9 @@ cdef class Flow:
         >>> flow.flowField1s(vv, rr, r, F1s)
         >>> pystokes.utils.plotStreamlinesXY(vv, rr, r, offset=6-1, density=1.4, title='1s')
         """
-        cdef int N=self.N, Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
-        cdef double L=self.L,  xi=self.xi, ixi2, mu=1.0/(6*PI*self.eta*self.a), muv=mu*self.a*0.75, siz=Nb*L
-        cdef double a2=0*self.a*self.a/6, k0=2*PI/L, fac=8*PI/(L*L*L), mt= IPI*xi*self.a*(-3+20*xi*xi*self.a*self.a/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
+        cdef int N=self.N, Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, Z=2*N, Nbb=2*Nb+1
+        cdef double L=self.L,  xi=self.xi, ixi2, mu=1.0/(6*PI*self.eta*self.b), muv=mu*self.b*0.75, siz=Nb*L
+        cdef double a2=0*self.b*self.b/6, k0=2*PI/L, fac=8*PI/(L*L*L), mt= IPI*xi*self.b*(-3+20*xi*xi*self.b*self.b/3.0), mpp=mu*(1+mt)   # include M^2(r=0)
         cdef double xdr, xdr2, xdr3, A, B, A1, B1, fdotir, e1, erxdr, m20, xd1, yd1, zd1
         cdef double xd, yd, zd, dx, dy, dz, idr, kx, ky, kz, k2, ik2, cc, fdotik, vx, vy, vz, fx, fy, fz
         if xi0 != 123456789:
@@ -1324,8 +1335,8 @@ cdef class Flow:
             for j in range(N):
                 xd=rt[i]    -r[j];          xd1=xd-siz; 
                 yd=rt[i+Nt]  -r[j+N];    yd1=yd-siz;  
-                zd=rt[i+2*Nt]-r[j+xx];    zd1=zd-siz;
-                fx=F[j];  fy=F[j+N];  fz=F[j+xx];
+                zd=rt[i+2*Nt]-r[j+Z];    zd1=zd-siz;
+                fx=F[j];  fy=F[j+N];  fz=F[j+Z];
 
                 for ii in range(Nbb):
                     dx = xd1 + ii*L 
@@ -1366,7 +1377,7 @@ cdef class Flow:
         return 
    
 
-    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] S, int Nb=6, int Nm=6, double xi0=123456789):
+    cpdef flowField2s(self, double [:] vv, double [:] rt, double [:] r, double [:] V2s, int Nb=6, int Nm=6, double xi0=123456789):
         """
         Compute flow field at field points  due to 2s mode of the slip 
         ...
@@ -1382,7 +1393,7 @@ cdef class Flow:
         r: np.array
             An array of positions
             An array of size 3*N,
-        S: np.array
+        V2s: np.array
             An array of 2s mode of the slip
             An array of size 5*N,
         Nb: int 
@@ -1394,11 +1405,11 @@ cdef class Flow:
         """
 
         cdef: 
-            int N=self.N,Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
+            int N=self.N,Nt=self.Nt, N1=-(Nm/2)+1, N2=(Nm/2)+1, i, j, ii, jj, kk, Z=2*N, Nbb=2*Nb+1
             double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
-            double a2 = self.a*self.a*4.0/15,aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.a**3)/24, ik2
+            double a2 = self.b*self.b*4.0/15,aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.b**3)/24, ik2
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
@@ -1407,14 +1418,14 @@ cdef class Flow:
         for i in prange(Nt, nogil=True):
             vx=0; vy=0; vz=0;
             for j in range(N):
-                sxx = S[j]
-                syy = S[j+N]
-                sxy = S[j+2*N]
-                sxz = S[j+3*N]
-                syz = S[j+4*N]
+                sxx = V2s[j]
+                syy = V2s[j+N]
+                sxy = V2s[j+2*N]
+                sxz = V2s[j+3*N]
+                syz = V2s[j+4*N]
                 xd=rt[i]-r[j];          xd1=xd-siz; 
                 yd=rt[i+Nt]-r[j+N];    yd1=yd-siz;  
-                zd=rt[i+2*Nt]-r[j+xx];    zd1=zd-siz;
+                zd=rt[i+2*Nt]-r[j+Z];    zd1=zd-siz;
                 
                 for ii in range(Nbb):
                     dx = xd1 + ii*L 
@@ -1434,8 +1445,8 @@ cdef class Flow:
                             srz = sxz*dx + syz*dy - (sxx+syy)*dz 
                             srr = srx*dx + sry*dy + srz*dz
 
-                            D += -12*erxdr+ e1*(-12*xdr - 8*xdr3  - 104*xdr5 + 104*xdr5*xdr2 - 16*xdr3*xdr3*xdr3)*aidr2
-                            E += 30*erxdr + e1*(30*xdr  + 20*xdr3 + 8*xdr5   - 80*xdr5*xdr2  + 16*xdr3*xdr3*xdr3)*aidr2
+                            # D += -12*erxdr+ e1*(-12*xdr - 8*xdr3  - 104*xdr5 + 104*xdr5*xdr2 - 16*xdr3*xdr3*xdr3)*aidr2
+                            # E += 30*erxdr + e1*(30*xdr  + 20*xdr3 + 8*xdr5   - 80*xdr5*xdr2  + 16*xdr3*xdr3*xdr3)*aidr2
                             D  = D*idr3
                             E  = E*srr*idr*idr*idr3
 
@@ -1468,7 +1479,7 @@ cdef class Flow:
         return 
     
     
-    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] D, int Nb=16, int Nm=16, double xi0=123456789):
+    cpdef flowField3t(self, double [:] vv, double [:] rt, double [:] r, double [:] V3t, int Nb=16, int Nm=16, double xi0=123456789):
         """
         Compute flow field at field points due to 3t mode of the slip 
         ...
@@ -1498,11 +1509,10 @@ cdef class Flow:
         cdef: 
             double L = self.L,  xi=self.xi, siz=Nb*L, k0=(2*PI/L), fac=8*PI/(L*L*L)
             double ixi2, vx, vy, vz
-            int Nt=self.Nt,N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, xx=2*N, Nbb=2*Nb+1
-            double xdr, xdr2, xdr3, A1, B1, Ddotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
-            double mud =3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**5)/10
+            int Nt=self.Nt,N = self.N, N1 = -(Nm/2)+1, N2 =  (Nm/2)+1, i, i1, j, j1, ii, jj, kk, Z=2*N, Nbb=2*Nb+1
+            double xdr, xdr2, xdr3, A1, B1, V3tdotik2, Ddotidr2, e1, erxdr, dx, dy, dz, idr, idr5,  kx, ky, kz, k2, cc
+            double mud1 = -1.0*(self.b**3)/5
             double xd, yd, zd, xd1, yd1, zd1
-        mud = mud + mud1*IPI*xi*(80*xi*xi*self.a*self.a/3.0) ## adding the M^2(r=0) contribution
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
@@ -1513,7 +1523,7 @@ cdef class Flow:
             for j in range(N):
                 xd=rt[i]-r[j];          xd1=xd-siz; 
                 yd=rt[i+Nt]-r[j+N];    yd1=yd-siz;  
-                zd=rt[i+2*Nt]-r[j+xx];    zd1=zd-siz;
+                zd=rt[i+2*Nt]-r[j+Z];    zd1=zd-siz;
                 
                 for ii in range(Nbb):
                     dx = xd1 + ii*L 
@@ -1527,11 +1537,11 @@ cdef class Flow:
                             erxdr   = erfc(xdr); e1=IPI*exp(-xdr2);  
                             A1 = (2*erxdr  + e1*( 2*xdr+28*xdr3-40*xdr3*xdr2+8*xdr3*xdr3*xdr ))*idr5 
                             B1 = (-6*erxdr + e1*(-6*xdr-4*xdr3 +32*xdr3*xdr2-8*xdr3*xdr3*xdr ))*idr5 
-                            Ddotidr2 = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz )*idr*idr
+                            Ddotidr2 = (V3t[j]*dx + V3t[j+N]*dy + V3t[j+Z]*dz )*idr*idr
                           
-                            vx += A1*D[j]    + B1*Ddotidr2*dx
-                            vy += A1*D[j+N] + B1*Ddotidr2*dy
-                            vz += A1*D[j+xx] + B1*Ddotidr2*dz
+                            vx += A1*V3t[j]    + B1*Ddotidr2*dx
+                            vy += A1*V3t[j+N] + B1*Ddotidr2*dy
+                            vz += A1*V3t[j+Z] + B1*Ddotidr2*dz
                 #Fourier part
                 for ii in range(N1, N2):
                     kx = k0*ii;
@@ -1542,11 +1552,11 @@ cdef class Flow:
                             if kx != 0 or ky != 0 or kz != 0:  
                                 k2 = (kx*kx + ky*ky + kz*kz)    
                                 cc = -fac*cos(kx*xd+ky*yd+kz*zd)*(1 + 0.25*k2*ixi2 + 0.125*ixi2*ixi2*k2*k2)*exp(-0.25*ixi2*k2)
-                                Ddotik2  = (D[j]*kx + D[j+N]*ky + D[j+xx]*kz)/k2
+                                V3tdotik2  = (V3t[j]*kx + V3t[j+N]*ky + V3t[j+Z]*kz)/k2
                                 
-                                vx += cc*( D[j]   - Ddotik2*kx ) 
-                                vy += cc*( D[j+N] - Ddotik2*ky ) 
-                                vz += cc*( D[j+xx] - Ddotik2*kz ) 
+                                vx += cc*( V3t[j]   - V3tdotik2*kx ) 
+                                vy += cc*( V3t[j+N] - V3tdotik2*ky ) 
+                                vz += cc*( V3t[j+Z] - V3tdotik2*kz ) 
             vv[i]      += mud1*vx
             vv[i+Nt]   += mud1*vy
             vv[i+2*Nt] += mud1*vz

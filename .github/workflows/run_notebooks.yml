@@ -2,27 +2,36 @@ name: notebooks
 
 on: [push, pull_request]
 
-
 jobs:
-  build-and-test:
-    name: check examples
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        # This is the version of the action for setting up Python, not the Python version.
+        uses: actions/setup-python@v4
         with:
-         python-version: 3.7 
-         architecture: x64
-      - name: Print version
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.x'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+
+      - name: Display Python version
         run: python -c "import sys; print(sys.version)"
+
+      - name: Install setup
+        run: python -m pip install -U pip setuptools 
 
       - name: Install dependencies 
         run: python -m pip install -r requirements.txt
+
+      - name: Install dependencies test
+        run: cd tests && python -m pip install -r test_req.txt
 
       - name: Install pystokes 
         run: python setup.py install 
 
       - name: Test example notebooks
-        run: cd tests && python shortTests.py
+        run: cd tests && python test_notebooks.py

@@ -14,3 +14,9 @@ Flow
 .. autoclass:: pystokes.unbounded.Flow
     :members:
 
+
+Power Dissipation (PD)
+--------------------------
+.. autoclass:: pystokes.unbounded.PD
+    :members:
+

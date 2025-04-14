@@ -60,6 +60,8 @@ cdef class Forces:
 
     cpdef membraneSurface(self, int Nmx, int Nmy, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus )
 
+    cpdef Cosserat(self, double [:] F, double [:] r, double [:] e1, double [:] e2, double [:] e3, double Lambda, double d)
+
 
 
 
@@ -73,3 +75,5 @@ cdef class Torques:
     cpdef bottomHeaviness(self, double [:] T, double [:] p, double bh=?)
 
     cpdef magnetic(self, double[:] T, double [:] p, double m0, double Bx, double By, double Bz)
+
+    cpdef Cosserat(self, double [:] T, double [:] r, double [:] e1, double [:] e2, double [:] e3, double Lambda, double mu, double d)

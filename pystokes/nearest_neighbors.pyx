@@ -172,7 +172,7 @@ cdef class Rbm:
         cdef double dx, dy, dz, dr, idr,  idr3, L = self.L
         cdef double aa=(self.a*self.a*8.0)/3.0, vv1, vv2, aidr2
         cdef double vx, vy, vz, 
-        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = -(28.0*self.a*self.a)/24 
+        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (28.0*self.a*self.a)/24 
         cdef int neighbors[2]
         
         for i in prange(N, nogil=True):
@@ -214,6 +214,170 @@ cdef class Rbm:
             v[i+N]+= vy*mus
             v[i+xx]+= vz*mus
 
+        return
+    
+    cpdef propulsionT3t(self, double [:] v, double [:] r, double [:] D):
+        """
+        Compute velocity due to 3t mode of the slip :math:`v=\pi^{T,3t}\cdot D` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*N,
+        r: np.array
+            An array of positions
+            An array of size 3*N,
+        D: np.array
+            An array of 3t mode of the slip
+            An array of size 3*N,
+        """
+
+        cdef int N = self.N, i, j, xx=2*N  
+        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.a*self.a*self.a/5, mud1 = -1.0*(self.a**3)/5
+        cdef double L = self.L
+        cdef int neighbors[2]
+ 
+        for i in prange(N, nogil=True):
+            vx=0; vy=0;   vz=0; 
+            neighbors[0] = i - 1
+            neighbors[1] = i + 1
+            for j in neighbors:
+                if i == 0 and j == i - 1:
+                    j = N - 1
+                    dx = r[i] - (r[j] - L)
+                elif i == N - 1 and j == i + 1:
+                    j = 0
+                    dx = r[i] - (r[j] + L)
+                else:
+                    dx = r[i] - r[j]
+
+                dy = r[i+N] - r[j+N]
+                dz = r[i+xx] - r[j+xx] 
+                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                idr3 = idr*idr*idr 
+                Ddotidr = (D[j]*dx + D[j+N]*dy + D[j+xx]*dz)*idr*idr
+
+                vx += (D[j]    - 3.0*Ddotidr*dx )*idr3
+                vy += (D[j+N] - 3.0*Ddotidr*dy )*idr3
+                vz += (D[j+xx] - 3.0*Ddotidr*dz )*idr3
+            
+            v[i]   += mud1*vx
+            v[i+N] += mud1*vy
+            v[i+xx]+= mud1*vz
+        return 
+
+    cpdef propulsionT3a(self, double [:] v, double [:] r, double [:] V):
+        """
+        Compute velocity due to 3a mode of the slip :math:`v=\pi^{T,3a}\cdot V` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*N,
+        r: np.array
+            An array of positions
+            An array of size 3*N,
+        V: np.array
+            An array of 3a mode of the slip
+            An array of size 5*N,
+        """
+
+        cdef int N = self.N, i, j 
+        cdef double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz
+        cdef double mud = 13.0*self.a*self.a*self.a/12, L = self.L
+        cdef int neighbors[2]
+ 
+        for i in prange(N, nogil=True):
+            neighbors[0] = i - 1
+            neighbors[1] = i + 1
+            for j in neighbors:
+                if i == 0 and j == i - 1:
+                    j = N - 1
+                    dx = r[i] - (r[j] - L)
+                elif i == N - 1 and j == i + 1:
+                    j = 0
+                    dx = r[i] - (r[j] + L)
+                else:
+                    dx = r[i] - r[j]
+                vxx = V[j]
+                vyy = V[j+N]
+                vxy = V[j+2*N]
+                vxz = V[j+3*N]
+                vyz = V[j+4*N]
+
+                dy = r[i+N]   - r[j+N]
+                dz = r[i+2*N] - r[j+2*N] 
+                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz)
+                idr5 = idr*idr*idr*idr*idr
+                vrx = vxx*dx +  vxy*dy + vxz*dz  
+                vry = vxy*dx +  vyy*dy + vyz*dz  
+                vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
+
+                v[i]     += mud * (vry * dz - vrz * dy) * idr5
+                v[i+N]   += mud * (vrz * dx - vrx * dz) * idr5
+                v[i+2*N] += mud * (vrx * dy - vry * dx) * idr5
+        return
+
+    cpdef propulsionT4a(self, double [:] v, double [:] r, double [:] M):
+        """
+        Compute velocity due to 4a mode of the slip :math:`v=\pi^{T,4a}\cdot M` 
+        ...
+
+        Parameters
+        ----------
+        v: np.array
+            An array of velocities
+            An array of size 3*N,
+        r: np.array
+            An array of positions
+            An array of size 3*N,
+        M: np.array
+            An array of 4a mode of the slip
+            An array of size 7*N,
+        """
+
+        cdef int N = self.N, i, j 
+        cdef double dx, dy, dz, idr, idr7
+        cdef double mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
+        cdef double mud = -363/8 * self.a ** 4, L = self.L
+        cdef int neighbors[2]
+ 
+        for i in prange(N, nogil=True):
+            neighbors[0] = i - 1
+            neighbors[1] = i + 1
+            for j in neighbors:
+                if i == 0 and j == i - 1:
+                    j = N - 1
+                    dx = r[i] - (r[j] - L)
+                elif i == N - 1 and j == i + 1:
+                    j = 0
+                    dx = r[i] - (r[j] + L)
+                else:
+                    dx = r[i] - r[j]
+
+                mxxx = M[j]
+                myyy = M[j+N]
+                mxxy = M[j+2*N]
+                mxxz = M[j+3*N]
+                mxyy = M[j+4*N]
+                mxyz = M[j+5*N]
+                myyz = M[j+6*N]
+
+                dy = r[i+N]   - r[j+N]
+                dz = r[i+2*N] - r[j+2*N] 
+                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                idr7 = idr*idr*idr*idr*idr*idr*idr
+                mrrx = mxxx*(dx*dx-dz*dz) + mxyy*(dy*dy-dz*dz) +  2*mxxy*dx*dy + 2*mxxz*dx*dz  +  2*mxyz*dy*dz
+                mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
+                mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz  - 2*(mxxy+myyy)*dy*dz
+                
+                v[i]     -= mud*( dy*mrrz - dz*mrry )*idr7
+                v[i+N]   -= mud*( dz*mrrx - dx*mrrz )*idr7
+                v[i+2*N] -= mud*( dx*mrry - dy*mrrx )*idr7
         return
 
 
@@ -338,7 +502,7 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j, xx=2*N 
         cdef double dx, dy, dz, idr, idr5, ox, oy, oz, L = self.L
-        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = -(28.0*self.a*self.a)/24
+        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (28.0*self.a*self.a)/24
         cdef int neighbors[2]
  
         for i in prange(N, nogil=True):
@@ -374,4 +538,122 @@ cdef class Rbm:
             o[i]    += ox*mus
             o[i+N] += oy*mus
             o[i+xx] += oz*mus
-        return                 
+        return              
+
+    cpdef propulsionR3a(  self, double [:] o, double [:] r, double [:] V):
+        """
+        Compute angular velocity due to 3a mode of the slip :math:`v=\pi^{R,3a}\cdot V` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*N,
+        r: np.array
+            An array of positions
+            An array of size 3*N,
+        V: np.array
+            An array of 3a mode of the slip
+            An array of size 5*N,
+        """
+
+        cdef int N = self.N, i, j
+        cdef double dx, dy, dz, idr, idr2, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz
+        cdef double mud = 13.0 / 24.0 * self.a * self.a * self.a, L = self.L
+        cdef int neighbors[2]
+ 
+        for i in prange(N, nogil=True):
+            neighbors[0] = i - 1
+            neighbors[1] = i + 1
+            for j in neighbors:
+                if i == 0 and j == i - 1:
+                    j = N - 1
+                    dx = r[i] - (r[j] - L)
+                elif i == N - 1 and j == i + 1:
+                    j = 0
+                    dx = r[i] - (r[j] + L)
+                else:
+                    dx = r[i] - r[j]
+
+                vxx = V[j]
+                vyy = V[j+N]
+                vxy = V[j+2*N]
+                vxz = V[j+3*N]
+                vyz = V[j+4*N]
+
+                dy = r[i+N]   - r[j+N]
+                dz = r[i+2*N] - r[j+2*N] 
+                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                idr5 = idr*idr*idr*idr*idr      
+                vrr = (vxx*(dx*dx-dz*dz) + vyy*(dy*dy-dz*dz) +  2*vxy*dx*dy + 2*vxz*dx*dz  +  2*vyz*dy*dz)*idr*idr
+                vrx = vxx*dx +  vxy*dy + vxz*dz  
+                vry = vxy*dx +  vyy*dy + vyz*dz  
+                vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
+
+                o[i]     +=  mud * (-2 * vrx + 5 * vrr * dx)*idr5
+                o[i+N]   +=  mud * (-2 * vry + 5 * vrr * dy) * idr5
+                o[i+2*N] +=  mud * (-2 * vrz + 5 * vrr * dz) * idr5
+        return   
+
+    cpdef propulsionR4a(  self, double [:] o, double [:] r, double [:] M):
+        """
+        Compute angular velocity due to 4a mode of the slip :math:`v=\pi^{R,4a}\cdot M` 
+        ...
+
+        Parameters
+        ----------
+        o: np.array
+            An array of angular velocities
+            An array of size 3*N,
+        r: np.array
+            An array of positions
+            An array of size 3*N,
+        M: np.array
+            An array of 4a mode of the slip
+            An array of size 7*N,
+        """
+
+
+        cdef int N = self.N, i, j 
+        cdef double dx, dy, dz, idr, idr7, idr9, mrrr, mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
+        cdef double mud = 363 / 80 * self.a ** 4, L = self.L
+        cdef int neighbors[2]
+ 
+        for i in prange(N, nogil=True):
+            neighbors[0] = i - 1
+            neighbors[1] = i + 1
+            for j in neighbors:
+                if i == 0 and j == i - 1:
+                    j = N - 1
+                    dx = r[i] - (r[j] - L)
+                elif i == N - 1 and j == i + 1:
+                    j = 0
+                    dx = r[i] - (r[j] + L)
+                else:
+                    dx = r[i] - r[j]
+
+                mxxx = M[j]
+                myyy = M[j+N]
+                mxxy = M[j+2*N]
+                mxxz = M[j+3*N]
+                mxyy = M[j+4*N]
+                mxyz = M[j+5*N]
+                myyz = M[j+6*N]
+
+                dy = r[i+N]   - r[j+N]
+                dz = r[i+2*N] - r[j+2*N] 
+                idr = 1.0/sqrt( dx*dx + dy*dy + dz*dz )
+                idr7 = idr*idr*idr*idr*idr*idr*idr      
+                idr9 = idr7*idr*idr     
+                
+                mrrr = mxxx*dx*(dx*dx-3*dz*dz) + 3*mxxy*dy*(dx*dx-dz*dz) + mxxz*dz*(3*dx*dx-dz*dz) +\
+                    3*mxyy*dx*(dy*dy-dz*dz) + 6*mxyz*dx*dy*dz + myyy*dy*(dy*dy-3*dz*dz) +  myyz*dz*(3*dy*dy-dz*dz) 
+                mrrx = mxxx*(dx*dx-dz*dz) + mxyy*(dy*dy-dz*dz) +  2*mxxy*dx*dy + 2*mxxz*dx*dz  +  2*mxyz*dy*dz
+                mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
+                mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz  - 2*(mxxy+myyy)*dy*dz
+                
+                o[i]     += mud * (15 * mrrx * idr7 - 35 * mrrr * dx * idr9)
+                o[i+N]   += mud * (15 * mrry * idr7 - 35 * mrrr * dy * idr9)
+                o[i+2*N] += mud * (15 * mrrz * idr7 - 35 * mrrr * dz * idr9)
+        return

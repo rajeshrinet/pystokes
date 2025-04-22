@@ -984,7 +984,62 @@ cdef class Forces:
         return
 
 
+    cpdef Cosserat(self, double [:] F, double [:] r, double [:] e1, double [:] e2, double [:] e3, double Lambda, double d):
+        """
+        The force for the Cosserat solids
 
+        ...
+
+        Parameter
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*N,
+        F: np.array
+            An array of forces
+            An array of size 3*N,
+        e1, e2, e3: np.array
+                    Arrays of Orientations
+                    Arrays of size 3*N
+        Lambda: float
+            Strength of the force 
+        d: float 
+            particle distance
+        """
+        cdef int N = self.N, i, k, xx = 2*N, ip, im
+        cdef double L = N*d
+        cdef double dxp, dxm, dyp, dym, dzp, dzm
+
+        for i in prange(N,nogil=True):
+            ip = (i + 1) % N
+            im = (i - 1 + N) % N
+
+            dxp = r[ip] - r[i]
+            dxm = r[i] - r[im]
+            dyp = r[N + ip] - r[N + i]
+            dym = r[N + i] - r[N + im]
+            dzp = r[xx + ip] - r[xx + i]
+            dzm = r[xx + i] - r[xx + im]
+
+            if i == 0:
+                dxm = r[i] - r[im] + L
+            elif i == N - 1:
+                dxp = r[ip] - r[i] + L
+
+            for k in range(3):
+                F[i+k*N] += 0.5 * Lambda * ((e1[i] * dxp + e1[N+i] * dyp + e1[xx+i] * dzp - d) * e1[i+k*N] \
+                                          + (e2[i] * dxp + e2[N+i] * dyp + e2[xx+i] * dzp) * e2[i+k*N] \
+                                          + (e3[i] * dxp + e3[N+i] * dyp + e3[xx+i] * dzp) * e3[i+k*N])
+                F[i+k*N] -= 0.5 * Lambda * ((e1[i] * dxm + e1[N+i] * dym + e1[xx+i] * dzm - d) * e1[i+k*N] \
+                                          + (e2[i] * dxm + e2[N+i] * dym + e2[xx+i] * dzm) * e2[i+k*N] \
+                                          + (e3[i] * dxm + e3[N+i] * dym + e3[xx+i] * dzm) * e3[i+k*N])
+                F[i+k*N] += 0.5 * Lambda * ((e1[ip] * dxp + e1[N+ip] * dyp + e1[xx+ip] * dzp - d) * e1[ip+k*N] \
+                                          + (e2[ip] * dxp + e2[N+ip] * dyp + e2[xx+ip] * dzp) * e2[ip+k*N] \
+                                          + (e3[ip] * dxp + e3[N+ip] * dyp + e3[xx+ip] * dzp) * e3[ip+k*N])
+                F[i+k*N] -= 0.5 * Lambda * ((e1[im] * dxm + e1[N+im] * dym + e1[xx+im] * dzm - d) * e1[im+k*N] \
+                                          + (e2[im] * dxm + e2[N+im] * dym + e2[xx+im] * dzm) * e2[im+k*N] \
+                                          + (e3[im] * dxm + e3[N+im] * dym + e3[xx+im] * dzm) * e3[im+k*N])
+        return 
 
 @cython.boundscheck(False)
 @cython.cdivision(True)
@@ -1067,3 +1122,94 @@ cdef class Torques:
             T[i+Z] += m0*(p[i]*By    -p[i+N]*Bx)
         return 
 
+
+    cpdef Cosserat(self, double [:] T, double [:] r, double [:] e1, double [:] e2, double [:] e3, double Lambda, double mu, double d):
+        """
+        The torque for the Cosserat solids
+
+        ...
+
+        Parameter
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*N,
+        T: np.array
+            An array of torques
+            An array of size 3*N,
+        e1, e2, e3: np.array
+                    Arrays of Orientations
+                    Arrays of size 3*N
+        Lambda: float
+            Strength of the force 
+        mu: float 
+            Strength of the torque
+        d: float 
+            particle distance
+        """
+        cdef int N = self.N, i, j, k, xx = 2*N, ip, im
+        cdef double L = N*d
+        cdef double drp[3], drm[3], e[3][3], ep[3][3], em[3][3]
+        cdef double e_dot_r, e_dot_e
+        cdef double cross[3]
+
+        for i in prange(N,nogil=True):
+            ip = (i + 1) % N
+            im = (i - 1 + N) % N
+
+            drp[0] = r[ip] - r[i]
+            drp[1] = r[N+ip] - r[N+i]
+            drp[2] = r[xx + ip] - r[xx + i]
+
+            drm[0] = r[i] - r[im]
+            drm[1] = r[N + i] - r[N + im]
+            drm[2] = r[xx + i] - r[xx + im]
+
+            if i == 0:
+                drm[0] += L
+            elif i == N - 1:
+                drp[0] += L
+            
+            for k in range(3):
+                e[0][k] = e1[k*N+i]
+                e[1][k] = e2[k*N+i]
+                e[2][k] = e3[k*N+i]
+
+                ep[0][k] = e1[k*N+ip]
+                ep[1][k] = e2[k*N+ip]
+                ep[2][k] = e3[k*N+ip]
+
+                em[0][k] = e1[k*N+im]
+                em[1][k] = e2[k*N+im]
+                em[2][k] = e3[k*N+im]
+
+            for j in range(3):
+                e_dot_r  = e[j][0] * drp[0] + e[j][1] * drp[1] + e[j][2] * drp[2]
+                cross[0] = e[j][1] * drp[2] - e[j][2] * drp[1]
+                cross[1] = e[j][2] * drp[0] - e[j][0] * drp[2]
+                cross[2] = e[j][0] * drp[1] - e[j][1] * drp[0]
+                for k in range(3):
+                    T[i+k*N] -= 0.5 * Lambda * (e_dot_r - (d if j == 0 else 0)) * cross[k]
+
+                e_dot_r  = e[j][0] * drm[0] + e[j][1] * drm[1] + e[j][2] * drm[2]
+                cross[0] = e[j][1] * drm[2] - e[j][2] * drm[1]
+                cross[1] = e[j][2] * drm[0] - e[j][0] * drm[2]
+                cross[2] = e[j][0] * drm[1] - e[j][1] * drm[0]
+                for k in range(3):
+                    T[i+k*N] -= 0.5 * Lambda * (e_dot_r - (d if j == 0 else 0)) * cross[k]
+
+            for j in range(3):
+                e_dot_e = e[j][0] * ep[(j+1)%3][0] + e[j][1] * ep[(j+1)%3][1] + e[j][2] * ep[(j+1)%3][2] 
+                cross[0] = e[j][1] * ep[(j+1)%3][2] - e[j][2] * ep[(j+1)%3][1]
+                cross[1] = e[j][2] * ep[(j+1)%3][0] - e[j][0] * ep[(j+1)%3][2]
+                cross[2] = e[j][0] * ep[(j+1)%3][1] - e[j][1] * ep[(j+1)%3][0]
+                for k in range(3):
+                    T[i+k*N] -= 0.5 * mu * (e_dot_e) * cross[k]
+                
+                e_dot_e  = e[j][0] * em[(j+2)%3][0] + e[j][1] * em[(j+2)%3][1] + e[j][2] * em[(j+2)%3][2]
+                cross[0] = e[j][1] * em[(j+2)%3][2] - e[j][2] * em[(j+2)%3][1]
+                cross[1] = e[j][2] * em[(j+2)%3][0] - e[j][0] * em[(j+2)%3][2]
+                cross[2] = e[j][0] * em[(j+2)%3][1] - e[j][1] * em[(j+2)%3][0]
+                for k in range(3):
+                    T[i+k*N] -= 0.5 * mu * (e_dot_e) * cross[k]
+        return

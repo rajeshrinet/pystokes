@@ -117,12 +117,12 @@ cpdef irreducibleTensors(l, p, Y0=1):
     
     if l==3:
         for i in range(N):
-            YY[i]      = Y0*(p[i]*p[i]*p[i]                    - 3/5*p[i]);
+            YY[i]     = Y0*(p[i]*p[i]*p[i]                    - 3/5*p[i]);
             YY[i+N]   = Y0*(p[i+N]*p[i+N]*p[i+N]   - 3/5*p[i+N]);
             YY[i+2*N] = Y0*(p[i]*p[i]*p[i+N]                   - 1/5*p[i+N]);
             YY[i+3*N] = Y0*(p[i]*p[i]*p[i+2*N]     - 1/5*p[i+2*N]);
-            YY[i+4*N] = Y0*(p[i]*p[i+N]*p[1+N]          -1/5* p[i]);
-            YY[i+5*N] = Y0*(p[i+N]*p[i+N]*p[i+2*N]);
+            YY[i+4*N] = Y0*(p[i]*p[i+N]*p[i+N]          -1/5* p[i]);
+            YY[i+5*N] = Y0*(p[i]*p[i+N]*p[i+2*N]);
             YY[i+6*N] = Y0*(p[i+N]*p[i+N]*p[i+2*N] -1/5*p[i+2*N]);
     return YY
 

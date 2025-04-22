@@ -282,7 +282,7 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j, Z=2*N 
         cdef double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz
-        cdef double mud = 13.0*self.a*self.a*self.a/12
+        cdef double mud = 13.0*self.b*self.b*self.b/12
  
         for i in prange(N, nogil=True):
             for j in range(N):
@@ -380,7 +380,7 @@ cdef class Rbm:
         cdef int N = self.N, i, j 
         cdef double dx, dy, dz, idr, idr7
         cdef double mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
-        cdef double mud = -363/8 * self.a ** 4
+        cdef double mud = -363/8 * self.b ** 4
  
         for i in prange(N, nogil=True):
             for j in range(N):
@@ -564,7 +564,7 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j, Z=2*N 
         cdef double dx, dy, dz, idr, idr2, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz
-        cdef double mud = 13.0 / 24.0 * self.a * self.a * self.a
+        cdef double mud = 13.0 / 24.0 * self.b * self.b * self.b
  
         for i in prange(N, nogil=True):
              for j in range(N):
@@ -661,7 +661,7 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j 
         cdef double dx, dy, dz, idr, idr7, idr9, mrrr, mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
-        cdef double mud = 363 / 80 * self.a ** 4
+        cdef double mud = 363 / 80 * self.b ** 4
  
         for i in prange(N, nogil=True):
              for j in range(N):

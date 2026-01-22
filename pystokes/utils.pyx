@@ -849,4 +849,3 @@ cpdef MSD3d(double [:] d2, double [:] xt, double [:] yt,  double [:] zt):
             dr2 += dx*dx + dy*dy + dz*dz
         d2[i] = dr2/(Nt-i)
     return  
-1

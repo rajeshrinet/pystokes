@@ -1,4 +1,5 @@
 *.pyc
+*mp4
 *.so
 *.ipynb_checkpoints
 *~

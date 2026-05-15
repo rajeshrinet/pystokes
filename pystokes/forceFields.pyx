@@ -659,7 +659,8 @@ cdef class Forces:
         return
 
 
-    cpdef multipolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus):
+
+    cpdef multipolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus=0):
         """
         Force on colloids in many polymers connected by a spring 
         
@@ -676,7 +677,9 @@ cdef class Forces:
         bondLength: float
             The size of natural spring 
         springModulus: float 
-            Stiffness of the trap
+            Stiffness of the spring
+        bendModulus: float 
+            Bending stiffness of the chain
         """
         cdef int N = self.N, Z= 2*N
         cdef:
@@ -744,7 +747,7 @@ cdef class Forces:
         return
 
     
-    cpdef multiRingpolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus):
+    cpdef multiRingpolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus=0):
         """
         Force on colloids connected by a spring in a ring polymer
         

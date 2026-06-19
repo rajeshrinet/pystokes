@@ -8,6 +8,8 @@ from cython.parallel import prange
 @cython.nonecheck(False)
 cdef class Forces:
     cdef int N
+
+    cpdef testfunction(self)
     
     cpdef VdW(self, double [:] F, double [:] r, double A=?, double a0=?)
     

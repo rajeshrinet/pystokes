@@ -29,6 +29,8 @@ cdef class Forces:
     def __init__(self, particles=1):
         self.N = particles
 
+    cpdef testfunction(self):
+        print("Hello, this is a test from modified pystokes.")
         
     cpdef VdW(self, double [:] F, double [:] r, double A=0, double a0=0):
         """

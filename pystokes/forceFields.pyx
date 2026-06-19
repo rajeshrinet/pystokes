@@ -128,8 +128,40 @@ cdef class Forces:
             F[i+N] += fy
             F[i+Z] += fz
         return
-
-
+    
+    cpdef lennardJonesstar(self, double [:] F, double [:] r, double lje = 0.01, double ljr = 3):            #only acts on non-neighbouring beads
+        cdef int N = self.N, i, j, indexdiff, diff, Z = 2 * N
+        cdef double fx, fy, fz, dx, dy, dz, dr2, idr, rminbyr, temp, fac
+        
+        for i in prange(N, nogil = True):
+            fx = 0.0; fy = 0.0; fz = 0.0
+            for j in range(N):
+                diff = i - j
+                if diff < 0:
+                    diff = - diff
+                indexdiff = diff
+                if N - diff < indexdiff:
+                    indexdiff = N - diff
+                if indexdiff <= 1:
+                     continue
+                dx = r[i] - r[j]
+                dy = r[i + N] - r[j + N]
+                dz = r[i + Z] - r[j + Z]
+                dr2 = dx * dx + dy * dy + dz * dz
+                if i != j and dr2 < (ljr * ljr):
+                    idr     = 1.0 / sqrt(dr2)
+                    rminbyr = ljr * idr
+                    temp = rminbyr * rminbyr
+                    temp = temp * temp * temp
+                    fac   = lje * (temp * temp - temp) * idr * idr 
+                    fx += fac * dx
+                    fy += fac * dy
+                    fz += fac * dz
+            F[i]   += fx
+            F[i + N] += fy
+            F[i + Z] += fz
+        return
+    
     cpdef lennardJonesWall(self, double [:] F, double [:] r, double lje=0.0100, double ljr=3, double wlje=0.01, double wljr=3.0):
         """
         The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)

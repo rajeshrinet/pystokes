@@ -17,6 +17,7 @@ cdef class Forces:
 
     cpdef lennardJones(self, double [:] F, double [:] r, double lje=?, double ljr=?)
 
+    cpdef lennardJonesstar(self, double [:] F, double [:] r, double lje=?, double ljr=?)
 
     cpdef lennardJonesWall(self, double [:] F, double [:] r, double lje=?, double ljr=?, double wlje=?, double wljr=?)
 

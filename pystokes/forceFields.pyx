@@ -869,8 +869,8 @@ cdef class Forces:
         cdef int N = self.N
         cdef int Z = 2 * N
         cdef:
-            int ii, i, ip, jp, kp
-            double Nm = N / Nf, dxij, dyij, dzij, dxjk, dyjk, dzjk, magr1, magr2, cosphi, phi, ax, ay, az, bx, by, bz, pref, Fix, Fiy, Fiz, Fjx, Fjy, Fjz, Fkx, Fky, Fkz, Fspring
+            int ii, i, ip, jp, kp, Nm = N / Nf
+            double dxij, dyij, dzij, dxjk, dyjk, dzjk, magr1, magr2, cosphi, phi, ax, ay, az, bx, by, bz, pref, Fix, Fiy, Fiz, Fjx, Fjy, Fjz, Fkx, Fky, Fkz, Fspring
         for ii in prange(Nf, nogil = True):
             for i in range(Nm):
                 ip = ii * Nm + i

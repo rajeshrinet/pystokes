@@ -60,7 +60,8 @@ cdef class Forces:
 
     cpdef multiRingpolymers(self, int Nf, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus, double twistModulus=?)
 
-
+    cpdef multiRingpolymersstar(self, int Nf, double [:] F, double [:] r, double bl, double sM, double bM, double tM = ?)
+    
     cpdef membraneSurface(self, int Nmx, int Nmy, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus )
 
 

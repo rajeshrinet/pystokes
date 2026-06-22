@@ -1,5 +1,5 @@
 cimport cython
-from libc.math cimport sqrt, pow, exp
+from libc.math cimport sqrt, pow, exp, acos, M_PI, sin
 from cython.parallel import prange
 
 
@@ -865,7 +865,72 @@ cdef class Forces:
                 F[kp+Z] += f3
         return
 
-
+    cpdef multiRingpolymersstar(self, int Nf, double [:] F, double [:] r, double bl, double sM, double bM, double tM = 0):
+        cdef int N = self.N
+        cdef int Z = 2 * N
+        cdef:
+            int ii, i, ip, jp, kp
+            double Nm = N / Nf, dxij, dyij, dzij, dxjk, dyjk, dzjk, magr1, magr2, cosphi, phi, ax, ay, az, bx, by, bz, pref, Fix, Fiy, Fiz, Fjx, Fjy, Fjz, Fkx, Fky, Fkz, Fspring
+        for ii in prange(Nf, nogil = True):
+            for i in range(Nm):
+                ip = ii * Nm + i
+                jp = ii * Nm + (i + 1) % Nm
+                dxij = r[ip] - r[jp]
+                dyij = r[ip + N] - r[jp + N]
+                dzij = r[ip + Z] - r[jp + Z]
+                Fspring = sM * (bl / sqrt(dxij * dxij + dyij * dyij + dzij * dzij) - 1.)
+                F[ip] += Fspring * dxij
+                F[ip + N] += Fspring * dyij
+                F[ip + Z] += Fspring * dzij
+                F[jp] -= Fspring * dxij
+                F[jp + N] -= Fspring * dyij
+                F[jp + Z] -= Fspring * dzij
+        for ii in prange(Nf, nogil = True):
+            for i in range(Nm):
+                ip = ii * Nm + i
+                jp = ii * Nm + (i + 1) % Nm
+                kp = ii * Nm + (i + 2) % Nm
+                dxij = r[ip] - r[jp]
+                dyij = r[ip + N] - r[jp + N]
+                dzij = r[ip + Z] - r[jp + Z]
+                dxjk = r[kp] - r[jp]
+                dyjk = r[kp + N] - r[jp + N]
+                dzjk = r[kp + Z] - r[jp + Z]
+                magr1 = sqrt(dxij * dxij + dyij * dyij + dzij * dzij)
+                magr2 = sqrt(dxjk * dxjk + dyjk * dyjk + dzjk * dzjk)
+                cosphi = (dxij*dxjk + dyij*dyjk + dzij*dzjk) / (magr1 * magr2)
+                if cosphi > 1.0:
+                    cosphi = 1.0
+                elif cosphi < -1.0:
+                    cosphi = -1.0
+                phi = acos(cosphi)
+                ax = (dxjk / magr2 - cosphi * dxij / magr1) / magr1
+                ay = (dyjk / magr2 - cosphi * dyij / magr1) / magr1
+                az = (dzjk / magr2 - cosphi * dzij / magr1) / magr1
+                bx = (dxij / magr1 - cosphi * dxjk / magr2) / magr2
+                by = (dyij / magr1 - cosphi * dyjk / magr2) / magr2
+                bz = (dzij / magr1 - cosphi * dzjk / magr2) / magr2
+                pref = - (bM / bl) * ((phi - M_PI) / sin(phi))
+                Fix = pref * ax
+                Fiy = pref * ay
+                Fiz = pref * az
+                Fkx = pref * bx
+                Fky = pref * by
+                Fkz = pref * bz
+                Fjx = - (Fix + Fkx)
+                Fjy = - (Fiy + Fky)
+                Fjz = - (Fiz + Fkz)
+                F[ip] += Fix
+                F[ip + N] += Fiy
+                F[ip + Z] += Fiz
+                F[jp] += Fjx
+                F[jp + N] += Fjy
+                F[jp + Z] += Fjz
+                F[kp] += Fkx
+                F[kp + N] += Fky
+                F[kp + Z] += Fkz
+        return
+                
     cpdef membraneSurface(self, int Nmx, int Nmy, double [:] F, double [:] r, double bondLength, double springModulus, double bendModulus):
         """
         Force on colloids connected as a membrane 

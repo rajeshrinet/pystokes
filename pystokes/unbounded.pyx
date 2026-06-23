@@ -118,7 +118,7 @@ cdef class Rbm:
             v[i+Z] += mu*F[i+Z] + muv*vz
         return 
                
-    cpdef mobilityTTstar(self, double [:] v, double [:] r, double [:] F):
+    cpdef int mobilityTTstar(self, double [:] v, double [:] r, double [:] F):
         cdef double aa, b = self.b, mu = self.mu, muv = self.muv, vx, vy, vz, dx, dy, dz, mag, idr, rrh, vv1, vv2, idr2
         cdef int N = self.N, i, j, count, Z = 2 * N
         count = 0
@@ -151,7 +151,7 @@ cdef class Rbm:
             v[i]   += mu * F[i]   + muv * vx
             v[i + N] += mu * F[i + N] + muv * vy
             v[i + Z] += mu * F[i + Z] + muv * vz
-        return 
+        return count
 
     
     cpdef mobilityTR(self, double [:] v, double [:] r, double [:] T):

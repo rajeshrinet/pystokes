@@ -132,6 +132,7 @@ cdef class Rbm:
                     dz = r[i + Z] - r[j + Z] 
                     mag = sqrt(dx * dx + dy * dy + dz * dz)
                     if mag < 2 * b:
+                        count += 1
                         idr = 1. / mag
                         rrh = (3. * mag) / (32 * b)
                         vv1 = 1. - (3. * rrh)
@@ -140,7 +141,6 @@ cdef class Rbm:
                         vy += vv1 * F[j + N] + vv2 * dy
                         vz += vv1 * F[j + Z] + vv2 * dz
                     else:
-                        count += 1
                         idr = 1.0/ mag
                         idr2 = idr * idr
                         vv1 = (1 + aa * idr2) * idr 

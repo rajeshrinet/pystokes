@@ -120,7 +120,8 @@ cdef class Rbm:
                
     cpdef mobilityTTstar(self, double [:] v, double [:] r, double [:] F):
         cdef double aa, b = self.b, mu = self.mu, muv = self.muv, vx, vy, vz, dx, dy, dz, mag, idr, rrh, vv1, vv2, idr2
-        cdef int N = self.N, i, j, Z = 2 * N
+        cdef int N = self.N, i, j, count, Z = 2 * N
+        count = 0
         aa = (2.0 * b * b) / 3.0
         for i in range(N):
             vx = 0; vy = 0;   vz = 0
@@ -139,6 +140,7 @@ cdef class Rbm:
                         vy += vv1 * F[j + N] + vv2 * dy
                         vz += vv1 * F[j + Z] + vv2 * dz
                     else:
+                        count += 1
                         idr = 1.0/ mag
                         idr2 = idr * idr
                         vv1 = (1 + aa * idr2) * idr 

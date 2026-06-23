@@ -16,7 +16,7 @@ cdef class Rbm:
 
     cpdef mobilityTT(self, double [:] v,  double [:] r, double [:] F)
                
-    cpdef mobilityTTstar(self, double [:] v, double [:] r, double [:] F)
+    cpdef int mobilityTTstar(self, double [:] v, double [:] r, double [:] F)
     
     cpdef mobilityTR(self,    double [:] v,  double [:] r, double [:] T)
     

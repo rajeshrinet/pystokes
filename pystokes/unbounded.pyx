@@ -153,6 +153,40 @@ cdef class Rbm:
             v[i + Z] += mu * F[i + Z] + muv * vz
         return count
 
+    cpdef computeStresslet(self, int Nf, double [:] r, double S0):
+        cdef int N = self.N, Nm = N // Nf, i, Z = 2 * N, Z1 = 3 * N, Z2 = 4 * N, ii, ip, ap, bp
+        cdef double modp
+        cdef np.ndarray[np.float64_t, ndim = 1] Sarr
+        cdef np.ndarray[np.float64_t, ndim = 1] parr
+        Sarr = np.zeros(5 * N, dtype = np.float64)
+        parr = np.zeros(3 * N, dtype = np.float64)
+        cdef double[:] S = Sarr
+        cdef double[:] p = parr
+        if Nm == 1:
+            for i in range(N):
+                p[i] = 0
+                p[i + N] = 0
+                p[i + Z] = 1
+        else:
+            for ii in range(Nf):
+                for i in range(Nm):
+                    ip = ii * Nm + i
+                    ap = ii * Nm + (i + 1) % Nm
+                    bp = ii * Nm + (i - 1 + Nm) % Nm
+                    p[ip] = r[ap] - r[bp]
+                    p[ip + N] = r[ap + N] - r[bp + N]
+                    p[ip + Z] = r[ap + Z] - r[bp + Z]
+                    modp = sqrt(p[ip] * p[ip] + p[ip + N] * p[ip + N] + p[ip + Z] * p[ip + Z]) + 1e-16
+                    p[ip] /= modp
+                    p[ip + N] /= modp
+                    p[ip + Z] /= modp
+        for i in range(N):
+            S[i] = S0 * (p[i] * p[i] - (1. / 3))
+            S[i + N] = S0 * (p[i + N] * p[i + N] - (1. / 3))
+            S[i + Z] = S0 * (p[i] * p[i + N])
+            S[i + Z1] = S0 * (p[i] * p[i + Z])
+            S[i + Z2] = S0 * (p[i + N] * p[i + Z])
+        return Sarr
     
     cpdef mobilityTR(self, double [:] v, double [:] r, double [:] T):
         """

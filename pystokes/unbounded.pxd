@@ -17,6 +17,8 @@ cdef class Rbm:
     cpdef mobilityTT(self, double [:] v,  double [:] r, double [:] F)
                
     cpdef int mobilityTTstar(self, double [:] v, double [:] r, double [:] F)
+
+    cpdef computeStresslet(self, int Nf, double [:] r, double S0)
     
     cpdef mobilityTR(self,    double [:] v,  double [:] r, double [:] T)
     

@@ -129,10 +129,10 @@ cdef class Forces:
             F[i+Z] += fz
         return
     
-    cpdef lennardJonesstar(self, double [:] F, double [:] r, double lje = 0.01, double ljr = 3):            #only acts on non-neighbouring beads
+    cpdef WCA(self, double [:] F, double [:] r, double lje = 0.01, double ljr = 3):            #only acts on non-neighbouring beads
         cdef int N = self.N, i, j, indexdiff, diff, Z = 2 * N
-        cdef double fx, fy, fz, dx, dy, dz, dr2, idr, rminbyr, temp, fac
-        
+        cdef double fx, fy, fz, dx, dy, dz, dr2, idr, rminbyr, temp, fac, root
+        root = pow(2, (1/3))
         for i in prange(N, nogil = True):
             fx = 0.0; fy = 0.0; fz = 0.0
             for j in range(N):
@@ -148,7 +148,7 @@ cdef class Forces:
                 dy = r[i + N] - r[j + N]
                 dz = r[i + Z] - r[j + Z]
                 dr2 = dx * dx + dy * dy + dz * dz
-                if i != j and dr2 < (ljr * ljr):
+                if i != j and dr2 < root * (ljr * ljr):
                     idr     = 1.0 / sqrt(dr2)
                     rminbyr = ljr * idr
                     temp = rminbyr * rminbyr

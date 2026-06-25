@@ -282,6 +282,7 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j, Z=2*N 
         cdef double dx, dy, dz, idr, idr5, vxx, vyy, vxy, vxz, vyz, vrx, vry, vrz
+        cdef double mud = 13.0*self.b*self.b*self.b/12
  
         for i in prange(N, nogil=True):
             for j in range(N):
@@ -300,9 +301,9 @@ cdef class Rbm:
                     vry = vxy*dx +  vyy*dy + vyz*dz  
                     vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
 
-                    v[i]   -= 8*( dy*vrz - dz*vry )*idr5
-                    v[i+N] -= 8*( dz*vrx - dx*vrz )*idr5
-                    v[i+Z] -= 8*( dx*vry - dy*vrx )*idr5 
+                    v[i]     += mud * (vry * dz - vrz * dy) * idr5
+                    v[i+N]   += mud * (vrz * dx - vrx * dz) * idr5
+                    v[i+2*N] += mud * (vrx * dy - vry * dx) * idr5
         return
 
 
@@ -379,6 +380,7 @@ cdef class Rbm:
         cdef int N = self.N, i, j 
         cdef double dx, dy, dz, idr, idr7
         cdef double mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
+        cdef double mud = -363/8 * self.b ** 4
  
         for i in prange(N, nogil=True):
             for j in range(N):
@@ -399,9 +401,9 @@ cdef class Rbm:
                     mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
                     mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz  - 2*(mxxy+myyy)*dy*dz
                     
-                    v[i]      -= 6*( dy*mrrz - dz*mrry )*idr7
-                    v[i+N]   -= 6*( dz*mrrx - dx*mrrz )*idr7
-                    v[i+2*N] -= 6*( dx*mrry - dy*mrrx )*idr7
+                    v[i]     -= mud*( dy*mrrz - dz*mrry )*idr7
+                    v[i+N]   -= mud*( dz*mrrx - dx*mrrz )*idr7
+                    v[i+2*N] -= mud*( dx*mrry - dy*mrrx )*idr7
         return
 
 
@@ -537,7 +539,7 @@ cdef class Rbm:
                     oz += 3*(srx*dy - sry*dx )*idr5
                     
             o[i]   += ox*mus
-            o[i+N] += oy*mus
+            o[i+N]  += oy*mus
             o[i+Z] += oz*mus
         return                 
     
@@ -562,6 +564,7 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j, Z=2*N 
         cdef double dx, dy, dz, idr, idr2, idr5, vxx, vyy, vxy, vxz, vyz, vrr, vrx, vry, vrz
+        cdef double mud = 13.0 / 24.0 * self.b * self.b * self.b
  
         for i in prange(N, nogil=True):
              for j in range(N):
@@ -581,9 +584,9 @@ cdef class Rbm:
                     vry = vxy*dx +  vyy*dy + vyz*dz  
                     vrz = vxz*dx +  vyz*dy - (vxx+vyy)*dz 
 
-                    o[i]   +=  ( 32*vrx- 20*vrr*dx )*idr5
-                    o[i+N] +=  ( 32*vry- 20*vrr*dy )*idr5
-                    o[i+Z] +=  ( 32*vrz- 20*vrr*dz )*idr5
+                    o[i]     +=  mud * (-2 * vrx + 5 * vrr * dx)*idr5
+                    o[i+N]   +=  mud * (-2 * vry + 5 * vrr * dy) * idr5
+                    o[i+2*N] +=  mud * (-2 * vrz + 5 * vrr * dz) * idr5
         return
 
 
@@ -658,6 +661,7 @@ cdef class Rbm:
 
         cdef int N = self.N, i, j 
         cdef double dx, dy, dz, idr, idr7, idr9, mrrr, mrrx, mrry, mrrz, mxxx, myyy, mxxy, mxxz, mxyy, mxyz, myyz
+        cdef double mud = 363 / 80 * self.b ** 4
  
         for i in prange(N, nogil=True):
              for j in range(N):
@@ -682,11 +686,9 @@ cdef class Rbm:
                     mrry = mxxy*(dx*dx-dz*dz) + myyy*(dy*dy-dz*dz) +  2*mxyy*dx*dy + 2*mxyz*dx*dz  +  2*myyz*dy*dz
                     mrrz = mxxz*(dx*dx-dz*dz) + myyz*(dy*dy-dz*dz) +  2*mxyz*dx*dy - 2*(mxxx+mxyy)*dx*dz  - 2*(mxxy+myyy)*dy*dz
                   
-                    o[i]      += 21*mrrr*dx*idr9 - 9*mrrx*idr7  
-                    o[i+N]   += 21*mrrr*dy*idr9 - 9*mrry*idr7  
-                    o[i+2*N] += 21*mrrr*dz*idr9 - 9*mrrz*idr7  
-                else:
-                    pass 
+                    o[i]     += mud * (15 * mrrx * idr7 - 35 * mrrr * dx * idr9)
+                    o[i+N]   += mud * (15 * mrry * idr7 - 35 * mrrr * dy * idr9)
+                    o[i+2*N] += mud * (15 * mrrz * idr7 - 35 * mrrr * dz * idr9)
         return
 
 

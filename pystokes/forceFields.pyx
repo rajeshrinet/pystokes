@@ -29,7 +29,7 @@ cdef class Forces:
     def __init__(self, particles=1):
         self.N = particles
 
-        
+    
     cpdef VdW(self, double [:] F, double [:] r, double A=0, double a0=0):
         """
         generic van der Waals attraction to a wall at z=0 with Hamaker constant a
@@ -127,6 +127,38 @@ cdef class Forces:
             F[i+Z] += fz
         return
 
+     cpdef WCA(self, double [:] F, double [:] r, double lje = 0.01, double ljr = 3):            #only acts on non-neighbouring beads
+        cdef int N = self.N, i, j, indexdiff, diff, Z = 2 * N
+        cdef double fx, fy, fz, dx, dy, dz, dr2, idr, rminbyr, temp, fac, root
+        root = pow(2, (1/3))
+        for i in prange(N, nogil = True):
+            fx = 0.0; fy = 0.0; fz = 0.0
+            for j in range(N):
+                diff = i - j
+                if diff < 0:
+                    diff = - diff
+                indexdiff = diff
+                if N - diff < indexdiff:
+                    indexdiff = N - diff
+                if indexdiff <= 1:
+                     continue
+                dx = r[i] - r[j]
+                dy = r[i + N] - r[j + N]
+                dz = r[i + Z] - r[j + Z]
+                dr2 = dx * dx + dy * dy + dz * dz
+                if i != j and dr2 < root * (ljr * ljr):
+                    idr     = 1.0 / sqrt(dr2)
+                    rminbyr = ljr * idr
+                    temp = rminbyr * rminbyr
+                    temp = temp * temp * temp
+                    fac   = lje * (temp * temp - temp) * idr * idr 
+                    fx += fac * dx
+                    fy += fac * dy
+                    fz += fac * dz
+            F[i]   += fx
+            F[i + N] += fy
+            F[i + Z] += fz
+        return
 
     cpdef lennardJonesWall(self, double [:] F, double [:] r, double lje=0.0100, double ljr=3, double wlje=0.01, double wljr=3.0):
         """

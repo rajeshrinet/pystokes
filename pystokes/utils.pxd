@@ -17,6 +17,6 @@ from cython.parallel import prange
 cdef class SlipModes:
     cdef int N
     cpdef V2s(self, double [:] S, double [:] p, double S0=?)
-
+    cpdef computeStresslet(self, int Nf, double [:] S, double [:] r, double S0)
 
 cpdef irreducibleTensors(l, p, Y0=?)

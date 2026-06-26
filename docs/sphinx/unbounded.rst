@@ -20,3 +20,14 @@ Power Dissipation (PD)
 .. autoclass:: pystokes.unbounded.PD
     :members:
 
+
+RBM with nearest-neighbor approximations 
+-------------------------------------------------------
+.. autoclass:: pystokes.unbounded.Rbm_nearest_neighbors
+    :members:
+
+
+RBM with correction for ovelapping particles
+-------------------------------------------------------
+.. autoclass:: pystokes.unbounded.Rbm_overlap
+    :members:

@@ -38,8 +38,6 @@ cdef class Rbm:
         self.muv = 1.0/(8*PI*self.eta)
         self.mur = 1.0/(8*PI*self.eta*self.b**3)
 
-        self.Mobility = np.zeros( (3*self.N, 3*self.N), dtype=np.float64)
-
         
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F, double ll=0):
         """

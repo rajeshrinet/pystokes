@@ -42,8 +42,6 @@ cdef class Rbm:
         self.muv = 1.0/(8*PI*self.eta)
         self.mur = 1.0/(8*PI*self.eta*self.b**3)
 
-        self.Mobility = np.zeros( (3*self.N, 3*self.N), dtype=np.float64)
-
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F):
         """
@@ -1224,8 +1222,6 @@ cdef class PD:
         self.muv = 1.0/(8*PI*self.eta)
         self.mur = 1.0/(self.gammaR)
 
-        self.Mobility = np.zeros( (3*self.N, 3*self.N), dtype=np.float64)
-
 
     cpdef frictionTT(self, double depsilon, double [:] v, double [:] r):
         """
@@ -1540,9 +1536,7 @@ cdef class Rbm_nearest_neighbors:
         self.mu  = 1.0/(6*PI*self.eta*self.b)
         self.muv = 1.0/(8*PI*self.eta)
         self.mur = 1.0/(8*PI*self.eta*self.b**3)
-
-        self.Mobility = np.zeros( (3*self.N, 3*self.N), dtype=np.float64)
-
+        
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F):
         """
@@ -2156,3 +2150,42 @@ cdef class Rbm_nearest_neighbors:
                 o[i+N]   += mud * (15 * mrry * idr7 - 35 * mrrr * dy * idr9)
                 o[i+2*N] += mud * (15 * mrrz * idr7 - 35 * mrrr * dz * idr9)
         return
+
+    
+
+
+@cython.wraparound(False)
+@cython.boundscheck(False)
+@cython.cdivision(True)
+@cython.nonecheck(False)
+cdef class Rbm_overlap:
+    """
+    Rigid body motion (RBM) - velocity and angular velocity: with corrections for ovelap 
+        
+    Methods in this class update velocities or angular velocities 
+    using the inputs of -  arrays of positions, velocity or angular velocity, 
+    along with an array of forces or torques or a slip mode
+
+    The array of velocity or angular velocities is then update by each method. 
+    
+    Read more about this: https://github.com/rajeshrinet/pystokes/pull/25
+    ...
+
+    ----------
+    radius: float
+        Radius of the particles (a).    
+    particles: int
+        Number of particles (N)
+    viscosity: float 
+        Viscosity of the fluid (eta)
+    boxSize: float 
+        Length of the box which is reperated periodicly in 3D
+   """
+
+    def __init__(self, radius=1, particles=1, viscosity=1.0):
+        self.b   = radius
+        self.N  = particles
+        self.eta = viscosity
+        self.mu  = 1.0/(6*PI*self.eta*self.b)
+        self.muv = 1.0/(8*PI*self.eta)
+        self.mur = 1.0/(8*PI*self.eta*self.b**3)

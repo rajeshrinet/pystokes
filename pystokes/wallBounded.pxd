@@ -3,7 +3,6 @@ from libc.math cimport sqrt, exp, pow, erfc, sin, cos
 from cython.parallel import prange
 import numpy as np
 cimport numpy as np
-cdef double PI = 3.14159265359
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
@@ -12,7 +11,6 @@ cdef double PI = 3.14159265359
 cdef class Rbm:
 
     cdef readonly int Nx, Ny, Nz, N
-    cdef readonly np.ndarray Mobility
     cdef readonly double Lx, Ly, Lz, b, facx, facy, facz, eta, mu, muv, mur
 
 
@@ -44,26 +42,7 @@ cdef class Rbm:
     
 
     cpdef propulsionR4a(self, double [:] o, double [:] r, double [:] V4a)
-    
 
-    cpdef noiseTT_old(self, double [:] v, double [:] r)
-
-
-    cpdef noiseRR_old(self, double [:] o, double [:] r)
-    
-    
-    cpdef noiseTT(self, double [:] v, double [:] r)
-    
-    
-    cpdef noiseTR(self, double [:] v, double [:] r)
-    
-    
-    cpdef noiseRT(self, double [:] o, double [:] r)
-    
-    
-    cpdef noiseRR(self, double [:] o, double [:] r)
-
-    
 
 
 ## Flow at given points

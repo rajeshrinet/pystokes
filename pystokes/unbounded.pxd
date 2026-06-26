@@ -3,7 +3,6 @@ from libc.math cimport sqrt
 from cython.parallel import prange
 import numpy as np
 cimport numpy as np
-cdef double PI = 3.14159265359
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
@@ -12,7 +11,6 @@ cdef double PI = 3.14159265359
 cdef class Rbm:
     cdef double b, eta, mu, muv, mur
     cdef int N 
-    cdef readonly np.ndarray Mobility
 
     cpdef mobilityTT(self, double [:] v,  double [:] r, double [:] F)
                
@@ -93,7 +91,6 @@ cdef class Flow:
 cdef class PD:
     cdef double b, eta, gammaT, gammaR, mu, muv, mur
     cdef int N 
-    cdef readonly np.ndarray Mobility
 
     cpdef frictionTT(self, double depsilon, double [:] v, double [:] r)
                
@@ -126,7 +123,6 @@ cdef class PD:
 cdef class Rbm_nearest_neighbors:
     cdef double a, eta, L, mu, muv, mur
     cdef int N 
-    cdef readonly np.ndarray Mobility
 
     cpdef mobilityTT(self, double [:] v,  double [:] r, double [:] F)
                

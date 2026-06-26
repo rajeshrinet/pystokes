@@ -80,7 +80,7 @@ cdef class Forces:
 
     cpdef lennardJones(self, double [:] F, double [:] r, double lje=0.01, double ljr=3):
         """
-        The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)
+        The standard Lennard-Jones potential truncated at the minimum (also called WCA potential)
         
             We choose \phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
             ljr: minimum of the LJ potential and rr=ljr/r.
@@ -130,7 +130,7 @@ cdef class Forces:
 
     cpdef lennardJonesWall(self, double [:] F, double [:] r, double lje=0.0100, double ljr=3, double wlje=0.01, double wljr=3.0):
         """
-        The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)
+        The standard Lennard-Jones potential truncated at the minimum (also called WCA potential)
         
             We choose \phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
             ljr: minimum of the LJ potential and rr=ljr/r.
@@ -355,7 +355,7 @@ cdef class Forces:
 
     cpdef lennardJonesXWall(self, double [:] F, double [:] r, double wlje=0.12, double wljr=3.0):
         """
-        The standard Lennard-Jones potential truncated at the minimum (aslo called WCA potential)
+        The standard Lennard-Jones potential truncated at the minimum (also called WCA potential)
         
             We choose \phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
             ljr: minimum of the LJ potential and rr=ljr/r.
@@ -1152,9 +1152,13 @@ cdef class Torques:
         """
         cdef int N = self.N, i, j, k, xx = 2*N, ip, im
         cdef double L = N*d
-        cdef double drp[3], drm[3], e[3][3], ep[3][3], em[3][3]
-        cdef double e_dot_r, e_dot_e
+        cdef double drp[3] 
+        cdef double drm[3] 
+        cdef double e[3][3] 
+        cdef double ep[3][3] 
+        cdef double em[3][3]
         cdef double cross[3]
+        cdef double e_dot_r, e_dot_e
 
         for i in prange(N,nogil=True):
             ip = (i + 1) % N

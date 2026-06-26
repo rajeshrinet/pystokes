@@ -793,8 +793,8 @@ cpdef couplingTensors(l, p, M0=1):
         MM = -M0*p
     
     if l==2:
-        """a symmetric traceless tensor s of rank 2 has 5 indepndent components.
-        We choose them as: sxx, syy, sxy, sxz, syz
+        ## a symmetric traceless tensor s of rank 2 has 5 indepndent components.
+        ## We choose them as: sxx, syy, sxy, sxz, syz
         """
         for i in prange(N, nogil=True):
             Y1[i + 0*N] = S0*(p1[i]*p1[i]         -(1.0/3)) ##sxx
@@ -804,10 +804,10 @@ cpdef couplingTensors(l, p, M0=1):
             Y1[i + 4*N] = S0*(p1[i + N]*p1[i + 2*N])        ##syz
 
     if l==3:
-        for i in range(N):
-        """a symmetric traceless tensor m of rank 3 has 7 indepndent components.
-        We choose them as: mxxx, myyy, myyy, myyy, myyy, mxyz, myyz
+        ##a symmetric traceless tensor m of rank 3 has 7 indepndent components.
+        ##We choose them as: mxxx, myyy, myyy, myyy, myyy, mxyz, myyz
         """
+        for i in range(N):
             MM[i]      = M0*(p[i]*p[i]*p[i]          - 3/5*p[i]);      #mxxx
             MM[i+N]   = M0*(p[i+N]*p[i+N]*p[i+N]     - 3/5*p[i+N]);    #myyy
             MM[i+2*N] = M0*(p[i]*p[i]*p[i+N]         - 1/5*p[i+N]);    #myyy

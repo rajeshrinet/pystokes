@@ -64,7 +64,7 @@ cdef class SlipModes:
         self.N = particles
 
         
-    cpdef V2s(self, double [:] S, double [:] p, double S0=1):
+    cpdef V2s(self, double [:] S, double [:] p, double S0=1.0):
         """
         ## a symmetric traceless tensor S of rank 2 has 5 indepndent components.
         ## We choose them as: sxx, syy, sxy, sxz, syz
@@ -81,15 +81,16 @@ cdef class SlipModes:
         S0: float
             Strength of the 2S mode 
         """
+        
         cdef int N = self.N, i, j, Z= 2*N
         S0 = S0*3
         
         for i in prange(N, nogil=True):
-            S[i + 0*N] = S0*(p1[i]*p1[i]         -1)       ##sxx
-            S[i + 1*N] = S0*(p1[i + N]*p1[i + N] -1)       ##syy
-            S[i + 2*N] = S0*(p1[i]*p1[i + N])              ##sxy
-            S[i + 3*N] = S0*(p1[i]*p1[i + 2*N])            ##sxz
-            S[i + 4*N] = S0*(p1[i + N]*p1[i + 2*N])        ##syz
+            S[i + 0*N] = S0*(p[i]  *p[i]     - 1)          ##sxx
+            S[i + 1*N] = S0*(p[i+N]*p[i + N] - 1)          ##syy
+            S[i + 2*N] = S0*(p[i]*  p[i + N])              ##sxy
+            S[i + 3*N] = S0*(p[i]*  p[i+2*N])              ##sxz
+            S[i + 4*N] = S0*(p[i+N]*p[i+2*N])              ##syz
         return
 
 
@@ -884,9 +885,8 @@ cpdef couplingTensors(l, p, M0=1):
     if l==3:
         ##a symmetric traceless tensor m of rank 3 has 7 indepndent components.
         ##We choose them as: mxxx, myyy, myyy, myyy, myyy, mxyz, myyz
-        """
         for i in range(N):
-            MM[i]      = M0*(p[i]*p[i]*p[i]          - 3/5*p[i]);      #mxxx
+            MM[i]     = M0*(p[i]*p[i]*p[i]          - 3/5*p[i]);      #mxxx
             MM[i+N]   = M0*(p[i+N]*p[i+N]*p[i+N]     - 3/5*p[i+N]);    #myyy
             MM[i+2*N] = M0*(p[i]*p[i]*p[i+N]         - 1/5*p[i+N]);    #myyy
             MM[i+3*N] = M0*(p[i]*p[i]*p[i+2*N]       - 1/5*p[i+2*N]);  #myyy
@@ -894,8 +894,6 @@ cpdef couplingTensors(l, p, M0=1):
             MM[i+5*N] = M0*(p[i+N]*p[i+N]*p[i+2*N]);                   #mxyz
             MM[i+6*N] = M0*(p[i+N]*p[i+N]*p[i+2*N]   -1/5*p[i+2*N]);   #myyz
     return MM
-
-
 
 
 def plotPhoreticField(l, c0=1):

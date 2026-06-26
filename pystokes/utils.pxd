@@ -14,8 +14,9 @@ from cython.parallel import prange
 @cython.boundscheck(False)
 @cython.cdivision(True)
 @cython.nonecheck(False)
-cdef class Slip Modes:
+cdef class SlipModes:
     cdef int N
-    
+    cpdef V2s(self, double [:] S, double [:] p, double S0=?)
+
 
 cpdef irreducibleTensors(l, p, Y0=?)

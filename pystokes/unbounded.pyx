@@ -689,6 +689,41 @@ cdef class Rbm:
                     o[i+2*N] += mud * (15 * mrrz * idr7 - 35 * mrrr * dz * idr9)
         return
 
+    cpdef int mobilityTTstar(self, double [:] v, double [:] r, double [:] F):
+        cdef double aa, b = self.b, mu = self.mu, muv = self.muv, vx, vy, vz, dx, dy, dz, mag, idr, rrh, vv1, vv2, idr2
+        cdef int N = self.N, i, j, count, Z = 2 * N
+        count = 0
+        aa = (2.0 * b * b) / 3.0
+        for i in range(N):
+            vx = 0; vy = 0;   vz = 0
+            for j in range(N):
+                if i!= j:
+                    dx = r[i]   - r[j]
+                    dy = r[i + N] - r[j + N]
+                    dz = r[i + Z] - r[j + Z] 
+                    mag = sqrt(dx * dx + dy * dy + dz * dz)
+                    if mag < 2 * b:
+                        count += 1
+                        idr = 1. / mag
+                        rrh = (3. * mag) / (32 * b)
+                        vv1 = 1. - (3. * rrh)
+                        vv2 = rrh * (F[j] * dx + F[j + N] * dy + F[j + Z] * dz) * idr * idr
+                        vx += vv1 * F[j] + vv2 * dx
+                        vy += vv1 * F[j + N] + vv2 * dy
+                        vz += vv1 * F[j + Z] + vv2 * dz
+                    else:
+                        idr = 1.0/ mag
+                        idr2 = idr * idr
+                        vv1 = (1 + aa * idr2) * idr 
+                        vv2 = (1 - 3 * aa * idr2) * (F[j] * dx + F[j + N] * dy + F[j + Z] * dz) * idr2 * idr
+                        vx += vv1 * F[j] + vv2 * dx 
+                        vy += vv1 * F[j + N] + vv2 * dy 
+                        vz += vv1 * F[j + Z] + vv2 * dz 
+            v[i]   += mu * F[i]   + muv * vx
+            v[i + N] += mu * F[i + N] + muv * vy
+            v[i + Z] += mu * F[i + Z] + muv * vz
+        return count
+
 
 
 

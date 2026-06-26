@@ -93,6 +93,37 @@ cdef class SlipModes:
             S[i + 4*N] = S0*(p[i+N]*p[i+2*N])              ##syz
         return
 
+    cpdef computeStresslet(self, int Nf, double [:] S, double [:] r, double S0):
+        cdef int N = self.N, Nm = N // Nf, i, Z = 2 * N, Z1 = 3 * N, Z2 = 4 * N, ii, ip, ap, bp
+        cdef double modp
+        cdef np.ndarray[np.float64_t, ndim = 1] parr
+        parr = np.zeros(3 * N, dtype = np.float64)
+        cdef double[:] p = parr
+        if Nm == 1:
+            for i in range(N):
+                p[i] = 0
+                p[i + N] = 0
+                p[i + Z] = 1
+        else:
+            for ii in range(Nf):
+                for i in range(Nm):
+                    ip = ii * Nm + i
+                    ap = ii * Nm + (i + 1) % Nm
+                    bp = ii * Nm + (i - 1 + Nm) % Nm
+                    p[ip] = r[ap] - r[bp]
+                    p[ip + N] = r[ap + N] - r[bp + N]
+                    p[ip + Z] = r[ap + Z] - r[bp + Z]
+                    modp = sqrt(p[ip] * p[ip] + p[ip + N] * p[ip + N] + p[ip + Z] * p[ip + Z]) + 1e-16
+                    p[ip] /= modp
+                    p[ip + N] /= modp
+                    p[ip + Z] /= modp
+        for i in range(N):
+            S[i] = S0 * (3. * p[i] * p[i] - 1.)
+            S[i + N] = S0 * (3. * p[i + N] * p[i + N] - 1.)
+            S[i + Z] = S0 * (3. * p[i] * p[i + N])
+            S[i + Z1] = S0 * (3. * p[i] * p[i + Z])
+            S[i + Z2] = S0 * (3. * p[i + N] * p[i + Z])
+        return
 
 
     

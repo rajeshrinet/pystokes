@@ -127,7 +127,30 @@ cdef class Forces:
             F[i+Z] += fz
         return
 
-     cpdef WCA(self, double [:] F, double [:] r, double lje = 0.01, double ljr = 3):            #only acts on non-neighbouring beads
+        
+    cpdef WCA(self, double [:] F, double [:] r, double lje = 0.01, double ljr = 3):            
+        """
+        The standard Lennard-Jones potential truncated at the minimum (also called WCA potential)
+        
+            We choose \phi(r) = lje/12 (rr^12 - 2*rr^6 ) + lje/12,  as the standard WCA potential.
+            ljr: minimum of the LJ potential and rr=ljr/r.
+                    #only acts on non-neighbouring beads
+        ...
+
+        Parameters
+        ----------
+        r: np.array
+            An array of positions
+            An array of size 3*N,
+        F: np.array
+            An array of forces
+            An array of size 3*N,
+        lje: float
+            Strength of the LJ 
+        ljr: float
+            Range of the LJ 
+
+        """
         cdef int N = self.N, i, j, indexdiff, diff, Z = 2 * N
         cdef double fx, fy, fz, dx, dy, dz, dr2, idr, rminbyr, temp, fac, root
         root = pow(2, (1/3))

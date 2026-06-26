@@ -10,5 +10,12 @@ cimport cython
 from libc.math cimport sqrt, pow, log
 from cython.parallel import prange
 
+@cython.wraparound(False)
+@cython.boundscheck(False)
+@cython.cdivision(True)
+@cython.nonecheck(False)
+cdef class Slip Modes:
+    cdef int N
+    
 
 cpdef irreducibleTensors(l, p, Y0=?)

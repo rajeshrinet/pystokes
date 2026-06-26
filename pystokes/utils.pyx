@@ -16,6 +16,85 @@ DTYP1   = np.int32
 ctypedef np.float_t DTYPE_t 
 
 
+
+
+
+@cython.boundscheck(False)
+@cython.cdivision(True)
+@cython.nonecheck(False)
+@cython.wraparound(False)
+cdef class SlipModes:
+    """
+    Computes Slip Modes
+
+    We expand the slip $\mathbf{v}^{\mathcal{A}}$ in the expansion basis of TSH (tensorial spherical harmonics), which are
+    defined as (read more in S. Hess, Tensors for physics, 2015):
+    
+    $$
+    \mathbf{Y}^{(l)}(\hat{\mathbf{ b }})
+       = (-1)^l b^{l+1} \mathbf \nabla^{(l)}
+      [1/{b}]  
+    $$
+    
+    The first TSH is
+    $$
+          Y^{(0)}(\hat{\mathbf{ b }})=1,\quad 
+    $$
+    
+    The second TSH is:
+    $$
+          Y_{i}^{(1)}(\hat{\mathbf{ b }})=\hat{ b }_{i},\quad 
+    $$
+    
+    The thirs TSH is
+    $$
+          Y_{ij}^{(2)}(\hat{\mathbf{ b }})=\left(3\hat{ b }_{i}\hat{ b }_{j}-\delta_{ij}\right).%\\
+    $$
+
+    ...
+
+    Parameters
+    ----------
+    particles: int
+        Number of particles (N)
+
+
+    """
+    def __init__(self, particles=1):
+        self.N = particles
+
+        
+    cpdef V2s(self, double [:] S, double [:] p, double S0=1):
+        """
+        ## a symmetric traceless tensor S of rank 2 has 5 indepndent components.
+        ## We choose them as: sxx, syy, sxy, sxz, syz
+        ...
+
+        Parameters
+        ----------
+        S: np.array
+            An array of positions
+            An array of size %*N,
+        p: np.array
+            An array of Orientatin
+            An array of size 3*N,
+        S0: float
+            Strength of the 2S mode 
+        """
+        cdef int N = self.N, i, j, Z= 2*N
+        S0 = S0*3
+        
+        for i in prange(N, nogil=True):
+            S[i + 0*N] = S0*(p1[i]*p1[i]         -1)       ##sxx
+            S[i + 1*N] = S0*(p1[i + N]*p1[i + N] -1)       ##syy
+            S[i + 2*N] = S0*(p1[i]*p1[i + N])              ##sxy
+            S[i + 3*N] = S0*(p1[i]*p1[i + 2*N])            ##sxz
+            S[i + 4*N] = S0*(p1[i + N]*p1[i + 2*N])        ##syz
+        return
+
+
+
+    
 def gridXY(dim, L, Ng):
     """
     Returns the grid in XY direction centered around zero
@@ -795,7 +874,6 @@ cpdef couplingTensors(l, p, M0=1):
     if l==2:
         ## a symmetric traceless tensor s of rank 2 has 5 indepndent components.
         ## We choose them as: sxx, syy, sxy, sxz, syz
-        """
         for i in prange(N, nogil=True):
             Y1[i + 0*N] = S0*(p1[i]*p1[i]         -(1.0/3)) ##sxx
             Y1[i + 1*N] = S0*(p1[i + N]*p1[i + N] -(1.0/3)) ##syy

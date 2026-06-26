@@ -53,7 +53,7 @@ cdef class Rbm:
 
     cpdef propulsionR4a(  self, double [:] o,  double [:] r, double [:] V4a) 
 
-
+    cpdef int mobilityTTstar(self, double [:] v, double [:] r, double [:] F)
 
 @cython.wraparound(False)
 @cython.boundscheck(False)

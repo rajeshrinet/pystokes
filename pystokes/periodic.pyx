@@ -33,7 +33,7 @@ cdef class Rbm:
    """
     def __init__(self, radius=1, particles=1, viscosity=1.0, boxSize=10, xi=123456789):
         self.b   = radius
-        self.N  = particles
+        self.N   = particles
         self.eta = viscosity
         self.L   = boxSize 
         if xi==123456789:

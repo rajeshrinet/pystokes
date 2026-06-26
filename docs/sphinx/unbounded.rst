@@ -22,12 +22,6 @@ Power Dissipation (PD)
 
 
 RBM with nearest-neighbor approximations 
--------------------------------------------------------
-.. autoclass:: pystokes.unbounded.Rbm_nearest_neighbors
-    :members:
-
-
-RBM with correction for ovelapping particles
--------------------------------------------------------
-.. autoclass:: pystokes.unbounded.Rbm_overlap
+----------------------------------------
+.. autoclass:: pystokes.unbounded.Rbm_NN
     :members:

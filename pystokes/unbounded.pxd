@@ -120,7 +120,7 @@ cdef class PD:
 @cython.boundscheck(False)
 @cython.cdivision(True)
 @cython.nonecheck(False)
-cdef class Rbm_nearest_neighbors:
+cdef class Rbm_NN:
     cdef double a, eta, L, mu, muv, mur
     cdef int N 
 

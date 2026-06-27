@@ -1,4 +1,3 @@
-
 cimport cython
 from libc.math cimport sqrt
 from cython.parallel import prange

@@ -3,7 +3,6 @@ from libc.math cimport sqrt, exp, pow, erfc, sin, cos
 from cython.parallel import prange
 import numpy as np
 cimport numpy as np
-cdef double PI = 3.14159265359
 
 @cython.wraparound(False)
 @cython.boundscheck(False)

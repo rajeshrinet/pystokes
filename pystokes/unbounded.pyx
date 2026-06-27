@@ -1,11 +1,10 @@
 cimport cython
 from libc.math cimport sqrt
 from cython.parallel import prange
-cdef double PI = 3.14159265359
-cdef double sqrt8 = 2.82842712475
-cdef double sqrt2 = 1.41421356237
 import numpy as np
 cimport numpy as np
+cdef double PI = 3.14159265359
+
 
 
 @cython.wraparound(False)
@@ -45,9 +44,9 @@ cdef class Rbm:
 
     cpdef mobilityTT(self, double [:] v, double [:] r, double [:] F):
         """
-        Compute velocity due to body forces using :math:`\boldsymbol{\mu}_{ij}^{TT}\cdot  \boldsymbol{F}_j` 
-        :math:`\boldsymbol \mu_{ij}^{TT}&=\left(1+\frac{b^2}{3}\nabla^2\right)\,\boldsymbol G (\boldsymbol R_i,\boldsymbol R_j)`
+        Compute velocity due to body forces using :math:`\mu^{TT}\cdot F` 
         ...
+
 
         Parameters
         ----------
@@ -162,8 +161,7 @@ cdef class Rbm:
     
     cpdef propulsionT2s(self, double [:] v, double [:] r, double [:] V2s):
         """
-        Compute velocity due to 2s mode of the slip :math:`\boldsymbol{\pi}_{ij}^{(T,2s)}\negmedspace\cdot\mathbf{{\mathbf{V}}}_{j}^{(2s)}` 
-        :math:`\boldsymbol{\pi}_{ij}^{(T,2s)}&=-\frac{10\pi\eta b^2}{3}\left(1+\frac{4b^2}{15}\nabla^2\right)\,\boldsymbol\nabla\boldsymbol G (\boldsymbol R_i,\boldsymbol R_j)`
+        Compute velocity due to 2s mode of the slip :math:`\pi^{T,2s}\cdot V^{(2s)}` 
         ...
         
         Parameters
@@ -238,7 +236,7 @@ cdef class Rbm:
         """
 
         cdef int N = self.N, i, j, Z=2*N  
-        cdef double dx, dy, dz, idr, idr3, V3tdotidr, vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, mud1 = -1.0*(self.b**3)/5
+        cdef double dx, dy, dz, idr, idr3, V3tdotidr, vx, vy, vz, mud1 = -0.1*(self.b**3)
  
         for i in prange(N, nogil=True):
             vx=0; vy=0;   vz=0; 
@@ -1037,7 +1035,7 @@ cdef class Flow:
 
         cdef int N = self.N, Nt = self.Nt
         cdef  int i, ii 
-        cdef double dx, dy, dz, dr, idr, idr3, V3tdotidr, vx, vy, vz,mud1 = -1.0*(self.b**5)/10, radi=self.b
+        cdef double dx, dy, dz, dr, idr, idr3, V3tdotidr, vx, vy, vz,mud1 = -0.1*(self.b**3), radi=self.b
  
         for i in prange(Nt, nogil=True):
             vx =0.0; vy = 0.0; vz =0.0;
@@ -1702,7 +1700,7 @@ cdef class Rbm_NN:
         cdef double dx, dy, dz, dr, idr,  idr3, L = self.L
         cdef double aa=(self.b*self.b*8.0)/3.0, vv1, vv2, aidr2
         cdef double vx, vy, vz, 
-        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (28.0*self.b*self.b)/24 
+        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (10.0*self.b*self.b)/24 
         cdef int neighbors[2]
         
         for i in prange(N, nogil=True):
@@ -1765,7 +1763,7 @@ cdef class Rbm_NN:
         """
 
         cdef int N = self.N, i, j, xx=2*N  
-        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, mud1 = -1.0*(self.b**3)/5
+        cdef double dx, dy, dz, idr, idr3, Ddotidr, vx, vy, vz, mud = 3.0*self.b*self.b*self.b/5, mud1 = -0.1*(self.b**3)
         cdef double L = self.L
         cdef int neighbors[2]
  
@@ -2032,7 +2030,7 @@ cdef class Rbm_NN:
 
         cdef int N = self.N, i, j, xx=2*N 
         cdef double dx, dy, dz, idr, idr5, ox, oy, oz, L = self.L
-        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (28.0*self.b*self.b)/24
+        cdef double sxx, sxy, sxz, syz, syy, srr, srx, sry, srz, mus = (10.0*self.b*self.b)/24
         cdef int neighbors[2]
  
         for i in prange(N, nogil=True):
@@ -2066,7 +2064,7 @@ cdef class Rbm_NN:
                 oz += 3*(srx*dy - sry*dx )*idr5
                 
             o[i]    += ox*mus
-            o[i+N] += oy*mus
+            o[i+N]  += oy*mus
             o[i+xx] += oz*mus
         return              
 

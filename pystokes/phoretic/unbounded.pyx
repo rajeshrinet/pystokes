@@ -2,6 +2,8 @@ cimport cython
 from libc.math cimport sqrt
 from cython.parallel import prange
 cdef double PI = 3.14159265359
+cdef double sqrt8 = 2.82842712475
+cdef double sqrt2 = 1.41421356237
 import numpy as np
 cimport numpy as np
 

@@ -953,7 +953,7 @@ cdef class Flow:
         cdef int N = self.N, Nt = self.Nt
         cdef int i, ii, Z= 2*N, Z1= 3*N, Z2 = 4*N
         cdef double dx, dy, dz, dr, idr, idr3, aidr2, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
-        cdef double aa = self.b**2, vv1, vv2, vx, vy, vz, mus = (28.0*self.b**3)/24, radi=self.b
+        cdef double aa = self.b**2, vv1, vv2, vx, vy, vz, mus = (10.0*self.b**3)/24, radi=self.b
         for i in prange(Nt, nogil=True):
             vx = 0.0;vy = 0.0; vz = 0.0;
             for ii in range(N):

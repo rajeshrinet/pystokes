@@ -1409,7 +1409,7 @@ cdef class Flow:
             double L = self.L,  xi=self.xi, siz=Nb*L, ixi2
             double xdr, xdr2, xdr3, xdr5,  D, E, erxdr, e1, sxx, syy, sxy, sxz, syz, srr, srx, sry, srz
             double dx, dy, dz, idr, idr3, kx, ky, kz, k2, cc, kdotr, vx, vy, vz, k0=2*PI/L, ixk2, fac=8*PI/(L*L*L)
-            double a2 = self.b*self.b*4.0/15,aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (28.0*self.b**3)/24, ik2
+            double a2 = self.b*self.b*4.0/15,aidr2, xd1, yd1, zd1, xd, yd, zd, mus = (10.0*self.b**3)/24, ik2
         if xi0 != 123456789:
             xi = xi0 
         ixi2 = 1/(xi*xi)
